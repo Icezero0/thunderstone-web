@@ -1,0 +1,20 @@
+# Supplied source assets and TTS export
+/game/
+/black_edges/
+
+# Reproducible, generated card images
+/generated/
+
+# Local Python environment and tooling
+/.venv/
+/.uv-cache/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local configuration and operating system files
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
