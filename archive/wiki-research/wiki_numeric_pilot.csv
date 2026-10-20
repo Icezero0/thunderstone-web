@@ -1,0 +1,4 @@
+card_id,current_name,english_name,wiki_set,wiki_section,source_url,match_basis,cost,hero_level,strength,gold_value,weight,health,light,upgrade_xp,xp_reward,victory_points,trophy_light,note
+deck_15_10x7_r01_c01,亚马逊弓箭手,AMAZON ARCHER,Basic Set,HERO,https://w.atwiki.jp/thunderstone/pages/23.html,translation_exact_and_image_checked,6,1,4,,,,,2,,,,
+deck_09_10x7_r04_c07,余烬,EMBER,Dragonspire,MONSTER,https://w.atwiki.jp/thunderstone/pages/26.html,translation_exact_and_image_checked,,,,2,,5,,,1,2,1,战利品照明来自卡表效果文字及卡图
+deck_18_10x7_r04_c04,霜巨人战斧,FROST GIANT AXE,Dragonspire,VILLAGE,https://w.atwiki.jp/thunderstone/pages/26.html,translation_alias_and_image_checked,8,,,3,6,,,,,,,旧对照表译为霜巨人斧；按类别与效果确认版本

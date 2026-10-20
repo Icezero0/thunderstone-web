@@ -1,9 +1,8 @@
 # Supplied source assets and TTS export
-/game/
-/black_edges/
+/game_TTS/
 
-# Reproducible, generated card images
-/generated/
+# Optional local audit reports
+/reports/
 
 # Local Python environment and tooling
 /.venv/

@@ -1,43 +1,23 @@
-# 雷霆之石网页版：卡牌资料整理
+﻿# 雷霆之石网页版：卡牌资产
 
-此仓库目前保存可重复运行的切图脚本和卡牌目录。后续游戏计划使用 Python 后端与 Vue 前端；当前阶段尚未建立联机服务。
+本阶段的正式产物是 [data/cards.csv](data/cards.csv) 和 [assets/cards/](assets/cards/) 中按 `card_id` 命名的卡图。`cards.csv` 是卡牌定义的唯一数据源；分类、中文文字、数值、审核状态、排序和新旧编号都已写入其中。后续游戏后端可直接读取或导入这份 CSV。
 
-## 本地输入
+## 资产
 
-将原始资料放在项目根目录的 `game/` 和 `black_edges/`。这两个目录及 `generated/` 均不纳入 Git：
+- `data/cards.csv`：722 条记录，其中 720 张可玩卡正面、1 张回合顺序参考卡、1 张公共牌背。`card_id` 是正式编号，`source_card_id` 保存原图集牌位名，`catalog_order` 保存当前目录顺序。
+- `assets/cards/`：720 张 `TS-0001.png` 至 `TS-0720.png`，以及 `TS-REFERENCE-001.png`、`TS-BACK-001.jpg`。每条记录的 `image_path` 指向相同编号的图片。
+- `archive/`：早期文字框、英雄系列核对结果和 Wiki 研究资料，仅供溯源，不参与当前目录编辑。
 
-- `game/assets/deck_XX_列数x行数.png`：已汉化的 TTS 成品图集，每格为 504×704 像素。
-- `game/TDS_CN.json`：TTS 存档，用于交叉核对卡牌 ID 和存档中的实例数量。
-- `black_edges/deck_XX_列数x行数_rYY_cZZ.png`：500×700 的英文原图，提供位置命名和空位判断。
-- `black_edges/.card_localizer_work/work_state.json`：中文文字框、坐标和样式。
-- `black_edges/.card_localizer_state.json`：较旧的编辑状态，仅供溯源。
+初期输入 `game/` 与 `black_edges/` 保留在本地，仍被 Git 忽略。人工修订的卡图已并入正式图片 `TS-0147.png`、`TS-0187.png`、`TS-0679.png`。当前不再使用图集切割、数据重建或覆盖表。
 
-## 生成卡图与资料
+历史编号映射、牌组分类和 Wiki 候选值均已并入 `cards.csv`；旧构建输入与命令已清理。
 
-需要 Python 3.11 或更新版本。以下命令从项目根目录运行：
+## 使用数据
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe scripts\split_decks.py
-.\.venv\Scripts\python.exe scripts\split_decks.py --verify
-.\.venv\Scripts\python.exe scripts\build_card_data.py
-```
+`cards.csv` 使用带 BOM 的 UTF-8 编码，空白数值表示未知或不适用，不等于 0。卡牌图片的路径由 `image_path` 字段给出。当前阶段仅保留资产和只读数据检查，不附带审核页面或本地服务。
 
-切图结果保存在 `generated/cards/`，文件名与英文原图逐一对应，尺寸为 504×704。`--verify` 会逐张比较输出图片与成品图集中的对应像素。图片未纳入 Git，重新取得输入资料后可以再生成。
+分类、标签、英雄系列、经验值字段与审核状态见 [数据模型](docs/data-model.md)。
 
-`build_card_data.py` 生成以下纳入 Git 的 UTF-8 CSV（带 BOM，方便 Windows 表格软件读取）：
+## 游戏引擎设计
 
-| 文件 | 内容 |
-| --- | --- |
-| `data/cards.csv` | 每个图集位置一行；包含卡牌类型、二级分类、名称、腰部原文、效果、图片路径和 TTS 参照信息 |
-| `data/text_boxes.csv` | 原始中文文字框及坐标、字体、颜色等样式，供重新提取和人工修正 |
-| `data/review_queue.csv` | 需要人工核对的卡牌 |
-
-`data/deck_catalog.csv` 定义牌组默认分类；`data/card_overrides.csv` 记录少量按图集位置识别的特殊卡；`data/card_text_overrides.csv` 用于保存后续人工校对的文字。分类提取依据见 [数据模型说明](docs/data-model.md)。
-
-## 当前结果
-
-20 张成品图集共切出 763 个位置：723 张卡牌正面、1 张回合顺序参考卡、21 张牌背、18 个空位。保留了 1,972 个中文文字框。32 个位置进入待核对清单，其中 27 张卡牌正面缺少嵌字记录，3 张已切出的卡牌未在当前 TTS 存档中实例化，另外 2 张宝藏牌有独立的辅助标签。
-
-现阶段的 `effect_text` 是自动提取的卡面正文，部分卡牌可能包含风味文字。`extracted` 表示脚本成功提取，不表示经过人工校对。卡牌价值、胜利点、光照点等未嵌字的数字尚未建模。
+Python 规则引擎的设计见[总览](docs/game-engine-design.md)和[详细文档目录](docs/game-engine/README.md)。详细文档依次说明卡牌目录与规则包、状态、组局、回合、战斗、能力结算、联机和验证。
