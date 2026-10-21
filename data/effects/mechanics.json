@@ -1,0 +1,2258 @@
+[
+  {
+    "id": "TS-0228-A02",
+    "source_card_id": "TS-0228",
+    "source_line": "你在自己的回合中触发陷阱时，可以选择另一名玩家使其承受该陷阱效果。",
+    "op": "response",
+    "params": {
+      "action": "redirect_trap"
+    }
+  },
+  {
+    "id": "TS-0229-A02",
+    "source_card_id": "TS-0229",
+    "source_line": "地下城：攻击 +1。你可以摧毁此牌，以防止 1 名英雄在战斗中被摧毁。",
+    "op": "response",
+    "params": {
+      "action": "prevent_destroy",
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0280-A01",
+    "source_card_id": "TS-0280",
+    "source_line": "你可以在任意时点展示此牌，以避免 1 张陷阱牌的效果。",
+    "op": "response",
+    "params": {
+      "action": "ignore_trap"
+    }
+  },
+  {
+    "id": "TS-0430-A02",
+    "source_card_id": "TS-0430",
+    "source_line": "若对手的效果将以你为目标，你可以展示此英雄，改为以当前回合玩家为目标。",
+    "op": "response",
+    "params": {
+      "action": "redirect_opponent"
+    }
+  },
+  {
+    "id": "TS-0536-A02",
+    "source_card_id": "TS-0536",
+    "source_line": "免疫 1 次陷阱效果。",
+    "op": "response",
+    "params": {
+      "action": "ignore_trap",
+      "once_per_turn": true
+    }
+  },
+  {
+    "id": "TS-0703-A01",
+    "source_card_id": "TS-0703",
+    "source_line": "你可以在任意时候摧毁该牌以免疫 1 个战斗效果。",
+    "op": "response",
+    "params": {
+      "action": "ignore_battle"
+    }
+  },
+  {
+    "id": "TS-0196-A01",
+    "source_card_id": "TS-0196",
+    "source_line": "所有被摧毁的牌（地下城牌堆除外）将返回村庄。英雄牌返回牌堆的正确位置。",
+    "op": "return_destroyed_to_supply",
+    "params": {}
+  },
+  {
+    "id": "TS-0197-A02",
+    "source_card_id": "TS-0197",
+    "source_line": "每当一个牌堆耗尽时，抽取 1 张相同类型的随机选择牌（英雄或村庄），替换该耗尽牌堆。",
+    "op": "refill_empty_supply",
+    "params": {}
+  },
+  {
+    "id": "TS-0550-A01",
+    "source_card_id": "TS-0550",
+    "source_line": "用怪潮牌堆顶部的 1 张牌替换此牌。",
+    "op": "replace_monster",
+    "params": {
+      "reserve_card_id": "TS-0550"
+    }
+  },
+  {
+    "id": "TS-0626-A01",
+    "source_card_id": "TS-0626",
+    "source_line": "用虫群牌堆顶部的 1 张牌替换此牌。",
+    "op": "replace_monster",
+    "params": {
+      "reserve_card_id": "TS-0626"
+    }
+  },
+  {
+    "id": "TS-0250-A02",
+    "source_card_id": "TS-0250",
+    "source_line": "装备此牌期间，每抽 1 张牌，额外获得攻击 +1。",
+    "op": "draw_attack",
+    "params": {
+      "amount": 1
+    }
+  },
+  {
+    "id": "TS-0523-A01",
+    "source_card_id": "TS-0523",
+    "source_line": "全局：无法使用以地下城牌堆为目标的效果。",
+    "op": "dungeon_deck_lock",
+    "params": {}
+  },
+  {
+    "id": "TS-0677-A01",
+    "source_card_id": "TS-0677",
+    "source_line": "全局：当苦痛守卫位于 阶层 0 时，怪物的战斗效果在每场战斗中额外重复触发 1 次。",
+    "op": "repeat_battle",
+    "params": {
+      "extra": 1
+    }
+  },
+  {
+    "id": "TS-0239-A02",
+    "source_card_id": "TS-0239",
+    "source_line": "此牌在手牌时，每当你将获得疾病，改为摧毁该疾病。",
+    "op": "replace_disease",
+    "params": {
+      "action": "destroy"
+    }
+  },
+  {
+    "id": "TS-0423-A02",
+    "source_card_id": "TS-0423",
+    "source_line": "当你获得疾病时，改为将其置入另一名玩家的弃牌堆。",
+    "op": "replace_disease",
+    "params": {
+      "action": "redirect"
+    }
+  },
+  {
+    "id": "TS-0424-A02",
+    "source_card_id": "TS-0424",
+    "source_line": "当你获得疾病时，改为将其置入另一名玩家的弃牌堆。",
+    "op": "replace_disease",
+    "params": {
+      "action": "redirect"
+    }
+  },
+  {
+    "id": "TS-0234-A02",
+    "source_card_id": "TS-0234",
+    "source_line": "地下城：若由弓箭手装备，额外获得攻击 +2。",
+    "op": "equipment_bonus",
+    "params": {
+      "hero_tag": "弓箭手",
+      "attack": 2
+    }
+  },
+  {
+    "id": "TS-0282-A02",
+    "source_card_id": "TS-0282",
+    "source_line": "只能攻击阶层 1。",
+    "op": "rank_restriction",
+    "params": {
+      "allowed": [
+        1
+      ]
+    }
+  },
+  {
+    "id": "TS-0330-A02",
+    "source_card_id": "TS-0330",
+    "source_line": "地下城：你的其他已装备英雄获得攻击 +1。",
+    "op": "hero_aura",
+    "params": {
+      "exclude_source": true,
+      "equipped": true,
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0331-A02",
+    "source_card_id": "TS-0331",
+    "source_line": "地下城：你的其他已装备英雄获得攻击 +2。",
+    "op": "hero_aura",
+    "params": {
+      "exclude_source": true,
+      "equipped": true,
+      "attack": 2
+    }
+  },
+  {
+    "id": "TS-0332-A02",
+    "source_card_id": "TS-0332",
+    "source_line": "地下城：你的其他已装备英雄获得攻击 +3。",
+    "op": "hero_aura",
+    "params": {
+      "exclude_source": true,
+      "equipped": true,
+      "attack": 3
+    }
+  },
+  {
+    "id": "TS-0500-A01",
+    "source_card_id": "TS-0500",
+    "source_line": "全局：所有怪物必须被击败，才能离开地下城大厅。",
+    "op": "hall_movement_lock",
+    "params": {}
+  },
+  {
+    "id": "TS-0613-A02",
+    "source_card_id": "TS-0613",
+    "source_line": "战斗：手牌中每有 1 张疾病，蛛影妖姬获得 +2 生命值。",
+    "op": "target_health",
+    "params": {
+      "filter": {
+        "card_type": "疾病牌"
+      },
+      "multiplier": 2
+    }
+  },
+  {
+    "id": "TS-0614-A02",
+    "source_card_id": "TS-0614",
+    "source_line": "战斗：当前玩家每拥有 1 点经验值，此牌获得 +1 生命值。",
+    "op": "target_health",
+    "params": {
+      "metric": "xp"
+    }
+  },
+  {
+    "id": "TS-0615-A01",
+    "source_card_id": "TS-0615",
+    "source_line": "全局：地下城中存在猛犸时，无法攻击其他腐化德鲁伊。",
+    "op": "hall_target_restriction",
+    "params": {
+      "protected_tag": "腐化德鲁伊"
+    }
+  },
+  {
+    "id": "TS-0615-A02",
+    "source_card_id": "TS-0615",
+    "source_line": "战斗：地下城中每有 1 名其他腐化德鲁伊，猛犸获得 +2 生命值。",
+    "op": "target_health",
+    "params": {
+      "hall_filter": {
+        "tag": "腐化德鲁伊"
+      },
+      "multiplier": 2
+    }
+  },
+  {
+    "id": "TS-0232-A01",
+    "source_card_id": "TS-0232",
+    "source_line": "攻击阶层 2 或更高阶层的怪物时，攻击 +4。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 4,
+      "minimum": 2,
+      "maximum": 100
+    }
+  },
+  {
+    "id": "TS-0233-A01",
+    "source_card_id": "TS-0233",
+    "source_line": "攻击阶层 2 或更高阶层时，攻击 +2。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 2,
+      "minimum": 2,
+      "maximum": 100
+    }
+  },
+  {
+    "id": "TS-0234-A01",
+    "source_card_id": "TS-0234",
+    "source_line": "攻击阶层 2 或阶层 3 时，攻击 +3。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 3,
+      "minimum": 2,
+      "maximum": 3
+    }
+  },
+  {
+    "id": "TS-0235-A01",
+    "source_card_id": "TS-0235",
+    "source_line": "攻击阶层 2 或更高阶层时，攻击 +5。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 5,
+      "minimum": 2,
+      "maximum": 100
+    }
+  },
+  {
+    "id": "TS-0308-A01",
+    "source_card_id": "TS-0308",
+    "source_line": "攻击阶层 2 或更高阶层时，攻击 +2。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 2,
+      "minimum": 2,
+      "maximum": 100
+    }
+  },
+  {
+    "id": "TS-0309-A01",
+    "source_card_id": "TS-0309",
+    "source_line": "攻击阶层 2 或更高阶层时，攻击 +3。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 3,
+      "minimum": 2,
+      "maximum": 100
+    }
+  },
+  {
+    "id": "TS-0310-A01",
+    "source_card_id": "TS-0310",
+    "source_line": "攻击阶层 2 或更高阶层时，攻击 +4。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 4,
+      "minimum": 2,
+      "maximum": 100
+    }
+  },
+  {
+    "id": "TS-0354-A02",
+    "source_card_id": "TS-0354",
+    "source_line": "攻击阶层 2 或阶层 3 时，额外获得攻击 +2。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 2,
+      "minimum": 2,
+      "maximum": 3
+    }
+  },
+  {
+    "id": "TS-0355-A02",
+    "source_card_id": "TS-0355",
+    "source_line": "攻击阶层 2 或阶层 3 时，额外获得攻击 +3。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 3,
+      "minimum": 2,
+      "maximum": 3
+    }
+  },
+  {
+    "id": "TS-0356-A02",
+    "source_card_id": "TS-0356",
+    "source_line": "攻击阶层 2 或阶层 3 时，额外获得攻击 +4。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 4,
+      "minimum": 2,
+      "maximum": 3
+    }
+  },
+  {
+    "id": "TS-0362-A02",
+    "source_card_id": "TS-0362",
+    "source_line": "攻击阶层 2 或阶层 3 时，额外获得攻击 +5。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 5,
+      "minimum": 2,
+      "maximum": 3
+    }
+  },
+  {
+    "id": "TS-0302-A01",
+    "source_card_id": "TS-0302",
+    "source_line": "获得等同于攻击目标所在阶层数的攻击。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 1,
+      "scale": true
+    }
+  },
+  {
+    "id": "TS-0303-A01",
+    "source_card_id": "TS-0303",
+    "source_line": "获得等同于攻击目标所在阶层数 2 倍的攻击。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 2,
+      "scale": true
+    }
+  },
+  {
+    "id": "TS-0304-A01",
+    "source_card_id": "TS-0304",
+    "source_line": "获得等同于攻击目标所在阶层数 3 倍的攻击。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 3,
+      "scale": true
+    }
+  },
+  {
+    "id": "TS-0305-A02",
+    "source_card_id": "TS-0305",
+    "source_line": "额外获得等同于攻击目标所在阶层数的攻击。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 1,
+      "scale": true
+    }
+  },
+  {
+    "id": "TS-0306-A02",
+    "source_card_id": "TS-0306",
+    "source_line": "额外获得等同于攻击目标所在阶层数的攻击。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 1,
+      "scale": true
+    }
+  },
+  {
+    "id": "TS-0307-A02",
+    "source_card_id": "TS-0307",
+    "source_line": "额外获得等同于攻击目标所在阶层数 2 倍的攻击。",
+    "op": "rank_bonus",
+    "params": {
+      "attack": 2,
+      "scale": true
+    }
+  },
+  {
+    "id": "TS-0306-A03",
+    "source_card_id": "TS-0306",
+    "source_line": "攻击阶层 3 时，获得光照 +1。",
+    "op": "rank_bonus",
+    "params": {
+      "light": 1,
+      "minimum": 3,
+      "maximum": 3
+    }
+  },
+  {
+    "id": "TS-0302-A02",
+    "source_card_id": "TS-0302",
+    "source_line": "若装备了弓，获得光照 +1。",
+    "op": "equipment_bonus",
+    "params": {
+      "weapon_tag": "弓",
+      "light": 1
+    }
+  },
+  {
+    "id": "TS-0303-A02",
+    "source_card_id": "TS-0303",
+    "source_line": "若装备了弓，获得光照 +1。",
+    "op": "equipment_bonus",
+    "params": {
+      "weapon_tag": "弓",
+      "light": 1
+    }
+  },
+  {
+    "id": "TS-0304-A02",
+    "source_card_id": "TS-0304",
+    "source_line": "若装备了弓，获得光照 +1。",
+    "op": "equipment_bonus",
+    "params": {
+      "weapon_tag": "弓",
+      "light": 1
+    }
+  },
+  {
+    "id": "TS-0233-A02",
+    "source_card_id": "TS-0233",
+    "source_line": "攻击阶层 2 或更高阶层时，装备此牌的英雄每有 1 级，额外获得攻击 +1。",
+    "op": "equipment_bonus",
+    "params": {
+      "attack": 1,
+      "level_scale": true,
+      "minimum_rank": 2
+    }
+  },
+  {
+    "id": "TS-0237-A03",
+    "source_card_id": "TS-0237",
+    "source_line": "若由牧师装备，获得光照 +1。",
+    "op": "equipment_bonus",
+    "params": {
+      "hero_tag": "牧师",
+      "light": 1
+    }
+  },
+  {
+    "id": "TS-0251-A03",
+    "source_card_id": "TS-0251",
+    "source_line": "装备给盗贼时，额外获得攻击 +1。",
+    "op": "equipment_bonus",
+    "params": {
+      "hero_tag": "盗贼",
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0253-A02",
+    "source_card_id": "TS-0253",
+    "source_line": "若装备给民兵，额外获得攻击 +2。",
+    "op": "equipment_bonus",
+    "params": {
+      "hero_card_id": "TS-0001",
+      "attack": 2
+    }
+  },
+  {
+    "id": "TS-0255-A02",
+    "source_card_id": "TS-0255",
+    "source_line": "若装备给力量为 8 或以上的英雄，额外获得攻击 +4。",
+    "op": "equipment_bonus",
+    "params": {
+      "strength_min": 8,
+      "attack": 4
+    }
+  },
+  {
+    "id": "TS-0258-A02",
+    "source_card_id": "TS-0258",
+    "source_line": "力量 +2。",
+    "op": "equipment_bonus",
+    "params": {
+      "strength": 2
+    }
+  },
+  {
+    "id": "TS-0260-A02",
+    "source_card_id": "TS-0260",
+    "source_line": "若装备给牧师或法师，额外获得魔法攻击 +2。",
+    "op": "equipment_bonus",
+    "params": {
+      "hero_tag": "牧师|法师",
+      "magic_attack": 2
+    }
+  },
+  {
+    "id": "TS-0333-A02",
+    "source_card_id": "TS-0333",
+    "source_line": "若此牌装备了武器，攻击 -2。",
+    "op": "equipment_bonus",
+    "params": {
+      "attack": -2
+    }
+  },
+  {
+    "id": "TS-0334-A02",
+    "source_card_id": "TS-0334",
+    "source_line": "若此牌装备了武器，攻击 -3。",
+    "op": "equipment_bonus",
+    "params": {
+      "attack": -3
+    }
+  },
+  {
+    "id": "TS-0335-A02",
+    "source_card_id": "TS-0335",
+    "source_line": "若此牌装备了武器，攻击 -3。",
+    "op": "equipment_bonus",
+    "params": {
+      "attack": -3
+    }
+  },
+  {
+    "id": "TS-0342-A02",
+    "source_card_id": "TS-0342",
+    "source_line": "若已装备武器，额外获得攻击 +2。",
+    "op": "equipment_bonus",
+    "params": {
+      "attack": 2
+    }
+  },
+  {
+    "id": "TS-0343-A02",
+    "source_card_id": "TS-0343",
+    "source_line": "若已装备武器，额外获得攻击 +3。",
+    "op": "equipment_bonus",
+    "params": {
+      "attack": 3
+    }
+  },
+  {
+    "id": "TS-0344-A02",
+    "source_card_id": "TS-0344",
+    "source_line": "若已装备武器，额外获得攻击 +4。",
+    "op": "equipment_bonus",
+    "params": {
+      "attack": 4
+    }
+  },
+  {
+    "id": "TS-0339-A02",
+    "source_card_id": "TS-0339",
+    "source_line": "装备锋利武器时，额外获得攻击 +3。",
+    "op": "equipment_bonus",
+    "params": {
+      "weapon_tag": "锋利",
+      "attack": 3
+    }
+  },
+  {
+    "id": "TS-0340-A02",
+    "source_card_id": "TS-0340",
+    "source_line": "装备锋利武器时，额外获得攻击 +4。",
+    "op": "equipment_bonus",
+    "params": {
+      "weapon_tag": "锋利",
+      "attack": 4
+    }
+  },
+  {
+    "id": "TS-0341-A02",
+    "source_card_id": "TS-0341",
+    "source_line": "装备锋利武器时，额外获得攻击 +5。",
+    "op": "equipment_bonus",
+    "params": {
+      "weapon_tag": "锋利",
+      "attack": 5
+    }
+  },
+  {
+    "id": "TS-0387-A02",
+    "source_card_id": "TS-0387",
+    "source_line": "若装备了重量为 3 或以下的锋利武器，该英雄额外获得攻击 +1。",
+    "op": "equipment_bonus",
+    "params": {
+      "weapon_tag": "锋利",
+      "weight_max": 3,
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0388-A02",
+    "source_card_id": "TS-0388",
+    "source_line": "若装备了重量为 3 或以下的锋利武器，该英雄额外获得攻击 +3。",
+    "op": "equipment_bonus",
+    "params": {
+      "weapon_tag": "锋利",
+      "weight_max": 3,
+      "attack": 3
+    }
+  },
+  {
+    "id": "TS-0389-A02",
+    "source_card_id": "TS-0389",
+    "source_line": "若装备了重量为 3 或以下的锋利武器，该英雄额外获得攻击 +6。",
+    "op": "equipment_bonus",
+    "params": {
+      "weapon_tag": "锋利",
+      "weight_max": 3,
+      "attack": 6
+    }
+  },
+  {
+    "id": "TS-0237-A02",
+    "source_card_id": "TS-0237",
+    "source_line": "牧师装备此牌所需力量减少 3。",
+    "op": "equipment_discount",
+    "params": {
+      "hero_tag": "牧师",
+      "amount": 3
+    }
+  },
+  {
+    "id": "TS-0258-A03",
+    "source_card_id": "TS-0258",
+    "source_line": "装备此牌的英雄可以额外装备 1 张武器。",
+    "op": "extra_equipment",
+    "params": {
+      "capacity": 2
+    }
+  },
+  {
+    "id": "TS-0325-A02",
+    "source_card_id": "TS-0325",
+    "source_line": "此英雄可以装备任意数量的武器。",
+    "op": "extra_equipment",
+    "params": {
+      "capacity": 100
+    }
+  },
+  {
+    "id": "TS-0326-A02",
+    "source_card_id": "TS-0326",
+    "source_line": "此英雄可以装备任意数量的武器。",
+    "op": "extra_equipment",
+    "params": {
+      "capacity": 100
+    }
+  },
+  {
+    "id": "TS-0327-A02",
+    "source_card_id": "TS-0327",
+    "source_line": "此英雄可以装备任意数量的武器。",
+    "op": "extra_equipment",
+    "params": {
+      "capacity": 100
+    }
+  },
+  {
+    "id": "TS-0226-A01",
+    "source_card_id": "TS-0226",
+    "source_line": "获得等同于手牌中佣兵数量的攻击。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "佣兵"
+      },
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0333-A03",
+    "source_card_id": "TS-0333",
+    "source_line": "手牌中每有 1 名佣兵，攻击 +1。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "佣兵"
+      },
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0334-A03",
+    "source_card_id": "TS-0334",
+    "source_line": "手牌中每有 1 名佣兵，攻击 +1。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "佣兵"
+      },
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0343-A03",
+    "source_card_id": "TS-0343",
+    "source_line": "手牌中每有 1 名佣兵，额外获得攻击 +1。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "佣兵"
+      },
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0344-A03",
+    "source_card_id": "TS-0344",
+    "source_line": "手牌中每有 1 名佣兵，额外获得攻击 +1。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "佣兵"
+      },
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0251-A02",
+    "source_card_id": "TS-0251",
+    "source_line": "手牌中有 3 名或以上英雄时，额外获得攻击 +2。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "英雄"
+      },
+      "minimum": 3,
+      "flat": true,
+      "attack": 2
+    }
+  },
+  {
+    "id": "TS-0314-A02",
+    "source_card_id": "TS-0314",
+    "source_line": "若手牌中有 3 名或以上英雄，该英雄额外获得攻击 +2。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "英雄"
+      },
+      "minimum": 3,
+      "flat": true,
+      "attack": 2
+    }
+  },
+  {
+    "id": "TS-0254-A01",
+    "source_card_id": "TS-0254",
+    "source_line": "手牌中每有 2 金币，获得攻击 +1。",
+    "op": "hand_bonus",
+    "params": {
+      "metric": "gold",
+      "divisor": 2,
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0278-A01",
+    "source_card_id": "TS-0278",
+    "source_line": "获得手牌中金币数一半的魔法攻击值，向下取整。",
+    "op": "hand_bonus",
+    "params": {
+      "metric": "gold",
+      "divisor": 2,
+      "magic_attack": 1
+    }
+  },
+  {
+    "id": "TS-0308-A02",
+    "source_card_id": "TS-0308",
+    "source_line": "若你拥有光照物品，获得光照 +1。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "物品",
+        "light_min": 1
+      },
+      "minimum": 1,
+      "flat": true,
+      "light": 1
+    }
+  },
+  {
+    "id": "TS-0315-A02",
+    "source_card_id": "TS-0315",
+    "source_line": "手牌中每有 1 名民兵或佣兵，该英雄额外获得攻击 +1。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tags_any": [
+          "民兵",
+          "佣兵"
+        ]
+      },
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0316-A02",
+    "source_card_id": "TS-0316",
+    "source_line": "手牌中每有 1 名民兵或佣兵，该英雄额外获得攻击 +2。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tags_any": [
+          "民兵",
+          "佣兵"
+        ]
+      },
+      "attack": 2
+    }
+  },
+  {
+    "id": "TS-0328-A02",
+    "source_card_id": "TS-0328",
+    "source_line": "手牌中每有 1 名其他方阵英雄，该英雄额外获得攻击 +1 和力量 +1。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "subcategory": "方阵"
+      },
+      "exclude_source": true,
+      "attack": 1,
+      "strength": 1
+    }
+  },
+  {
+    "id": "TS-0336-A02",
+    "source_card_id": "TS-0336",
+    "source_line": "若手牌中没有魔法攻击，该英雄额外获得攻击 +1。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "magic_min": 1
+      },
+      "absent": true,
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0337-A02",
+    "source_card_id": "TS-0337",
+    "source_line": "若手牌中没有魔法攻击，该英雄额外获得攻击 +2。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "magic_min": 1
+      },
+      "absent": true,
+      "attack": 2
+    }
+  },
+  {
+    "id": "TS-0338-A02",
+    "source_card_id": "TS-0338",
+    "source_line": "若手牌中没有魔法攻击，该英雄额外获得攻击 +3。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "magic_min": 1
+      },
+      "absent": true,
+      "attack": 3
+    }
+  },
+  {
+    "id": "TS-0383-A03",
+    "source_card_id": "TS-0383",
+    "source_line": "若手牌中没有光照物品，获得魔法攻击 +3。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "物品",
+        "light_min": 1
+      },
+      "absent": true,
+      "magic_attack": 3
+    }
+  },
+  {
+    "id": "TS-0388-A03",
+    "source_card_id": "TS-0388",
+    "source_line": "若你没有光照物品，获得攻击 +1。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "物品",
+        "light_min": 1
+      },
+      "absent": true,
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0401-A01",
+    "source_card_id": "TS-0401",
+    "source_line": "手牌中每有 1 张具有金币值的牌（包括此牌），获得魔法攻击 +1。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "gold_present": true
+      },
+      "magic_attack": 1
+    }
+  },
+  {
+    "id": "TS-0405-A02",
+    "source_card_id": "TS-0405",
+    "source_line": "每张法术使该英雄额外获得魔法攻击 +1。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "法术"
+      },
+      "magic_attack": 1
+    }
+  },
+  {
+    "id": "TS-0406-A02",
+    "source_card_id": "TS-0406",
+    "source_line": "每张法术使该英雄额外获得魔法攻击 +2。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "法术"
+      },
+      "magic_attack": 2
+    }
+  },
+  {
+    "id": "TS-0407-A02",
+    "source_card_id": "TS-0407",
+    "source_line": "每张法术使该英雄额外获得魔法攻击 +3。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "法术"
+      },
+      "magic_attack": 3
+    }
+  },
+  {
+    "id": "TS-0445-A02",
+    "source_card_id": "TS-0445",
+    "source_line": "手牌中每有 1 张金币值为 3 或以上的牌，获得攻击 +1。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "gold_min": 3
+      },
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0346-A02",
+    "source_card_id": "TS-0346",
+    "source_line": "所有民兵获得攻击 +1。",
+    "op": "hero_aura",
+    "params": {
+      "filter": {
+        "card_id": "TS-0001"
+      },
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0347-A02",
+    "source_card_id": "TS-0347",
+    "source_line": "战士以外的所有英雄获得攻击 +2。",
+    "op": "hero_aura",
+    "params": {
+      "filter": {
+        "tags_none": [
+          "战士"
+        ]
+      },
+      "attack": 2
+    }
+  },
+  {
+    "id": "TS-0411-A02",
+    "source_card_id": "TS-0411",
+    "source_line": "你的所有英雄装备的武器获得光照 +1。",
+    "op": "weapon_aura",
+    "params": {
+      "light": 1
+    }
+  },
+  {
+    "id": "TS-0412-A02",
+    "source_card_id": "TS-0412",
+    "source_line": "你的所有英雄装备的武器获得光照 +1 和攻击 +1。",
+    "op": "weapon_aura",
+    "params": {
+      "light": 1,
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0413-A02",
+    "source_card_id": "TS-0413",
+    "source_line": "你的所有英雄装备的武器获得光照 +2 和攻击 +2。",
+    "op": "weapon_aura",
+    "params": {
+      "light": 2,
+      "attack": 2
+    }
+  },
+  {
+    "id": "TS-0403-A02",
+    "source_card_id": "TS-0403",
+    "source_line": "总魔法攻击翻倍（最后结算）。",
+    "op": "double_magic",
+    "params": {}
+  },
+  {
+    "id": "TS-0404-A02",
+    "source_card_id": "TS-0404",
+    "source_line": "总魔法攻击翻倍（最后结算）。",
+    "op": "double_magic",
+    "params": {}
+  },
+  {
+    "id": "TS-0311-A02",
+    "source_card_id": "TS-0311",
+    "source_line": "攻击阶层 2 或更高阶层的亡灵时，忽略光照惩罚。",
+    "op": "ignore_darkness",
+    "params": {
+      "minimum_rank": 2,
+      "tag": "亡灵"
+    }
+  },
+  {
+    "id": "TS-0312-A03",
+    "source_card_id": "TS-0312",
+    "source_line": "攻击阶层 2 或更高阶层的亡灵时，忽略光照惩罚。",
+    "op": "ignore_darkness",
+    "params": {
+      "minimum_rank": 2,
+      "tag": "亡灵"
+    }
+  },
+  {
+    "id": "TS-0313-A02",
+    "source_card_id": "TS-0313",
+    "source_line": "攻击阶层 2 或更高阶层时，忽略光照惩罚。",
+    "op": "ignore_darkness",
+    "params": {
+      "minimum_rank": 2
+    }
+  },
+  {
+    "id": "TS-0383-A02",
+    "source_card_id": "TS-0383",
+    "source_line": "忽略所有光照惩罚。",
+    "op": "ignore_darkness",
+    "params": {}
+  },
+  {
+    "id": "TS-0312-A02",
+    "source_card_id": "TS-0312",
+    "source_line": "对抗亡灵时，额外获得魔法攻击 +2。",
+    "op": "target_bonus",
+    "params": {
+      "tag": "亡灵",
+      "magic_attack": 2
+    }
+  },
+  {
+    "id": "TS-0375-A02",
+    "source_card_id": "TS-0375",
+    "source_line": "攻击会给予疾病的怪物时，额外获得魔法攻击 +3。",
+    "op": "target_bonus",
+    "params": {
+      "gives_disease": true,
+      "magic_attack": 3
+    }
+  },
+  {
+    "id": "TS-0376-A02",
+    "source_card_id": "TS-0376",
+    "source_line": "攻击会给予疾病的怪物时，额外获得魔法攻击 +4。",
+    "op": "target_bonus",
+    "params": {
+      "gives_disease": true,
+      "magic_attack": 4
+    }
+  },
+  {
+    "id": "TS-0511-A01",
+    "source_card_id": "TS-0511",
+    "source_line": "对抗类人生物时，获得 攻击 +1。",
+    "op": "target_bonus",
+    "params": {
+      "tag": "类人生物",
+      "attack": 1
+    }
+  },
+  {
+    "id": "TS-0363-A01",
+    "source_card_id": "TS-0363",
+    "source_line": "无法攻击阶层 1。",
+    "op": "rank_restriction",
+    "params": {
+      "forbidden": [
+        1
+      ]
+    }
+  },
+  {
+    "id": "TS-0364-A01",
+    "source_card_id": "TS-0364",
+    "source_line": "无法攻击阶层 1。",
+    "op": "rank_restriction",
+    "params": {
+      "forbidden": [
+        1
+      ]
+    }
+  },
+  {
+    "id": "TS-0365-A01",
+    "source_card_id": "TS-0365",
+    "source_line": "无法攻击阶层 1。",
+    "op": "rank_restriction",
+    "params": {
+      "forbidden": [
+        1
+      ]
+    }
+  },
+  {
+    "id": "TS-0489-A01",
+    "source_card_id": "TS-0489",
+    "source_line": "需要魔法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "magic_required": true
+    }
+  },
+  {
+    "id": "TS-0508-A01",
+    "source_card_id": "TS-0508",
+    "source_line": "需要魔法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "magic_required": true
+    }
+  },
+  {
+    "id": "TS-0585-A01",
+    "source_card_id": "TS-0585",
+    "source_line": "需要魔法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "magic_required": true
+    }
+  },
+  {
+    "id": "TS-0487-A01",
+    "source_card_id": "TS-0487",
+    "source_line": "若没有魔法攻击，则攻击值减半。",
+    "op": "target_restriction",
+    "params": {
+      "half_attack_no_magic": true
+    }
+  },
+  {
+    "id": "TS-0583-A01",
+    "source_card_id": "TS-0583",
+    "source_line": "若没有魔法攻击，则攻击减半。",
+    "op": "target_restriction",
+    "params": {
+      "half_attack_no_magic": true
+    }
+  },
+  {
+    "id": "TS-0665-A01",
+    "source_card_id": "TS-0665",
+    "source_line": "没有魔法攻击时，攻击减半。",
+    "op": "target_restriction",
+    "params": {
+      "half_attack_no_magic": true
+    }
+  },
+  {
+    "id": "TS-0662-A01",
+    "source_card_id": "TS-0662",
+    "source_line": "魔法攻击减半。",
+    "op": "target_restriction",
+    "params": {
+      "half_magic": true
+    }
+  },
+  {
+    "id": "TS-0580-A01",
+    "source_card_id": "TS-0580",
+    "source_line": "来自魔法攻击的攻击减半。",
+    "op": "target_restriction",
+    "params": {
+      "half_magic": true
+    }
+  },
+  {
+    "id": "TS-0646-A01",
+    "source_card_id": "TS-0646",
+    "source_line": "魔法攻击减半。",
+    "op": "target_restriction",
+    "params": {
+      "half_magic": true
+    }
+  },
+  {
+    "id": "TS-0584-A01",
+    "source_card_id": "TS-0584",
+    "source_line": "没有武器时，攻击减半。",
+    "op": "target_restriction",
+    "params": {
+      "half_attack_no_weapon": true
+    }
+  },
+  {
+    "id": "TS-0506-A01",
+    "source_card_id": "TS-0506",
+    "source_line": "免疫法术。",
+    "op": "target_restriction",
+    "params": {
+      "immune_spells": true
+    }
+  },
+  {
+    "id": "TS-0506-A02",
+    "source_card_id": "TS-0506",
+    "source_line": "免疫未装备武器的英雄。",
+    "op": "target_restriction",
+    "params": {
+      "immune_unarmed": true
+    }
+  },
+  {
+    "id": "TS-0514-A01",
+    "source_card_id": "TS-0514",
+    "source_line": "未装备武器的英雄无法对其造成伤害。",
+    "op": "target_restriction",
+    "params": {
+      "equipped_only": true
+    }
+  },
+  {
+    "id": "TS-0568-A01",
+    "source_card_id": "TS-0568",
+    "source_line": "未装备武器的英雄无法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "equipped_only": true
+    }
+  },
+  {
+    "id": "TS-0580-A02",
+    "source_card_id": "TS-0580",
+    "source_line": "免疫利刃武器。",
+    "op": "target_restriction",
+    "params": {
+      "immune_weapon_tag": "锋利"
+    }
+  },
+  {
+    "id": "TS-0643-A01",
+    "source_card_id": "TS-0643",
+    "source_line": "力量低于 4 的英雄无法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "strength_min": 4
+    }
+  },
+  {
+    "id": "TS-0644-A01",
+    "source_card_id": "TS-0644",
+    "source_line": "力量低于 5 的英雄无法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "strength_min": 5
+    }
+  },
+  {
+    "id": "TS-0645-A01",
+    "source_card_id": "TS-0645",
+    "source_line": "力量低于 6 的英雄无法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "strength_min": 6
+    }
+  },
+  {
+    "id": "TS-0646-A02",
+    "source_card_id": "TS-0646",
+    "source_line": "力量低于 7 的英雄无法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "strength_min": 7
+    }
+  },
+  {
+    "id": "TS-0647-A02",
+    "source_card_id": "TS-0647",
+    "source_line": "力量低于 8 的英雄无法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "strength_min": 8
+    }
+  },
+  {
+    "id": "TS-0659-A01",
+    "source_card_id": "TS-0659",
+    "source_line": "民兵无法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "exclude_tags": [
+        "民兵"
+      ]
+    }
+  },
+  {
+    "id": "TS-0668-A01",
+    "source_card_id": "TS-0668",
+    "source_line": "法师无法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "exclude_tags": [
+        "法师"
+      ]
+    }
+  },
+  {
+    "id": "TS-0669-A01",
+    "source_card_id": "TS-0669",
+    "source_line": "牧师无法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "exclude_tags": [
+        "牧师"
+      ]
+    }
+  },
+  {
+    "id": "TS-0670-A01",
+    "source_card_id": "TS-0670",
+    "source_line": "盗贼和弓箭手无法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "exclude_tags": [
+        "盗贼",
+        "弓箭手"
+      ]
+    }
+  },
+  {
+    "id": "TS-0671-A01",
+    "source_card_id": "TS-0671",
+    "source_line": "战士无法攻击。",
+    "op": "target_restriction",
+    "params": {
+      "exclude_tags": [
+        "战士"
+      ]
+    }
+  },
+  {
+    "id": "TS-0535-A01",
+    "source_card_id": "TS-0535",
+    "source_line": "若在场英雄少于 3 名，则无法击败此牌。",
+    "op": "target_restriction",
+    "params": {
+      "min_heroes": 3
+    }
+  },
+  {
+    "id": "TS-0536-A01",
+    "source_card_id": "TS-0536",
+    "source_line": "若在场英雄少于 3 名，则无法击败此牌。",
+    "op": "target_restriction",
+    "params": {
+      "min_heroes": 3
+    }
+  },
+  {
+    "id": "TS-0537-A01",
+    "source_card_id": "TS-0537",
+    "source_line": "若在场英雄少于 5 名，则无法击败此牌。",
+    "op": "target_restriction",
+    "params": {
+      "min_heroes": 5
+    }
+  },
+  {
+    "id": "TS-0538-A01",
+    "source_card_id": "TS-0538",
+    "source_line": "若在场英雄少于 4 名，则无法击败此牌。",
+    "op": "target_restriction",
+    "params": {
+      "min_heroes": 4
+    }
+  },
+  {
+    "id": "TS-0539-A01",
+    "source_card_id": "TS-0539",
+    "source_line": "若在场英雄少于 5 名，则无法击败此牌。",
+    "op": "target_restriction",
+    "params": {
+      "min_heroes": 5
+    }
+  },
+  {
+    "id": "TS-0650-A02",
+    "source_card_id": "TS-0650",
+    "source_line": "若存在光照惩罚，则不能攻击此牌。",
+    "op": "target_restriction",
+    "params": {
+      "no_darkness": true
+    }
+  },
+  {
+    "id": "TS-0505-A01",
+    "source_card_id": "TS-0505",
+    "source_line": "若本回合已使用过法术，则不能攻击此牌。",
+    "op": "target_restriction",
+    "params": {
+      "forbid_used_spell": true
+    }
+  },
+  {
+    "id": "TS-0509-A01",
+    "source_card_id": "TS-0509",
+    "source_line": "若本回合已使用过法术，或是有英雄装备了武器，则无法攻击此牌。",
+    "op": "target_restriction",
+    "params": {
+      "forbid_used_spell": true,
+      "forbid_equipment": true
+    }
+  },
+  {
+    "id": "TS-0497-A02",
+    "source_card_id": "TS-0497",
+    "source_line": "除非本回合使用过法术或物品，否则无法击败此牌。",
+    "op": "target_restriction",
+    "params": {
+      "requires_used_spell_or_item": true
+    }
+  },
+  {
+    "id": "TS-0508-A02",
+    "source_card_id": "TS-0508",
+    "source_line": "战斗：若当前玩家手牌中没有元素牌，则只受到一半伤害。",
+    "op": "target_restriction",
+    "params": {
+      "half_no_element": true
+    }
+  },
+  {
+    "id": "TS-0461-A01",
+    "source_card_id": "TS-0461",
+    "source_line": "玩家手牌的金币值小于 5 时，此牌生命值翻倍。",
+    "op": "target_health",
+    "params": {
+      "gold_below_double": 5
+    }
+  },
+  {
+    "id": "TS-0462-A01",
+    "source_card_id": "TS-0462",
+    "source_line": "当前玩家展示至少 1 金币，否则此牌生命值翻倍。",
+    "op": "target_health",
+    "params": {
+      "gold_below_double": 1
+    }
+  },
+  {
+    "id": "TS-0551-A01",
+    "source_card_id": "TS-0551",
+    "source_line": "战斗：手牌中每有 1 张物品，此怪物获得 +3 生命值。",
+    "op": "target_health",
+    "params": {
+      "filter": {
+        "tag": "物品"
+      },
+      "multiplier": 3
+    }
+  },
+  {
+    "id": "TS-0552-A01",
+    "source_card_id": "TS-0552",
+    "source_line": "战斗：手牌中每有 1 张武器，此怪物获得 +4 生命值。",
+    "op": "target_health",
+    "params": {
+      "filter": {
+        "tag": "武器"
+      },
+      "multiplier": 4
+    }
+  },
+  {
+    "id": "TS-0554-A01",
+    "source_card_id": "TS-0554",
+    "source_line": "战斗：手牌中每有 1 名英雄，此怪物获得 +4 生命值。",
+    "op": "target_health",
+    "params": {
+      "filter": {
+        "tag": "英雄"
+      },
+      "multiplier": 4
+    }
+  },
+  {
+    "id": "TS-0638-A01",
+    "source_card_id": "TS-0638",
+    "source_line": "战斗：手牌中每有 1 名民兵，此牌获得 +1 生命值。",
+    "op": "target_health",
+    "params": {
+      "filter": {
+        "tag": "民兵"
+      },
+      "multiplier": 1
+    }
+  },
+  {
+    "id": "TS-0642-A01",
+    "source_card_id": "TS-0642",
+    "source_line": "战斗：手牌中每有 1 名英雄，此牌获得 +2 生命值。",
+    "op": "target_health",
+    "params": {
+      "filter": {
+        "tag": "英雄"
+      },
+      "multiplier": 2
+    }
+  },
+  {
+    "id": "TS-0553-A01",
+    "source_card_id": "TS-0553",
+    "source_line": "战斗：此怪物获得等同于手牌中金币值总和的生命值。",
+    "op": "target_health",
+    "params": {
+      "metric": "gold"
+    }
+  },
+  {
+    "id": "TS-0555-A01",
+    "source_card_id": "TS-0555",
+    "source_line": "战斗：每有 1 张手牌，此怪物获得 +2 生命值。",
+    "op": "target_health",
+    "params": {
+      "multiplier": 2
+    }
+  },
+  {
+    "id": "TS-0600-A01",
+    "source_card_id": "TS-0600",
+    "source_line": "手牌中每有 1 名村民或民兵，此牌额外获得 +1 生命值。",
+    "op": "target_health",
+    "params": {
+      "filter": {
+        "tags_any": [
+          "村民",
+          "民兵"
+        ]
+      }
+    }
+  },
+  {
+    "id": "TS-0602-A01",
+    "source_card_id": "TS-0602",
+    "source_line": "手牌中每有 1 名村民或民兵，此牌额外获得 +2 生命值。",
+    "op": "target_health",
+    "params": {
+      "filter": {
+        "tags_any": [
+          "村民",
+          "民兵"
+        ]
+      },
+      "multiplier": 2
+    }
+  },
+  {
+    "id": "TS-0639-A01",
+    "source_card_id": "TS-0639",
+    "source_line": "战斗：手牌中每有 1 名等级 1 的英雄，此牌获得 +2 生命值。",
+    "op": "target_health",
+    "params": {
+      "filter": {
+        "tag": "英雄",
+        "level_min": 1,
+        "level_max": 1
+      },
+      "multiplier": 2
+    }
+  },
+  {
+    "id": "TS-0640-A01",
+    "source_card_id": "TS-0640",
+    "source_line": "战斗：手牌中每有 1 名等级 2 的英雄，此牌获得 +3 生命值。",
+    "op": "target_health",
+    "params": {
+      "filter": {
+        "tag": "英雄",
+        "level_min": 2,
+        "level_max": 2
+      },
+      "multiplier": 3
+    }
+  },
+  {
+    "id": "TS-0641-A01",
+    "source_card_id": "TS-0641",
+    "source_line": "战斗：若手牌中有至少 1 名等级 3 的英雄，则此牌获得 +4 生命值。",
+    "op": "target_health",
+    "params": {
+      "filter": {
+        "tag": "英雄",
+        "level_min": 3,
+        "level_max": 3
+      },
+      "multiplier": 4,
+      "minimum": 1,
+      "flat": true
+    }
+  },
+  {
+    "id": "TS-0673-A03",
+    "source_card_id": "TS-0673",
+    "source_line": "战斗：此牌生命值增加，数值等同于你手牌中所有英雄的等级总和。",
+    "op": "target_health",
+    "params": {
+      "filter": {
+        "tag": "英雄"
+      },
+      "metric": "level_sum"
+    }
+  },
+  {
+    "id": "TS-0611-A01",
+    "source_card_id": "TS-0611",
+    "source_line": "战斗：若手牌中或地下城大厅中有另一名腐化德鲁伊，德鲁伊君主获得 +3 生命值。",
+    "op": "target_health",
+    "params": {
+      "other_tag": "腐化德鲁伊",
+      "multiplier": 3
+    }
+  },
+  {
+    "id": "TS-0496-A01",
+    "source_card_id": "TS-0496",
+    "source_line": "全局：光照 +1。",
+    "op": "hall_aura",
+    "params": {
+      "light": 1
+    }
+  },
+  {
+    "id": "TS-0497-A01",
+    "source_card_id": "TS-0497",
+    "source_line": "全局：光照 +2。",
+    "op": "hall_aura",
+    "params": {
+      "light": 2
+    }
+  },
+  {
+    "id": "TS-0498-A01",
+    "source_card_id": "TS-0498",
+    "source_line": "全局：光照 -2。",
+    "op": "hall_aura",
+    "params": {
+      "light": -2
+    }
+  },
+  {
+    "id": "TS-0499-A01",
+    "source_card_id": "TS-0499",
+    "source_line": "全局：光照 +3。",
+    "op": "hall_aura",
+    "params": {
+      "light": 3
+    }
+  },
+  {
+    "id": "TS-0680-A01",
+    "source_card_id": "TS-0680",
+    "source_line": "全局：光照值 -1。",
+    "op": "hall_aura",
+    "params": {
+      "light": -1
+    }
+  },
+  {
+    "id": "TS-0680-A02",
+    "source_card_id": "TS-0680",
+    "source_line": "所有英雄承受 力量 -1。",
+    "op": "hall_aura",
+    "params": {
+      "strength": -1
+    }
+  },
+  {
+    "id": "TS-0680-A03",
+    "source_card_id": "TS-0680",
+    "source_line": "其他怪物获得 生命值 +1。",
+    "op": "hall_aura",
+    "params": {
+      "health": 1
+    }
+  },
+  {
+    "id": "TS-0679-A03",
+    "source_card_id": "TS-0679",
+    "source_line": "当死亡哨卫停留在阶层 0 时，其他所有怪物获得 +1 生命值。",
+    "op": "hall_aura",
+    "params": {
+      "health": 1,
+      "rank0_only": true
+    }
+  },
+  {
+    "id": "TS-0520-A01",
+    "source_card_id": "TS-0520",
+    "source_line": "全局：手牌中每有 1 张法术，所有英雄承受力量 -1。",
+    "op": "hall_aura",
+    "params": {
+      "strength_per_spell": true
+    }
+  },
+  {
+    "id": "TS-0524-A01",
+    "source_card_id": "TS-0524",
+    "source_line": "全局：每张疾病额外提供攻击 -1。",
+    "op": "hall_aura",
+    "params": {
+      "disease_attack": -1
+    }
+  },
+  {
+    "id": "TS-0681-A01",
+    "source_card_id": "TS-0681",
+    "source_line": "全局：每个阶层的基础光照惩罚翻倍。",
+    "op": "hall_aura",
+    "params": {
+      "double_darkness": true
+    }
+  },
+  {
+    "id": "TS-0596-A01",
+    "source_card_id": "TS-0596",
+    "source_line": "此牌位于阶层 1 时，该阶层的光照惩罚提升到 3。",
+    "op": "light_requirement",
+    "params": {
+      "ranks": {
+        "1": 3
+      }
+    }
+  },
+  {
+    "id": "TS-0597-A01",
+    "source_card_id": "TS-0597",
+    "source_line": "此怪物位于阶层 1 时，光照惩罚为 5；位于阶层 2 时，光照惩罚为 4（取代正常光照惩罚）。",
+    "op": "light_requirement",
+    "params": {
+      "ranks": {
+        "1": 5,
+        "2": 4
+      }
+    }
+  },
+  {
+    "id": "TS-0598-A01",
+    "source_card_id": "TS-0598",
+    "source_line": "此怪物位于阶层 1 时，光照惩罚为 5；位于阶层 2 时，光照惩罚为 4（取代正常光照惩罚）。",
+    "op": "light_requirement",
+    "params": {
+      "ranks": {
+        "1": 5,
+        "2": 4
+      }
+    }
+  },
+  {
+    "id": "TS-0599-A01",
+    "source_card_id": "TS-0599",
+    "source_line": "此怪物位于阶层 1 时，光照惩罚为 6；位于阶层 2 时，光照惩罚为 5；位于阶层 3 时，光照惩罚为 4（取代正常光照惩罚）。",
+    "op": "light_requirement",
+    "params": {
+      "ranks": {
+        "1": 6,
+        "2": 5,
+        "3": 4
+      }
+    }
+  },
+  {
+    "id": "TS-0507-A01",
+    "source_card_id": "TS-0507",
+    "source_line": "光照惩罚无法被降低。",
+    "op": "light_requirement",
+    "params": {
+      "irreducible": true
+    }
+  },
+  {
+    "id": "TS-0596-A02",
+    "source_card_id": "TS-0596",
+    "source_line": "除非被击败，否则不会离开大厅。",
+    "op": "immovable",
+    "params": {}
+  },
+  {
+    "id": "TS-0597-A02",
+    "source_card_id": "TS-0597",
+    "source_line": "除非被击败，否则不会离开大厅。",
+    "op": "immovable",
+    "params": {}
+  },
+  {
+    "id": "TS-0598-A02",
+    "source_card_id": "TS-0598",
+    "source_line": "除非被击败，否则不会离开大厅。",
+    "op": "immovable",
+    "params": {}
+  },
+  {
+    "id": "TS-0599-A02",
+    "source_card_id": "TS-0599",
+    "source_line": "除非被击败，否则不会离开大厅。",
+    "op": "immovable",
+    "params": {}
+  },
+  {
+    "id": "TS-0679-A01",
+    "source_card_id": "TS-0679",
+    "source_line": "除非被击败，否则无法从大厅中移除。",
+    "op": "immovable",
+    "params": {}
+  },
+  {
+    "id": "TS-0682-A01",
+    "source_card_id": "TS-0682",
+    "source_line": "除非被击败，否则无法从大厅中移除。",
+    "op": "immovable",
+    "params": {}
+  },
+  {
+    "id": "TS-0717-A01",
+    "source_card_id": "TS-0717",
+    "source_line": "所有英雄承受力量 -1。",
+    "op": "disease_strength",
+    "params": {
+      "amount": -1
+    }
+  },
+  {
+    "id": "TS-0718-A01",
+    "source_card_id": "TS-0718",
+    "source_line": "一名英雄承受力量 -2。",
+    "op": "disease_strength",
+    "params": {
+      "amount": -2,
+      "single": true
+    }
+  },
+  {
+    "id": "TS-0660-A01",
+    "source_card_id": "TS-0660",
+    "source_line": "所有英雄承受力量 -1。",
+    "op": "hero_aura",
+    "params": {
+      "strength": -1
+    }
+  },
+  {
+    "id": "TS-0324-A02",
+    "source_card_id": "TS-0324",
+    "source_line": "若你手牌中只有等级 3 或以上的英雄，额外获得攻击 +10。",
+    "op": "hand_bonus",
+    "params": {
+      "filter": {
+        "tag": "英雄",
+        "level_max": 2
+      },
+      "absent": true,
+      "attack": 10
+    }
+  },
+  {
+    "id": "TS-0238-A02",
+    "source_card_id": "TS-0238",
+    "source_line": "当牧师装备此牌，攻击末日骑士或亡灵时，额外获得攻击 +3。",
+    "op": "equipment_bonus",
+    "params": {
+      "hero_tag": "牧师",
+      "target_tags_any": [
+        "末日骑士",
+        "亡灵"
+      ],
+      "attack": 3
+    }
+  },
+  {
+    "id": "TS-0360-A02",
+    "source_card_id": "TS-0360",
+    "source_line": "攻击阶层 2 或阶层 3 时，若手牌中有与目标类型相同的怪物，额外获得攻击 +3。",
+    "op": "target_bonus",
+    "params": {
+      "same_family": true,
+      "minimum_rank": 2,
+      "attack": 3
+    }
+  },
+  {
+    "id": "TS-0361-A02",
+    "source_card_id": "TS-0361",
+    "source_line": "攻击阶层 2 或阶层 3 时，若手牌中有与目标类型相同的怪物，额外获得攻击 +4。",
+    "op": "target_bonus",
+    "params": {
+      "same_family": true,
+      "minimum_rank": 2,
+      "attack": 4
+    }
+  },
+  {
+    "id": "TS-0370-A02",
+    "source_card_id": "TS-0370",
+    "source_line": "每有 1 点超过光照惩罚的额外光照，该英雄获得魔法攻击 +1。",
+    "op": "excess_light_magic",
+    "params": {
+      "amount": 1
+    }
+  },
+  {
+    "id": "TS-0371-A02",
+    "source_card_id": "TS-0371",
+    "source_line": "每有 1 点超过光照惩罚的额外光照，该英雄获得魔法攻击 +2。",
+    "op": "excess_light_magic",
+    "params": {
+      "amount": 2
+    }
+  },
+  {
+    "id": "TS-0402-A02",
+    "source_card_id": "TS-0402",
+    "source_line": "所有物品和具有魔法攻击的法术获得魔法攻击 +1。",
+    "op": "card_aura",
+    "params": {
+      "filters_any": [
+        {
+          "tag": "物品"
+        },
+        {
+          "tag": "法术",
+          "magic_min": 1
+        }
+      ],
+      "magic_attack": 1
+    }
+  },
+  {
+    "id": "TS-0189-A01",
+    "source_card_id": "TS-0189",
+    "source_line": "怪物卡牌无法产生金币。",
+    "op": "economy",
+    "params": {
+      "monster_gold_zero": true
+    }
+  },
+  {
+    "id": "TS-0226-A02",
+    "source_card_id": "TS-0226",
+    "source_line": "村庄：英雄购买价格 -1 金币。",
+    "op": "economy",
+    "params": {
+      "hero_discount": 1
+    }
+  },
+  {
+    "id": "TS-0674-A01",
+    "source_card_id": "TS-0674",
+    "source_line": "全局：所有英雄的购买价格额外增加 2 金币。",
+    "op": "economy",
+    "params": {
+      "hero_surcharge": 2
+    }
+  },
+  {
+    "id": "TS-0720-A01",
+    "source_card_id": "TS-0720",
+    "source_line": "村庄：这张卡牌必须打出。本回合中，所有卡牌的购买价格增加 3 金币。",
+    "op": "economy",
+    "params": {
+      "all_surcharge": 3
+    }
+  },
+  {
+    "id": "TS-0528-A01",
+    "source_card_id": "TS-0528",
+    "source_line": "全局：无论其他卡牌效果如何，玩家每回合无法购买超过 1 张牌。",
+    "op": "economy",
+    "params": {
+      "one_purchase": true
+    }
+  },
+  {
+    "id": "TS-0616-A01",
+    "source_card_id": "TS-0616",
+    "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+    "op": "scoring",
+    "params": {
+      "group": "虫群",
+      "maximum": 5
+    }
+  },
+  {
+    "id": "TS-0617-A01",
+    "source_card_id": "TS-0617",
+    "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+    "op": "scoring",
+    "params": {
+      "group": "虫群",
+      "maximum": 5
+    }
+  },
+  {
+    "id": "TS-0618-A01",
+    "source_card_id": "TS-0618",
+    "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+    "op": "scoring",
+    "params": {
+      "group": "虫群",
+      "maximum": 5
+    }
+  },
+  {
+    "id": "TS-0619-A01",
+    "source_card_id": "TS-0619",
+    "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+    "op": "scoring",
+    "params": {
+      "group": "虫群",
+      "maximum": 5
+    }
+  },
+  {
+    "id": "TS-0620-A01",
+    "source_card_id": "TS-0620",
+    "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+    "op": "scoring",
+    "params": {
+      "group": "虫群",
+      "maximum": 5
+    }
+  },
+  {
+    "id": "TS-0621-A01",
+    "source_card_id": "TS-0621",
+    "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+    "op": "scoring",
+    "params": {
+      "group": "虫群",
+      "maximum": 5
+    }
+  },
+  {
+    "id": "TS-0622-A01",
+    "source_card_id": "TS-0622",
+    "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+    "op": "scoring",
+    "params": {
+      "group": "虫群",
+      "maximum": 5
+    }
+  },
+  {
+    "id": "TS-0623-A01",
+    "source_card_id": "TS-0623",
+    "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+    "op": "scoring",
+    "params": {
+      "group": "虫群",
+      "maximum": 5
+    }
+  },
+  {
+    "id": "TS-0624-A01",
+    "source_card_id": "TS-0624",
+    "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+    "op": "scoring",
+    "params": {
+      "group": "虫群",
+      "maximum": 5
+    }
+  },
+  {
+    "id": "TS-0625-A01",
+    "source_card_id": "TS-0625",
+    "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+    "op": "scoring",
+    "params": {
+      "group": "虫群",
+      "maximum": 5
+    }
+  },
+  {
+    "id": "TS-0540-A01",
+    "source_card_id": "TS-0540",
+    "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+    "op": "scoring",
+    "params": {
+      "group": "怪潮"
+    }
+  },
+  {
+    "id": "TS-0541-A01",
+    "source_card_id": "TS-0541",
+    "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+    "op": "scoring",
+    "params": {
+      "group": "怪潮"
+    }
+  },
+  {
+    "id": "TS-0542-A01",
+    "source_card_id": "TS-0542",
+    "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+    "op": "scoring",
+    "params": {
+      "group": "怪潮"
+    }
+  },
+  {
+    "id": "TS-0543-A01",
+    "source_card_id": "TS-0543",
+    "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+    "op": "scoring",
+    "params": {
+      "group": "怪潮"
+    }
+  },
+  {
+    "id": "TS-0544-A01",
+    "source_card_id": "TS-0544",
+    "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+    "op": "scoring",
+    "params": {
+      "group": "怪潮"
+    }
+  },
+  {
+    "id": "TS-0545-A01",
+    "source_card_id": "TS-0545",
+    "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+    "op": "scoring",
+    "params": {
+      "group": "怪潮"
+    }
+  },
+  {
+    "id": "TS-0546-A01",
+    "source_card_id": "TS-0546",
+    "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+    "op": "scoring",
+    "params": {
+      "group": "怪潮"
+    }
+  },
+  {
+    "id": "TS-0547-A01",
+    "source_card_id": "TS-0547",
+    "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+    "op": "scoring",
+    "params": {
+      "group": "怪潮"
+    }
+  },
+  {
+    "id": "TS-0548-A01",
+    "source_card_id": "TS-0548",
+    "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+    "op": "scoring",
+    "params": {
+      "group": "怪潮"
+    }
+  },
+  {
+    "id": "TS-0549-A01",
+    "source_card_id": "TS-0549",
+    "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+    "op": "scoring",
+    "params": {
+      "group": "怪潮"
+    }
+  },
+  {
+    "id": "TS-0708-A01",
+    "source_card_id": "TS-0708",
+    "source_line": "游戏结束时，每拥有一块其他雷霆之石，获得 2 点胜利点。",
+    "op": "scoring",
+    "params": {
+      "other_stones": 2
+    }
+  },
+  {
+    "id": "TS-0713-A01",
+    "source_card_id": "TS-0713",
+    "source_line": "游戏结束时，若其他所有玩家的怪物卡牌数多于你，则本卡牌额外增加 4 胜利点。",
+    "op": "scoring",
+    "params": {
+      "fewest_monsters_bonus": 4
+    }
+  }
+]

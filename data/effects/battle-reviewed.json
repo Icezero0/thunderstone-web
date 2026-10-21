@@ -1,0 +1,4779 @@
+{
+  "schema_version": "thunderstone.effects/1",
+  "abilities": [
+    {
+      "id": "TS-0459-A01",
+      "source_card_id": "TS-0459",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "武器"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "武器"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0552-A02",
+      "source_card_id": "TS-0552",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "武器"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "武器"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0577-A01",
+      "source_card_id": "TS-0577",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "武器"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "武器"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0663-A01",
+      "source_card_id": "TS-0663",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "武器"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "武器"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0467-A02",
+      "source_card_id": "TS-0467",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "法术"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "法术"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0475-A01",
+      "source_card_id": "TS-0475",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "法术"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "法术"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0491-A02",
+      "source_card_id": "TS-0491",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "法术"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "法术"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0486-A01",
+      "source_card_id": "TS-0486",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0488-A01",
+      "source_card_id": "TS-0488",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0527-A02",
+      "source_card_id": "TS-0527",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0576-A01",
+      "source_card_id": "TS-0576",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0654-A01",
+      "source_card_id": "TS-0654",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0665-A02",
+      "source_card_id": "TS-0665",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0669-A02",
+      "source_card_id": "TS-0669",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0670-A02",
+      "source_card_id": "TS-0670",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0512-A01",
+      "source_card_id": "TS-0512",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "佣兵"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "佣兵"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0519-A02",
+      "source_card_id": "TS-0519",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "战士"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "战士"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0569-A02",
+      "source_card_id": "TS-0569",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "战士"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "战士"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0570-A02",
+      "source_card_id": "TS-0570",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "战士"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "战士"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0668-A02",
+      "source_card_id": "TS-0668",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "战士"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "战士"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0468-A02",
+      "source_card_id": "TS-0468",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "tags_any": [
+              "牧师",
+              "法师"
+            ]
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "tags_any": [
+              "牧师",
+              "法师"
+            ]
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0492-A02",
+      "source_card_id": "TS-0492",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "魔法",
+            "tags_any": [
+              "武器",
+              "物品"
+            ]
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "魔法",
+            "tags_any": [
+              "武器",
+              "物品"
+            ]
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0460-A01",
+      "source_card_id": "TS-0460",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_type": "村庄牌",
+            "max_by": "gold"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_type": "村庄牌",
+            "max_by": "gold"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0496-A02",
+      "source_card_id": "TS-0496",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0551-A02",
+      "source_card_id": "TS-0551",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "物品"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "物品"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0553-A02",
+      "source_card_id": "TS-0553",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "gold_present": true
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "gold_present": true
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0554-A02",
+      "source_card_id": "TS-0554",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0664-A01",
+      "source_card_id": "TS-0664",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0666-A02",
+      "source_card_id": "TS-0666",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0578-A01",
+      "source_card_id": "TS-0578",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "食物"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "食物"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0584-A02",
+      "source_card_id": "TS-0584",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "牧师"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "牧师"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0632-A01",
+      "source_card_id": "TS-0632",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "exclude_card_id": "TS-0001"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "exclude_card_id": "TS-0001"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0637-A01",
+      "source_card_id": "TS-0637",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "物品"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "物品"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0638-A02",
+      "source_card_id": "TS-0638",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tags_any": [
+              "武器",
+              "法术"
+            ]
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tags_any": [
+              "武器",
+              "法术"
+            ]
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0640-A02",
+      "source_card_id": "TS-0640",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "level_min": 1,
+            "level_max": 1
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "level_min": 1,
+            "level_max": 1
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0641-A02",
+      "source_card_id": "TS-0641",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "level_min": 2,
+            "level_max": 2
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "level_min": 2,
+            "level_max": 2
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0642-A02",
+      "source_card_id": "TS-0642",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "light_min": 1
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "light_min": 1
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0671-A02",
+      "source_card_id": "TS-0671",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "法师"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "法师"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0530-A01",
+      "source_card_id": "TS-0530",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "min_by": "strength"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "min_by": "strength"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0531-A01",
+      "source_card_id": "TS-0531",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "min_by": "strength"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "min_by": "strength"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0667-A02",
+      "source_card_id": "TS-0667",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "max_by": "strength"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "max_by": "strength"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0594-A02",
+      "source_card_id": "TS-0594",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "max_by": "attack"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "max_by": "attack"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0532-A01",
+      "source_card_id": "TS-0532",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "strength_max": 4
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "strength_max": 4
+          },
+          "bind": "victims",
+          "min": 2,
+          "max": 2,
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "victims"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "mark_destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          },
+          "allow_shortfall": true
+        }
+      }
+    },
+    {
+      "id": "TS-0533-A01",
+      "source_card_id": "TS-0533",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "subject_hand",
+                "exclude_card_type": "疾病牌",
+                "unmarked": true,
+                "tag": "英雄",
+                "strength_max": 5
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "subject_hand",
+                "exclude_card_type": "疾病牌",
+                "unmarked": true,
+                "tag": "英雄",
+                "strength_max": 5
+              },
+              "bind": "victims",
+              "min": 2,
+              "max": 2,
+              "then": {
+                "op": "for_each",
+                "query": {
+                  "zone": "bound",
+                  "var": "victims"
+                },
+                "bind": "chosen",
+                "body": {
+                  "op": "mark_destroy",
+                  "target": {
+                    "var": "chosen"
+                  }
+                }
+              },
+              "allow_shortfall": true
+            }
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "subject_hand",
+                "exclude_card_type": "疾病牌",
+                "unmarked": true,
+                "tag": "武器",
+                "min_by": "weight"
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "subject_hand",
+                "exclude_card_type": "疾病牌",
+                "unmarked": true,
+                "tag": "武器",
+                "min_by": "weight"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "mark_destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0469-A02",
+      "source_card_id": "TS-0469",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "strength",
+              "amount": -4
+            },
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "attack",
+              "amount": -1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0478-A01",
+      "source_card_id": "TS-0478",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "strength",
+              "amount": -2
+            },
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "attack",
+              "amount": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0487-A02",
+      "source_card_id": "TS-0487",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "strength",
+              "amount": -2
+            },
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "attack",
+              "amount": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0489-A02",
+      "source_card_id": "TS-0489",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "strength",
+              "amount": -4
+            },
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "attack",
+              "amount": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0493-A02",
+      "source_card_id": "TS-0493",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "strength",
+              "amount": -3
+            },
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "attack",
+              "amount": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0567-A01",
+      "source_card_id": "TS-0567",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "strength",
+              "amount": -2
+            },
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "attack",
+              "amount": -1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0569-A01",
+      "source_card_id": "TS-0569",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "strength",
+              "amount": -2
+            },
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "attack",
+              "amount": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0485-A01",
+      "source_card_id": "TS-0485",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "participating": true
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "participating": true
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "exclude_combat",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0629-A01",
+      "source_card_id": "TS-0629",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "participating": true
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "participating": true
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "exclude_combat",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0630-A01",
+      "source_card_id": "TS-0630",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "participating": true
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "participating": true
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "exclude_combat",
+                "target": {
+                  "var": "chosen"
+                }
+              },
+              {
+                "op": "mark_destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0631-A01",
+      "source_card_id": "TS-0631",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "participating": true
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "participating": true
+          },
+          "bind": "victims",
+          "min": 2,
+          "max": 2,
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "victims"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "sequence",
+              "children": [
+                {
+                  "op": "exclude_combat",
+                  "target": {
+                    "var": "chosen"
+                  }
+                },
+                {
+                  "op": "mark_destroy",
+                  "target": {
+                    "var": "chosen"
+                  }
+                }
+              ]
+            }
+          },
+          "allow_shortfall": true
+        }
+      }
+    },
+    {
+      "id": "TS-0592-A02",
+      "source_card_id": "TS-0592",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "弓箭手"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mark_destroy",
+          "target": {
+            "var": "chosen"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0655-A01",
+      "source_card_id": "TS-0655",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "弓箭手"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mark_destroy",
+          "target": {
+            "var": "chosen"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0639-A02",
+      "source_card_id": "TS-0639",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "card_id": "TS-0001"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mark_destroy",
+          "target": {
+            "var": "chosen"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0585-A03",
+      "source_card_id": "TS-0585",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "英雄",
+          "tags_any": [
+            "牧师",
+            "法师"
+          ]
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mark_destroy",
+          "target": {
+            "var": "chosen"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0464-A02",
+      "source_card_id": "TS-0464",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "duplicate_names": true
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mark_destroy",
+          "target": {
+            "var": "chosen"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0633-A01",
+      "source_card_id": "TS-0633",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "物品",
+          "light_min": 1
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "attack",
+          "amount": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0634-A01",
+      "source_card_id": "TS-0634",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "card_id": "TS-0002"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "attack",
+          "amount": 4
+        }
+      }
+    },
+    {
+      "id": "TS-0636-A01",
+      "source_card_id": "TS-0636",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "card_id": "TS-0001"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "attack",
+          "amount": 2
+        }
+      }
+    },
+    {
+      "id": "TS-0529-A02",
+      "source_card_id": "TS-0529",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "武器"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "attack",
+          "amount": -1
+        }
+      }
+    },
+    {
+      "id": "TS-0479-A01",
+      "source_card_id": "TS-0479",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 2
+      }
+    },
+    {
+      "id": "TS-0524-A02",
+      "source_card_id": "TS-0524",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 2
+      }
+    },
+    {
+      "id": "TS-0484-A02",
+      "source_card_id": "TS-0484",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "gain_disease",
+            "count": 2
+          },
+          {
+            "op": "for_players",
+            "scope": "others",
+            "body": {
+              "op": "gain_disease",
+              "count": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0498-A02",
+      "source_card_id": "TS-0498",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "gain_disease",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0661-A01",
+      "source_card_id": "TS-0661",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "gain_disease",
+            "count": {
+              "count": {
+                "zone": "subject_hand",
+                "exclude_card_type": "疾病牌",
+                "unmarked": true,
+                "card_id": "TS-0001"
+              }
+            }
+          },
+          {
+            "op": "for_each",
+            "query": {
+              "zone": "subject_hand",
+              "exclude_card_type": "疾病牌",
+              "unmarked": true,
+              "card_id": "TS-0001"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "mark_destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0662-A02",
+      "source_card_id": "TS-0662",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": {
+          "count": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "tags_any": [
+              "民兵",
+              "战士"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0586-A01",
+      "source_card_id": "TS-0586",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "for_each",
+            "query": {
+              "zone": "subject_hand",
+              "exclude_card_type": "疾病牌",
+              "unmarked": true,
+              "tag": "食物"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "mark_destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          },
+          {
+            "op": "gain_disease",
+            "count": {
+              "count": {
+                "zone": "subject_hand",
+                "tag": "食物"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0587-A01",
+      "source_card_id": "TS-0587",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "物品",
+            "light_min": 1
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "物品",
+            "light_min": 1
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "mark_destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              },
+              {
+                "op": "gain_disease",
+                "count": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0588-A01",
+      "source_card_id": "TS-0588",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "card_id": "TS-0001"
+          },
+          "bind": "victims",
+          "min": 2,
+          "max": 2,
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "victims"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "sequence",
+              "children": [
+                {
+                  "op": "mark_destroy",
+                  "target": {
+                    "var": "chosen"
+                  }
+                },
+                {
+                  "op": "gain_disease",
+                  "count": 1
+                }
+              ]
+            }
+          },
+          "allow_shortfall": true
+        }
+      }
+    },
+    {
+      "id": "TS-0589-A01",
+      "source_card_id": "TS-0589",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "战士"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "战士"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "mark_destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              },
+              {
+                "op": "gain_disease",
+                "count": {
+                  "stat": {
+                    "var": "chosen",
+                    "field": "level"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0590-A01",
+      "source_card_id": "TS-0590",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "subcategory": "怪物"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "subcategory": "怪物"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "mark_destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              },
+              {
+                "op": "gain_disease",
+                "count": {
+                  "stat": {
+                    "var": "chosen",
+                    "field": "xp_reward"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0591-A01",
+      "source_card_id": "TS-0591",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "card_type": "疾病牌"
+          }
+        },
+        "then": {
+          "op": "gain_disease",
+          "count": 2
+        },
+        "else": {
+          "op": "gain_disease",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0483-A01",
+      "source_card_id": "TS-0483",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "repeat",
+        "times": {
+          "min": [
+            100,
+            {
+              "count": {
+                "zone": "subject_hand",
+                "card_type": "疾病牌"
+              }
+            }
+          ]
+        },
+        "limit": 100,
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "exclude_card_type": "疾病牌",
+              "unmarked": true
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "exclude_card_type": "疾病牌",
+              "unmarked": true
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "mark_destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0527-A03",
+      "source_card_id": "TS-0527",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "lose_xp",
+          "amount": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0504-A02",
+      "source_card_id": "TS-0504",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "exclude_card_type": "疾病牌",
+              "unmarked": true,
+              "subcategory": "怪物"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "exclude_card_type": "疾病牌",
+              "unmarked": true,
+              "subcategory": "怪物"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "mark_destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0613-A01",
+      "source_card_id": "TS-0613",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "gain_disease",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0614-A01",
+      "source_card_id": "TS-0614",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "gain_disease",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0613-A03",
+      "source_card_id": "TS-0613",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "牧师"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "牧师"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0614-A03",
+      "source_card_id": "TS-0614",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "level_min": 1
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "level_min": 1
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0507-A02",
+      "source_card_id": "TS-0507",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "英雄",
+          "equipped": false,
+          "magic_max": 0
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mark_destroy",
+          "target": {
+            "var": "chosen"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0579-A01",
+      "source_card_id": "TS-0579",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "not": {
+            "exists": {
+              "zone": "subject_hand",
+              "exclude_card_type": "疾病牌",
+              "unmarked": true,
+              "tag": "英雄",
+              "equipped": true
+            }
+          }
+        },
+        "then": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "exclude_card_type": "疾病牌",
+              "unmarked": true,
+              "tag": "英雄"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "exclude_card_type": "疾病牌",
+              "unmarked": true,
+              "tag": "英雄"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "mark_destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0607-A01",
+      "source_card_id": "TS-0607",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "英雄",
+          "equipped": true
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "attack",
+          "amount": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0683-A03",
+      "source_card_id": "TS-0683",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "for_each",
+            "query": {
+              "zone": "active_hand",
+              "tag": "雷霆之石"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "magic_attack",
+              "amount": 6
+            }
+          },
+          {
+            "op": "set_battle_flag",
+            "flag": "lose_on_battle_loss",
+            "value": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0534-A01",
+      "source_card_id": "TS-0534",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "exclude_card_type": "疾病牌",
+              "unmarked": true,
+              "tag": "英雄"
+            },
+            "bind": "kept",
+            "min": 2,
+            "max": 2,
+            "then": {
+              "op": "for_each",
+              "query": {
+                "zone": "subject_hand",
+                "exclude_card_type": "疾病牌",
+                "unmarked": true,
+                "tag": "英雄",
+                "exclude_var": "kept"
+              },
+              "bind": "chosen",
+              "body": {
+                "op": "mark_destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            },
+            "allow_shortfall": true,
+            "highest_by": "strength"
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "subject_hand",
+                "exclude_card_type": "疾病牌",
+                "unmarked": true,
+                "tag": "武器"
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "subject_hand",
+                "exclude_card_type": "疾病牌",
+                "unmarked": true,
+                "tag": "武器",
+                "max_by": "weight"
+              },
+              "bind": "kept_weapon",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "for_each",
+                "query": {
+                  "zone": "subject_hand",
+                  "exclude_card_type": "疾病牌",
+                  "unmarked": true,
+                  "tag": "武器",
+                  "exclude_var": "kept_weapon"
+                },
+                "bind": "chosen",
+                "body": {
+                  "op": "mark_destroy",
+                  "target": {
+                    "var": "chosen"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0595-A02",
+      "source_card_id": "TS-0595",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "英雄"
+        },
+        "bind": "kept",
+        "min": 2,
+        "max": 2,
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "subject_hand",
+            "exclude_card_type": "疾病牌",
+            "unmarked": true,
+            "tag": "英雄",
+            "exclude_var": "kept"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        },
+        "allow_shortfall": true
+      }
+    },
+    {
+      "id": "TS-0555-A02",
+      "source_card_id": "TS-0555",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true
+        },
+        "bind": "victims",
+        "min": 2,
+        "max": 2,
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "victims"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "mark_destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        },
+        "allow_shortfall": true,
+        "constraints": [
+          {
+            "filter": {
+              "tag": "英雄"
+            },
+            "maximum": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0635-A01",
+      "source_card_id": "TS-0635",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "物品",
+          "unused": true
+        },
+        "bind": "sacrificed",
+        "min": 0,
+        "max": 100,
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "sacrificed"
+              },
+              "bind": "chosen",
+              "body": {
+                "op": "mark_destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            },
+            {
+              "op": "mod_attack",
+              "amount": {
+                "mul": [
+                  3,
+                  {
+                    "count": {
+                      "zone": "bound",
+                      "var": "sacrificed"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0470-A01",
+      "source_card_id": "TS-0470",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "set_battle_flag",
+            "flag": "cannot_defeat",
+            "value": true
+          },
+          {
+            "op": "if",
+            "condition": {
+              "compare": {
+                "left": {
+                  "count": {
+                    "zone": "active_hand",
+                    "tag": "食物"
+                  }
+                },
+                "op": "ge",
+                "right": 1
+              }
+            },
+            "then": {
+              "op": "choose_value",
+              "kind": "enum",
+              "bind": "payment",
+              "options": [
+                "pay",
+                "decline"
+              ],
+              "then": {
+                "op": "if",
+                "condition": {
+                  "choice_is": {
+                    "var": "payment",
+                    "option": "pay"
+                  }
+                },
+                "then": {
+                  "op": "select",
+                  "query": {
+                    "zone": "active_hand",
+                    "tag": "食物"
+                  },
+                  "bind": "paid",
+                  "min": 1,
+                  "max": 1,
+                  "then": {
+                    "op": "sequence",
+                    "children": [
+                      {
+                        "op": "for_each",
+                        "query": {
+                          "zone": "bound",
+                          "var": "paid"
+                        },
+                        "bind": "chosen",
+                        "body": {
+                          "op": "destroy",
+                          "target": {
+                            "var": "chosen"
+                          }
+                        }
+                      },
+                      {
+                        "op": "set_battle_flag",
+                        "flag": "cannot_defeat",
+                        "value": false
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0471-A01",
+      "source_card_id": "TS-0471",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "set_battle_flag",
+            "flag": "cannot_defeat",
+            "value": true
+          },
+          {
+            "op": "if",
+            "condition": {
+              "compare": {
+                "left": {
+                  "count": {
+                    "zone": "active_hand",
+                    "tag": "英雄"
+                  }
+                },
+                "op": "ge",
+                "right": 1
+              }
+            },
+            "then": {
+              "op": "choose_value",
+              "kind": "enum",
+              "bind": "payment",
+              "options": [
+                "pay",
+                "decline"
+              ],
+              "then": {
+                "op": "if",
+                "condition": {
+                  "choice_is": {
+                    "var": "payment",
+                    "option": "pay"
+                  }
+                },
+                "then": {
+                  "op": "select",
+                  "query": {
+                    "zone": "active_hand",
+                    "tag": "英雄"
+                  },
+                  "bind": "paid",
+                  "min": 1,
+                  "max": 1,
+                  "then": {
+                    "op": "sequence",
+                    "children": [
+                      {
+                        "op": "for_each",
+                        "query": {
+                          "zone": "bound",
+                          "var": "paid"
+                        },
+                        "bind": "chosen",
+                        "body": {
+                          "op": "destroy",
+                          "target": {
+                            "var": "chosen"
+                          }
+                        }
+                      },
+                      {
+                        "op": "set_battle_flag",
+                        "flag": "cannot_defeat",
+                        "value": false
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0472-A01",
+      "source_card_id": "TS-0472",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "set_battle_flag",
+            "flag": "cannot_defeat",
+            "value": true
+          },
+          {
+            "op": "if",
+            "condition": {
+              "compare": {
+                "left": {
+                  "resource": "xp"
+                },
+                "op": "ge",
+                "right": 2
+              }
+            },
+            "then": {
+              "op": "choose_value",
+              "kind": "enum",
+              "bind": "payment",
+              "options": [
+                "pay",
+                "decline"
+              ],
+              "then": {
+                "op": "if",
+                "condition": {
+                  "choice_is": {
+                    "var": "payment",
+                    "option": "pay"
+                  }
+                },
+                "then": {
+                  "op": "sequence",
+                  "children": [
+                    {
+                      "op": "spend_xp",
+                      "amount": 2
+                    },
+                    {
+                      "op": "set_battle_flag",
+                      "flag": "cannot_defeat",
+                      "value": false
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0473-A01",
+      "source_card_id": "TS-0473",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "set_battle_flag",
+            "flag": "cannot_defeat",
+            "value": true
+          },
+          {
+            "op": "if",
+            "condition": {
+              "compare": {
+                "left": {
+                  "count": {
+                    "zone": "active_hand",
+                    "subcategory": "怪物"
+                  }
+                },
+                "op": "ge",
+                "right": 1
+              }
+            },
+            "then": {
+              "op": "choose_value",
+              "kind": "enum",
+              "bind": "payment",
+              "options": [
+                "pay",
+                "decline"
+              ],
+              "then": {
+                "op": "if",
+                "condition": {
+                  "choice_is": {
+                    "var": "payment",
+                    "option": "pay"
+                  }
+                },
+                "then": {
+                  "op": "select",
+                  "query": {
+                    "zone": "active_hand",
+                    "subcategory": "怪物"
+                  },
+                  "bind": "paid",
+                  "min": 1,
+                  "max": 1,
+                  "then": {
+                    "op": "sequence",
+                    "children": [
+                      {
+                        "op": "for_each",
+                        "query": {
+                          "zone": "bound",
+                          "var": "paid"
+                        },
+                        "bind": "chosen",
+                        "body": {
+                          "op": "destroy",
+                          "target": {
+                            "var": "chosen"
+                          }
+                        }
+                      },
+                      {
+                        "op": "set_battle_flag",
+                        "flag": "cannot_defeat",
+                        "value": false
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0474-A01",
+      "source_card_id": "TS-0474",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "set_battle_flag",
+            "flag": "cannot_defeat",
+            "value": true
+          },
+          {
+            "op": "if",
+            "condition": {
+              "compare": {
+                "left": {
+                  "count": {
+                    "zone": "active_hand"
+                  }
+                },
+                "op": "ge",
+                "right": 3
+              }
+            },
+            "then": {
+              "op": "choose_value",
+              "kind": "enum",
+              "bind": "payment",
+              "options": [
+                "pay",
+                "decline"
+              ],
+              "then": {
+                "op": "if",
+                "condition": {
+                  "choice_is": {
+                    "var": "payment",
+                    "option": "pay"
+                  }
+                },
+                "then": {
+                  "op": "select",
+                  "query": {
+                    "zone": "active_hand"
+                  },
+                  "bind": "paid",
+                  "min": 3,
+                  "max": 3,
+                  "then": {
+                    "op": "sequence",
+                    "children": [
+                      {
+                        "op": "for_each",
+                        "query": {
+                          "zone": "bound",
+                          "var": "paid"
+                        },
+                        "bind": "chosen",
+                        "body": {
+                          "op": "discard",
+                          "target": {
+                            "var": "chosen"
+                          }
+                        }
+                      },
+                      {
+                        "op": "set_battle_flag",
+                        "flag": "cannot_defeat",
+                        "value": false
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0672-A01",
+      "source_card_id": "TS-0672",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "英雄"
+        },
+        "bind": "excluded",
+        "min": {
+          "add": [
+            {
+              "add": [
+                {
+                  "add": [
+                    {
+                      "add": [
+                        {
+                          "add": [
+                            0,
+                            {
+                              "min": [
+                                1,
+                                {
+                                  "count": {
+                                    "zone": "subject_hand",
+                                    "exclude_card_type": "疾病牌",
+                                    "unmarked": true,
+                                    "tag": "战士"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "min": [
+                            1,
+                            {
+                              "count": {
+                                "zone": "subject_hand",
+                                "exclude_card_type": "疾病牌",
+                                "unmarked": true,
+                                "tag": "盗贼"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "min": [
+                        1,
+                        {
+                          "count": {
+                            "zone": "subject_hand",
+                            "exclude_card_type": "疾病牌",
+                            "unmarked": true,
+                            "tag": "弓箭手"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "min": [
+                    1,
+                    {
+                      "count": {
+                        "zone": "subject_hand",
+                        "exclude_card_type": "疾病牌",
+                        "unmarked": true,
+                        "tag": "法师"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "min": [
+                1,
+                {
+                  "count": {
+                    "zone": "subject_hand",
+                    "exclude_card_type": "疾病牌",
+                    "unmarked": true,
+                    "tag": "牧师"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "max": {
+          "add": [
+            {
+              "add": [
+                {
+                  "add": [
+                    {
+                      "add": [
+                        {
+                          "add": [
+                            0,
+                            {
+                              "min": [
+                                1,
+                                {
+                                  "count": {
+                                    "zone": "subject_hand",
+                                    "exclude_card_type": "疾病牌",
+                                    "unmarked": true,
+                                    "tag": "战士"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "min": [
+                            1,
+                            {
+                              "count": {
+                                "zone": "subject_hand",
+                                "exclude_card_type": "疾病牌",
+                                "unmarked": true,
+                                "tag": "盗贼"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "min": [
+                        1,
+                        {
+                          "count": {
+                            "zone": "subject_hand",
+                            "exclude_card_type": "疾病牌",
+                            "unmarked": true,
+                            "tag": "弓箭手"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "min": [
+                    1,
+                    {
+                      "count": {
+                        "zone": "subject_hand",
+                        "exclude_card_type": "疾病牌",
+                        "unmarked": true,
+                        "tag": "法师"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "min": [
+                1,
+                {
+                  "count": {
+                    "zone": "subject_hand",
+                    "exclude_card_type": "疾病牌",
+                    "unmarked": true,
+                    "tag": "牧师"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "excluded"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "exclude_combat",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        },
+        "allow_shortfall": true
+      }
+    },
+    {
+      "id": "TS-0672-A02",
+      "source_card_id": "TS-0672",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "exclude_card_type": "疾病牌",
+          "unmarked": true,
+          "tag": "英雄",
+          "participating": false
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mark_destroy",
+          "target": {
+            "var": "chosen"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0672-A03",
+      "source_card_id": "TS-0672",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "set_retreat_position",
+        "amount": 3
+      }
+    },
+    {
+      "id": "TS-0464-A01",
+      "source_card_id": "TS-0464",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "tag": "英雄"
+        },
+        "bind": "hero",
+        "body": {
+          "op": "if",
+          "condition": {
+            "compare": {
+              "left": {
+                "count": {
+                  "zone": "subject_hand",
+                  "tag": "英雄",
+                  "participating": true,
+                  "same_name_as_var": "hero"
+                }
+              },
+              "op": "gt",
+              "right": 1
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "tag": "英雄",
+              "participating": true,
+              "same_name_as_var": "hero"
+            },
+            "bind": "kept",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "for_each",
+              "query": {
+                "zone": "subject_hand",
+                "tag": "英雄",
+                "participating": true,
+                "same_name_as_var": "hero",
+                "exclude_var": "kept"
+              },
+              "bind": "chosen",
+              "body": {
+                "op": "exclude_combat",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0509-A02",
+      "source_card_id": "TS-0509",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "schedule",
+        "event": "BATTLE_AFTER_OUTCOME",
+        "body": {
+          "op": "random_destroy",
+          "filter": {
+            "tag": "元素"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0560-A02",
+      "source_card_id": "TS-0560",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "semantic_type": "village"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "destroy_matching_supply",
+          "target": {
+            "var": "chosen"
+          },
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0604-A01",
+      "source_card_id": "TS-0604",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "tag": "英雄",
+          "participating": true
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "destroy_matching_supply",
+          "target": {
+            "var": "chosen"
+          },
+          "count": 1,
+          "family": true,
+          "from_bottom": true
+        }
+      }
+    },
+    {
+      "id": "TS-0656-A01",
+      "source_card_id": "TS-0656",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "subject_hand",
+                "tag": "英雄",
+                "without_weapon_tag": "锋利"
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "subject_hand",
+                "tag": "英雄",
+                "without_weapon_tag": "锋利"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            }
+          },
+          {
+            "op": "for_each",
+            "query": {
+              "zone": "subject_hand",
+              "tag": "英雄",
+              "without_weapon_tag": "锋利"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "mark_destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0463-A02",
+      "source_card_id": "TS-0463",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "clear_collection",
+            "collection": "heroes"
+          },
+          {
+            "op": "for_players",
+            "scope": "all",
+            "body": {
+              "op": "sequence",
+              "children": [
+                {
+                  "op": "if",
+                  "condition": {
+                    "compare": {
+                      "left": {
+                        "count": {
+                          "zone": "subject_hand",
+                          "tag": "英雄"
+                        }
+                      },
+                      "op": "lt",
+                      "right": 2
+                    }
+                  },
+                  "then": {
+                    "op": "show_hand"
+                  }
+                },
+                {
+                  "op": "select",
+                  "query": {
+                    "zone": "subject_hand",
+                    "tag": "英雄"
+                  },
+                  "bind": "shown",
+                  "min": 2,
+                  "max": 2,
+                  "then": {
+                    "op": "sequence",
+                    "children": [
+                      {
+                        "op": "for_each",
+                        "query": {
+                          "zone": "bound",
+                          "var": "shown"
+                        },
+                        "bind": "chosen",
+                        "body": {
+                          "op": "show",
+                          "target": {
+                            "var": "chosen"
+                          }
+                        }
+                      },
+                      {
+                        "op": "collect",
+                        "collection": "heroes",
+                        "query": {
+                          "zone": "bound",
+                          "var": "shown"
+                        }
+                      }
+                    ]
+                  },
+                  "allow_shortfall": true
+                }
+              ]
+            }
+          },
+          {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "collection",
+                "collection": "heroes"
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "collection",
+                "collection": "heroes",
+                "max_by": "strength"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "mark_destroy",
+                "target": {
+                  "var": "chosen"
+                },
+                "as_owner": true
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0462-A02",
+      "source_card_id": "TS-0462",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0466-A02",
+      "source_card_id": "TS-0466",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0476-A01",
+      "source_card_id": "TS-0476",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0477-A01",
+      "source_card_id": "TS-0477",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0478-A02",
+      "source_card_id": "TS-0478",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0480-A01",
+      "source_card_id": "TS-0480",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0481-A01",
+      "source_card_id": "TS-0481",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0482-A02",
+      "source_card_id": "TS-0482",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0483-A02",
+      "source_card_id": "TS-0483",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0517-A02",
+      "source_card_id": "TS-0517",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0582-A01",
+      "source_card_id": "TS-0582",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0609-A01",
+      "source_card_id": "TS-0609",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0610-A01",
+      "source_card_id": "TS-0610",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0611-A02",
+      "source_card_id": "TS-0611",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0616-A02",
+      "source_card_id": "TS-0616",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0617-A02",
+      "source_card_id": "TS-0617",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0618-A02",
+      "source_card_id": "TS-0618",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0619-A02",
+      "source_card_id": "TS-0619",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0620-A02",
+      "source_card_id": "TS-0620",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0621-A02",
+      "source_card_id": "TS-0621",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0622-A02",
+      "source_card_id": "TS-0622",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0623-A02",
+      "source_card_id": "TS-0623",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0624-A02",
+      "source_card_id": "TS-0624",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0625-A02",
+      "source_card_id": "TS-0625",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0658-A01",
+      "source_card_id": "TS-0658",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0659-A02",
+      "source_card_id": "TS-0659",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0660-A02",
+      "source_card_id": "TS-0660",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    }
+  ]
+}

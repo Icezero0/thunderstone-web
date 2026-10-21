@@ -1,0 +1,1738 @@
+[
+  {
+    "ability_id": "TS-0190-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "任意战斗结束后，获得一张疾病。"
+  },
+  {
+    "ability_id": "TS-0194-A02",
+    "hand": [
+      "TS-0004"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroyed": [
+        "TS-0004"
+      ]
+    },
+    "source_line": "玩家进入地下城时，在任意战斗结束后销毁一张卡牌。"
+  },
+  {
+    "ability_id": "TS-0484-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "diseases_each": 1
+    },
+    "source_line": "突破：每位玩家获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0612-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "diseases_each": 1
+    },
+    "source_line": "突破：每位玩家获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0627-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 1
+    },
+    "source_line": "突破：每位玩家摧毁 1 名英雄，或展示手牌以证明没有。"
+  },
+  {
+    "ability_id": "TS-0628-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 2
+    },
+    "source_line": "突破：每位玩家摧毁 2 名英雄，或展示手牌以证明没有英雄。"
+  },
+  {
+    "ability_id": "TS-0629-A02",
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 1
+    },
+    "source_line": "突破：每位玩家摧毁 1 名英雄，或展示手牌以证明没有英雄。"
+  },
+  {
+    "ability_id": "TS-0630-A02",
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroyed": [
+        "TS-0001",
+        "TS-0302"
+      ]
+    },
+    "source_line": "突破：当前回合玩家摧毁手牌中的所有英雄。"
+  },
+  {
+    "ability_id": "TS-0525-A01",
+    "hand": [
+      "TS-0003"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 1
+    },
+    "source_line": "突破：每位玩家摧毁 1 张具有金币值的牌，或展示手牌以证明没有。"
+  },
+  {
+    "ability_id": "TS-0529-A01",
+    "hand": [
+      "TS-0002"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 1
+    },
+    "source_line": "突破：每位玩家摧毁 1 件武器；或展示手牌以证明没有武器。"
+  },
+  {
+    "ability_id": "TS-0666-A01",
+    "hand": [
+      "TS-0003",
+      "TS-0004",
+      "TS-0001"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "discard_count_each": 2
+    },
+    "source_line": "突破：每位玩家必须弃掉 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0494-A02",
+    "hand": [],
+    "draw": [
+      "TS-0311",
+      "TS-0311",
+      "TS-0003",
+      "TS-0004",
+      "TS-0002"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 2,
+      "discard_count_each": 3
+    },
+    "source_line": "突破：每位玩家从自己的牌堆顶翻开 5 张牌。摧毁其中所有具有魔法攻击的英雄。"
+  },
+  {
+    "ability_id": "TS-0592-A01",
+    "hand": [],
+    "draw": [
+      "TS-0302",
+      "TS-0302",
+      "TS-0003",
+      "TS-0004",
+      "TS-0002"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 2,
+      "discard_count_each": 3
+    },
+    "source_line": "突破：每位玩家翻开自己牌堆顶的 5 张牌，并摧毁其中所有弓箭手。"
+  },
+  {
+    "ability_id": "TS-0593-A02",
+    "hand": [],
+    "draw": [
+      "TS-0426",
+      "TS-0426",
+      "TS-0003",
+      "TS-0004",
+      "TS-0002"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 2,
+      "discard_count_each": 3
+    },
+    "source_line": "突破：每位玩家翻开自己牌堆顶的 5 张牌，并摧毁其中所有牧师。"
+  },
+  {
+    "ability_id": "TS-0594-A01",
+    "hand": [],
+    "draw": [
+      "TS-0401",
+      "TS-0401",
+      "TS-0003",
+      "TS-0004",
+      "TS-0002"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 2,
+      "discard_count_each": 3
+    },
+    "source_line": "突破：每位玩家翻开自己牌堆顶的 5 张牌，并摧毁其中所有法师。"
+  },
+  {
+    "ability_id": "TS-0501-A02",
+    "hand": [],
+    "draw": [
+      "TS-0001",
+      "TS-0001",
+      "TS-0003",
+      "TS-0004",
+      "TS-0002"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 1,
+      "discard_count_each": 4
+    },
+    "source_line": "突破：每位玩家展示并弃掉自己牌堆顶的 5 张牌，摧毁其中 1 名民兵（若有）。"
+  },
+  {
+    "ability_id": "TS-0502-A01",
+    "hand": [],
+    "draw": [
+      "TS-0302",
+      "TS-0302",
+      "TS-0003",
+      "TS-0004",
+      "TS-0002"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 1,
+      "discard_count_each": 4
+    },
+    "source_line": "突破：每位玩家展示并弃掉自己牌堆顶的 5 张牌，摧毁其中 1 名等级 1 的英雄（若有）。"
+  },
+  {
+    "ability_id": "TS-0503-A02",
+    "hand": [],
+    "draw": [
+      "TS-0303",
+      "TS-0303",
+      "TS-0003",
+      "TS-0004",
+      "TS-0002"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 1,
+      "discard_count_each": 4
+    },
+    "source_line": "突破：每位玩家展示并弃掉自己牌堆顶的 5 张牌，摧毁其中 1 名等级 2 的英雄（若有）。"
+  },
+  {
+    "ability_id": "TS-0504-A01",
+    "hand": [],
+    "draw": [
+      "TS-0476",
+      "TS-0476",
+      "TS-0003",
+      "TS-0004",
+      "TS-0002"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 1,
+      "discard_count_each": 4
+    },
+    "source_line": "突破：每位玩家展示并弃掉自己牌堆顶的 5 张牌，摧毁其中 1 张具有胜利点数值的牌（若有）。"
+  },
+  {
+    "ability_id": "TS-0463-A01",
+    "hand": [],
+    "draw": [
+      "TS-0003",
+      "TS-0004",
+      "TS-0001",
+      "TS-0302"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 1,
+      "discard_count_each": 2,
+      "draw_remaining_each": 1
+    },
+    "source_line": "突破：每位玩家从自己的牌堆顶弃牌，直到翻出 1 名英雄，然后摧毁该英雄。"
+  },
+  {
+    "ability_id": "TS-0461-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0233",
+        "count": 4,
+        "kind": "village"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 2
+    },
+    "source_line": "突破：从每个顶部牌金币值为 3 或以上的村庄牌堆顶部，移除 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0521-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0003",
+        "count": 4,
+        "kind": "village"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 3
+    },
+    "source_line": "突破：从每个能产生光照的村庄牌堆顶部，各摧毁 3 张牌。"
+  },
+  {
+    "ability_id": "TS-0564-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "count": 4,
+        "kind": "hero"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 1
+    },
+    "source_line": "突破：摧毁每个英雄牌堆顶部的 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0585-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "count": 4,
+        "kind": "hero"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 2
+    },
+    "source_line": "突破：摧毁村庄中每个英雄牌堆顶部的 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0565-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "count": 4,
+        "kind": "hero"
+      },
+      {
+        "card_id": "TS-0226",
+        "count": 4,
+        "kind": "village"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 4
+    },
+    "source_line": "突破：摧毁每个村庄牌堆和英雄牌堆顶部的 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0603-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "count": 4,
+        "kind": "hero"
+      },
+      {
+        "card_id": "TS-0226",
+        "count": 4,
+        "kind": "village"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 2
+    },
+    "source_line": "突破：摧毁每个英雄牌堆和村民牌堆顶部 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0631-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "count": 4,
+        "kind": "hero"
+      },
+      {
+        "card_id": "TS-0339",
+        "count": 2,
+        "kind": "hero"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 4
+    },
+    "source_line": "突破：摧毁村庄中牌数最多的英雄牌堆中的所有牌。"
+  },
+  {
+    "ability_id": "TS-0556-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0226",
+        "count": 4,
+        "kind": "village"
+      },
+      {
+        "card_id": "TS-0210",
+        "count": 4,
+        "kind": "village"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 2
+    },
+    "source_line": "掠袭：当此牌被翻开时，摧毁购买价格最低的村庄牌堆顶部的 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0557-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0226",
+        "count": 4,
+        "kind": "village"
+      },
+      {
+        "card_id": "TS-0210",
+        "count": 4,
+        "kind": "village"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 4
+    },
+    "source_line": "掠袭：当此牌被翻开时，从购买价格最低的两个村庄牌堆顶部各摧毁 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0558-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0226",
+        "count": 4,
+        "kind": "village"
+      },
+      {
+        "card_id": "TS-0210",
+        "count": 4,
+        "kind": "village"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 2
+    },
+    "source_line": "掠袭：当此牌被翻开时，从购买价格最高的村庄牌堆顶部摧毁 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0559-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0226",
+        "count": 4,
+        "kind": "village"
+      },
+      {
+        "card_id": "TS-0210",
+        "count": 4,
+        "kind": "village"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 4
+    },
+    "source_line": "掠袭：当此牌被翻开时，从购买价格最高的两个村庄牌堆顶部各摧毁 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0560-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0226",
+        "count": 4,
+        "kind": "village"
+      },
+      {
+        "card_id": "TS-0210",
+        "count": 4,
+        "kind": "village"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 4
+    },
+    "source_line": "掠袭：当此牌被翻开时，从购买价格最高的两个村庄牌堆顶部各摧毁 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0515-A01",
+    "hand": [
+      "TS-0004"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": true,
+    "scheduled": true,
+    "expected": {
+      "gold_adjustment": -2
+    },
+    "source_line": "追猎：当前玩家在其下个回合获得金币 -2。"
+  },
+  {
+    "ability_id": "TS-0516-A01",
+    "hand": [
+      "TS-0004"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": true,
+    "scheduled": true,
+    "expected": {
+      "discard_count_each": 1
+    },
+    "source_line": "追猎：当前玩家在其下个回合开始时，弃掉 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0517-A01",
+    "hand": [
+      "TS-0004"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": true,
+    "scheduled": true,
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "追猎：当前玩家在其下个回合开始时获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0518-A01",
+    "hand": [
+      "TS-0004"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": true,
+    "scheduled": true,
+    "expected": {
+      "discard_count_each": 1
+    },
+    "source_line": "追猎：当前玩家在其下个回合开始时随机弃掉 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0519-A01",
+    "hand": [
+      "TS-0004"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": true,
+    "scheduled": true,
+    "expected": {
+      "forced_dungeon": 1
+    },
+    "source_line": "追猎：当前玩家下个回合必须前往地下城。"
+  },
+  {
+    "ability_id": "TS-0522-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "gained": "TS-0001"
+    },
+    "source_line": "全局：前往地下城后，将村庄中的 1 名民兵置入你的弃牌堆。"
+  },
+  {
+    "ability_id": "TS-0676-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "全局：玩家访问村庄时，获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0527-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "xp": 4
+    },
+    "source_line": "全局：玩家升级英雄后，摧毁 1 点经验值。"
+  },
+  {
+    "ability_id": "TS-0683-A01",
+    "hand": [
+      "TS-0476",
+      "TS-0476",
+      "TS-0001"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroyed": [
+        "TS-0476",
+        "TS-0476"
+      ]
+    },
+    "source_line": "全局：当玩家进入地下城时，立即摧毁所有手牌中的怪物。"
+  },
+  {
+    "ability_id": "TS-0228-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "xp": 7
+    },
+    "source_line": "购买此牌时，获得 2 点经验值。"
+  },
+  {
+    "ability_id": "TS-0247-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "protected_heroes": 1
+    },
+    "source_line": "若装备此牌的英雄将被摧毁，改为弃掉该英雄。"
+  },
+  {
+    "ability_id": "TS-0323-A03",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "xp": 6
+    },
+    "source_line": "凯旋：获得 1 点经验值。"
+  },
+  {
+    "ability_id": "TS-0324-A03",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "xp": 7
+    },
+    "source_line": "凯旋：获得 2 点经验值。"
+  },
+  {
+    "ability_id": "TS-0307-A03",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "xp": 6
+    },
+    "source_line": "若你击败阶层 3 的怪物，额外获得 1 点经验值。"
+  },
+  {
+    "ability_id": "TS-0365-A03",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "xp": 6
+    },
+    "source_line": "若你击败阶层 3 的怪物，额外获得 1 点经验值。"
+  },
+  {
+    "ability_id": "TS-0446-A03",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "next_hand": 1
+    },
+    "source_line": "凯旋：本回合结束补充手牌时，额外抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0523-A02",
+    "hand": [
+      "TS-0001",
+      "TS-0302",
+      "TS-0004",
+      "TS-0003",
+      "TS-0002",
+      "TS-0004"
+    ],
+    "draw": [
+      "TS-0003",
+      "TS-0004"
+    ],
+    "supplies": [],
+    "active_only": true,
+    "scheduled": true,
+    "expected": {
+      "discard_count_each": 3
+    },
+    "source_line": "战斗：回合结束抽牌后，弃掉 3 张牌。"
+  },
+  {
+    "ability_id": "TS-0528-A02",
+    "hand": [
+      "TS-0001",
+      "TS-0302",
+      "TS-0004",
+      "TS-0003",
+      "TS-0002",
+      "TS-0004"
+    ],
+    "draw": [
+      "TS-0003",
+      "TS-0004"
+    ],
+    "supplies": [],
+    "active_only": true,
+    "scheduled": true,
+    "expected": {
+      "discard_count_each": 2
+    },
+    "source_line": "战斗：回合结束抽牌后，展示你的手牌。弃掉所有英雄，然后抽牌直到你的手牌达到 6 张。"
+  },
+  {
+    "ability_id": "TS-0561-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "全局：若玩家前往地下城，则在回合结束时摧毁 1 名民兵。"
+  },
+  {
+    "ability_id": "TS-0682-A03",
+    "hand": [
+      "TS-0004"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroyed": [
+        "TS-0004"
+      ]
+    },
+    "source_line": "当黑暗勇士停留在阶层 0 时，所有玩家在自己回合结束时必须摧毁手牌中的 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0235-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "装备时，获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0242-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "装备时，获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0686-A01",
+    "hand": [
+      "TS-0267",
+      "TS-0267"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "other_destroy_count": 2
+    },
+    "source_line": "其他所有玩家展示手牌并摧毁其中的所有法术牌。"
+  },
+  {
+    "ability_id": "TS-0687-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "摧毁你手牌中力量最低的英雄。"
+  },
+  {
+    "ability_id": "TS-0691-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "当前玩家摧毁手牌中力量最低的英雄。"
+  },
+  {
+    "ability_id": "TS-0692-A02",
+    "hand": [],
+    "draw": [
+      "TS-0476",
+      "TS-0003"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "other_destroy_count": 1
+    },
+    "source_line": "其他每位玩家展示各自牌堆顶的 1 张牌，并摧毁其中展示出的所有怪物牌。"
+  },
+  {
+    "ability_id": "TS-0685-A01",
+    "hand": [
+      "TS-0426"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {},
+    "variants": [
+      {
+        "hand": [
+          "TS-0004"
+        ],
+        "expected": {
+          "diseases_each": 1
+        }
+      }
+    ],
+    "source_line": "每位玩家获得 1 张疾病，除非其从手牌中展示一名牧师或盗贼。"
+  },
+  {
+    "ability_id": "TS-0688-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 1
+    },
+    "variants": [
+      {
+        "hand": [
+          "TS-0447"
+        ],
+        "expected": {
+          "destroy_count_each": 0
+        }
+      },
+      {
+        "hand": [],
+        "expected": {
+          "destroy_count_each": 0
+        }
+      }
+    ],
+    "source_line": "每位玩家展示手牌中的一张英雄牌，或是展示全部手牌以证明自己手牌中没有。若展示的英雄不是盗贼，则摧毁该英雄。"
+  },
+  {
+    "ability_id": "TS-0690-A01",
+    "hand": [
+      "TS-0226"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_count_each": 1
+    },
+    "variants": [
+      {
+        "hand": [
+          "TS-0226",
+          "TS-0447"
+        ],
+        "expected": {
+          "destroy_count_each": 0
+        }
+      }
+    ],
+    "source_line": "每位玩家展示手牌，若没有盗贼英雄，则摧毁手牌中的所有村民牌。"
+  },
+  {
+    "ability_id": "TS-0687-A02",
+    "hand": [],
+    "draw": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "other_destroy_count": 1
+    },
+    "variants": [
+      {
+        "draw": [
+          "TS-0001",
+          "TS-0001"
+        ],
+        "expected": {
+          "other_destroy_count": 0
+        }
+      },
+      {
+        "draw": [
+          "TS-0003",
+          "TS-0302"
+        ],
+        "expected": {
+          "other_destroy_count": 0
+        }
+      }
+    ],
+    "source_line": "其他所有玩家翻开抽牌堆顶部的两张牌，若为两张力量不等的英雄牌，则摧毁其中力量值较低的英雄。"
+  },
+  {
+    "ability_id": "TS-0691-A02",
+    "hand": [],
+    "draw": [
+      "TS-0001",
+      "TS-0302",
+      "TS-0003"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "other_destroy_count": 1
+    },
+    "source_line": "其他每位玩家从各自牌堆顶展示 3 张牌。弃掉所展示牌中力量值最高的英雄牌 和 所有非英雄牌，摧毁剩余的英雄牌。"
+  },
+  {
+    "ability_id": "TS-0689-A01",
+    "hand": [],
+    "draw": [
+      "TS-0003",
+      "TS-0001",
+      "TS-0001"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_total": 3,
+      "reveal_total": 5
+    },
+    "variants": [
+      {
+        "draw": [
+          "TS-0003",
+          "TS-0004"
+        ],
+        "expected": {
+          "destroy_total": 0,
+          "reveal_total": 4
+        }
+      }
+    ],
+    "source_line": "按逆时针顺序，每位玩家依次展示自己抽牌堆顶的一张牌，若是英雄，则摧毁该卡牌。重复此流程，直到总计摧毁 3 张英雄牌为止。"
+  },
+  {
+    "ability_id": "TS-0693-A01",
+    "hand": [],
+    "draw": [
+      "TS-0003",
+      "TS-0002",
+      "TS-0002"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroy_total": 3,
+      "reveal_total": 5
+    },
+    "variants": [
+      {
+        "draw": [
+          "TS-0003",
+          "TS-0004"
+        ],
+        "expected": {
+          "destroy_total": 0,
+          "reveal_total": 4
+        }
+      }
+    ],
+    "source_line": "按逆时针顺序，每位玩家依次展示自己抽牌堆顶的一张牌，若是武器，则摧毁该卡牌。重复此流程，直到总计摧毁 3 张武器牌为止。"
+  },
+  {
+    "ability_id": "TS-0692-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroyed": [
+        "TS-0476"
+      ]
+    },
+    "defeated_monster": "TS-0476",
+    "variants": [
+      {
+        "hand": [
+          "TS-0447"
+        ],
+        "expected": {
+          "destroyed": []
+        }
+      }
+    ],
+    "source_line": "若此陷阱在任意怪物被击败后进入大厅，则摧毁该怪物牌，除非当前玩家展示一名盗贼英雄。"
+  },
+  {
+    "ability_id": "TS-0358-A03",
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "purchased_card": "TS-0002"
+    },
+    "source_line": "凯旋：获得一次购买村庄牌（武器）的机会。"
+  },
+  {
+    "ability_id": "TS-0332-A03",
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "purchased_card": "TS-0002"
+    },
+    "source_line": "凯旋：获得一次购买村庄牌（武器）的机会。"
+  },
+  {
+    "ability_id": "TS-0338-A03",
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0226",
+        "count": 3,
+        "kind": "village"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "purchased_card": "TS-0226"
+    },
+    "source_line": "凯旋：获得一次购买村庄牌（佣兵）的机会。"
+  },
+  {
+    "ability_id": "TS-0340-A03",
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "purchased_card": "TS-0002"
+    },
+    "source_line": "凯旋：获得一次购买村庄牌（武器）的机会。"
+  },
+  {
+    "ability_id": "TS-0371-A03",
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "purchased_card": "TS-0003"
+    },
+    "source_line": "凯旋：获得一次购买村庄牌（光照物品）的机会。"
+  },
+  {
+    "ability_id": "TS-0374-A03",
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "purchased_card": "TS-0002"
+    },
+    "source_line": "凯旋：获得一次购买村庄牌的机会。"
+  },
+  {
+    "ability_id": "TS-0380-A03",
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0226",
+        "count": 3,
+        "kind": "village"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "purchased_card": "TS-0226"
+    },
+    "source_line": "凯旋：获得一次购买村庄牌（村民）的机会。"
+  },
+  {
+    "ability_id": "TS-0407-A03",
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0267",
+        "count": 3,
+        "kind": "village"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "purchased_card": "TS-0267"
+    },
+    "source_line": "凯旋：获得一次购买村庄牌（法术）的机会。"
+  },
+  {
+    "ability_id": "TS-0445-A03",
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0226",
+        "count": 3,
+        "kind": "village"
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "purchased_card": "TS-0226"
+    },
+    "source_line": "凯旋：获得一次购买村庄牌（村民）的机会。"
+  },
+  {
+    "ability_id": "TS-0579-A02",
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "purchased_card": "TS-0004"
+    },
+    "source_line": "凯旋：获得一次购买村庄牌（食物）的机会。"
+  },
+  {
+    "ability_id": "TS-0595-A03",
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "purchased_card": "TS-0002"
+    },
+    "source_line": "凯旋：获得一次购买任意村庄牌的机会。"
+  },
+  {
+    "ability_id": "TS-0482-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "diseases_each": 1
+    },
+    "source_line": "全局：每当另一只怪物被击败时，每位玩家获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0675-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": true,
+    "expected": {
+      "forced_dungeon": 1
+    },
+    "source_line": "全局：若玩家击败怪物，该玩家下个回合必须前往地下城。"
+  },
+  {
+    "ability_id": "TS-0652-A02",
+    "hand": [],
+    "draw": [
+      "TS-0001",
+      "TS-0003",
+      "TS-0004",
+      "TS-0001",
+      "TS-0003",
+      "TS-0004"
+    ],
+    "supplies": [],
+    "active_only": true,
+    "scheduled": false,
+    "expected": {
+      "destroy_total": 6,
+      "active_discard": 0
+    },
+    "variants": [
+      {
+        "choose_count": 0,
+        "expected": {
+          "destroy_total": 0,
+          "active_discard": 6
+        }
+      },
+      {
+        "choose_count": 2,
+        "expected": {
+          "destroy_total": 2,
+          "active_discard": 4
+        }
+      }
+    ],
+    "source_line": "凯旋：从你的牌堆顶翻开 6 张牌，摧毁其中任意数量的牌，其余弃掉。"
+  },
+  {
+    "ability_id": "TS-0195-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "front_rotated": true
+    },
+    "source_line": "当玩家结束回合时，若本回合没有进入地下城，则将阶层 1 的怪物移至阶层 3，并将其他怪物依次前移。"
+  },
+  {
+    "ability_id": "TS-0240-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "source_top": true
+    },
+    "source_line": "地下城：若你本回合击败怪物，将此牌置于你的牌堆顶部。"
+  },
+  {
+    "ability_id": "TS-0352-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "source_top": true
+    },
+    "source_line": "若你击败胜利点低于 4 的怪物，回合结束时你可以将此英雄置于你的牌堆顶部，而非弃掉。"
+  },
+  {
+    "ability_id": "TS-0353-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "source_refill": true
+    },
+    "source_line": "若你击败胜利点低于 4 的怪物，回合结束时你可以将此英雄加入你新抽的手牌，而非弃掉。"
+  },
+  {
+    "ability_id": "TS-0344-A04",
+    "hand": [
+      "TS-0226",
+      "TS-0229"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "refill_count": 2
+    },
+    "source_line": "凯旋：你可以将手牌中任意数量的佣兵放置在一旁；补充手牌后，将其加入你的新手牌。"
+  },
+  {
+    "ability_id": "TS-0409-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "hall_returned": true
+    },
+    "source_line": "击败怪物后，你可以将 1 只怪物放回地下城牌堆底部，并补充大厅。"
+  },
+  {
+    "ability_id": "TS-0678-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "stone_returned": true
+    },
+    "source_line": "若雷霆之石在回合开始时位于大厅中，则将其返回地下城牌堆底部，并补充大厅。"
+  },
+  {
+    "ability_id": "TS-0601-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "basic_destruction": 5
+    },
+    "source_line": "突破：摧毁民兵牌堆顶部 5 张牌。"
+  },
+  {
+    "ability_id": "TS-0562-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0226",
+        "kind": "village",
+        "count": 3
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 1
+    },
+    "source_line": "全局：每当玩家购买一张非英雄牌时，摧毁该牌堆顶部的 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0563-A01",
+    "hand": [
+      "TS-0302"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroyed": [
+        "TS-0302"
+      ]
+    },
+    "source_line": "全局：每当玩家购买一名英雄时，该玩家必须摧毁 1 名英雄。"
+  },
+  {
+    "ability_id": "TS-0673-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [
+      {
+        "card_id": "TS-0226",
+        "kind": "village",
+        "count": 3
+      }
+    ],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "supply_destroyed": 1
+    },
+    "source_line": "当此牌位于阶层 0 时，每当有牌被购买，摧毁该牌堆顶部的 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0261-A02",
+    "hand": [
+      "TS-0001"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ],
+      "extra_buys": 1
+    },
+    "source_line": "购买此牌时，你可以额外购买 1 张牌，并可以摧毁 1 名民兵。"
+  },
+  {
+    "ability_id": "TS-0288-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "global_rule": "light"
+    },
+    "source_line": "击败怪物后，所有玩家获得光照 +1。效果持续到你的下个回合结束。"
+  },
+  {
+    "ability_id": "TS-0499-A03",
+    "hand": [],
+    "draw": [
+      "TS-0476",
+      "TS-0003",
+      "TS-0476"
+    ],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "harvested_monsters": 2
+    },
+    "source_line": "凯旋：翻开每位对手抽牌堆顶的 3 张牌。将以此方式翻出的所有胜利点为 3 或以下的怪物牌置入你的弃牌堆。"
+  },
+  {
+    "ability_id": "TS-0526-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "shuffled_traps": true
+    },
+    "source_line": "突破：取地下城牌堆顶部的 10 张牌，加入所有已被摧毁的陷阱牌，将它们洗混后放回地下城牌堆顶部。"
+  },
+  {
+    "ability_id": "TS-0696-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "extra_turn": 1
+    },
+    "source_line": "地下城：如果你击败了小于 4 胜利点的怪物，你可以摧毁该牌，以额外进行一个回合。"
+  },
+  {
+    "ability_id": "TS-0684-A01",
+    "hand": [
+      "TS-0302"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": true,
+    "scheduled": false,
+    "expected": {
+      "attachment": "cage"
+    },
+    "source_line": "将囚笼与你手牌中的 1 名英雄一同放置在一旁并补充大厅。"
+  },
+  {
+    "ability_id": "TS-0684-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "released": "cage"
+    },
+    "source_line": "若任意玩家击败任意怪物，摧毁囚笼，将该英雄取回并置入你的弃牌堆。"
+  },
+  {
+    "ability_id": "TS-0704-A01",
+    "hand": [
+      "TS-0003"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "attachment": "emerald"
+    },
+    "source_line": "当你击败怪物时，可以将你手牌中的 1 张牌 面朝下置于此牌下方，并将它们一同放置在一旁。"
+  },
+  {
+    "ability_id": "TS-0704-A02",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "released": "emerald"
+    },
+    "source_line": "当任意玩家击败大于 6 点胜利点的怪物时，摧毁此牌，并将下方那张面朝下的牌置入该玩家的弃牌堆。"
+  },
+  {
+    "ability_id": "TS-0705-A01",
+    "hand": [],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "attachment": "sapphire"
+    },
+    "source_line": "当你击败怪物时，可以将该怪物与此牌一同放置在一旁。"
+  }
+]

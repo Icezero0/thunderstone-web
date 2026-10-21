@@ -1,0 +1,7466 @@
+{
+  "schema_version": "thunderstone.effects/1",
+  "abilities": [
+    {
+      "id": "TS-0004-A01",
+      "source_card_id": "TS-0004",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "strength",
+          "amount": 2
+        }
+      }
+    },
+    {
+      "id": "TS-0291-A01",
+      "source_card_id": "TS-0291",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "strength",
+          "amount": 3
+        }
+      }
+    },
+    {
+      "id": "TS-0293-A01",
+      "source_card_id": "TS-0293",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "strength",
+          "amount": 3
+        }
+      }
+    },
+    {
+      "id": "TS-0530-A02",
+      "source_card_id": "TS-0530",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "strength",
+          "amount": 3
+        }
+      }
+    },
+    {
+      "id": "TS-0644-A02",
+      "source_card_id": "TS-0644",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "strength",
+          "amount": 2
+        }
+      }
+    },
+    {
+      "id": "TS-0211-A02",
+      "source_card_id": "TS-0211",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "draw",
+          "count": 3
+        }
+      }
+    },
+    {
+      "id": "TS-0212-A01",
+      "source_card_id": "TS-0212",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_gold",
+        "amount": {
+          "players": "all"
+        }
+      }
+    },
+    {
+      "id": "TS-0214-A02",
+      "source_card_id": "TS-0214",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "mod_gold",
+          "amount": {
+            "count": {
+              "zone": "active_hand",
+              "tag": "英雄"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0223-A01",
+      "source_card_id": "TS-0223",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": {
+          "min": [
+            {
+              "div": [
+                {
+                  "resource": "xp"
+                },
+                2
+              ]
+            },
+            5
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0223-A02",
+      "source_card_id": "TS-0223",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_id": "TS-0001"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_id": "TS-0001"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "draw",
+                "count": 2
+              },
+              {
+                "op": "gain_xp",
+                "amount": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0229-A01",
+      "source_card_id": "TS-0229",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "draw",
+            "count": 1
+          },
+          {
+            "op": "select",
+            "query": {
+              "zone": "active_hand"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "discard",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0230-A01",
+      "source_card_id": "TS-0230",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "diseases",
+        "min": 0,
+        "max": 100,
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "diseases"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              },
+              {
+                "op": "draw",
+                "count": 2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0231-A02",
+      "source_card_id": "TS-0231",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": {
+          "count": {
+            "zone": "active_hand",
+            "card_id": "TS-0001"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0256-A02",
+      "source_card_id": "TS-0256",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "mod_attack",
+          "amount": 3
+        }
+      }
+    },
+    {
+      "id": "TS-0267-A01",
+      "source_card_id": "TS-0267",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "attack",
+          "amount": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0264-A01",
+      "source_card_id": "TS-0264",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "set_battle_flag",
+            "flag": "convert_equipped_magic",
+            "value": true
+          },
+          {
+            "op": "draw",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0281-A01",
+      "source_card_id": "TS-0281",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "set_battle_flag",
+            "flag": "zero_weapon_weight",
+            "value": true
+          },
+          {
+            "op": "draw",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0276-A01",
+      "source_card_id": "TS-0276",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "draw",
+            "count": 2
+          },
+          {
+            "op": "for_players",
+            "scope": "others",
+            "body": {
+              "op": "draw",
+              "count": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0286-A01",
+      "source_card_id": "TS-0286",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "strength",
+          "amount": 3
+        }
+      }
+    },
+    {
+      "id": "TS-0329-A02",
+      "source_card_id": "TS-0329",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": {
+          "count": {
+            "zone": "active_hand",
+            "subcategory": "方阵",
+            "exclude_source": true
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0335-A03",
+      "source_card_id": "TS-0335",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": {
+          "mul": [
+            2,
+            {
+              "count": {
+                "zone": "active_hand",
+                "tag": "佣兵"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0318-A02",
+      "source_card_id": "TS-0318",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "subcategory": "怪物"
+          }
+        }
+      ],
+      "body": {
+        "op": "mod_card",
+        "target": {
+          "var": "source"
+        },
+        "stat": "attack",
+        "amount": 2
+      }
+    },
+    {
+      "id": "TS-0319-A02",
+      "source_card_id": "TS-0319",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "subcategory": "怪物"
+          }
+        }
+      ],
+      "body": {
+        "op": "mod_card",
+        "target": {
+          "var": "source"
+        },
+        "stat": "attack",
+        "amount": 3
+      }
+    },
+    {
+      "id": "TS-0322-A02",
+      "source_card_id": "TS-0322",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "mod_attack",
+            "amount": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0323-A02",
+      "source_card_id": "TS-0323",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "mod_attack",
+            "amount": 4
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0345-A02",
+      "source_card_id": "TS-0345",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "食物"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "食物"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "mod_attack",
+            "amount": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0346-A03",
+      "source_card_id": "TS-0346",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "食物"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "食物"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "mod_attack",
+            "amount": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0348-A02",
+      "source_card_id": "TS-0348",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "食物"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "食物"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "mod_attack",
+            "amount": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0349-A03",
+      "source_card_id": "TS-0349",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "repeatable",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "食物"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "食物"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "mod_attack",
+            "amount": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0349-A02",
+      "source_card_id": "TS-0349",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_card",
+        "target": {
+          "var": "source"
+        },
+        "stat": "attack",
+        "amount": {
+          "mul": [
+            1,
+            {
+              "count": {
+                "zone": "active_hand",
+                "subcategory": "怪物"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0350-A02",
+      "source_card_id": "TS-0350",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_card",
+        "target": {
+          "var": "source"
+        },
+        "stat": "attack",
+        "amount": {
+          "mul": [
+            2,
+            {
+              "count": {
+                "zone": "active_hand",
+                "subcategory": "怪物"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0427-A02",
+      "source_card_id": "TS-0427",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_card",
+        "target": {
+          "var": "source"
+        },
+        "stat": "attack",
+        "amount": {
+          "mul": [
+            1,
+            {
+              "add": [
+                {
+                  "count": {
+                    "zone": "active_hand",
+                    "card_type": "疾病牌"
+                  }
+                },
+                {
+                  "count": {
+                    "zone": "active_hand",
+                    "subcategory": "怪物"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0366-A02",
+      "source_card_id": "TS-0366",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_magic_attack",
+        "amount": {
+          "mul": [
+            1,
+            {
+              "count": {
+                "zone": "active_hand",
+                "tag": "法术"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0367-A02",
+      "source_card_id": "TS-0367",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_magic_attack",
+        "amount": {
+          "mul": [
+            2,
+            {
+              "count": {
+                "zone": "active_hand",
+                "tag": "法术"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0520-A02",
+      "source_card_id": "TS-0520",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_magic_attack",
+        "amount": {
+          "mul": [
+            1,
+            {
+              "count": {
+                "zone": "active_hand",
+                "tag": "法术"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0373-A02",
+      "source_card_id": "TS-0373",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_attack",
+        "amount": {
+          "count": {
+            "zone": "active_hand",
+            "tag": "物品",
+            "light_min": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0377-A02",
+      "source_card_id": "TS-0377",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "repeatable",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "mod_magic_attack",
+                "amount": 4
+              },
+              {
+                "op": "draw",
+                "count": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0378-A02",
+      "source_card_id": "TS-0378",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "discard",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0424-A03",
+      "source_card_id": "TS-0424",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "discard",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0379-A02",
+      "source_card_id": "TS-0379",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "discard",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "draw",
+                "count": 1
+              },
+              {
+                "op": "mod_attack",
+                "amount": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0380-A02",
+      "source_card_id": "TS-0380",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tags_any": [
+              "疾病",
+              "村民"
+            ]
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tags_any": [
+            "疾病",
+            "村民"
+          ]
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "discard",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "draw",
+                "count": 2
+              },
+              {
+                "op": "mod_attack",
+                "amount": 2
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0381-A02",
+      "source_card_id": "TS-0381",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "repeatable",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "物品",
+            "light_min": 1
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "物品",
+          "light_min": 1
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "mod_magic_attack",
+            "amount": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0382-A02",
+      "source_card_id": "TS-0382",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "repeatable",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "物品",
+            "light_min": 1
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "物品",
+          "light_min": 1
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "mod_magic_attack",
+            "amount": 4
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0386-A03",
+      "source_card_id": "TS-0386",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "discard",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "mod_attack",
+            "amount": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0391-A02",
+      "source_card_id": "TS-0391",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "discard",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0448-A02",
+      "source_card_id": "TS-0448",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "discard",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0449-A02",
+      "source_card_id": "TS-0449",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "discard",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0457-A03",
+      "source_card_id": "TS-0457",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "discard",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0395-A02",
+      "source_card_id": "TS-0395",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "lose_xp",
+          "amount": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0400-A02",
+      "source_card_id": "TS-0400",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "let",
+          "bind": "gold",
+          "value": {
+            "stat": {
+              "var": "chosen",
+              "field": "gold"
+            }
+          },
+          "then": {
+            "op": "cost_gate",
+            "cost": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            },
+            "then": {
+              "op": "mod_magic_attack",
+              "amount": {
+                "value": "gold"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0401-A02",
+      "source_card_id": "TS-0401",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "gold_present": false
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "gold_present": false
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0418-A02",
+      "source_card_id": "TS-0418",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "subcategory": "怪物"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "subcategory": "怪物"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "mod_magic_attack",
+          "amount": {
+            "stat": {
+              "var": "chosen",
+              "field": "vp"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0419-A02",
+      "source_card_id": "TS-0419",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_magic_attack",
+        "amount": {
+          "sum": {
+            "query": {
+              "zone": "active_hand",
+              "subcategory": "怪物"
+            },
+            "field": "vp"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0420-A02",
+      "source_card_id": "TS-0420",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "destroy",
+          "target": {
+            "var": "chosen"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0429-A03",
+      "source_card_id": "TS-0429",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "mod_gold",
+            "amount": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0441-A02",
+      "source_card_id": "TS-0441",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_gold",
+        "amount": {
+          "count": {
+            "zone": "active_hand",
+            "tag": "英雄",
+            "exclude_source": true
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0442-A02",
+      "source_card_id": "TS-0442",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_gold",
+        "amount": {
+          "count": {
+            "zone": "active_hand",
+            "tag": "英雄",
+            "exclude_source": true
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0443-A02",
+      "source_card_id": "TS-0443",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "compare": {
+            "left": {
+              "sum": {
+                "query": {
+                  "zone": "active_hand"
+                },
+                "field": "gold"
+              }
+            },
+            "op": "ge",
+            "right": 5
+          }
+        }
+      ],
+      "body": {
+        "op": "mod_card",
+        "target": {
+          "var": "source"
+        },
+        "stat": "attack",
+        "amount": 4
+      }
+    },
+    {
+      "id": "TS-0456-A02",
+      "source_card_id": "TS-0456",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄",
+          "exclude_source": true
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "strength",
+          "amount": 2
+        }
+      }
+    },
+    {
+      "id": "TS-0457-A02",
+      "source_card_id": "TS-0457",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄",
+          "exclude_source": true
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "strength",
+          "amount": 3
+        }
+      }
+    },
+    {
+      "id": "TS-0458-A02",
+      "source_card_id": "TS-0458",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄",
+          "exclude_source": true
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "strength",
+          "amount": 4
+        }
+      }
+    },
+    {
+      "id": "TS-0522-A02",
+      "source_card_id": "TS-0522",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "active_hand",
+          "card_id": "TS-0001"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "strength",
+          "amount": 3
+        }
+      }
+    },
+    {
+      "id": "TS-0525-A02",
+      "source_card_id": "TS-0525",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_gold",
+        "amount": {
+          "players": "all"
+        }
+      }
+    },
+    {
+      "id": "TS-0529-A03",
+      "source_card_id": "TS-0529",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "active_hand",
+          "tag": "武器"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "attack",
+          "amount": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0309-A02",
+      "source_card_id": "TS-0309",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "compare": {
+            "left": {
+              "resource": "xp"
+            },
+            "op": "ge",
+            "right": 1
+          }
+        }
+      ],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "spend_xp",
+          "amount": 1
+        },
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_magic_attack",
+              "amount": 2
+            },
+            {
+              "op": "mod_light",
+              "amount": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0310-A02",
+      "source_card_id": "TS-0310",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "compare": {
+            "left": {
+              "resource": "xp"
+            },
+            "op": "ge",
+            "right": 1
+          }
+        }
+      ],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "spend_xp",
+          "amount": 1
+        },
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_magic_attack",
+              "amount": 4
+            },
+            {
+              "op": "mod_light",
+              "amount": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0707-A01",
+      "source_card_id": "TS-0707",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "discard",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "for_players",
+          "scope": "others",
+          "body": {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "subject_hand"
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "subject_hand"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "discard",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0210-A01",
+      "source_card_id": "TS-0210",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "gold_present": true
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "gold_present": true
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "let",
+          "bind": "gold",
+          "value": {
+            "stat": {
+              "var": "chosen",
+              "field": "gold"
+            }
+          },
+          "then": {
+            "op": "cost_gate",
+            "cost": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            },
+            "then": {
+              "op": "mod_gold",
+              "amount": {
+                "add": [
+                  {
+                    "value": "gold"
+                  },
+                  3
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0214-A01",
+      "source_card_id": "TS-0214",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "let",
+          "bind": "hero",
+          "value": {
+            "count": {
+              "zone": "bound",
+              "var": "chosen",
+              "tag": "英雄"
+            }
+          },
+          "then": {
+            "op": "cost_gate",
+            "cost": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            },
+            "then": {
+              "op": "if",
+              "condition": {
+                "compare": {
+                  "left": {
+                    "value": "hero"
+                  },
+                  "op": "eq",
+                  "right": 0
+                }
+              },
+              "then": {
+                "op": "gain_xp",
+                "amount": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0216-A02",
+      "source_card_id": "TS-0216",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "active_hand",
+            "tag": "英雄"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "cost_gate",
+            "cost": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            },
+            "then": {
+              "op": "for_players",
+              "scope": "others",
+              "body": {
+                "op": "select",
+                "query": {
+                  "zone": "subject_hand"
+                },
+                "bind": "chosen",
+                "min": 2,
+                "max": 2,
+                "then": {
+                  "op": "for_each",
+                  "query": {
+                    "zone": "bound",
+                    "var": "chosen"
+                  },
+                  "bind": "victim",
+                  "body": {
+                    "op": "discard",
+                    "target": {
+                      "var": "victim"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0217-A02",
+      "source_card_id": "TS-0217",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄"
+          }
+        }
+      ],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_gold",
+              "amount": 2
+            },
+            {
+              "op": "select",
+              "query": {
+                "zone": "active_hand",
+                "tag": "英雄"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "move",
+                "target": {
+                  "var": "chosen"
+                },
+                "destination": "draw_top"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0218-A02",
+      "source_card_id": "TS-0218",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "min": 0,
+        "max": 100,
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "chosen"
+              },
+              "bind": "victim",
+              "body": {
+                "op": "discard",
+                "target": {
+                  "var": "victim"
+                }
+              }
+            },
+            {
+              "op": "draw",
+              "count": {
+                "count": {
+                  "zone": "bound",
+                  "var": "chosen"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0221-A02",
+      "source_card_id": "TS-0221",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1,
+        "bind": "drawn",
+        "then": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "bound",
+              "var": "drawn",
+              "subcategory": "怪物"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0222-A02",
+      "source_card_id": "TS-0222",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tags_any": [
+            "英雄",
+            "佣兵"
+          ]
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "attack",
+              "amount": 3
+            },
+            {
+              "op": "mark_destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0225-A03",
+      "source_card_id": "TS-0225",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "repeatable",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄"
+          }
+        },
+        {
+          "compare": {
+            "left": {
+              "resource": "xp"
+            },
+            "op": "ge",
+            "right": 1
+          }
+        }
+      ],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "spend_xp",
+          "amount": 1
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "active_hand",
+            "tag": "英雄"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mod_card",
+            "target": {
+              "var": "chosen"
+            },
+            "stat": "attack",
+            "amount": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0236-A02",
+      "source_card_id": "TS-0236",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "mod_light",
+            "amount": 2
+          },
+          {
+            "op": "mod_attack",
+            "amount": 2
+          },
+          {
+            "op": "mark_destroy",
+            "target": {
+              "var": "source"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0285-A01",
+      "source_card_id": "TS-0285",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_light",
+        "amount": {
+          "maximum": {
+            "query": {
+              "zone": "active_hand",
+              "tag": "英雄"
+            },
+            "field": "level"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0257-A02",
+      "source_card_id": "TS-0257",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "not": {
+            "exists": {
+              "zone": "active_hand",
+              "tag": "英雄",
+              "strength_min": 6
+            }
+          }
+        }
+      ],
+      "body": {
+        "op": "draw",
+        "count": 1,
+        "bind": "drawn",
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "drawn",
+            "tag": "英雄"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "mod_card",
+            "target": {
+              "var": "chosen"
+            },
+            "stat": "strength",
+            "amount": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0269-A02",
+      "source_card_id": "TS-0269",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tags_any": [
+              "法师",
+              "牧师"
+            ]
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tags_any": [
+            "法师",
+            "牧师"
+          ]
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "magic_attack",
+          "amount": {
+            "stat": {
+              "var": "chosen",
+              "field": "level"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0274-A01",
+      "source_card_id": "TS-0274",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "magic_attack",
+          "amount": {
+            "min": [
+              {
+                "resource": "xp"
+              },
+              6
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0275-A01",
+      "source_card_id": "TS-0275",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "mod_next_hand",
+            "amount": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0290-A01",
+      "source_card_id": "TS-0290",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "for_each",
+            "query": {
+              "zone": "active_hand",
+              "tag": "英雄"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "sequence",
+              "children": [
+                {
+                  "op": "mod_card",
+                  "target": {
+                    "var": "chosen"
+                  },
+                  "stat": "attack",
+                  "amount": 1
+                },
+                {
+                  "op": "mod_card",
+                  "target": {
+                    "var": "chosen"
+                  },
+                  "stat": "strength",
+                  "amount": 3
+                }
+              ]
+            }
+          },
+          {
+            "op": "schedule",
+            "event": "BATTLE_AFTER_OUTCOME",
+            "body": {
+              "op": "if",
+              "condition": {
+                "exists": {
+                  "zone": "active_hand",
+                  "tag": "英雄",
+                  "participating": true
+                }
+              },
+              "then": {
+                "op": "select",
+                "query": {
+                  "zone": "active_hand",
+                  "tag": "英雄",
+                  "participating": true
+                },
+                "bind": "chosen",
+                "min": 1,
+                "max": 1,
+                "then": {
+                  "op": "destroy",
+                  "target": {
+                    "var": "chosen"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0291-A02",
+      "source_card_id": "TS-0291",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄"
+          }
+        }
+      ],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "select",
+              "query": {
+                "zone": "active_hand",
+                "tag": "英雄"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "mod_card",
+                "target": {
+                  "var": "chosen"
+                },
+                "stat": "attack",
+                "amount": 3
+              }
+            },
+            {
+              "op": "for_players",
+              "scope": "all",
+              "body": {
+                "op": "gain_disease",
+                "count": 1
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0297-A01",
+      "source_card_id": "TS-0297",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tags_any": [
+              "武器",
+              "物品"
+            ],
+            "exclude_source": true
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tags_any": [
+            "武器",
+            "物品"
+          ],
+          "exclude_source": true
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0357-A02",
+      "source_card_id": "TS-0357",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tags_any": [
+              "物品",
+              "武器"
+            ]
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tags_any": [
+            "物品",
+            "武器"
+          ]
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "mod_attack",
+            "amount": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0358-A02",
+      "source_card_id": "TS-0358",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "武器"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "武器"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "let",
+          "bind": "weight",
+          "value": {
+            "stat": {
+              "var": "chosen",
+              "field": "weight"
+            }
+          },
+          "then": {
+            "op": "cost_gate",
+            "cost": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            },
+            "then": {
+              "op": "mod_attack",
+              "amount": {
+                "value": "weight"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0359-A02",
+      "source_card_id": "TS-0359",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand_or_village_top",
+            "tag": "武器"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand_or_village_top",
+          "tag": "武器"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "let",
+          "bind": "weight",
+          "value": {
+            "stat": {
+              "var": "chosen",
+              "field": "weight"
+            }
+          },
+          "then": {
+            "op": "cost_gate",
+            "cost": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            },
+            "then": {
+              "op": "mod_attack",
+              "amount": {
+                "value": "weight"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0385-A02",
+      "source_card_id": "TS-0385",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "食物"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "食物"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "mod_attack",
+                "amount": 2
+              },
+              {
+                "op": "for_players",
+                "scope": "others",
+                "body": {
+                  "op": "if",
+                  "condition": {
+                    "exists": {
+                      "zone": "subject_hand"
+                    }
+                  },
+                  "then": {
+                    "op": "select",
+                    "query": {
+                      "zone": "subject_hand"
+                    },
+                    "bind": "chosen",
+                    "min": 1,
+                    "max": 1,
+                    "then": {
+                      "op": "discard",
+                      "target": {
+                        "var": "chosen"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0386-A02",
+      "source_card_id": "TS-0386",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "物品"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "物品"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "mod_attack",
+                "amount": 2
+              },
+              {
+                "op": "for_players",
+                "scope": "others",
+                "body": {
+                  "op": "if",
+                  "condition": {
+                    "exists": {
+                      "zone": "subject_hand"
+                    }
+                  },
+                  "then": {
+                    "op": "select",
+                    "query": {
+                      "zone": "subject_hand"
+                    },
+                    "bind": "chosen",
+                    "min": 1,
+                    "max": 1,
+                    "then": {
+                      "op": "discard",
+                      "target": {
+                        "var": "chosen"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0389-A03",
+      "source_card_id": "TS-0389",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "tag": "物品",
+              "light_min": 1
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "tag": "物品",
+              "light_min": 1
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "discard",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0439-A02",
+      "source_card_id": "TS-0439",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "tag": "武器"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "tag": "武器"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "discard",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0442-A03",
+      "source_card_id": "TS-0442",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "gold_present": true
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "gold_present": true
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "discard",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0393-A02",
+      "source_card_id": "TS-0393",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "if",
+          "condition": {
+            "compare": {
+              "left": {
+                "count": {
+                  "zone": "subject_hand"
+                }
+              },
+              "op": "ge",
+              "right": 6
+            }
+          },
+          "then": {
+            "op": "random_discard",
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0394-A02",
+      "source_card_id": "TS-0394",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "if",
+          "condition": {
+            "not": {
+              "exists": {
+                "zone": "subject_hand",
+                "tag": "法术"
+              }
+            }
+          },
+          "then": {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "subject_hand"
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "subject_hand"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "discard",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0417-A02",
+      "source_card_id": "TS-0417",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_discard",
+            "tags_any": [
+              "英雄",
+              "村民"
+            ]
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_discard",
+          "tags_any": [
+            "英雄",
+            "村民"
+          ]
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "mod_magic_attack",
+            "amount": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0440-A02",
+      "source_card_id": "TS-0440",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "tag": "武器"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "tag": "武器"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "sequence",
+              "children": [
+                {
+                  "op": "discard",
+                  "target": {
+                    "var": "chosen"
+                  }
+                },
+                {
+                  "op": "mod_card",
+                  "target": {
+                    "var": "source"
+                  },
+                  "stat": "attack",
+                  "amount": 1
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0497-A03",
+      "source_card_id": "TS-0497",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "destroy",
+          "target": {
+            "var": "chosen"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0612-A02",
+      "source_card_id": "TS-0612",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "destroy",
+          "target": {
+            "var": "chosen"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0523-A03",
+      "source_card_id": "TS-0523",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "draw",
+            "count": 1
+          },
+          {
+            "op": "select",
+            "query": {
+              "zone": "active_hand"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "move",
+              "target": {
+                "var": "chosen"
+              },
+              "destination": "draw_top"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0368-A02",
+      "source_card_id": "TS-0368",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "reveal",
+        "count": 3,
+        "bind": "revealed",
+        "then": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "bound",
+              "var": "revealed",
+              "tag": "法术"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "bound",
+              "var": "revealed",
+              "tag": "法术"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "move",
+              "target": {
+                "var": "chosen"
+              },
+              "destination": "hand"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0694-A01",
+      "source_card_id": "TS-0694",
+      "kind": "activated",
+      "source_zone": "active_control",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "draw",
+          "count": 3
+        }
+      }
+    },
+    {
+      "id": "TS-0700-A01",
+      "source_card_id": "TS-0700",
+      "kind": "activated",
+      "source_zone": "active_control",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "mod_attack",
+          "amount": 3
+        }
+      }
+    },
+    {
+      "id": "TS-0701-A01",
+      "source_card_id": "TS-0701",
+      "kind": "activated",
+      "source_zone": "active_control",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "mod_magic_attack",
+          "amount": 3
+        }
+      }
+    },
+    {
+      "id": "TS-0702-A01",
+      "source_card_id": "TS-0702",
+      "kind": "activated",
+      "source_zone": "active_control",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "mod_gold",
+          "amount": 4
+        }
+      }
+    },
+    {
+      "id": "TS-0241-A02",
+      "source_card_id": "TS-0241",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "bound",
+            "var": "source",
+            "equipped": true
+          }
+        },
+        {
+          "exists": {
+            "zone": "hall",
+            "subcategory": "怪物",
+            "movable": true,
+            "rank": 1
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "hall",
+          "subcategory": "怪物",
+          "movable": true,
+          "rank": 1
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "relocate_hall",
+          "target": {
+            "var": "chosen"
+          },
+          "destination": "dungeon_bottom"
+        }
+      }
+    },
+    {
+      "id": "TS-0245-A02",
+      "source_card_id": "TS-0245",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "hall",
+            "subcategory": "怪物",
+            "movable": true
+          }
+        }
+      ],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "select",
+              "query": {
+                "zone": "hall",
+                "subcategory": "怪物",
+                "movable": true
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "relocate_hall",
+                "target": {
+                  "var": "chosen"
+                },
+                "destination": "dungeon_bottom"
+              }
+            },
+            {
+              "op": "draw",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0268-A01",
+      "source_card_id": "TS-0268",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "hall",
+            "subcategory": "怪物",
+            "movable": true
+          }
+        }
+      ],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "select",
+            "query": {
+              "zone": "hall",
+              "subcategory": "怪物",
+              "movable": true
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "relocate_hall",
+              "target": {
+                "var": "chosen"
+              },
+              "destination": "dungeon_bottom"
+            }
+          },
+          {
+            "op": "select",
+            "query": {
+              "zone": "active_hand"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "cost_gate",
+              "cost": {
+                "op": "destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              },
+              "then": {
+                "op": "draw",
+                "count": 1
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0347-A03",
+      "source_card_id": "TS-0347",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "食物"
+          }
+        },
+        {
+          "exists": {
+            "zone": "hall",
+            "subcategory": "怪物",
+            "movable": true,
+            "vp_min": 1,
+            "vp_max": 2
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "食物"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "hall",
+              "subcategory": "怪物",
+              "movable": true,
+              "vp_min": 1,
+              "vp_max": 2
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "relocate_hall",
+              "target": {
+                "var": "chosen"
+              },
+              "destination": "discard"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0394-A03",
+      "source_card_id": "TS-0394",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "hall",
+            "subcategory": "怪物",
+            "movable": true,
+            "rank": 1
+          }
+        },
+        {
+          "compare": {
+            "left": {
+              "resource": "xp"
+            },
+            "op": "ge",
+            "right": 2
+          }
+        }
+      ],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "spend_xp",
+          "amount": 2
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "hall",
+            "subcategory": "怪物",
+            "movable": true,
+            "rank": 1
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "relocate_hall",
+            "target": {
+              "var": "chosen"
+            },
+            "destination": "dungeon_bottom"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0395-A03",
+      "source_card_id": "TS-0395",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "hall",
+            "subcategory": "怪物",
+            "movable": true
+          }
+        },
+        {
+          "compare": {
+            "left": {
+              "resource": "xp"
+            },
+            "op": "ge",
+            "right": 1
+          }
+        }
+      ],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "spend_xp",
+          "amount": 1
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "hall",
+            "subcategory": "怪物",
+            "movable": true
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "relocate_hall",
+            "target": {
+              "var": "chosen"
+            },
+            "destination": "dungeon_bottom"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0410-A02",
+      "source_card_id": "TS-0410",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "hall",
+            "subcategory": "怪物",
+            "movable": true
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "hall",
+          "subcategory": "怪物",
+          "movable": true
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "relocate_hall",
+          "target": {
+            "var": "chosen"
+          },
+          "destination": "dungeon_bottom"
+        }
+      }
+    },
+    {
+      "id": "TS-0301-A02",
+      "source_card_id": "TS-0301",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "card_type": "村庄牌"
+        },
+        "destination": "discard",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0397-A02",
+      "source_card_id": "TS-0397",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "tag": "英雄"
+        },
+        "destination": "discard",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0398-A02",
+      "source_card_id": "TS-0398",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "tag": "英雄"
+        },
+        "destination": "hand",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0697-A01",
+      "source_card_id": "TS-0697",
+      "kind": "activated",
+      "source_zone": "active_control",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "tag": "英雄"
+        },
+        "destination": "hand",
+        "payment": "discard_source"
+      }
+    },
+    {
+      "id": "TS-0699-A01",
+      "source_card_id": "TS-0699",
+      "kind": "activated",
+      "source_zone": "active_control",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "card_type": "村庄牌"
+        },
+        "destination": "hand",
+        "payment": "discard_source"
+      }
+    },
+    {
+      "id": "TS-0212-A02",
+      "source_card_id": "TS-0212",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "remember",
+          "query": {
+            "zone": "other_discard"
+          },
+          "bind": "before",
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "for_players",
+                "scope": "others",
+                "body": {
+                  "op": "if",
+                  "condition": {
+                    "exists": {
+                      "zone": "subject_hand",
+                      "gold_present": true
+                    }
+                  },
+                  "then": {
+                    "op": "select",
+                    "query": {
+                      "zone": "subject_hand",
+                      "gold_present": true
+                    },
+                    "bind": "chosen",
+                    "min": 1,
+                    "max": 1,
+                    "then": {
+                      "op": "discard",
+                      "target": {
+                        "var": "chosen"
+                      }
+                    }
+                  },
+                  "else": {
+                    "op": "show_hand"
+                  }
+                }
+              },
+              {
+                "op": "mod_gold",
+                "amount": {
+                  "sum": {
+                    "query": {
+                      "zone": "other_discard",
+                      "exclude_var": "before"
+                    },
+                    "field": "gold"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0218-A01",
+      "source_card_id": "TS-0218",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "remember",
+        "query": {
+          "zone": "active_hand"
+        },
+        "bind": "oldhand",
+        "then": {
+          "op": "draw",
+          "count": 3,
+          "bind": "drawn",
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "drawn",
+              "name_in_var": "oldhand"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "discard",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0219-A01",
+      "source_card_id": "TS-0219",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 2,
+        "bind": "drawn",
+        "then": {
+          "op": "if",
+          "condition": {
+            "not": {
+              "exists": {
+                "zone": "bound",
+                "var": "drawn",
+                "tag": "法术"
+              }
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "bound",
+              "var": "drawn"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "discard",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0262-A01",
+      "source_card_id": "TS-0262",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "choose_value",
+        "kind": "player",
+        "bind": "choice",
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "reveal",
+              "count": 5,
+              "bind": "revealed",
+              "then": {
+                "op": "select",
+                "query": {
+                  "zone": "bound",
+                  "var": "revealed"
+                },
+                "bind": "victims",
+                "min": 2,
+                "max": 2,
+                "then": {
+                  "op": "for_each",
+                  "query": {
+                    "zone": "bound",
+                    "var": "victims"
+                  },
+                  "bind": "chosen",
+                  "body": {
+                    "op": "destroy",
+                    "target": {
+                      "var": "chosen"
+                    }
+                  }
+                },
+                "allow_shortfall": true
+              }
+            },
+            {
+              "op": "if",
+              "condition": {
+                "subject_is_active": false
+              },
+              "then": {
+                "op": "for_players",
+                "scope": "active",
+                "body": {
+                  "op": "destroy",
+                  "target": {
+                    "var": "source"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "as_subject": true
+      }
+    },
+    {
+      "id": "TS-0451-A02",
+      "source_card_id": "TS-0451",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "remember",
+        "query": {
+          "zone": "other_discard"
+        },
+        "bind": "before",
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "for_players",
+              "scope": "others",
+              "body": {
+                "op": "if",
+                "condition": {
+                  "exists": {
+                    "zone": "subject_hand",
+                    "tag": "物品"
+                  }
+                },
+                "then": {
+                  "op": "select",
+                  "query": {
+                    "zone": "subject_hand",
+                    "tag": "物品"
+                  },
+                  "bind": "chosen",
+                  "min": 1,
+                  "max": 1,
+                  "then": {
+                    "op": "discard",
+                    "target": {
+                      "var": "chosen"
+                    }
+                  }
+                },
+                "else": {
+                  "op": "show_hand"
+                }
+              }
+            },
+            {
+              "op": "if",
+              "condition": {
+                "exists": {
+                  "zone": "other_discard",
+                  "exclude_var": "before",
+                  "tag": "物品",
+                  "light_min": 1
+                }
+              },
+              "then": {
+                "op": "mod_light",
+                "amount": 1
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0458-A03",
+      "source_card_id": "TS-0458",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "remember",
+        "query": {
+          "zone": "other_discard"
+        },
+        "bind": "before",
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "for_players",
+              "scope": "others",
+              "body": {
+                "op": "if",
+                "condition": {
+                  "exists": {
+                    "zone": "subject_hand"
+                  }
+                },
+                "then": {
+                  "op": "select",
+                  "query": {
+                    "zone": "subject_hand"
+                  },
+                  "bind": "chosen",
+                  "min": 1,
+                  "max": 1,
+                  "then": {
+                    "op": "discard",
+                    "target": {
+                      "var": "chosen"
+                    }
+                  }
+                },
+                "else": {
+                  "op": "show_hand"
+                }
+              }
+            },
+            {
+              "op": "if",
+              "condition": {
+                "not": {
+                  "exists": {
+                    "zone": "other_discard",
+                    "exclude_var": "before",
+                    "tag": "法术"
+                  }
+                }
+              },
+              "then": {
+                "op": "mod_card",
+                "target": {
+                  "var": "source"
+                },
+                "stat": "magic_attack",
+                "amount": 2
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0253-A03",
+      "source_card_id": "TS-0253",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "bound",
+            "var": "source",
+            "equipper_card_id": "TS-0001"
+          }
+        }
+      ],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0273-A02",
+      "source_card_id": "TS-0273",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "choose_value",
+        "kind": "number",
+        "bind": "spent",
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "spend_xp",
+            "amount": {
+              "value": "spent"
+            }
+          },
+          "then": {
+            "op": "mod_magic_attack",
+            "amount": {
+              "value": "spent"
+            }
+          }
+        },
+        "min": 0,
+        "max": {
+          "min": [
+            5,
+            {
+              "resource": "xp"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0224-A02",
+      "source_card_id": "TS-0224",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "choose_value",
+        "kind": "dungeon",
+        "bind": "dungeon",
+        "then": {
+          "op": "reveal",
+          "zone": "dungeon",
+          "count": 3,
+          "bind": "peeked",
+          "then": {
+            "op": "reorder",
+            "query": {
+              "zone": "bound",
+              "var": "peeked"
+            },
+            "destination": "dungeon_top"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0280-A02",
+      "source_card_id": "TS-0280",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "choose_value",
+            "kind": "dungeon",
+            "bind": "dungeon",
+            "then": {
+              "op": "reveal",
+              "zone": "dungeon",
+              "count": 3,
+              "bind": "peeked",
+              "then": {
+                "op": "reorder",
+                "query": {
+                  "zone": "bound",
+                  "var": "peeked"
+                },
+                "destination": "dungeon_top"
+              }
+            }
+          },
+          {
+            "op": "draw",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0453-A02",
+      "source_card_id": "TS-0453",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "choose_value",
+        "kind": "dungeon",
+        "bind": "dungeon",
+        "then": {
+          "op": "reveal",
+          "zone": "dungeon",
+          "count": 3,
+          "bind": "peeked",
+          "then": {
+            "op": "reorder",
+            "query": {
+              "zone": "bound",
+              "var": "peeked"
+            },
+            "destination": "dungeon_top"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0224-A01",
+      "source_card_id": "TS-0224",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "draw",
+            "count": 3
+          },
+          {
+            "op": "select",
+            "query": {
+              "zone": "active_hand"
+            },
+            "bind": "putback",
+            "min": 3,
+            "max": 3,
+            "then": {
+              "op": "reorder",
+              "query": {
+                "zone": "bound",
+                "var": "putback"
+              },
+              "destination": "draw_top"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0289-A01",
+      "source_card_id": "TS-0289",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "draw",
+            "count": 1
+          },
+          {
+            "op": "choose_value",
+            "kind": "player",
+            "bind": "choice",
+            "then": {
+              "op": "reveal",
+              "count": 1,
+              "bind": "revealed",
+              "then": {
+                "op": "if",
+                "condition": {
+                  "exists": {
+                    "zone": "bound",
+                    "var": "revealed",
+                    "tag": "英雄"
+                  }
+                },
+                "then": {
+                  "op": "mod_magic_attack",
+                  "amount": 2
+                }
+              }
+            },
+            "scope": "others",
+            "as_subject": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0413-A03",
+      "source_card_id": "TS-0413",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_magic_attack",
+        "amount": {
+          "combat": "light"
+        }
+      }
+    },
+    {
+      "id": "TS-0270-A01",
+      "source_card_id": "TS-0270",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "draw",
+            "count": 1
+          },
+          {
+            "op": "select",
+            "query": {
+              "zone": "active_hand",
+              "unused": true,
+              "exclude_source": true
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "move",
+              "target": {
+                "var": "chosen"
+              },
+              "destination": "refill_add"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0283-A01",
+      "source_card_id": "TS-0283",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "reveal",
+        "count": 3,
+        "from_bottom": true,
+        "bind": "salvage",
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "select",
+              "query": {
+                "zone": "bound",
+                "var": "salvage",
+                "revealed_only": true
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "discard",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            },
+            {
+              "op": "select",
+              "query": {
+                "zone": "bound",
+                "var": "salvage",
+                "revealed_only": true
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            },
+            {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "salvage",
+                "revealed_only": true
+              },
+              "bind": "chosen",
+              "body": {
+                "op": "move",
+                "target": {
+                  "var": "chosen"
+                },
+                "destination": "hand"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0695-A01",
+      "source_card_id": "TS-0695",
+      "kind": "activated",
+      "source_zone": "active_control",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "let",
+        "bind": "destroyed",
+        "value": {
+          "add": [
+            1,
+            {
+              "count": {
+                "zone": "active_hand",
+                "tags_none": [
+                  "英雄"
+                ]
+              }
+            }
+          ]
+        },
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "destroy",
+              "target": {
+                "var": "source"
+              }
+            },
+            {
+              "op": "for_each",
+              "query": {
+                "zone": "active_hand",
+                "tags_none": [
+                  "英雄"
+                ]
+              },
+              "bind": "chosen",
+              "body": {
+                "op": "destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            },
+            {
+              "op": "draw",
+              "count": {
+                "mul": [
+                  2,
+                  {
+                    "value": "destroyed"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0706-A01",
+      "source_card_id": "TS-0706",
+      "kind": "activated",
+      "source_zone": "active_control",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand"
+        },
+        "bind": "sacrificed",
+        "min": 0,
+        "max": 100,
+        "then": {
+          "op": "let",
+          "bind": "destroyed",
+          "value": {
+            "add": [
+              1,
+              {
+                "count": {
+                  "zone": "bound",
+                  "var": "sacrificed"
+                }
+              }
+            ]
+          },
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "destroy",
+                "target": {
+                  "var": "source"
+                }
+              },
+              {
+                "op": "for_each",
+                "query": {
+                  "zone": "bound",
+                  "var": "sacrificed"
+                },
+                "bind": "chosen",
+                "body": {
+                  "op": "destroy",
+                  "target": {
+                    "var": "chosen"
+                  }
+                }
+              },
+              {
+                "op": "gain_xp",
+                "amount": {
+                  "value": "destroyed"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0437-A02",
+      "source_card_id": "TS-0437",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "upgrade",
+        "destination": "hand",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0698-A01",
+      "source_card_id": "TS-0698",
+      "kind": "activated",
+      "source_zone": "active_control",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "upgrade",
+        "destination": "hand",
+        "payment": "discard_source"
+      }
+    },
+    {
+      "id": "TS-0295-A01",
+      "source_card_id": "TS-0295",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "strength",
+              "amount": 2
+            },
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "attack",
+              "amount": 1
+            },
+            {
+              "op": "grant_turn_buff",
+              "target": {
+                "var": "chosen"
+              },
+              "buff": "discard_instead_of_destroy"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0296-A01",
+      "source_card_id": "TS-0296",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "strength",
+              "amount": 2
+            },
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "attack",
+              "amount": 1
+            },
+            {
+              "op": "grant_turn_buff",
+              "target": {
+                "var": "chosen"
+              },
+              "buff": "discard_instead_of_destroy"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0292-A01",
+      "source_card_id": "TS-0292",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "for_each",
+            "query": {
+              "zone": "active_hand",
+              "tag": "英雄"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "sequence",
+              "children": [
+                {
+                  "op": "mod_card",
+                  "target": {
+                    "var": "chosen"
+                  },
+                  "stat": "strength",
+                  "amount": 2
+                },
+                {
+                  "op": "mod_card",
+                  "target": {
+                    "var": "chosen"
+                  },
+                  "stat": "magic_attack",
+                  "amount": 1
+                }
+              ]
+            }
+          },
+          {
+            "op": "set_battle_flag",
+            "flag": "convert_all_magic",
+            "value": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0294-A01",
+      "source_card_id": "TS-0294",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_card",
+              "target": {
+                "var": "chosen"
+              },
+              "stat": "strength",
+              "amount": 3
+            },
+            {
+              "op": "convert_card_magic",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0259-A02",
+      "source_card_id": "TS-0259",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "bound",
+            "var": "source",
+            "equipper_tags_any": [
+              "法师",
+              "牧师"
+            ]
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "subcategory": "怪物"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "mod_magic_attack",
+          "amount": {
+            "div": [
+              {
+                "stat": {
+                  "var": "chosen",
+                  "field": "health"
+                }
+              },
+              2
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0299-A01",
+      "source_card_id": "TS-0299",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "choose_value",
+        "kind": "enum",
+        "bind": "declared",
+        "then": {
+          "op": "reveal",
+          "count": 1,
+          "bind": "flipped",
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "for_each",
+                "query": {
+                  "zone": "bound",
+                  "var": "flipped"
+                },
+                "bind": "chosen",
+                "body": {
+                  "op": "discard",
+                  "target": {
+                    "var": "chosen"
+                  }
+                }
+              },
+              {
+                "op": "if",
+                "condition": {
+                  "all": [
+                    {
+                      "choice_is": {
+                        "var": "declared",
+                        "option": "hero"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "zone": "bound",
+                        "var": "flipped",
+                        "semantic_type": "hero"
+                      }
+                    }
+                  ]
+                },
+                "then": {
+                  "op": "draw",
+                  "count": 2
+                }
+              },
+              {
+                "op": "if",
+                "condition": {
+                  "all": [
+                    {
+                      "choice_is": {
+                        "var": "declared",
+                        "option": "village"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "zone": "bound",
+                        "var": "flipped",
+                        "semantic_type": "village"
+                      }
+                    }
+                  ]
+                },
+                "then": {
+                  "op": "draw",
+                  "count": 2
+                }
+              },
+              {
+                "op": "if",
+                "condition": {
+                  "all": [
+                    {
+                      "choice_is": {
+                        "var": "declared",
+                        "option": "monster"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "zone": "bound",
+                        "var": "flipped",
+                        "semantic_type": "monster"
+                      }
+                    }
+                  ]
+                },
+                "then": {
+                  "op": "draw",
+                  "count": 2
+                }
+              }
+            ]
+          }
+        },
+        "options": [
+          "hero",
+          "village",
+          "monster"
+        ]
+      }
+    },
+    {
+      "id": "TS-0392-A02",
+      "source_card_id": "TS-0392",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "choose_value",
+          "kind": "enum",
+          "bind": "payment",
+          "then": {
+            "op": "if",
+            "condition": {
+              "choice_is": {
+                "var": "payment",
+                "option": "hero"
+              }
+            },
+            "then": {
+              "op": "if",
+              "condition": {
+                "exists": {
+                  "zone": "subject_hand",
+                  "tag": "英雄"
+                }
+              },
+              "then": {
+                "op": "select",
+                "query": {
+                  "zone": "subject_hand",
+                  "tag": "英雄"
+                },
+                "bind": "chosen",
+                "min": 1,
+                "max": 1,
+                "then": {
+                  "op": "discard",
+                  "target": {
+                    "var": "chosen"
+                  }
+                }
+              },
+              "else": {
+                "op": "show_hand"
+              }
+            },
+            "else": {
+              "op": "select",
+              "query": {
+                "zone": "subject_hand"
+              },
+              "bind": "chosen",
+              "min": 2,
+              "max": 2,
+              "then": {
+                "op": "for_each",
+                "query": {
+                  "zone": "bound",
+                  "var": "chosen"
+                },
+                "bind": "victim",
+                "body": {
+                  "op": "discard",
+                  "target": {
+                    "var": "victim"
+                  }
+                }
+              },
+              "allow_shortfall": true
+            }
+          },
+          "options": [
+            "hero",
+            "two_cards"
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0226-A03",
+      "source_card_id": "TS-0226",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "select",
+            "query": {
+              "zone": "hall",
+              "subcategory": "怪物",
+              "movable": true
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "shuffle_hall_top",
+              "target": {
+                "var": "chosen"
+              },
+              "count": 3
+            }
+          },
+          {
+            "op": "draw",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0232-A02",
+      "source_card_id": "TS-0232",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "hall",
+          "subcategory": "怪物",
+          "movable": true
+        },
+        "bind": "first",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "hall",
+            "subcategory": "怪物",
+            "movable": true,
+            "adjacent_to_var": "first"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "swap_hall",
+            "target": {
+              "var": "first"
+            },
+            "other": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0263-A01",
+      "source_card_id": "TS-0263",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "choose_value",
+            "kind": "dungeon",
+            "bind": "deck",
+            "then": {
+              "op": "reveal",
+              "zone": "dungeon",
+              "count": 1,
+              "bind": "peeked",
+              "then": {
+                "op": "select",
+                "query": {
+                  "zone": "reveal_zone",
+                  "subcategory": "怪物"
+                },
+                "bind": "incoming",
+                "min": 0,
+                "max": 1,
+                "then": {
+                  "op": "for_each",
+                  "query": {
+                    "zone": "bound",
+                    "var": "incoming"
+                  },
+                  "bind": "new_monster",
+                  "body": {
+                    "op": "select",
+                    "query": {
+                      "zone": "hall",
+                      "subcategory": "怪物",
+                      "movable": true,
+                      "in_selected_dungeon": true
+                    },
+                    "bind": "chosen",
+                    "min": 1,
+                    "max": 1,
+                    "then": {
+                      "op": "exchange_hall",
+                      "target": {
+                        "var": "chosen"
+                      },
+                      "other": {
+                        "var": "new_monster"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "op": "draw",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0454-A02",
+      "source_card_id": "TS-0454",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "choose_value",
+        "kind": "dungeon",
+        "bind": "deck",
+        "then": {
+          "op": "reveal",
+          "zone": "dungeon",
+          "count": 3,
+          "bind": "peeked",
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "select",
+                "query": {
+                  "zone": "reveal_zone",
+                  "subcategory": "怪物"
+                },
+                "bind": "incoming",
+                "min": 0,
+                "max": 1,
+                "then": {
+                  "op": "for_each",
+                  "query": {
+                    "zone": "bound",
+                    "var": "incoming"
+                  },
+                  "bind": "new_monster",
+                  "body": {
+                    "op": "select",
+                    "query": {
+                      "zone": "hall",
+                      "subcategory": "怪物",
+                      "movable": true,
+                      "in_selected_dungeon": true,
+                      "rank": 1
+                    },
+                    "bind": "chosen",
+                    "min": 1,
+                    "max": 1,
+                    "then": {
+                      "op": "exchange_hall",
+                      "target": {
+                        "var": "chosen"
+                      },
+                      "other": {
+                        "var": "new_monster"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "op": "reorder",
+                "query": {
+                  "zone": "reveal_zone"
+                },
+                "destination": "dungeon_top"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0455-A02",
+      "source_card_id": "TS-0455",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "reveal",
+          "count": 5,
+          "bind": "shown",
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "for_each",
+                "query": {
+                  "zone": "reveal_zone",
+                  "tag": "英雄"
+                },
+                "bind": "chosen",
+                "body": {
+                  "op": "discard",
+                  "target": {
+                    "var": "chosen"
+                  }
+                }
+              },
+              {
+                "op": "reorder",
+                "query": {
+                  "zone": "reveal_zone"
+                },
+                "destination": "draw_top"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0266-A01",
+      "source_card_id": "TS-0266",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄",
+          "tags_any": [
+            "法师",
+            "牧师"
+          ],
+          "max_by": "level"
+        },
+        "bind": "caster",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "hall",
+            "subcategory": "怪物",
+            "movable": true,
+            "compare_stat": {
+              "field": "vp",
+              "op": "le",
+              "value": {
+                "add": [
+                  {
+                    "stat": {
+                      "var": "caster",
+                      "field": "level"
+                    }
+                  },
+                  2
+                ]
+              }
+            }
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "relocate_hall",
+            "target": {
+              "var": "chosen"
+            },
+            "destination": "discard",
+            "defeat": true
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0271-A01",
+      "source_card_id": "TS-0271",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "for_players",
+            "scope": "others",
+            "body": {
+              "op": "gain_disease",
+              "count": 1
+            }
+          },
+          {
+            "op": "for_each",
+            "query": {
+              "zone": "hall",
+              "subcategory": "怪物"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "mod_monster_health",
+              "target": {
+                "var": "chosen"
+              },
+              "amount": -2
+            }
+          },
+          {
+            "op": "for_each",
+            "query": {
+              "zone": "hall",
+              "subcategory": "怪物",
+              "movable": true,
+              "compare_stat": {
+                "field": "health",
+                "op": "le",
+                "value": 0
+              }
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "relocate_hall",
+              "target": {
+                "var": "chosen"
+              },
+              "destination": "discard"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0246-A02",
+      "source_card_id": "TS-0246",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "listen",
+        "event": "BEFORE_HALL_REFILL",
+        "once": true,
+        "body": {
+          "op": "select",
+          "query": {
+            "zone": "hall",
+            "subcategory": "怪物",
+            "movable": true,
+            "vp_min": 1,
+            "vp_max": 2
+          },
+          "bind": "taken",
+          "min": 0,
+          "max": 1,
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "taken"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "relocate_hall",
+              "target": {
+                "var": "chosen"
+              },
+              "destination": "discard"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0277-A01",
+      "source_card_id": "TS-0277",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "add_global_rule",
+            "kind": "force_dungeon",
+            "until": "owner_next_turn_start",
+            "scope": "others",
+            "amount": 1
+          },
+          {
+            "op": "destroy",
+            "target": {
+              "var": "source"
+            }
+          },
+          {
+            "op": "draw",
+            "count": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0421-A02",
+      "source_card_id": "TS-0421",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "choose_value",
+          "kind": "player",
+          "bind": "recipient",
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "move",
+                "target": {
+                  "var": "chosen"
+                },
+                "destination": "discard"
+              },
+              {
+                "op": "for_players",
+                "scope": "active",
+                "body": {
+                  "op": "mod_magic_attack",
+                  "amount": 1
+                }
+              }
+            ]
+          },
+          "scope": "others",
+          "as_subject": true
+        }
+      }
+    },
+    {
+      "id": "TS-0396-A02",
+      "source_card_id": "TS-0396",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "other_control",
+            "subcategory": "宝藏"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "move",
+            "target": {
+              "var": "chosen"
+            },
+            "destination": "control",
+            "recipient": "active"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0416-A02",
+      "source_card_id": "TS-0416",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_id": "TS-0001"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "discard",
+            "target": {
+              "var": "chosen"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "hero_supply_top"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "sequence",
+              "children": [
+                {
+                  "op": "move",
+                  "target": {
+                    "var": "chosen"
+                  },
+                  "destination": "hand"
+                },
+                {
+                  "op": "mark_destroy",
+                  "target": {
+                    "var": "chosen"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0217-A01",
+      "source_card_id": "TS-0217",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "draw",
+            "count": 1
+          },
+          {
+            "op": "listen",
+            "event": "CARD_PURCHASED",
+            "once": true,
+            "conditions": [
+              {
+                "exists": {
+                  "zone": "event_source",
+                  "tag": "武器"
+                }
+              }
+            ],
+            "body": {
+              "op": "grant_buy",
+              "amount": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0231-A01",
+      "source_card_id": "TS-0231",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "draw",
+            "count": 1
+          },
+          {
+            "op": "grant_basic_buy"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0221-A01",
+      "source_card_id": "TS-0221",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "let",
+          "bind": "limit",
+          "value": {
+            "add": [
+              {
+                "stat": {
+                  "var": "chosen",
+                  "field": "cost"
+                }
+              },
+              2
+            ]
+          },
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              },
+              {
+                "op": "buy",
+                "filter": {
+                  "card_type": "村庄牌",
+                  "tags_none": [
+                    "英雄"
+                  ]
+                },
+                "destination": "discard",
+                "maximum_cost": {
+                  "value": "limit"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0300-A02",
+      "source_card_id": "TS-0300",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "listen",
+        "event": "CARD_PURCHASED",
+        "body": {
+          "op": "buy",
+          "filter": {
+            "card_type": "村庄牌"
+          },
+          "maximum_cost": {
+            "sub": [
+              {
+                "context": "price"
+              },
+              1
+            ]
+          },
+          "destination": "discard"
+        }
+      }
+    },
+    {
+      "id": "TS-0216-A01",
+      "source_card_id": "TS-0216",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "village"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "let",
+          "bind": "strength",
+          "value": {
+            "stat": {
+              "var": "chosen",
+              "field": "strength"
+            }
+          },
+          "then": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "discard",
+                "target": {
+                  "var": "chosen"
+                }
+              },
+              {
+                "op": "choose_value",
+                "kind": "player",
+                "bind": "choice",
+                "then": {
+                  "op": "reveal",
+                  "count": 1000,
+                  "until": {
+                    "tag": "英雄"
+                  },
+                  "bind": "revealed_hero",
+                  "then": {
+                    "op": "sequence",
+                    "children": [
+                      {
+                        "op": "for_each",
+                        "query": {
+                          "zone": "reveal_zone"
+                        },
+                        "bind": "chosen",
+                        "body": {
+                          "op": "discard",
+                          "target": {
+                            "var": "chosen"
+                          }
+                        }
+                      },
+                      {
+                        "op": "if",
+                        "condition": {
+                          "all": [
+                            {
+                              "exists": {
+                                "zone": "bound",
+                                "var": "revealed_hero",
+                                "tag": "英雄"
+                              }
+                            },
+                            {
+                              "compare": {
+                                "left": {
+                                  "value": "strength"
+                                },
+                                "op": "gt",
+                                "right": {
+                                  "maximum": {
+                                    "query": {
+                                      "zone": "bound",
+                                      "var": "revealed_hero",
+                                      "tag": "英雄"
+                                    },
+                                    "field": "strength"
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "then": {
+                          "op": "sequence",
+                          "children": [
+                            {
+                              "op": "for_each",
+                              "query": {
+                                "zone": "bound",
+                                "var": "revealed_hero",
+                                "tag": "英雄"
+                              },
+                              "bind": "chosen",
+                              "body": {
+                                "op": "destroy",
+                                "target": {
+                                  "var": "chosen"
+                                }
+                              }
+                            },
+                            {
+                              "op": "for_players",
+                              "scope": "active",
+                              "body": {
+                                "op": "gain_xp",
+                                "amount": 1
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "scope": "others",
+                "as_subject": true
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0317-A02",
+      "source_card_id": "TS-0317",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "clear_collection",
+            "collection": "militia"
+          },
+          {
+            "op": "for_players",
+            "scope": "others",
+            "body": {
+              "op": "if",
+              "condition": {
+                "exists": {
+                  "zone": "subject_hand",
+                  "card_id": "TS-0001"
+                }
+              },
+              "then": {
+                "op": "select",
+                "query": {
+                  "zone": "subject_hand",
+                  "card_id": "TS-0001"
+                },
+                "bind": "chosen",
+                "min": 1,
+                "max": 1,
+                "then": {
+                  "op": "sequence",
+                  "children": [
+                    {
+                      "op": "show",
+                      "target": {
+                        "var": "chosen"
+                      }
+                    },
+                    {
+                      "op": "collect",
+                      "collection": "militia",
+                      "query": {
+                        "zone": "bound",
+                        "var": "chosen"
+                      }
+                    }
+                  ]
+                }
+              },
+              "else": {
+                "op": "random_discard",
+                "count": 1
+              }
+            }
+          },
+          {
+            "op": "mod_attack",
+            "amount": {
+              "mul": [
+                2,
+                {
+                  "add": [
+                    {
+                      "count": {
+                        "zone": "active_hand",
+                        "card_id": "TS-0001"
+                      }
+                    },
+                    {
+                      "count": {
+                        "zone": "collection",
+                        "collection": "militia"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0362-A03",
+      "source_card_id": "TS-0362",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "subcategory": "怪物"
+        },
+        "bind": "offered",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "hall",
+            "subcategory": "怪物",
+            "movable": true,
+            "compare_stat": {
+              "field": "vp",
+              "op": "le",
+              "value": {
+                "add": [
+                  {
+                    "stat": {
+                      "var": "offered",
+                      "field": "vp"
+                    }
+                  },
+                  1
+                ]
+              }
+            }
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "exchange_hall",
+            "target": {
+              "var": "chosen"
+            },
+            "other": {
+              "var": "offered"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0422-A02",
+      "source_card_id": "TS-0422",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "hall",
+          "subcategory": "怪物"
+        },
+        "bind": "monster",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "mod_magic_attack",
+              "amount": {
+                "mul": [
+                  2,
+                  {
+                    "count": {
+                      "zone": "active_hand",
+                      "card_type": "疾病牌"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "op": "for_each",
+              "query": {
+                "zone": "active_hand",
+                "card_type": "疾病牌"
+              },
+              "bind": "disease",
+              "body": {
+                "op": "attach_card",
+                "target": {
+                  "var": "disease"
+                },
+                "anchor": {
+                  "var": "monster"
+                },
+                "kind": "disease_before"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0425-A02",
+      "source_card_id": "TS-0425",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "diseases",
+        "min": 0,
+        "max": 100,
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "diseases"
+          },
+          "bind": "disease",
+          "body": {
+            "op": "select",
+            "query": {
+              "zone": "hall",
+              "subcategory": "怪物"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "attach_card",
+              "target": {
+                "var": "disease"
+              },
+              "anchor": {
+                "var": "chosen"
+              },
+              "kind": "disease_after"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0265-A01",
+      "source_card_id": "TS-0265",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄",
+          "equipment_space": true
+        },
+        "bind": "hero",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "village_supply_top",
+            "tag": "武器",
+            "compare_stat": {
+              "field": "weight",
+              "op": "le",
+              "value": {
+                "stat": {
+                  "var": "hero",
+                  "field": "strength"
+                }
+              }
+            }
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "equip_from_supply",
+            "target": {
+              "var": "chosen"
+            },
+            "equipper": {
+              "var": "hero"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0244-A02",
+      "source_card_id": "TS-0244",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "bound",
+            "var": "source",
+            "equipper_tags_any": [
+              "法师",
+              "牧师"
+            ]
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "tag": "法术",
+          "used": true
+        },
+        "bind": "chosen",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "reuse_ability",
+          "target": {
+            "var": "chosen"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0298-A01",
+      "source_card_id": "TS-0298",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "remember",
+        "query": {
+          "zone": "all_discard"
+        },
+        "bind": "old",
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "for_players",
+              "scope": "all",
+              "body": {
+                "op": "select",
+                "query": {
+                  "zone": "subject_hand"
+                },
+                "bind": "chosen",
+                "min": 1,
+                "max": 1,
+                "then": {
+                  "op": "discard",
+                  "target": {
+                    "var": "chosen"
+                  }
+                },
+                "allow_shortfall": true
+              }
+            },
+            {
+              "op": "select",
+              "query": {
+                "zone": "all_discard",
+                "exclude_var": "old"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "sequence",
+                "children": [
+                  {
+                    "op": "move",
+                    "target": {
+                      "var": "chosen"
+                    },
+                    "destination": "hand",
+                    "recipient": "active"
+                  },
+                  {
+                    "op": "redistribute_discards",
+                    "query": {
+                      "zone": "all_discard",
+                      "exclude_var": "old"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "op": "draw",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0320-A02",
+      "source_card_id": "TS-0320",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "remember",
+        "query": {
+          "zone": "all_discard"
+        },
+        "bind": "before",
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "for_players",
+              "scope": "all",
+              "body": {
+                "op": "if",
+                "condition": {
+                  "exists": {
+                    "zone": "subject_hand",
+                    "subcategory": "怪物"
+                  }
+                },
+                "then": {
+                  "op": "select",
+                  "query": {
+                    "zone": "subject_hand",
+                    "subcategory": "怪物"
+                  },
+                  "bind": "chosen",
+                  "min": 1,
+                  "max": 1,
+                  "then": {
+                    "op": "discard",
+                    "target": {
+                      "var": "chosen"
+                    }
+                  }
+                },
+                "else": {
+                  "op": "show_hand"
+                }
+              }
+            },
+            {
+              "op": "remember",
+              "query": {
+                "zone": "all_discard",
+                "exclude_var": "before",
+                "subcategory": "怪物"
+              },
+              "bind": "dropped",
+              "then": {
+                "op": "listen",
+                "event": "MONSTER_DEFEATED",
+                "conditions": [
+                  {
+                    "exists": {
+                      "zone": "bound",
+                      "var": "dropped",
+                      "in_discard": true,
+                      "same_family_as_event": true,
+                      "vp_max": 5
+                    }
+                  }
+                ],
+                "body": {
+                  "op": "select",
+                  "query": {
+                    "zone": "bound",
+                    "var": "dropped",
+                    "in_discard": true,
+                    "same_family_as_event": true,
+                    "vp_max": 5
+                  },
+                  "bind": "claimed",
+                  "min": 0,
+                  "max": 1,
+                  "then": {
+                    "op": "for_each",
+                    "query": {
+                      "zone": "bound",
+                      "var": "claimed"
+                    },
+                    "bind": "chosen",
+                    "body": {
+                      "op": "sequence",
+                      "children": [
+                        {
+                          "op": "move",
+                          "target": {
+                            "var": "chosen"
+                          },
+                          "destination": "discard",
+                          "recipient": "active"
+                        },
+                        {
+                          "op": "remove_listener"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0404-A03",
+      "source_card_id": "TS-0404",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "remember",
+        "query": {
+          "zone": "all_discard"
+        },
+        "bind": "before",
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "for_players",
+              "scope": "all",
+              "body": {
+                "op": "if",
+                "condition": {
+                  "exists": {
+                    "zone": "subject_hand",
+                    "tag": "英雄"
+                  }
+                },
+                "then": {
+                  "op": "select",
+                  "query": {
+                    "zone": "subject_hand",
+                    "tag": "英雄"
+                  },
+                  "bind": "chosen",
+                  "min": 1,
+                  "max": 1,
+                  "then": {
+                    "op": "discard",
+                    "target": {
+                      "var": "chosen"
+                    }
+                  }
+                },
+                "else": {
+                  "op": "show_hand"
+                }
+              }
+            },
+            {
+              "op": "select",
+              "query": {
+                "zone": "all_discard",
+                "exclude_var": "before",
+                "tag": "英雄"
+              },
+              "bind": "taken",
+              "min": 0,
+              "max": 1,
+              "then": {
+                "op": "for_each",
+                "query": {
+                  "zone": "bound",
+                  "var": "taken"
+                },
+                "bind": "borrowed",
+                "body": {
+                  "op": "borrow_card",
+                  "target": {
+                    "var": "borrowed"
+                  },
+                  "when": "after_battle",
+                  "return_destroyed": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0327-A03",
+      "source_card_id": "TS-0327",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "remember",
+        "query": {
+          "zone": "all_discard"
+        },
+        "bind": "before",
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "for_players",
+              "scope": "all",
+              "body": {
+                "op": "if",
+                "condition": {
+                  "exists": {
+                    "zone": "subject_hand",
+                    "tag": "武器"
+                  }
+                },
+                "then": {
+                  "op": "select",
+                  "query": {
+                    "zone": "subject_hand",
+                    "tag": "武器"
+                  },
+                  "bind": "chosen",
+                  "min": 1,
+                  "max": 1,
+                  "then": {
+                    "op": "discard",
+                    "target": {
+                      "var": "chosen"
+                    }
+                  }
+                },
+                "else": {
+                  "op": "show_hand"
+                }
+              }
+            },
+            {
+              "op": "select",
+              "query": {
+                "zone": "all_discard",
+                "exclude_var": "before",
+                "tag": "武器",
+                "compare_stat": {
+                  "field": "weight",
+                  "op": "le",
+                  "value": {
+                    "stat": {
+                      "var": "source",
+                      "field": "strength"
+                    }
+                  }
+                }
+              },
+              "bind": "taken",
+              "min": 0,
+              "max": 1,
+              "then": {
+                "op": "for_each",
+                "query": {
+                  "zone": "bound",
+                  "var": "taken"
+                },
+                "bind": "borrowed",
+                "body": {
+                  "op": "borrow_card",
+                  "target": {
+                    "var": "borrowed"
+                  },
+                  "when": "after_battle",
+                  "return_destroyed": false,
+                  "equipper": {
+                    "var": "source"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0452-A02",
+      "source_card_id": "TS-0452",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "remember",
+        "query": {
+          "zone": "all_discard"
+        },
+        "bind": "before",
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "for_players",
+              "scope": "others",
+              "body": {
+                "op": "if",
+                "condition": {
+                  "exists": {
+                    "zone": "subject_hand",
+                    "tag": "物品"
+                  }
+                },
+                "then": {
+                  "op": "select",
+                  "query": {
+                    "zone": "subject_hand",
+                    "tag": "物品"
+                  },
+                  "bind": "chosen",
+                  "min": 1,
+                  "max": 1,
+                  "then": {
+                    "op": "discard",
+                    "target": {
+                      "var": "chosen"
+                    }
+                  }
+                },
+                "else": {
+                  "op": "show_hand"
+                }
+              }
+            },
+            {
+              "op": "select",
+              "query": {
+                "zone": "all_discard",
+                "exclude_var": "before",
+                "tag": "物品"
+              },
+              "bind": "taken",
+              "min": 0,
+              "max": 1,
+              "then": {
+                "op": "for_each",
+                "query": {
+                  "zone": "bound",
+                  "var": "taken"
+                },
+                "bind": "borrowed",
+                "body": {
+                  "op": "borrow_card",
+                  "target": {
+                    "var": "borrowed"
+                  },
+                  "when": "turn_end",
+                  "return_destroyed": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0415-A02",
+      "source_card_id": "TS-0415",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_id": "TS-0001"
+          }
+        },
+        {
+          "compare": {
+            "left": {
+              "count": {
+                "zone": "active_hand",
+                "tag": "英雄",
+                "exclude_source": true
+              }
+            },
+            "op": "ge",
+            "right": 2
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_id": "TS-0001"
+        },
+        "bind": "militia",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "active_hand",
+            "tag": "英雄",
+            "exclude_var": "militia",
+            "exclude_source": true
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "copy_hero",
+            "target": {
+              "var": "militia"
+            },
+            "other": {
+              "var": "chosen"
+            },
+            "preserve_attack": false,
+            "full_card": false
+          }
+        }
+      }
+    }
+  ]
+}

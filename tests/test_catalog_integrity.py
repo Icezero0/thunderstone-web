@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import unittest
 from collections import defaultdict
 from pathlib import Path
@@ -37,8 +38,8 @@ class CatalogIntegrityTests(unittest.TestCase):
         self.assertEqual(len({card["source_card_id"] for card in self.cards}), len(self.cards))
         self.assertEqual(len({card["card_id"] for card in self.cards}), len(self.cards))
         self.assertEqual([int(card["catalog_order"]) for card in self.cards], list(range(1, len(self.cards) + 1)))
-        self.assertEqual({card["card_id"] for card in self.fronts},
-                         {f"TS-{index:04d}" for index in range(1, len(self.fronts) + 1)})
+        self.assertEqual([card["card_id"] for card in self.fronts],
+                         [f"TS-{index:04d}" for index in range(1, len(self.fronts) + 1)])
         self.assertEqual([card["card_id"] for card in self.cards[-2:]], ["TS-REFERENCE-001", "TS-BACK-001"])
 
     def test_special_positions_and_grouped_numeric_values(self) -> None:
@@ -84,9 +85,9 @@ class CatalogIntegrityTests(unittest.TestCase):
         self.assertLess(int(colors[-1]["catalog_order"]), int(humanoids[0]["catalog_order"]))
         self.assertNotIn("random_card_id", self.cards[0])
 
-    def test_updated_random_village_card_keeps_its_id(self) -> None:
+    def test_updated_random_village_card_matches_published_order(self) -> None:
         card = next(card for card in self.cards if card["source_card_id"] == "deck_12_10x3_r03_c02")
-        self.assertEqual(card["card_id"], "TS-0187")
+        self.assertEqual(card["card_id"], "TS-0120")
         self.assertEqual((card["card_type"], card["subcategory"]), ("游戏设置牌", "随机牌"))
         self.assertEqual(card["waist_text"], "随机・村庄")
         self.assertEqual(card["tags"], "随机|村庄")
@@ -97,6 +98,19 @@ class CatalogIntegrityTests(unittest.TestCase):
         positions = [int(row["catalog_order"]) for row in random_village]
         self.assertEqual(positions, list(range(min(positions), max(positions) + 1)))
         self.assertIn(card, random_village)
+
+    def test_warhammer_is_grouped_with_blunt_weapons(self) -> None:
+        card = next(card for card in self.cards if card["source_card_id"] == "deck_19_10x3_r03_c07")
+        self.assertEqual(card["card_id"], "TS-0238")
+        self.assertEqual(card["catalog_order"], "238")
+        self.assertEqual(card["tags"], "武器|钝器")
+        self.assertEqual(card["waist_text"], "武器・钝器")
+        self.assertEqual(card["image_path"], "assets/cards/TS-0238.png")
+        group = [row for row in self.fronts
+                 if row["card_type"] == "村庄牌" and row["tags"] == "武器|钝器"]
+        positions = [int(row["catalog_order"]) for row in group]
+        self.assertEqual(positions, list(range(min(positions), max(positions) + 1)))
+        self.assertIn(card, group)
 
     def test_real_villager_groups_are_adjacent(self) -> None:
         village = [card for card in self.fronts if card["card_type"] == "村庄牌"]
@@ -112,10 +126,23 @@ class CatalogIntegrityTests(unittest.TestCase):
                 reward = card["defeat_xp_reward"]
                 self.assertEqual([field for field in (cost, reward) if field], [value] if value else [])
                 if cost:
-                    self.assertTrue(card["card_type"] == "英雄牌" or "英雄" in card["tags"].split("|"))
+                    self.assertIn("英雄", card["tags"].split("|"))
                 if reward:
                     self.assertEqual(card["card_type"], "地下城牌")
                     self.assertIn(card["subcategory"], {"怪物", "守护者"})
+
+    def test_all_hero_cards_have_explicit_semantic_tag_after_printed_tags(self) -> None:
+        draft_path = ROOT / "docs/游戏引擎设计参考/thunderstone_card_rules_v0.3.2_engine.json"
+        draft = {card["id"]: card for card in json.loads(draft_path.read_text(encoding="utf-8"))["cards"]}
+        for card in self.cards:
+            if card["card_type"] != "英雄牌":
+                continue
+            with self.subTest(card_id=card["card_id"]):
+                tags = card["tags"].split("|")
+                self.assertEqual(tags.count("英雄"), 1)
+                printed = list(dict.fromkeys(tag.strip() for tag in card["waist_text"].split("・") if tag.strip()))
+                self.assertEqual(tags, list(dict.fromkeys(printed + ["英雄"])))
+                self.assertEqual(draft[card["card_id"]]["tags"], tags)
 
     def test_published_images_match_card_ids(self) -> None:
         image_dir = ROOT / "assets/cards"

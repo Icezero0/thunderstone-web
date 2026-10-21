@@ -37,15 +37,18 @@ players:
   - {player_id: p2, seat_index: 1}
 rules:
   mode: classic
-  content_set: 已启用的卡组/扩展集合
   counts: {village_groups: 8, hero_groups: 4, monster_groups: 3}
   selection:
-    village: {fixed_randomizer_ids: [], fill: random}
-    hero: {fixed_randomizer_ids: [], fill: random}
-    monster: {fixed_randomizer_ids: [], fill: random}
-    dungeon_features: {fixed_randomizer_ids: [], random_feature_policy: classic}
-    environment: {fixed_card_id: null, random_feature_policy: classic}
-    thunderstone: {fixed_card_id: null, fill: random}
+    village: {fixed_randomizer_ids: []}
+    hero: {fixed_randomizer_ids: []}
+    monster: {fixed_randomizer_ids: []}
+    dungeon_features: {mode: classic_random}
+    guardian: {random_count: 0, fixed_card_ids: []}
+    environment: {random_count: 0, fixed_card_ids: []}
+    trap: {random_count: 0, fixed_group_ids: []}
+    treasure: {random_count: 0, fixed_group_ids: []}
+    thunderstone: {fixed_card_ids: []}
+  instance_multipliers: {village: 1, hero: 1, monster: 1}
   first_player: {method: random}
 catalog_version: 已选卡牌目录版本
 ruleset_version: 已选规则包版本
@@ -53,7 +56,9 @@ rng_seed: 由服务端确定并记录
 rng_algorithm_version: 已选随机算法版本
 ```
 
-初期仅实现 `mode=classic`。村庄 8 种、英雄 4 种、怪物 3 组是**默认值**，不是不可更改的规则常量；怪物组数不包含环境和其他地下城特征。可以先指定部分组，剩余名额由随机设置牌补齐，也可以全部随机或全部指定。指定一张实际卡牌时，联机界面应先解析它所属的可选组；引擎最终接收明确的设置牌或组 ID。组局细节见[组局章节](03-setup.md)。
+当前本地配置面板只生成 `rules` 的草稿，暂不收集玩家数、玩家名单、座位、先手玩家或随机种子。联机层在未来组装完整 `StartGameRequest` 时补入这些字段；面板的预检只覆盖规则参数及现有卡牌目录，不代表组局已能成功。
+
+初期仅实现 `mode=classic`，使用完整卡牌目录，不提供扩展筛选。村庄 8 种、英雄 4 种、怪物 3 组是**默认值**，不是不可更改的规则常量；怪物组数不包含环境和其他地下城特征。确定环境时固定组数不得超过调整后的目标组数；随机环境若降低目标并造成已选组超额，组局时随机丢弃超出的组。未指定的组默认由随机设置牌补齐。`selection.dungeon_features.mode=classic_random` 时按经典流程将地下城特征牌洗入设置池，四类手动选择必须为空；`manual` 时不抽特征设置牌，只按四类选择构建。守护者和环境的 `fixed_card_ids` 指实际卡牌；陷阱和宝藏的 `fixed_group_ids` 指完整牌组，分别有 3 组和 4 组，内部借用对应特征牌 ID 作稳定组 ID。`random_count` 表示从未固定的实际卡牌或牌组中无放回抽取的数量；环境只能为 0 或 1，且与固定环境互斥。雷霆之石的 `fixed_card_ids` 可指定部分，剩余名额随机补足；普通环境目标 1 张，飞龙尖塔目标 2 张，放逐仪式强制选入全部 7 张并加入末日之心。环境随机时，设置阶段在抽出具体环境后应用相同修正；输入预检检查各可能环境调整后的目标仍在目录可用范围内。村庄牌、所有等级的英雄牌、怪物牌分别使用 ×1～×5 的统一倍率，实际实例数为 `cards.csv.initial_copy_count × 对应倍率`；其他类型仍用 CSV 默认值。组局细节见[组局章节](03-setup.md)和[生成目录的规则](01-catalog-and-rulesets.md)。
 
 首位玩家在房间界面可选随机、指定玩家、上一局唯一赢家或房主。联机层将后面三种方式解析为 `{method: fixed, player_id: ..., source: specified | previous_winner | host}`：查询历史结果、判断房主是否参赛等由联机层完成；引擎只校验该 `player_id` 在本局名单里，并在设置事件中保留 `source`。默认 `{method: random}` 由引擎使用本局随机数状态选择。后续回合按提交的 `seat_index` 顺序循环，玩家顺序由联机层决定、引擎只读使用。
 

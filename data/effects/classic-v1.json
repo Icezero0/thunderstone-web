@@ -1,0 +1,65 @@
+{
+  "schema_version": "thunderstone.effects/1",
+  "source_draft": "thunderstone.card-engine.atoms/0.3.2",
+  "abilities": [
+    {
+      "id": "TS-0428-A02",
+      "source_card_id": "TS-0428",
+      "kind": "activated",
+      "actions": ["village", "dungeon"],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [
+        {"exists": {"zone": "active_hand", "card_type": "疾病牌"}}
+      ],
+      "body": {
+        "op": "select",
+        "query": {"zone": "active_hand", "card_type": "疾病牌"},
+        "bind": "disease",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {"op": "destroy", "target": {"var": "disease"}},
+          "then": {"op": "draw", "count": 2}
+        }
+      }
+    },
+    {
+      "id": "TS-0428-A03",
+      "source_card_id": "TS-0428",
+      "kind": "activated",
+      "actions": ["village", "dungeon"],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": {
+          "mul": [2, {"count": {"zone": "active_hand", "subcategory": "怪物"}}]
+        }
+      }
+    },
+    {
+      "id": "TS-0193-A02",
+      "source_card_id": "TS-0193",
+      "kind": "triggered",
+      "event": "ACTION_EXITED",
+      "source_zone": "settings",
+      "usage": "once_per_event",
+      "conditions": [
+        {"action_in": ["village", "rest"]},
+        {"setting_active": "TS-0193"},
+        {"exists": {"zone": "village_supply_top"}}
+      ],
+      "body": {
+        "op": "select",
+        "query": {"zone": "village_supply_top", "max_by": "purchase_cost"},
+        "bind": "supply_top",
+        "min": 1,
+        "max": 1,
+        "then": {"op": "destroy", "target": {"var": "supply_top"}}
+      }
+    }
+  ]
+}

@@ -1,0 +1,869 @@
+{
+  "schema_version": "thunderstone.effects/1",
+  "source_draft": "thunderstone.card-engine.atoms/0.3.2",
+  "abilities": [
+    {
+      "id": "TS-0211-A01",
+      "source_card_id": "TS-0211",
+      "kind": "activated",
+      "actions": [
+        "village"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 2
+      }
+    },
+    {
+      "id": "TS-0222-A01",
+      "source_card_id": "TS-0222",
+      "kind": "activated",
+      "actions": [
+        "village"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0225-A01",
+      "source_card_id": "TS-0225",
+      "kind": "activated",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0227-A01",
+      "source_card_id": "TS-0227",
+      "kind": "activated",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0373-A03",
+      "source_card_id": "TS-0373",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0374-A02",
+      "source_card_id": "TS-0374",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0427-A03",
+      "source_card_id": "TS-0427",
+      "kind": "activated",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0429-A02",
+      "source_card_id": "TS-0429",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0430-A03",
+      "source_card_id": "TS-0430",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0431-A02",
+      "source_card_id": "TS-0431",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0433-A02",
+      "source_card_id": "TS-0433",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0434-A02",
+      "source_card_id": "TS-0434",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 2
+      }
+    },
+    {
+      "id": "TS-0446-A02",
+      "source_card_id": "TS-0446",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0492-A03",
+      "source_card_id": "TS-0492",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0494-A03",
+      "source_card_id": "TS-0494",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0537-A02",
+      "source_card_id": "TS-0537",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0708-A02",
+      "source_card_id": "TS-0708",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "draw",
+        "count": 2
+      }
+    },
+    {
+      "id": "TS-0435-A02",
+      "source_card_id": "TS-0435",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "gain_xp",
+        "amount": 1
+      }
+    },
+    {
+      "id": "TS-0436-A02",
+      "source_card_id": "TS-0436",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "gain_xp",
+        "amount": 2
+      }
+    },
+    {
+      "id": "TS-0527-A04",
+      "source_card_id": "TS-0527",
+      "kind": "activated",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "gain_xp",
+        "amount": 1
+      }
+    },
+    {
+      "id": "TS-0219-A02",
+      "source_card_id": "TS-0219",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_attack",
+        "amount": 1
+      }
+    },
+    {
+      "id": "TS-0227-A02",
+      "source_card_id": "TS-0227",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "mod_magic_attack",
+        "amount": 1
+      }
+    },
+    {
+      "id": "TS-0210-A02",
+      "source_card_id": "TS-0210",
+      "kind": "activated",
+      "actions": [
+        "village"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "mod_gold",
+          "amount": 2
+        }
+      }
+    },
+    {
+      "id": "TS-0213-A02",
+      "source_card_id": "TS-0213",
+      "kind": "activated",
+      "actions": [
+        "village"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "mod_gold",
+          "amount": 2
+        }
+      }
+    },
+    {
+      "id": "TS-0215-A02",
+      "source_card_id": "TS-0215",
+      "kind": "activated",
+      "actions": [
+        "village"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "cost_gate",
+        "cost": {
+          "op": "destroy",
+          "target": {
+            "var": "source"
+          }
+        },
+        "then": {
+          "op": "mod_gold",
+          "amount": 2
+        }
+      }
+    },
+    {
+      "id": "TS-0220-A01",
+      "source_card_id": "TS-0220",
+      "kind": "activated",
+      "actions": [
+        "village"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "grant_buy",
+        "amount": 1
+      }
+    },
+    {
+      "id": "TS-0225-A02",
+      "source_card_id": "TS-0225",
+      "kind": "activated",
+      "actions": [
+        "village"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "grant_buy",
+        "amount": 1
+      }
+    },
+    {
+      "id": "TS-0215-A01",
+      "source_card_id": "TS-0215",
+      "kind": "activated",
+      "actions": [
+        "village"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [],
+      "body": {
+        "op": "grant_buy",
+        "amount": 1
+      }
+    },
+    {
+      "id": "TS-0372-A02",
+      "source_card_id": "TS-0372",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "repeatable",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "disease",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "disease"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0373-A04",
+      "source_card_id": "TS-0373",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "repeatable",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "disease",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "disease"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0376-A03",
+      "source_card_id": "TS-0376",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "disease",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "disease"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0426-A02",
+      "source_card_id": "TS-0426",
+      "kind": "activated",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "disease",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "disease"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0431-A03",
+      "source_card_id": "TS-0431",
+      "kind": "activated",
+      "actions": [
+        "village",
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "disease",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "disease"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0432-A02",
+      "source_card_id": "TS-0432",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "repeatable",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "disease",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "disease"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0433-A03",
+      "source_card_id": "TS-0433",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "repeatable",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "disease",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "disease"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0434-A03",
+      "source_card_id": "TS-0434",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "repeatable",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "disease",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "disease"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0524-A03",
+      "source_card_id": "TS-0524",
+      "kind": "activated",
+      "actions": [
+        "dungeon"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_type": "疾病牌"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_type": "疾病牌"
+        },
+        "bind": "disease",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "disease"
+            }
+          },
+          "then": {
+            "op": "draw",
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0213-A01",
+      "source_card_id": "TS-0213",
+      "kind": "activated",
+      "actions": [
+        "village"
+      ],
+      "source_zone": "active_hand",
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "card_id": "TS-0001"
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "active_hand",
+          "card_id": "TS-0001"
+        },
+        "bind": "militia",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "cost_gate",
+          "cost": {
+            "op": "destroy",
+            "target": {
+              "var": "militia"
+            }
+          },
+          "then": {
+            "op": "gain_xp",
+            "amount": 2
+          }
+        }
+      }
+    }
+  ]
+}

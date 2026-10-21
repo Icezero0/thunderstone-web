@@ -1,0 +1,1 @@
+"""Classic rules configuration."""

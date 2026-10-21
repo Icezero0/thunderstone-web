@@ -6,6 +6,7 @@
 
 # Local Python environment and tooling
 /.venv/
+/backend/instance/
 /.uv-cache/
 __pycache__/
 *.py[cod]

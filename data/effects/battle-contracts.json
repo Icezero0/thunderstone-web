@@ -1,0 +1,1749 @@
+[
+  {
+    "ability_id": "TS-0459-A01",
+    "hand": [
+      "TS-0002"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0002"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张武器。"
+  },
+  {
+    "ability_id": "TS-0552-A02",
+    "hand": [
+      "TS-0002"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0002"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张武器。"
+  },
+  {
+    "ability_id": "TS-0577-A01",
+    "hand": [
+      "TS-0002"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0002"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张武器。"
+  },
+  {
+    "ability_id": "TS-0663-A01",
+    "hand": [
+      "TS-0002"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0002"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张武器。"
+  },
+  {
+    "ability_id": "TS-0467-A02",
+    "hand": [
+      "TS-0267"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0267"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张法术。"
+  },
+  {
+    "ability_id": "TS-0475-A01",
+    "hand": [
+      "TS-0267"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0267"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张法术。"
+  },
+  {
+    "ability_id": "TS-0491-A02",
+    "hand": [
+      "TS-0267"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0267"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张法术。"
+  },
+  {
+    "ability_id": "TS-0486-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名民兵。"
+  },
+  {
+    "ability_id": "TS-0488-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名民兵。"
+  },
+  {
+    "ability_id": "TS-0527-A02",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名民兵。"
+  },
+  {
+    "ability_id": "TS-0576-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名民兵。"
+  },
+  {
+    "ability_id": "TS-0654-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名民兵。"
+  },
+  {
+    "ability_id": "TS-0665-A02",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名民兵。"
+  },
+  {
+    "ability_id": "TS-0669-A02",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名民兵。"
+  },
+  {
+    "ability_id": "TS-0670-A02",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名民兵。"
+  },
+  {
+    "ability_id": "TS-0512-A01",
+    "hand": [
+      "TS-0226"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0226"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名佣兵。"
+  },
+  {
+    "ability_id": "TS-0519-A02",
+    "hand": [
+      "TS-0339"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0339"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名战士。"
+  },
+  {
+    "ability_id": "TS-0569-A02",
+    "hand": [
+      "TS-0339"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0339"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名战士。"
+  },
+  {
+    "ability_id": "TS-0570-A02",
+    "hand": [
+      "TS-0339"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0339"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名战士。"
+  },
+  {
+    "ability_id": "TS-0668-A02",
+    "hand": [
+      "TS-0339"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0339"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名战士。"
+  },
+  {
+    "ability_id": "TS-0468-A02",
+    "hand": [
+      "TS-0401"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0401"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名牧师或法师。"
+  },
+  {
+    "ability_id": "TS-0492-A02",
+    "hand": [
+      "TS-0260"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0260"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张魔法物品或魔法武器。"
+  },
+  {
+    "ability_id": "TS-0460-A01",
+    "hand": [
+      "TS-0285",
+      "TS-0210"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0285"
+      ]
+    },
+    "source_line": "战斗：摧毁手牌中金币值最高的 1 张村庄牌。"
+  },
+  {
+    "ability_id": "TS-0496-A02",
+    "hand": [
+      "TS-0004"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0004"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0551-A02",
+    "hand": [
+      "TS-0003"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0003"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张物品。"
+  },
+  {
+    "ability_id": "TS-0553-A02",
+    "hand": [
+      "TS-0003"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0003"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张具有金币值的牌。"
+  },
+  {
+    "ability_id": "TS-0554-A02",
+    "hand": [
+      "TS-0302"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0302"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名英雄。"
+  },
+  {
+    "ability_id": "TS-0664-A01",
+    "hand": [
+      "TS-0302"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0302"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名英雄。"
+  },
+  {
+    "ability_id": "TS-0666-A02",
+    "hand": [
+      "TS-0302"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0302"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名英雄。"
+  },
+  {
+    "ability_id": "TS-0578-A01",
+    "hand": [
+      "TS-0004"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0004"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张食物。"
+  },
+  {
+    "ability_id": "TS-0584-A02",
+    "hand": [
+      "TS-0426"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0426"
+      ]
+    },
+    "source_line": "战斗：销毁一名牧师。"
+  },
+  {
+    "ability_id": "TS-0632-A01",
+    "hand": [
+      "TS-0302"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0302"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名非民兵英雄。"
+  },
+  {
+    "ability_id": "TS-0637-A01",
+    "hand": [
+      "TS-0003"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0003"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张物品。"
+  },
+  {
+    "ability_id": "TS-0638-A02",
+    "hand": [
+      "TS-0002"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0002"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张武器或法术。"
+  },
+  {
+    "ability_id": "TS-0640-A02",
+    "hand": [
+      "TS-0302"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0302"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名等级 1 的英雄。"
+  },
+  {
+    "ability_id": "TS-0641-A02",
+    "hand": [
+      "TS-0303"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0303"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名等级 2 的英雄。"
+  },
+  {
+    "ability_id": "TS-0642-A02",
+    "hand": [
+      "TS-0003"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0003"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张具有光照的牌。"
+  },
+  {
+    "ability_id": "TS-0671-A02",
+    "hand": [
+      "TS-0401"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0401"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名法师。"
+  },
+  {
+    "ability_id": "TS-0530-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0304"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁力量最低的 1 名英雄。"
+  },
+  {
+    "ability_id": "TS-0531-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0304"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁力量最低的 1 名英雄。"
+  },
+  {
+    "ability_id": "TS-0667-A02",
+    "hand": [
+      "TS-0001",
+      "TS-0304"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0304"
+      ]
+    },
+    "source_line": "战斗：摧毁力量最高的 1 名英雄。"
+  },
+  {
+    "ability_id": "TS-0594-A02",
+    "hand": [
+      "TS-0001",
+      "TS-0304"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0304"
+      ]
+    },
+    "source_line": "战斗：摧毁总攻击值最高的 1 名英雄。"
+  },
+  {
+    "ability_id": "TS-0532-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0001",
+      "TS-0304"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001",
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁 2 名力量为 4 或以下的英雄。"
+  },
+  {
+    "ability_id": "TS-0533-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0001",
+      "TS-0002"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001",
+        "TS-0001",
+        "TS-0002"
+      ]
+    },
+    "source_line": "战斗：摧毁 2 名力量为 5 或以下的英雄。摧毁重量最低的 1 张武器。"
+  },
+  {
+    "ability_id": "TS-0469-A02",
+    "hand": [
+      "TS-0304"
+    ],
+    "expected": {
+      "modified": {
+        "strength": -4,
+        "attack": -1
+      }
+    },
+    "source_line": "战斗：所有英雄承受攻击 -1 和 力量 -4。"
+  },
+  {
+    "ability_id": "TS-0478-A01",
+    "hand": [
+      "TS-0304"
+    ],
+    "expected": {
+      "modified": {
+        "strength": -2,
+        "attack": 0
+      }
+    },
+    "source_line": "战斗：所有英雄承受力量 -2。"
+  },
+  {
+    "ability_id": "TS-0487-A02",
+    "hand": [
+      "TS-0304"
+    ],
+    "expected": {
+      "modified": {
+        "strength": -2,
+        "attack": 0
+      }
+    },
+    "source_line": "战斗：所有英雄承受力量 -2。"
+  },
+  {
+    "ability_id": "TS-0489-A02",
+    "hand": [
+      "TS-0304"
+    ],
+    "expected": {
+      "modified": {
+        "strength": -4,
+        "attack": 0
+      }
+    },
+    "source_line": "战斗：所有英雄承受力量 -4。摧毁所有力量降至 0 或以下的英雄。"
+  },
+  {
+    "ability_id": "TS-0493-A02",
+    "hand": [
+      "TS-0304"
+    ],
+    "expected": {
+      "modified": {
+        "strength": -3,
+        "attack": 0
+      }
+    },
+    "source_line": "战斗：所有英雄承受力量 -3。任何英雄的力量在任意时点降至 0 或以下，则被摧毁。"
+  },
+  {
+    "ability_id": "TS-0567-A01",
+    "hand": [
+      "TS-0304"
+    ],
+    "expected": {
+      "modified": {
+        "strength": -2,
+        "attack": -1
+      }
+    },
+    "source_line": "战斗：所有英雄承受力量 -2 和 攻击 -1。"
+  },
+  {
+    "ability_id": "TS-0569-A01",
+    "hand": [
+      "TS-0304"
+    ],
+    "expected": {
+      "modified": {
+        "strength": -2,
+        "attack": 0
+      }
+    },
+    "source_line": "战斗：所有英雄承受力量 -2。"
+  },
+  {
+    "ability_id": "TS-0485-A01",
+    "hand": [
+      "TS-0302"
+    ],
+    "expected": {
+      "excluded": 1
+    },
+    "source_line": "战斗：一名英雄无法攻击。"
+  },
+  {
+    "ability_id": "TS-0629-A01",
+    "hand": [
+      "TS-0302"
+    ],
+    "expected": {
+      "excluded": 1
+    },
+    "source_line": "战斗：1 名英雄无法攻击。"
+  },
+  {
+    "ability_id": "TS-0630-A01",
+    "hand": [
+      "TS-0302",
+      "TS-0303"
+    ],
+    "expected": {
+      "excluded": 1,
+      "destroy_count": 1
+    },
+    "source_line": "战斗：1 名英雄无法攻击。摧毁该英雄。"
+  },
+  {
+    "ability_id": "TS-0631-A01",
+    "hand": [
+      "TS-0302",
+      "TS-0303"
+    ],
+    "expected": {
+      "excluded": 2,
+      "destroy_count": 2
+    },
+    "source_line": "战斗：2 名英雄无法攻击。摧毁这些英雄。"
+  },
+  {
+    "ability_id": "TS-0592-A02",
+    "hand": [
+      "TS-0302",
+      "TS-0303"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0302",
+        "TS-0303"
+      ]
+    },
+    "source_line": "战斗：摧毁所有弓箭手。"
+  },
+  {
+    "ability_id": "TS-0655-A01",
+    "hand": [
+      "TS-0302",
+      "TS-0303"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0302",
+        "TS-0303"
+      ]
+    },
+    "source_line": "战斗：摧毁所有弓箭手。"
+  },
+  {
+    "ability_id": "TS-0639-A02",
+    "hand": [
+      "TS-0001",
+      "TS-0001"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001",
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁所有民兵。"
+  },
+  {
+    "ability_id": "TS-0585-A03",
+    "hand": [
+      "TS-0401",
+      "TS-0426"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0401",
+        "TS-0426"
+      ]
+    },
+    "source_line": "战斗：摧毁所有牧师和法师。"
+  },
+  {
+    "ability_id": "TS-0464-A02",
+    "hand": [
+      "TS-0001",
+      "TS-0001",
+      "TS-0004"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001",
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁所有手牌中有复数张同名牌的牌。"
+  },
+  {
+    "ability_id": "TS-0633-A01",
+    "hand": [
+      "TS-0003"
+    ],
+    "expected": {
+      "modified": {
+        "attack": 1
+      }
+    },
+    "source_line": "战斗：光照物品获得攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0634-A01",
+    "hand": [
+      "TS-0002",
+      "TS-0001"
+    ],
+    "expected": {
+      "modified": {
+        "attack": 4
+      }
+    },
+    "equipment": [
+      "TS-0001",
+      "TS-0002"
+    ],
+    "source_line": "战斗：匕首获得攻击 +4。"
+  },
+  {
+    "ability_id": "TS-0636-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "modified": {
+        "attack": 2
+      }
+    },
+    "source_line": "战斗：民兵获得攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0529-A02",
+    "hand": [
+      "TS-0002",
+      "TS-0001"
+    ],
+    "expected": {
+      "modified": {
+        "attack": -1
+      }
+    },
+    "equipment": [
+      "TS-0001",
+      "TS-0002"
+    ],
+    "source_line": "战斗：每件武器承受 攻击 -1。"
+  },
+  {
+    "ability_id": "TS-0479-A01",
+    "hand": [],
+    "expected": {
+      "diseases": 2
+    },
+    "source_line": "战斗：获得 2 张疾病。"
+  },
+  {
+    "ability_id": "TS-0524-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 2
+    },
+    "source_line": "战斗：获得 2 张疾病。"
+  },
+  {
+    "ability_id": "TS-0484-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 2,
+      "other_diseases": 1
+    },
+    "source_line": "战斗：获得 2 张疾病。其他每位玩家获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0498-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1,
+      "other_diseases": 1
+    },
+    "source_line": "战斗：每位玩家获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0661-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0001"
+    ],
+    "expected": {
+      "diseases": 2,
+      "destroyed": [
+        "TS-0001",
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：每有 1 名民兵，获得 1 张疾病。摧毁所有民兵。"
+  },
+  {
+    "ability_id": "TS-0662-A02",
+    "hand": [
+      "TS-0001",
+      "TS-0339"
+    ],
+    "expected": {
+      "diseases": 2
+    },
+    "source_line": "战斗：每有 1 名战士或民兵，获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0586-A01",
+    "hand": [
+      "TS-0004",
+      "TS-0004"
+    ],
+    "expected": {
+      "diseases": 2,
+      "destroyed": [
+        "TS-0004",
+        "TS-0004"
+      ]
+    },
+    "source_line": "战斗：摧毁所有食物物品。每摧毁 1 张食物，获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0587-A01",
+    "hand": [
+      "TS-0003"
+    ],
+    "expected": {
+      "diseases": 1,
+      "destroyed": [
+        "TS-0003"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张光照物品。若成功摧毁了物品，获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0588-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0001"
+    ],
+    "expected": {
+      "diseases": 2,
+      "destroyed": [
+        "TS-0001",
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁 2 名民兵。每摧毁 1 名民兵，获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0589-A01",
+    "hand": [
+      "TS-0340"
+    ],
+    "expected": {
+      "diseases_from_stat": {
+        "card_id": "TS-0340",
+        "field": "level"
+      },
+      "destroyed": [
+        "TS-0340"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名战士。获得等同于该战士等级数量的疾病。"
+  },
+  {
+    "ability_id": "TS-0590-A01",
+    "hand": [
+      "TS-0476"
+    ],
+    "expected": {
+      "diseases_from_stat": {
+        "card_id": "TS-0476",
+        "field": "xp_reward"
+      },
+      "destroyed": [
+        "TS-0476"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 张怪物牌。获得数量等同于被摧毁怪物经验值的疾病。"
+  },
+  {
+    "ability_id": "TS-0591-A01",
+    "hand": [
+      "TS-0714"
+    ],
+    "expected": {
+      "diseases": 2
+    },
+    "source_line": "战斗：获得 1 张疾病。若手牌中有任意疾病牌，则额外获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0483-A01",
+    "hand": [
+      "TS-0714",
+      "TS-0004"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0004"
+      ]
+    },
+    "source_line": "战斗：手牌中每有 1 张疾病，摧毁 1 张非疾病牌。"
+  },
+  {
+    "ability_id": "TS-0527-A03",
+    "hand": [],
+    "expected": {
+      "xp_loss_each": 1
+    },
+    "source_line": "所有玩家摧毁 1 点经验值。"
+  },
+  {
+    "ability_id": "TS-0504-A02",
+    "hand": [
+      "TS-0476"
+    ],
+    "expected": {
+      "destroy_count_each": 1
+    },
+    "source_line": "战斗：每位玩家展示手牌并摧毁其中 1 张怪物牌。"
+  },
+  {
+    "ability_id": "TS-0613-A01",
+    "hand": [],
+    "expected": {
+      "diseases": 1,
+      "other_diseases": 1
+    },
+    "source_line": "战斗：每位玩家获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0614-A01",
+    "hand": [],
+    "expected": {
+      "diseases": 1,
+      "other_diseases": 1
+    },
+    "source_line": "战斗：每位玩家获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0613-A03",
+    "hand": [
+      "TS-0426"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0426"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名牧师。"
+  },
+  {
+    "ability_id": "TS-0614-A03",
+    "hand": [
+      "TS-0302"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0302"
+      ]
+    },
+    "source_line": "战斗：摧毁 1 名等级 1 或以上的英雄。"
+  },
+  {
+    "ability_id": "TS-0507-A02",
+    "hand": [
+      "TS-0001",
+      "TS-0311"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：摧毁所有未装备武器且没有魔法攻击的英雄。"
+  },
+  {
+    "ability_id": "TS-0579-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "战斗：除非队伍中至少装备了 1 张武器，否则摧毁 1 名英雄。"
+  },
+  {
+    "ability_id": "TS-0607-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0002"
+    ],
+    "expected": {
+      "modified": {
+        "attack": 1
+      }
+    },
+    "equipment": [
+      "TS-0001",
+      "TS-0002"
+    ],
+    "source_line": "战斗：装备了武器的英雄获得攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0683-A03",
+    "hand": [
+      "TS-0707",
+      "TS-0708"
+    ],
+    "expected": {
+      "modified": {
+        "magic_attack": 6
+      }
+    },
+    "source_line": "战斗：雷霆之石获得 魔法攻击 +6。若战斗后末日之心未被击败，该玩家败北。"
+  },
+  {
+    "ability_id": "TS-0534-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0001",
+      "TS-0302",
+      "TS-0002",
+      "TS-0238"
+    ],
+    "expected": {
+      "destroy_count": 2
+    },
+    "source_line": "战斗：摧毁除力量最高的 2 名英雄以外的所有英雄。摧毁除重量最高的 1 张武器以外的所有武器。"
+  },
+  {
+    "ability_id": "TS-0595-A02",
+    "hand": [
+      "TS-0001",
+      "TS-0001",
+      "TS-0302"
+    ],
+    "expected": {
+      "destroy_count": 1
+    },
+    "source_line": "战斗：摧毁除 2 名英雄以外的所有英雄。"
+  },
+  {
+    "ability_id": "TS-0555-A02",
+    "hand": [
+      "TS-0001",
+      "TS-0302",
+      "TS-0003"
+    ],
+    "expected": {
+      "destroy_count": 2
+    },
+    "variants": [
+      {
+        "hand": [
+          "TS-0001",
+          "TS-0302"
+        ],
+        "expected": {
+          "destroy_count": 1
+        }
+      }
+    ],
+    "source_line": "战斗：摧毁 2 张手牌，其中最多只能有 1 张英雄牌。"
+  },
+  {
+    "ability_id": "TS-0635-A01",
+    "hand": [
+      "TS-0003",
+      "TS-0003"
+    ],
+    "expected": {
+      "destroy_count": 2,
+      "attack_bonus": 6
+    },
+    "variants": [
+      {
+        "used_card_ids": [
+          "TS-0003"
+        ],
+        "expected": {
+          "destroy_count": 1,
+          "attack_bonus": 3
+        }
+      },
+      {
+        "choose_count": 0,
+        "expected": {
+          "destroy_count": 0,
+          "attack_bonus": 0
+        }
+      }
+    ],
+    "source_line": "战斗：你可以摧毁手牌中任意数量的物品。每摧毁 1 件物品，获得 攻击 +3。不能摧毁本回合已经使用过地下城效果的物品。"
+  },
+  {
+    "ability_id": "TS-0470-A01",
+    "hand": [
+      "TS-0004"
+    ],
+    "expected": {
+      "outcome": "win",
+      "immediate_destroyed": [
+        "TS-0004"
+      ]
+    },
+    "attack": 100,
+    "values": [
+      "pay"
+    ],
+    "assert_failed_departure": true,
+    "variants": [
+      {
+        "values": [
+          "decline"
+        ],
+        "expected": {
+          "outcome": "loss",
+          "immediate_destroyed": []
+        }
+      },
+      {
+        "hand": [],
+        "xp": 0,
+        "expected": {
+          "outcome": "loss",
+          "immediate_destroyed": []
+        }
+      }
+    ],
+    "source_line": "当你选择与此怪物战斗时，除非你立即摧毁 1 张食物，否则无法击败此牌。"
+  },
+  {
+    "ability_id": "TS-0471-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "outcome": "win",
+      "immediate_destroyed": [
+        "TS-0001"
+      ]
+    },
+    "attack": 100,
+    "values": [
+      "pay"
+    ],
+    "assert_failed_departure": true,
+    "variants": [
+      {
+        "values": [
+          "decline"
+        ],
+        "expected": {
+          "outcome": "loss",
+          "immediate_destroyed": []
+        }
+      },
+      {
+        "hand": [],
+        "xp": 0,
+        "expected": {
+          "outcome": "loss",
+          "immediate_destroyed": []
+        }
+      }
+    ],
+    "source_line": "当你选择与此怪物战斗时，除非你立即摧毁 1 名英雄，否则无法击败此牌。"
+  },
+  {
+    "ability_id": "TS-0472-A01",
+    "hand": [],
+    "expected": {
+      "outcome": "win",
+      "xp_spent": 2
+    },
+    "attack": 100,
+    "values": [
+      "pay"
+    ],
+    "assert_failed_departure": true,
+    "variants": [
+      {
+        "values": [
+          "decline"
+        ],
+        "expected": {
+          "outcome": "loss",
+          "immediate_destroyed": []
+        }
+      },
+      {
+        "hand": [],
+        "xp": 0,
+        "expected": {
+          "outcome": "loss",
+          "immediate_destroyed": []
+        }
+      }
+    ],
+    "source_line": "当你选择与此怪物战斗时，除非你立即摧毁 2 点经验值，否则无法击败此牌。"
+  },
+  {
+    "ability_id": "TS-0473-A01",
+    "hand": [
+      "TS-0476"
+    ],
+    "expected": {
+      "outcome": "win",
+      "immediate_destroyed": [
+        "TS-0476"
+      ]
+    },
+    "attack": 100,
+    "values": [
+      "pay"
+    ],
+    "assert_failed_departure": true,
+    "variants": [
+      {
+        "values": [
+          "decline"
+        ],
+        "expected": {
+          "outcome": "loss",
+          "immediate_destroyed": []
+        }
+      },
+      {
+        "hand": [],
+        "xp": 0,
+        "expected": {
+          "outcome": "loss",
+          "immediate_destroyed": []
+        }
+      }
+    ],
+    "source_line": "当你选择与此怪物战斗时，除非摧毁 1 张怪物牌，否则无法击败此牌。"
+  },
+  {
+    "ability_id": "TS-0474-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0003",
+      "TS-0004"
+    ],
+    "expected": {
+      "outcome": "win"
+    },
+    "attack": 100,
+    "values": [
+      "pay"
+    ],
+    "assert_failed_departure": true,
+    "variants": [
+      {
+        "values": [
+          "decline"
+        ],
+        "expected": {
+          "outcome": "loss",
+          "immediate_destroyed": []
+        }
+      },
+      {
+        "hand": [],
+        "xp": 0,
+        "expected": {
+          "outcome": "loss",
+          "immediate_destroyed": []
+        }
+      }
+    ],
+    "source_line": "当你选择与此怪物战斗时，除非立即弃掉 3 张牌，否则无法击败此牌。"
+  },
+  {
+    "ability_id": "TS-0672-A01",
+    "hand": [
+      "TS-0001",
+      "TS-0302",
+      "TS-0401"
+    ],
+    "expected": {
+      "excluded": 2
+    },
+    "variants": [
+      {
+        "hand": [
+          "TS-0001"
+        ],
+        "expected": {
+          "excluded": 0
+        }
+      }
+    ],
+    "source_line": "手牌中每有 1 种英雄职业，便有 1 名英雄无法攻击。"
+  },
+  {
+    "ability_id": "TS-0672-A02",
+    "hand": [],
+    "expected": {},
+    "variants": [
+      {
+        "hand": [
+          "TS-0001",
+          "TS-0302"
+        ],
+        "excluded_card_ids": [
+          "TS-0001"
+        ],
+        "expected": {
+          "destroy_count": 1
+        }
+      }
+    ],
+    "source_line": "战斗：摧毁所有未参与战斗的英雄。"
+  },
+  {
+    "ability_id": "TS-0672-A03",
+    "hand": [],
+    "expected": {
+      "retreat_position": 3
+    },
+    "source_line": "战斗：若此牌未被击败，将其放入地下城牌堆，自牌堆顶起第 3 张的位置。"
+  },
+  {
+    "ability_id": "TS-0464-A01",
+    "hand": [
+      "TS-0302",
+      "TS-0302"
+    ],
+    "expected": {
+      "excluded": 1
+    },
+    "variants": [
+      {
+        "hand": [
+          "TS-0302",
+          "TS-0303"
+        ],
+        "expected": {
+          "excluded": 0
+        }
+      },
+      {
+        "hand": [
+          "TS-0302",
+          "TS-0302",
+          "TS-0302"
+        ],
+        "expected": {
+          "excluded": 2
+        }
+      }
+    ],
+    "source_line": "攻击此牌时，同名英雄最多只能有 1 名参与战斗。"
+  },
+  {
+    "ability_id": "TS-0509-A02",
+    "hand": [
+      "TS-0003"
+    ],
+    "expected": {
+      "random_destroyed": 1
+    },
+    "variants": [
+      {
+        "hand": [
+          "TS-0495"
+        ],
+        "expected": {
+          "random_destroyed": 0
+        }
+      }
+    ],
+    "source_line": "战斗：战斗结束时，从手牌中随机抽取一张牌，若不是元素牌，则摧毁该牌。"
+  },
+  {
+    "ability_id": "TS-0560-A02",
+    "hand": [
+      "TS-0226",
+      "TS-0226"
+    ],
+    "expected": {
+      "supply_destroyed": 2
+    },
+    "supplies": [
+      {
+        "card_id": "TS-0226",
+        "kind": "village",
+        "count": 4
+      }
+    ],
+    "source_line": "战斗：手牌中每有 1 张村庄牌，摧毁其对应村庄牌堆顶部的 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0604-A01",
+    "hand": [
+      "TS-0302"
+    ],
+    "expected": {
+      "supply_destroyed": 1,
+      "supply_destroyed_cards": [
+        "TS-0304"
+      ]
+    },
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "kind": "hero",
+        "count": 1
+      },
+      {
+        "card_id": "TS-0304",
+        "kind": "hero",
+        "count": 1,
+        "pile": 0
+      }
+    ],
+    "source_line": "战斗：摧毁每个参与战斗的英雄对应的英雄牌堆底部 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0656-A01",
+    "hand": [
+      "TS-0302",
+      "TS-0303"
+    ],
+    "expected": {
+      "immediate_destroyed": [
+        "TS-0302"
+      ],
+      "destroyed": [
+        "TS-0303"
+      ]
+    },
+    "variants": [
+      {
+        "hand": [
+          "TS-0302",
+          "TS-0002"
+        ],
+        "equipment": [
+          "TS-0302",
+          "TS-0002"
+        ],
+        "expected": {
+          "immediate_destroyed": [],
+          "destroyed": []
+        }
+      }
+    ],
+    "source_line": "战斗：在计算你的总攻击值前，摧毁 1 名未装备锋利武器的英雄。战斗结束时，摧毁所有未装备锋利武器的英雄。"
+  },
+  {
+    "ability_id": "TS-0463-A02",
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "expected": {
+      "destroyed": [
+        "TS-0304"
+      ]
+    },
+    "other_hand": [
+      "TS-0304",
+      "TS-0304"
+    ],
+    "source_line": "战斗：每位玩家展示手牌中的 2 名英雄，或展示手牌以证明没有。摧毁展示英雄中力量最高的 1 名英雄。"
+  },
+  {
+    "ability_id": "TS-0462-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0466-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0476-A01",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0477-A01",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0478-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0480-A01",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0481-A01",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0482-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0483-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0517-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0582-A01",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0609-A01",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0610-A01",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0611-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0616-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0617-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0618-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0619-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0620-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0621-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0622-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0623-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0624-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0625-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0658-A01",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0659-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0660-A02",
+    "hand": [],
+    "expected": {
+      "diseases": 1
+    },
+    "source_line": "战斗：获得 1 张疾病。"
+  }
+]

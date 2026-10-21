@@ -1,0 +1,4541 @@
+[
+  {
+    "ability_id": "TS-0004-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 2
+        }
+      }
+    },
+    "source_line": "地下城：一名英雄获得力量 +2。"
+  },
+  {
+    "ability_id": "TS-0291-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 3
+        }
+      }
+    },
+    "source_line": "地下城：一名英雄获得力量 +3。"
+  },
+  {
+    "ability_id": "TS-0293-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 3
+        }
+      }
+    },
+    "source_line": "一名英雄获得力量 +3。"
+  },
+  {
+    "ability_id": "TS-0530-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 3
+        }
+      }
+    },
+    "source_line": "地下城：一名英雄获得力量 +3。"
+  },
+  {
+    "ability_id": "TS-0644-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 2
+        }
+      }
+    },
+    "source_line": "地下城：一名英雄获得 力量 +2。"
+  },
+  {
+    "ability_id": "TS-0211-A02",
+    "actions": [
+      "village"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 3,
+      "destroyed": [
+        "TS-0211"
+      ]
+    },
+    "source_line": "村庄：摧毁此牌，额外抽 3 张牌。"
+  },
+  {
+    "ability_id": "TS-0212-A01",
+    "actions": [
+      "village"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "gold": 2
+    },
+    "source_line": "村庄：获得等同于玩家数的金币。"
+  },
+  {
+    "ability_id": "TS-0214-A02",
+    "actions": [
+      "village"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "gold": 2,
+      "destroyed": [
+        "TS-0214"
+      ]
+    },
+    "source_line": "村庄：摧毁此牌。手牌中每有 1 名英雄，获得 1 金币。"
+  },
+  {
+    "ability_id": "TS-0223-A01",
+    "actions": [
+      "village"
+    ],
+    "hand": [],
+    "xp": 12,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 5
+    },
+    "source_line": "村庄：你每拥有 2 点经验值，抽 1 张牌，最多抽 5 张。"
+  },
+  {
+    "ability_id": "TS-0223-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2,
+      "xp": 1,
+      "destroyed": [
+        "TS-0001"
+      ]
+    },
+    "source_line": "地下城：摧毁 1 名民兵，抽 2 张牌并获得 1 点经验值。"
+  },
+  {
+    "ability_id": "TS-0229-A01",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "discard_count": 1
+    },
+    "source_line": "村庄 / 地下城：抽 1 张牌，然后弃掉 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0230-A01",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0714",
+      "TS-0715"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 4,
+      "destroyed": [
+        "TS-0714",
+        "TS-0715"
+      ]
+    },
+    "source_line": "村庄 / 地下城：摧毁你手牌中任意数量的疾病。每以此方式摧毁 1 张疾病，抽 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0231-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2
+    },
+    "source_line": "地下城：手牌中每有 1 名民兵，抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0256-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "attack": 3
+      },
+      "destroyed": [
+        "TS-0256"
+      ]
+    },
+    "source_line": "地下城：摧毁此牌以额外获得攻击 +3。"
+  },
+  {
+    "ability_id": "TS-0267-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "attack": 1
+        },
+        "TS-0302": {
+          "attack": 1
+        }
+      }
+    },
+    "source_line": "地下城：所有英雄获得攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0264-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "flags": {
+        "convert_equipped_magic": true
+      }
+    },
+    "source_line": "地下城：所有装备了武器的英雄，其攻击改为魔法攻击。抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0281-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "flags": {
+        "zero_weapon_weight": true
+      }
+    },
+    "source_line": "地下城：所有武器的重量变为 0。抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0276-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2,
+      "other_draw": 1
+    },
+    "source_line": "地下城：抽 2 张牌。其他每位玩家抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0286-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 3
+        },
+        "TS-0302": {
+          "strength": 3
+        }
+      }
+    },
+    "source_line": "地下城：每名英雄获得力量 +3。"
+  },
+  {
+    "ability_id": "TS-0329-A02",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0328",
+      "TS-0328"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2
+    },
+    "source_line": "村庄 / 地下城：手牌中每有 1 名其他方阵英雄，抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0335-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0226"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2
+    },
+    "source_line": "地下城：手牌中每有 1 名佣兵，抽 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0318-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0476"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0318": {
+          "attack": 2
+        }
+      }
+    },
+    "source_line": "地下城：若你手牌中有怪物，该英雄获得攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0319-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0476"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0319": {
+          "attack": 3
+        }
+      }
+    },
+    "source_line": "地下城：若你手牌中有怪物，该英雄获得攻击 +3。"
+  },
+  {
+    "ability_id": "TS-0322-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "attack": 2
+      },
+      "destroy_count": 1
+    },
+    "source_line": "地下城：摧毁 1 名英雄，额外获得攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0323-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "attack": 4
+      },
+      "destroy_count": 1
+    },
+    "source_line": "地下城：摧毁 1 名英雄，额外获得攻击 +4。"
+  },
+  {
+    "ability_id": "TS-0345-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0004"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "attack": 2
+      },
+      "destroyed": [
+        "TS-0004"
+      ]
+    },
+    "source_line": "地下城：摧毁 1 张食物，额外获得攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0346-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0004"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "attack": 2
+      },
+      "destroyed": [
+        "TS-0004"
+      ]
+    },
+    "source_line": "地下城：摧毁 1 张食物，额外获得攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0348-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0004"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "attack": 3
+      },
+      "destroyed": [
+        "TS-0004"
+      ]
+    },
+    "source_line": "地下城：摧毁 1 张食物，额外获得攻击 +3。"
+  },
+  {
+    "ability_id": "TS-0349-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0004"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "attack": 3
+      },
+      "destroyed": [
+        "TS-0004"
+      ]
+    },
+    "source_line": "重复地下城：摧毁 1 张食物，额外获得攻击 +3。"
+  },
+  {
+    "ability_id": "TS-0349-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0476",
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0349": {
+          "attack": 1
+        }
+      }
+    },
+    "source_line": "地下城：手牌中每有 1 张怪物，获得攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0350-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0476",
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0350": {
+          "attack": 2
+        }
+      }
+    },
+    "source_line": "地下城：手牌中每有 1 张怪物，获得攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0427-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0476",
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0427": {
+          "attack": 2
+        }
+      }
+    },
+    "source_line": "地下城：手牌中每有 1 张疾病或怪物牌，获得攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0366-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0267",
+      "TS-0276"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "magic_attack": 2
+      }
+    },
+    "source_line": "地下城：手牌中每有 1 张法术，获得魔法攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0367-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0267",
+      "TS-0276"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "magic_attack": 4
+      }
+    },
+    "source_line": "地下城：手牌中每有 1 张法术，获得魔法攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0520-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0267",
+      "TS-0276"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "magic_attack": 2
+      }
+    },
+    "source_line": "地下城：手牌中每有 1 张法术，获得魔法攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0373-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003",
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "attack": 2
+      }
+    },
+    "source_line": "地下城：每有 1 张能产生光照的物品，就获得攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0377-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "battle_modifiers": {
+        "magic_attack": 4
+      },
+      "destroyed": [
+        "TS-0714"
+      ]
+    },
+    "source_line": "重复地下城：摧毁 1 张疾病，额外获得魔法攻击 +4，并抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0378-A02",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "discard_count": 1
+    },
+    "source_line": "村庄 / 地下城：弃掉 1 张疾病，抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0424-A03",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "discard_count": 1
+    },
+    "source_line": "村庄 / 地下城：弃掉 1 张疾病，抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0379-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "discard_count": 1,
+      "battle_modifiers": {
+        "attack": 1
+      }
+    },
+    "source_line": "地下城：弃掉 1 张疾病，抽 1 张牌，并额外获得攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0380-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2,
+      "discard_count": 1,
+      "battle_modifiers": {
+        "attack": 2
+      }
+    },
+    "source_line": "地下城：弃掉 1 张疾病或 1 名村民，抽 2 张牌，并额外获得攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0381-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0003"
+      ],
+      "battle_modifiers": {
+        "magic_attack": 3
+      }
+    },
+    "source_line": "重复地下城：摧毁 1 张光照物品以获得魔法攻击 +3。"
+  },
+  {
+    "ability_id": "TS-0382-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0003"
+      ],
+      "battle_modifiers": {
+        "magic_attack": 4
+      }
+    },
+    "source_line": "重复地下城：摧毁 1 张光照物品以获得魔法攻击 +4。"
+  },
+  {
+    "ability_id": "TS-0386-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "discard_count": 1,
+      "battle_modifiers": {
+        "attack": 2
+      }
+    },
+    "source_line": "地下城：弃掉 1 张牌，额外获得攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0391-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_discard": 1
+    },
+    "source_line": "地下城：其他每位玩家弃掉 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0448-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_discard": 1
+    },
+    "source_line": "地下城：其他每位玩家弃掉 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0449-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_discard": 1
+    },
+    "source_line": "地下城：其他每位玩家弃掉 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0457-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_discard": 1
+    },
+    "source_line": "地下城：其他每位玩家弃掉 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0395-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_xp": -1
+    },
+    "source_line": "地下城：其他每位玩家失去 1 点经验值。"
+  },
+  {
+    "ability_id": "TS-0400-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [
+      "TS-0003"
+    ],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0003"
+      ],
+      "battle_modifiers": {
+        "magic_attack": 2
+      }
+    },
+    "source_line": "地下城：摧毁 1 张牌，获得等同于其金币值的魔法攻击。"
+  },
+  {
+    "ability_id": "TS-0401-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0267"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2,
+      "destroyed": [
+        "TS-0267"
+      ]
+    },
+    "source_line": "地下城：摧毁 1 张不具有金币值的牌，抽 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0418-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0476"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "magic_equals_monster_vp": "TS-0476"
+    },
+    "source_line": "地下城：获得等同于你手牌中 1 张怪物牌胜利点的魔法攻击。"
+  },
+  {
+    "ability_id": "TS-0419-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0476",
+      "TS-0476"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "magic_sum_monster_vp": [
+        "TS-0476",
+        "TS-0476"
+      ]
+    },
+    "source_line": "地下城：获得等同于你手牌中所有怪物牌面胜利点总和的魔法攻击。"
+  },
+  {
+    "ability_id": "TS-0420-A02",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0714"
+      ]
+    },
+    "source_line": "村庄 / 地下城：摧毁 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0429-A03",
+    "actions": [
+      "village"
+    ],
+    "hand": [
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0714"
+      ],
+      "gold": 2
+    },
+    "source_line": "村庄：摧毁 1 张疾病，以获得 2 金币。"
+  },
+  {
+    "ability_id": "TS-0441-A02",
+    "actions": [
+      "village"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "gold": 2
+    },
+    "source_line": "村庄：手牌中每有 1 名其他英雄，获得 1 金币。"
+  },
+  {
+    "ability_id": "TS-0442-A02",
+    "actions": [
+      "village"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "gold": 2
+    },
+    "source_line": "村庄：手牌中每有 1 名其他英雄，获得 1 金币。"
+  },
+  {
+    "ability_id": "TS-0443-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0443": {
+          "attack": 4
+        }
+      }
+    },
+    "source_line": "地下城：若你手牌中所有牌的金币值总和为 5 或以上，该英雄额外获得攻击 +4。"
+  },
+  {
+    "ability_id": "TS-0456-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 2
+        }
+      }
+    },
+    "source_line": "地下城：所有其他英雄获得力量 +2。"
+  },
+  {
+    "ability_id": "TS-0457-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 3
+        }
+      }
+    },
+    "source_line": "地下城：所有其他英雄获得力量 +3。"
+  },
+  {
+    "ability_id": "TS-0458-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 4
+        }
+      }
+    },
+    "source_line": "地下城：所有其他英雄获得力量 +4。"
+  },
+  {
+    "ability_id": "TS-0522-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 3
+        }
+      }
+    },
+    "source_line": "地下城：你的民兵获得力量 +3。"
+  },
+  {
+    "ability_id": "TS-0525-A02",
+    "actions": [
+      "village"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "gold": 2
+    },
+    "source_line": "村庄：这局游戏每有 1 名玩家，获得 1 金币。"
+  },
+  {
+    "ability_id": "TS-0529-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0002"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0002": {
+          "attack": 1
+        }
+      }
+    },
+    "source_line": "地下城：每件武器获得 攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0309-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 1,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "xp": -1,
+      "battle_modifiers": {
+        "magic_attack": 2,
+        "light": 2
+      }
+    },
+    "source_line": "地下城：摧毁 1 点经验值，获得魔法攻击 +2 和光照 +2。"
+  },
+  {
+    "ability_id": "TS-0310-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 1,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "xp": -1,
+      "battle_modifiers": {
+        "magic_attack": 4,
+        "light": 3
+      }
+    },
+    "source_line": "地下城：摧毁 1 点经验值，获得魔法攻击 +4 和光照 +3。"
+  },
+  {
+    "ability_id": "TS-0707-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "discard_count": 1,
+      "other_discard": 1
+    },
+    "source_line": "地下城：弃掉这张牌。其他所有玩家弃 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0210-A01",
+    "actions": [
+      "village"
+    ],
+    "hand": [
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "gold": 5,
+      "destroyed": [
+        "TS-0003"
+      ]
+    },
+    "source_line": "村庄：摧毁任意 1 张具有金币值的牌，以获得等同于其金币值加 3 的金币。"
+  },
+  {
+    "ability_id": "TS-0214-A01",
+    "actions": [
+      "village"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "xp": 1,
+      "destroyed": [
+        "TS-0214"
+      ]
+    },
+    "source_line": "村庄：摧毁 1 张牌。若该牌不是英雄，获得 1 点经验值。"
+  },
+  {
+    "ability_id": "TS-0216-A02",
+    "actions": [
+      "village"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0216",
+        "TS-0001"
+      ],
+      "other_discard": 2
+    },
+    "source_line": "村庄：摧毁此牌和 1 名英雄，其他玩家各弃 2 张手牌。"
+  },
+  {
+    "ability_id": "TS-0217-A02",
+    "actions": [
+      "village"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "gold": 2,
+      "destroyed": [
+        "TS-0217"
+      ],
+      "topdeck": "TS-0001"
+    },
+    "source_line": "村庄：摧毁此牌，获得 2 金币。将你手牌中的 1 名英雄置于抽牌堆顶部。"
+  },
+  {
+    "ability_id": "TS-0218-A02",
+    "actions": [
+      "village"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2,
+      "discard_count": 2
+    },
+    "source_line": "村庄：弃掉任意数量英雄并抽取相同数量牌。"
+  },
+  {
+    "ability_id": "TS-0221-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [
+      "TS-0476"
+    ],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2
+    },
+    "source_line": "地下城：抽 1 张牌。若该牌是怪物，额外抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0222-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [
+      "TS-0001"
+    ],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "attack": 3
+        }
+      },
+      "marked_count": 1
+    },
+    "source_line": "地下城：一名英雄或佣兵获得攻击 +3。战斗结束时摧毁该英雄或佣兵。"
+  },
+  {
+    "ability_id": "TS-0225-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 3,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "xp": -1,
+      "modified": {
+        "TS-0001": {
+          "attack": 1
+        }
+      }
+    },
+    "source_line": "重复地下城：使用 1 点经验值，使 1 名英雄获得攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0236-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "light": 2,
+        "attack": 2
+      },
+      "marked_count": 1
+    },
+    "source_line": "地下城：获得光照 +2 和攻击 +2。战斗结束时摧毁此牌。"
+  },
+  {
+    "ability_id": "TS-0285-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0304",
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "light": 3
+      }
+    },
+    "source_line": "地下城：获得等同于你手牌中最高英雄等级的光照。"
+  },
+  {
+    "ability_id": "TS-0257-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "modified": {
+        "TS-0001": {
+          "strength": 3
+        }
+      }
+    },
+    "source_line": "地下城：若你没有力量为 6 或以上的英雄，抽 1 张牌。若该牌是英雄，该英雄获得力量 +3。此能力可以在未装备时使用。"
+  },
+  {
+    "ability_id": "TS-0269-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0402"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0402": {
+          "magic_attack": 1
+        }
+      }
+    },
+    "source_line": "你选择的 1 名法师或牧师获得等同于其等级的魔法攻击。"
+  },
+  {
+    "ability_id": "TS-0274-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 8,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "magic_attack": 6
+        }
+      }
+    },
+    "source_line": "一名英雄获得等同于你当前拥有经验值数量的魔法攻击，最多获得魔法攻击 +6。"
+  },
+  {
+    "ability_id": "TS-0275-A01",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroy_count": 1,
+      "next_hand": 1
+    },
+    "source_line": "村庄 / 地下城：摧毁 1 张牌。回合结束补充手牌时，额外抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0290-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "attack": 1,
+          "strength": 3
+        },
+        "TS-0302": {
+          "attack": 1,
+          "strength": 3
+        }
+      },
+      "scheduled": "BATTLE_AFTER_OUTCOME"
+    },
+    "source_line": "地下城：每名英雄获得攻击 +1 和力量 +3。战斗结束时，摧毁 1 名参与战斗的英雄。"
+  },
+  {
+    "ability_id": "TS-0291-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0291"
+      ],
+      "modified": {
+        "TS-0001": {
+          "attack": 3
+        }
+      },
+      "diseases_each": 1
+    },
+    "source_line": "地下城：摧毁此牌，使一名英雄获得攻击 +3。每位玩家获得 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0297-A01",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0002"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2,
+      "destroyed": [
+        "TS-0002"
+      ]
+    },
+    "source_line": "村庄 / 地下城：摧毁手牌中另一张武器或物品，抽 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0357-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0002"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0002"
+      ],
+      "battle_modifiers": {
+        "attack": 1
+      }
+    },
+    "source_line": "地下城：摧毁手牌中的 1 张物品或武器，获得攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0358-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0002"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0002"
+      ],
+      "battle_modifiers": {
+        "attack": 2
+      }
+    },
+    "source_line": "地下城：摧毁手牌中的 1 张武器，获得等同于该武器重量的攻击。"
+  },
+  {
+    "ability_id": "TS-0359-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0002"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0002"
+      ],
+      "battle_modifiers": {
+        "attack": 2
+      }
+    },
+    "source_line": "地下城：摧毁手牌中或村庄牌堆中的 1 张武器，获得等同于该武器重量的攻击。"
+  },
+  {
+    "ability_id": "TS-0385-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0004"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0004"
+      ],
+      "battle_modifiers": {
+        "attack": 2
+      },
+      "other_discard": 1
+    },
+    "source_line": "地下城：摧毁 1 张食物，获得攻击 +2，其他每位玩家弃掉 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0386-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0004"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0004"
+      ],
+      "battle_modifiers": {
+        "attack": 2
+      },
+      "other_discard": 1
+    },
+    "source_line": "地下城：摧毁 1 张物品，获得攻击 +2，其他每位玩家弃掉 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0389-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0003"
+    ],
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_discard": 1
+    },
+    "source_line": "地下城：其他每位玩家弃掉 1 张光照物品，或展示手牌以证明没有。"
+  },
+  {
+    "ability_id": "TS-0439-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0002"
+    ],
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_discard": 1
+    },
+    "source_line": "地下城：其他每位玩家弃掉 1 张武器，或展示手牌以证明没有。"
+  },
+  {
+    "ability_id": "TS-0442-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0004"
+    ],
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_discard": 1
+    },
+    "source_line": "地下城：其他每位玩家弃掉 1 张具有金币值的牌，或展示手牌以证明没有。"
+  },
+  {
+    "ability_id": "TS-0393-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0001",
+      "TS-0001",
+      "TS-0001",
+      "TS-0001",
+      "TS-0001",
+      "TS-0001"
+    ],
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_hand": 5
+    },
+    "source_line": "地下城：其他每位手牌为 6 张或以上的玩家随机弃掉 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0394-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_discard": 1
+    },
+    "source_line": "地下城：其他每位玩家展示 1 张法术，否则弃掉 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0417-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [
+      "TS-0001"
+    ],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0001"
+      ],
+      "battle_modifiers": {
+        "magic_attack": 1
+      }
+    },
+    "source_line": "地下城：摧毁你弃牌堆中的 1 名英雄或 1 名村民，以获得魔法攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0440-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0002"
+    ],
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_discard": 1,
+      "modified": {
+        "TS-0440": {
+          "attack": 1
+        }
+      }
+    },
+    "source_line": "地下城：其他每位玩家弃掉 1 张武器，或展示手牌以证明没有。每以此方式弃掉 1 张武器，此英雄额外获得攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0497-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0714"
+      ]
+    },
+    "source_line": "地下城：摧毁手牌中的 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0612-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0714"
+      ]
+    },
+    "source_line": "地下城：摧毁 1 张疾病。"
+  },
+  {
+    "ability_id": "TS-0523-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "topdeck": "TS-0523"
+    },
+    "source_line": "地下城：抽 1 张牌，然后将 1 张手牌置于你的抽牌堆顶部。"
+  },
+  {
+    "ability_id": "TS-0368-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [
+      "TS-0267",
+      "TS-0003",
+      "TS-0004"
+    ],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "gained_hand": "TS-0267",
+      "revealed_discard": 2
+    },
+    "source_line": "地下城：翻开你牌堆顶的 3 张牌。将其中 1 张法术牌加入你的手牌（若有），其余弃掉。"
+  },
+  {
+    "ability_id": "TS-0694-A01",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_control",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0694"
+      ],
+      "draw": 3
+    },
+    "source_line": "摧毁该牌以抽取 3 张牌。"
+  },
+  {
+    "ability_id": "TS-0700-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_control",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0700"
+      ],
+      "battle_modifiers": {
+        "attack": 3
+      }
+    },
+    "source_line": "地下城：摧毁该牌以获取攻击 +3。"
+  },
+  {
+    "ability_id": "TS-0701-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_control",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0701"
+      ],
+      "battle_modifiers": {
+        "magic_attack": 3
+      }
+    },
+    "source_line": "地下城：摧毁该牌以获取魔法攻击 +3。"
+  },
+  {
+    "ability_id": "TS-0702-A01",
+    "actions": [
+      "village"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_control",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0702"
+      ],
+      "gold": 4
+    },
+    "source_line": "村庄：摧毁该牌以获取 4 金币。"
+  },
+  {
+    "ability_id": "TS-0241-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0340"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [
+      "TS-0476",
+      "TS-0476",
+      "TS-0476"
+    ],
+    "equipment": [
+      "TS-0340",
+      "TS-0241"
+    ],
+    "supplies": [],
+    "expected": {
+      "relocations": 1
+    },
+    "source_line": "地下城：当此牌被装备时，你可以将阶层 1 的怪物放回地下城牌堆底部，并补充大厅。"
+  },
+  {
+    "ability_id": "TS-0245-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [
+      "TS-0476",
+      "TS-0476",
+      "TS-0476"
+    ],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "relocations": 1,
+      "destroyed": [
+        "TS-0245"
+      ],
+      "draw": 1
+    },
+    "source_line": "地下城：摧毁此牌，将任意阶层的 1 只怪物置于地下城牌堆底部，并补充大厅。抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0268-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [
+      "TS-0476",
+      "TS-0476",
+      "TS-0476"
+    ],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "relocations": 1,
+      "destroy_count": 1,
+      "draw": 1
+    },
+    "source_line": "地下城：将 1 只怪物放回地下城牌堆底部并补充大厅。摧毁你手牌中的 1 张牌。抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0347-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0004"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [
+      "TS-0476",
+      "TS-0476",
+      "TS-0476"
+    ],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "relocations": 1,
+      "destroyed": [
+        "TS-0004"
+      ],
+      "gained_monster": "TS-0476"
+    },
+    "source_line": "地下城：摧毁 1 张食物，将大厅中 1 只胜利点为 1 或 2 的怪物置入你的弃牌堆，并补充大厅。"
+  },
+  {
+    "ability_id": "TS-0394-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 3,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [
+      "TS-0476",
+      "TS-0476",
+      "TS-0476"
+    ],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "relocations": 1,
+      "xp": -2
+    },
+    "source_line": "地下城：摧毁 2 点经验值，将阶层 1 的怪物置于地下城牌堆底部，并补充大厅。"
+  },
+  {
+    "ability_id": "TS-0395-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 3,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [
+      "TS-0476",
+      "TS-0476",
+      "TS-0476"
+    ],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "relocations": 1,
+      "xp": -1
+    },
+    "source_line": "地下城：摧毁 1 点经验值，将大厅中任意 1 只怪物置于地下城牌堆底部，并补充大厅。"
+  },
+  {
+    "ability_id": "TS-0410-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [
+      "TS-0476",
+      "TS-0476",
+      "TS-0476"
+    ],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "relocations": 1
+    },
+    "source_line": "地下城：战斗开始前，你可以将 1 只怪物放回地下城牌堆底部，并补充大厅。"
+  },
+  {
+    "ability_id": "TS-0301-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "count": 2,
+        "kind": "hero"
+      }
+    ],
+    "expected": {
+      "purchased_card": "TS-0002",
+      "purchase_destination": "discard"
+    },
+    "source_line": "地下城：购买 1 张村庄牌。"
+  },
+  {
+    "ability_id": "TS-0397-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "count": 2,
+        "kind": "hero"
+      }
+    ],
+    "expected": {
+      "purchased_card": "TS-0302",
+      "purchase_destination": "discard"
+    },
+    "source_line": "地下城：购买 1 名英雄。"
+  },
+  {
+    "ability_id": "TS-0398-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "count": 2,
+        "kind": "hero"
+      }
+    ],
+    "expected": {
+      "purchased_card": "TS-0302",
+      "purchase_destination": "hand"
+    },
+    "source_line": "地下城：购买 1 名英雄，并将其加入你的手牌。"
+  },
+  {
+    "ability_id": "TS-0697-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_control",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "count": 2,
+        "kind": "hero"
+      }
+    ],
+    "expected": {
+      "purchased_card": "TS-0302",
+      "purchase_destination": "hand",
+      "source_discarded": true
+    },
+    "source_line": "地下城：弃掉此牌以购买一名英雄。将购买的新英雄加入你的手牌。"
+  },
+  {
+    "ability_id": "TS-0699-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003",
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_control",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "count": 2,
+        "kind": "hero"
+      }
+    ],
+    "expected": {
+      "purchased_card": "TS-0002",
+      "purchase_destination": "hand",
+      "source_discarded": true
+    },
+    "source_line": "地下城：弃掉此牌以购买一张村庄牌。将购买的新卡牌加入你的手牌。"
+  },
+  {
+    "ability_id": "TS-0212-A02",
+    "actions": [
+      "village"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0003"
+    ],
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0212"
+      ],
+      "other_discard": 1,
+      "gold": 2
+    },
+    "variants": [
+      {
+        "others": [
+          "TS-0302"
+        ],
+        "expected": {
+          "destroyed": [
+            "TS-0212"
+          ],
+          "other_discard": 0,
+          "gold": 0
+        }
+      }
+    ],
+    "source_line": "村庄：摧毁此牌。其他每位玩家弃掉 1 张具有金币值的牌，或展示手牌以证明没有。获得等同于所有被弃掉牌金币值总和的金币。"
+  },
+  {
+    "ability_id": "TS-0218-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [
+      "TS-0003",
+      "TS-0004",
+      "TS-0004"
+    ],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 3,
+      "discard_count": 1,
+      "hand_counts": {
+        "TS-0003": 1,
+        "TS-0004": 2
+      }
+    },
+    "source_line": "地下城：抽 3 张牌。弃掉其中所有与你手牌中已有牌同名的牌。"
+  },
+  {
+    "ability_id": "TS-0219-A01",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [
+      "TS-0001",
+      "TS-0001"
+    ],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2,
+      "discard_count": 1
+    },
+    "variants": [
+      {
+        "draw": [
+          "TS-0267",
+          "TS-0001"
+        ],
+        "expected": {
+          "draw": 2,
+          "discard_count": 0
+        }
+      }
+    ],
+    "source_line": "村庄 / 地下城：抽 2 张牌。若其中至少有 1 张法术，保留这 2 张牌；否则弃掉其中 1 张。"
+  },
+  {
+    "ability_id": "TS-0262-A01",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroy_count": 3,
+      "opponent_revealed_discard": 3
+    },
+    "values": [
+      "$other"
+    ],
+    "opponent_draw": 5,
+    "variants": [
+      {
+        "values": [
+          "$self"
+        ],
+        "expected": {
+          "destroy_count": 2,
+          "revealed_discard": 3
+        }
+      }
+    ],
+    "source_line": "村庄 / 地下城：弃掉任意一名玩家牌堆顶的 5 张牌。该玩家摧毁其中 2 张牌。若你指定的是其他玩家，则摧毁此牌。"
+  },
+  {
+    "ability_id": "TS-0451-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0003"
+    ],
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_discard": 1,
+      "battle_modifiers": {
+        "light": 1
+      }
+    },
+    "variants": [
+      {
+        "others": [
+          "TS-0004"
+        ],
+        "expected": {
+          "other_discard": 1
+        }
+      }
+    ],
+    "source_line": "地下城：其他每位玩家弃掉 1 张物品，或展示手牌以证明没有。若以此方式弃掉了任意光照物品，获得光照 +1。"
+  },
+  {
+    "ability_id": "TS-0458-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0001"
+    ],
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_discard": 1,
+      "modified": {
+        "TS-0458": {
+          "magic_attack": 2
+        }
+      }
+    },
+    "variants": [
+      {
+        "others": [
+          "TS-0267"
+        ],
+        "expected": {
+          "other_discard": 1,
+          "modified": {}
+        }
+      }
+    ],
+    "source_line": "地下城：其他每位玩家弃 1 张牌。若弃牌中没有法术，此牌获得魔法攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0253-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": [
+      "TS-0001",
+      "TS-0253"
+    ],
+    "supplies": [],
+    "expected": {
+      "draw": 1
+    },
+    "source_line": "地下城：若此牌装备给民兵，抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0273-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 7,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "xp": -5,
+      "battle_modifiers": {
+        "magic_attack": 5
+      }
+    },
+    "values": [
+      5
+    ],
+    "source_line": "地下城：使用任意数量经验值，以额外获得等量的魔法攻击，至多 5 点。"
+  },
+  {
+    "ability_id": "TS-0224-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 0,
+      "dungeon_top": [
+        "TS-0478",
+        "TS-0477",
+        "TS-0476"
+      ]
+    },
+    "dungeon": [
+      "TS-0476",
+      "TS-0477",
+      "TS-0478",
+      "TS-0479"
+    ],
+    "source_line": "地下城：查看地下城牌堆顶部的 3 张牌，以任意顺序放回。"
+  },
+  {
+    "ability_id": "TS-0280-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2,
+      "dungeon_top": [
+        "TS-0478",
+        "TS-0477",
+        "TS-0476"
+      ]
+    },
+    "dungeon": [
+      "TS-0476",
+      "TS-0477",
+      "TS-0478",
+      "TS-0479"
+    ],
+    "source_line": "地下城：查看地下城牌堆顶部的 3 张牌，以任意顺序放回。抽 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0453-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 0,
+      "dungeon_top": [
+        "TS-0478",
+        "TS-0477",
+        "TS-0476"
+      ]
+    },
+    "dungeon": [
+      "TS-0476",
+      "TS-0477",
+      "TS-0478",
+      "TS-0479"
+    ],
+    "source_line": "地下城：查看地下城牌堆顶部 3 张牌，以任意顺序放回。"
+  },
+  {
+    "ability_id": "TS-0224-A01",
+    "actions": [
+      "village"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [
+      "TS-0001",
+      "TS-0002",
+      "TS-0003"
+    ],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [
+      [
+        "TS-0001",
+        "TS-0002",
+        "TS-0003"
+      ]
+    ],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 3,
+      "draw_top": [
+        "TS-0003",
+        "TS-0002",
+        "TS-0001"
+      ]
+    },
+    "source_line": "村庄：抽 3 张牌。将 3 张牌以任意顺序置于你的牌堆顶部。"
+  },
+  {
+    "ability_id": "TS-0289-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "battle_modifiers": {
+        "magic_attack": 2
+      }
+    },
+    "source_line": "地下城：抽 1 张牌。展示并弃掉任意一名对手牌堆顶的 1 张牌。若弃掉的牌是英雄，获得魔法攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0413-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003",
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "magic_attack": 2
+      }
+    },
+    "source_line": "地下城：获得等同于当前光照总量的魔法攻击。"
+  },
+  {
+    "ability_id": "TS-0270-A01",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [
+      "TS-0003"
+    ],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "set_aside": "TS-0003"
+    },
+    "source_line": "村庄 / 地下城：抽 1 张牌。将 1 张未使用的牌放置在一旁，直到你补充手牌时，再将该牌加入你的手牌。"
+  },
+  {
+    "ability_id": "TS-0283-A01",
+    "actions": [
+      "village"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [
+      "TS-0003",
+      "TS-0002"
+    ],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0002"
+      ],
+      "revealed_discard": 1,
+      "gained_hand": "TS-0001"
+    },
+    "draw_exact": [
+      "TS-0001",
+      "TS-0002",
+      "TS-0003"
+    ],
+    "source_line": "村庄：从你的牌堆底部抽取 3 张牌。弃掉其中 1 张，摧毁其中 1 张，并将其中 1 张加入你的手牌。"
+  },
+  {
+    "ability_id": "TS-0695-A01",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0003",
+      "TS-0004"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_control",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 6,
+      "destroyed": [
+        "TS-0695",
+        "TS-0003",
+        "TS-0004"
+      ]
+    },
+    "source_line": "摧毁该牌以及手牌中的所有非英雄牌。每摧毁一张牌，就抽取 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0706-A01",
+    "actions": [
+      "village"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0004"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_control",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "xp": 3,
+      "destroyed": [
+        "TS-0706",
+        "TS-0001",
+        "TS-0004"
+      ]
+    },
+    "source_line": "村庄：摧毁该牌以及任意数量手牌。每摧毁一张牌，就获取 1 点经验值。"
+  },
+  {
+    "ability_id": "TS-0437-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 3,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "kind": "hero",
+        "count": 2
+      }
+    ],
+    "expected": {
+      "xp": -3,
+      "upgraded_card": "TS-0302",
+      "gained_hand": "TS-0302"
+    },
+    "source_line": "地下城：支付费用并升级 1 名英雄，将升级后的新英雄加入你的手牌。"
+  },
+  {
+    "ability_id": "TS-0698-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 3,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_control",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "kind": "hero",
+        "count": 2
+      }
+    ],
+    "expected": {
+      "xp": -3,
+      "upgraded_card": "TS-0302",
+      "gained_hand": "TS-0302",
+      "source_discarded": true
+    },
+    "source_line": "地下城：支付费用并升级 1 名英雄，将升级后的新英雄加入你的手牌。"
+  },
+  {
+    "ability_id": "TS-0295-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 2,
+          "attack": 1
+        },
+        "TS-0302": {
+          "strength": 2,
+          "attack": 1
+        }
+      },
+      "protected_heroes": 2
+    },
+    "source_line": "地下城：所有英雄获得力量 +2 和攻击 +1。若有英雄会在本场战斗中被摧毁，改为弃掉该英雄。"
+  },
+  {
+    "ability_id": "TS-0296-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0302"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 2,
+          "attack": 1
+        },
+        "TS-0302": {
+          "strength": 2,
+          "attack": 1
+        }
+      },
+      "protected_heroes": 2
+    },
+    "source_line": "地下城：所有英雄获得力量 +2 和攻击 +1。若有英雄会在本场战斗中被摧毁，改为弃掉该英雄。"
+  },
+  {
+    "ability_id": "TS-0292-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 2,
+          "magic_attack": 1
+        }
+      },
+      "flags": {
+        "convert_all_magic": true
+      }
+    },
+    "source_line": "地下城：每名英雄获得力量 +2 和魔法攻击 +1。所有来源的攻击均变为魔法攻击。"
+  },
+  {
+    "ability_id": "TS-0294-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "strength": 3
+        }
+      },
+      "converted_card": "TS-0001"
+    },
+    "source_line": "地下城：一名英雄获得力量 +3，且该英雄的攻击变为魔法攻击。"
+  },
+  {
+    "ability_id": "TS-0259-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0401",
+      "TS-0476"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": [
+      "TS-0401",
+      "TS-0259"
+    ],
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "magic_attack": 2
+      }
+    },
+    "source_line": "若此牌装备给法师或牧师，选择你手牌中的 1 张怪物牌，获得等同于该怪物生命值一半的魔法攻击。"
+  },
+  {
+    "ability_id": "TS-0299-A01",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [
+      "TS-0001"
+    ],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2
+    },
+    "values": [
+      "hero"
+    ],
+    "variants": [
+      {
+        "values": [
+          "monster"
+        ],
+        "expected": {
+          "draw": 0
+        }
+      }
+    ],
+    "source_line": "村庄 / 地下城：宣告英雄、村庄或怪物，然后展示并弃掉你抽牌堆顶的 1 张牌。若你正确宣告了该牌类型，则抽 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0392-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0001",
+      "TS-0001"
+    ],
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "other_discard": 1
+    },
+    "source_line": "地下城：其他每位玩家弃掉 1 名英雄或 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0226-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [
+      "TS-0476",
+      "TS-0477",
+      "TS-0478"
+    ],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "hall_shuffle": true
+    },
+    "source_line": "地下城：将大厅中 1 张牌与地下城牌堆顶 3 张牌洗混后置于牌堆顶，补充大厅。抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0232-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [
+      "TS-0477",
+      "TS-0478"
+    ],
+    "hall": [
+      "TS-0476",
+      "TS-0477",
+      "TS-0478"
+    ],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "hall_order": [
+        "TS-0476",
+        "TS-0478",
+        "TS-0477"
+      ]
+    },
+    "source_line": "地下城：交换大厅中两只相邻怪物的位置。"
+  },
+  {
+    "ability_id": "TS-0263-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "exchanged": true
+    },
+    "dungeon": [
+      "TS-0477",
+      "TS-0478",
+      "TS-0479"
+    ],
+    "source_line": "地下城：查看地下城牌堆顶部的 1 张牌。若该牌是怪物，你可以用它替换大厅中的任意 1 只怪物。将被替换的怪物置于地下城牌堆顶部。抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0454-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "exchanged": true
+    },
+    "dungeon": [
+      "TS-0477",
+      "TS-0478",
+      "TS-0479",
+      "TS-0480"
+    ],
+    "source_line": "地下城：查看地下城牌堆顶部 3 张牌。你可以用其中 1 张牌替换阶层 1 的怪物，其余牌以任意顺序放回牌堆顶部。"
+  },
+  {
+    "ability_id": "TS-0455-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "opponent_discarded_heroes": 2
+    },
+    "opponent_draw_cards": [
+      "TS-0003",
+      "TS-0001",
+      "TS-0004",
+      "TS-0302",
+      "TS-0002"
+    ],
+    "source_line": "地下城：其他每位玩家翻开自己牌堆顶的 5 张牌，弃掉其中所有英雄，再将其余牌以任意顺序放回自己的牌堆顶部。"
+  },
+  {
+    "ability_id": "TS-0266-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0401"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [
+      "TS-0476",
+      "TS-0477",
+      "TS-0478"
+    ],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "xp": 1,
+      "direct_defeats": 1
+    },
+    "source_line": "地下城：选择你手牌中等级最高的法师或牧师，直接击败 1 张胜利点不高于其等级 +2 的怪物，然后补充大厅。"
+  },
+  {
+    "ability_id": "TS-0271-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [
+      "TS-0476",
+      "TS-0477",
+      "TS-0478"
+    ],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "health_reductions": 3,
+      "other_diseases": 1
+    },
+    "source_line": "地下城：其他每位玩家获得 1 张疾病。地下城大厅中所有怪物的生命值减少 2。若此效果使怪物生命值降至 0，将其置入你的弃牌堆并补充大厅。"
+  },
+  {
+    "ability_id": "TS-0246-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "listener": "BEFORE_HALL_REFILL"
+    },
+    "source_line": "地下城：补充地下城大厅前，将大厅中 1 张价值 1 或 2 胜利点的怪物牌置入你的弃牌堆。你无法从该怪物获得经验值。"
+  },
+  {
+    "ability_id": "TS-0277-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 2,
+      "destroyed": [
+        "TS-0277"
+      ],
+      "global_rule": "force_dungeon"
+    },
+    "source_line": "地下城：其他玩家在自己的回合必须前往地下城。此效果持续到当前玩家下个回合开始。摧毁此牌。抽 2 张牌。"
+  },
+  {
+    "ability_id": "TS-0421-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "transferred_disease": 1,
+      "battle_modifiers": {
+        "magic_attack": 1
+      }
+    },
+    "source_line": "地下城：将你手牌中的 1 张疾病置入另一名玩家的弃牌堆，以获得魔法攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0396-A02",
+    "actions": [
+      "village"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0396"
+      ],
+      "stolen_treasure": 1
+    },
+    "other_control": [
+      "TS-0697"
+    ],
+    "source_line": "村庄：摧毁此牌，从另一名玩家处拿取 1 张宝藏。"
+  },
+  {
+    "ability_id": "TS-0416-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [
+      "TS-0302"
+    ],
+    "hall": [],
+    "equipment": null,
+    "supplies": [
+      {
+        "card_id": "TS-0302",
+        "kind": "hero",
+        "count": 2
+      }
+    ],
+    "expected": {
+      "discard_count": 1,
+      "gained_hand": "TS-0302",
+      "marked_count": 1
+    },
+    "source_line": "地下城：弃掉 1 名民兵，从任意村庄英雄牌堆顶部取得 1 名英雄。该英雄加入本次战斗，并在战斗结束时被摧毁。"
+  },
+  {
+    "ability_id": "TS-0217-A01",
+    "actions": [
+      "village"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "listener": "CARD_PURCHASED"
+    },
+    "source_line": "村庄：抽 1 张牌。若你购买武器，则可以额外购买 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0231-A01",
+    "actions": [
+      "village"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "basic_buy": 1
+    },
+    "source_line": "村庄：抽 1 张牌。你可以在本次购买之外额外购买 1 名民兵。"
+  },
+  {
+    "ability_id": "TS-0221-A01",
+    "actions": [
+      "village"
+    ],
+    "hand": [
+      "TS-0003"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [
+      "TS-0003"
+    ],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "destroyed": [
+        "TS-0003"
+      ],
+      "gained_supply_card": "TS-0004"
+    },
+    "source_line": "村庄：在本次购买之外，你可以摧毁 1 张牌，从村庄获得 1 张购买价格至多高出其 2 金币的非英雄牌。"
+  },
+  {
+    "ability_id": "TS-0300-A02",
+    "actions": [
+      "village",
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "listener": "CARD_PURCHASED"
+    },
+    "source_line": "村庄 / 地下城：本回合购买牌后，获得 1 张购买价格低于该牌的村庄牌。"
+  },
+  {
+    "ability_id": "TS-0216-A01",
+    "actions": [
+      "village"
+    ],
+    "hand": [
+      "TS-0304"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "discard_count": 1,
+      "xp": 1,
+      "other_hero_destroyed": 1
+    },
+    "source_line": "村庄：弃掉 1 名英雄，选择另一名玩家，从其牌堆顶弃牌，直到出现英雄牌。若你的英雄力量更高，摧毁对方的英雄并获得 1 点经验值。"
+  },
+  {
+    "ability_id": "TS-0317-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0001"
+    ],
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "attack": 4
+      }
+    },
+    "source_line": "地下城：其他每位玩家必须展示 1 名民兵，否则随机弃掉 1 张牌。你的手牌中和对手展示的牌中，每有 1 名民兵，获得攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0362-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0476"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [
+      "TS-0477",
+      "TS-0478",
+      "TS-0479"
+    ],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "exchanged": true
+    },
+    "source_line": "地下城：用手牌中 1 张怪物牌，交换大厅中胜利点至多高出其 1 点的 1 只怪物。"
+  },
+  {
+    "ability_id": "TS-0422-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0714",
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [
+      "TS-0476",
+      "TS-0477",
+      "TS-0478"
+    ],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "battle_modifiers": {
+        "magic_attack": 4
+      },
+      "attached_diseases": 2
+    },
+    "source_line": "地下城：将你手牌中的所有疾病置于大厅中 1 只怪物下方。下一位与该怪物战斗的玩家获得这些疾病。每以此方式放置 1 张疾病，获得魔法攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0425-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0714",
+      "TS-0714"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [
+      "TS-0476",
+      "TS-0477",
+      "TS-0478"
+    ],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "attached_diseases": 2
+    },
+    "source_line": "地下城：将任意数量的疾病置于任意怪物下方；每张疾病使对应怪物获得生命值 +1。玩家攻击这些怪物后，获得其下方的疾病。"
+  },
+  {
+    "ability_id": "TS-0265-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0302"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [
+      "TS-0234"
+    ],
+    "hall": [],
+    "equipment": null,
+    "supplies": [
+      {
+        "card_id": "TS-0234",
+        "kind": "village",
+        "count": 2
+      }
+    ],
+    "expected": {
+      "draw": 1,
+      "gained_hand": "TS-0234",
+      "marked_count": 1,
+      "supplied_weapon_equipped": true
+    },
+    "source_line": "地下城：从村庄中选择 1 张武器牌，装备给一名满足力量需求的英雄。战斗结束后摧毁该武器。"
+  },
+  {
+    "ability_id": "TS-0244-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0401",
+      "TS-0281"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": [
+      "TS-0401",
+      "TS-0244"
+    ],
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "reused_spell": "TS-0281"
+    },
+    "pre_activate": [
+      "TS-0281-A01"
+    ],
+    "source_line": "地下城：若此牌装备给牧师或法师，你可以再次使用本回合已经使用过的 1 张法术。若如此做，在回合结束时摧毁该法术。"
+  },
+  {
+    "ability_id": "TS-0298-A01",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0004"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0001"
+    ],
+    "zone": "active_hand",
+    "choices": [
+      "TS-0004",
+      "TS-0001",
+      "TS-0001"
+    ],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "draw": 1,
+      "redistributed": 1,
+      "gained_hand": "TS-0001"
+    },
+    "source_line": "地下城：所有玩家各弃掉 1 张牌。选择其中 1 张牌加入你的手牌，剩余牌洗混后，其他每位玩家随机抽 1 张到手牌中。抽 1 张牌。"
+  },
+  {
+    "ability_id": "TS-0320-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0476"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0476"
+    ],
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "discard_count": 1,
+      "other_discard": 1,
+      "listener": "MONSTER_DEFEATED"
+    },
+    "source_line": "地下城：每位玩家弃掉 1 张怪物牌，或展示手牌以证明没有。若你本回合击败怪物，可获得其中 1 张同类型且胜利点不高于 5 的怪物牌。"
+  },
+  {
+    "ability_id": "TS-0404-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0302"
+    ],
+    "zone": "active_hand",
+    "choices": [
+      "TS-0001",
+      "TS-0302",
+      "TS-0302"
+    ],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "borrowed": 1,
+      "return_when": "after_battle"
+    },
+    "source_line": "地下城：每位玩家弃掉 1 名英雄，或展示手牌以证明没有。你可以借用其中 1 名被弃掉的英雄，并在战斗结束时归还。"
+  },
+  {
+    "ability_id": "TS-0327-A03",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0002"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0234"
+    ],
+    "zone": "active_hand",
+    "choices": [
+      "TS-0234"
+    ],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "borrowed": 1,
+      "return_when": "after_battle"
+    },
+    "source_line": "地下城：每位玩家弃掉 1 张武器，或展示手牌以证明没有。你可以将其中 1 张被弃掉的武器装备给此英雄，战斗结束后归还其持有者。"
+  },
+  {
+    "ability_id": "TS-0452-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": [
+      "TS-0003"
+    ],
+    "zone": "active_hand",
+    "choices": [
+      "TS-0003"
+    ],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "borrowed": 1,
+      "return_when": "turn_end"
+    },
+    "source_line": "地下城：其他每位玩家弃掉 1 张物品，或展示手牌以证明没有。你可以使用其中 1 张被弃掉的物品，并在回合结束时将其还给原持有者。"
+  },
+  {
+    "ability_id": "TS-0415-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0430"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": null,
+    "supplies": [],
+    "expected": {
+      "copied_hero": "TS-0430"
+    },
+    "source_line": "地下城：一名民兵复制你手牌中另一名英雄的所有能力。"
+  }
+]

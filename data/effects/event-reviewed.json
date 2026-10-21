@@ -1,0 +1,3267 @@
+{
+  "schema_version": "thunderstone.effects/1",
+  "abilities": [
+    {
+      "id": "TS-0190-A01",
+      "source_card_id": "TS-0190",
+      "kind": "triggered",
+      "source_zone": "settings",
+      "event": "BATTLE_AFTER_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0194-A02",
+      "source_card_id": "TS-0194",
+      "kind": "triggered",
+      "source_zone": "settings",
+      "event": "BATTLE_AFTER_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "chosen"
+            },
+            "bind": "victim",
+            "body": {
+              "op": "destroy",
+              "target": {
+                "var": "victim"
+              }
+            }
+          },
+          "allow_shortfall": true
+        }
+      }
+    },
+    {
+      "id": "TS-0484-A01",
+      "source_card_id": "TS-0484",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "gain_disease",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0612-A01",
+      "source_card_id": "TS-0612",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "gain_disease",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0627-A01",
+      "source_card_id": "TS-0627",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "tag": "英雄"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "tag": "英雄"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "chosen"
+              },
+              "bind": "victim",
+              "body": {
+                "op": "destroy",
+                "target": {
+                  "var": "victim"
+                }
+              }
+            },
+            "allow_shortfall": true
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0628-A01",
+      "source_card_id": "TS-0628",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "tag": "英雄"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "tag": "英雄"
+            },
+            "bind": "chosen",
+            "min": 2,
+            "max": 2,
+            "then": {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "chosen"
+              },
+              "bind": "victim",
+              "body": {
+                "op": "destroy",
+                "target": {
+                  "var": "victim"
+                }
+              }
+            },
+            "allow_shortfall": true
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0629-A02",
+      "source_card_id": "TS-0629",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "tag": "英雄"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "tag": "英雄"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "chosen"
+              },
+              "bind": "victim",
+              "body": {
+                "op": "destroy",
+                "target": {
+                  "var": "victim"
+                }
+              }
+            },
+            "allow_shortfall": true
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0630-A02",
+      "source_card_id": "TS-0630",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "destroy",
+          "target": {
+            "var": "chosen"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0525-A01",
+      "source_card_id": "TS-0525",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "gold_present": true
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "gold_present": true
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "chosen"
+              },
+              "bind": "victim",
+              "body": {
+                "op": "destroy",
+                "target": {
+                  "var": "victim"
+                }
+              }
+            },
+            "allow_shortfall": true
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0529-A01",
+      "source_card_id": "TS-0529",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "tag": "武器"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "tag": "武器"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "chosen"
+              },
+              "bind": "victim",
+              "body": {
+                "op": "destroy",
+                "target": {
+                  "var": "victim"
+                }
+              }
+            },
+            "allow_shortfall": true
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0666-A01",
+      "source_card_id": "TS-0666",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand"
+            },
+            "bind": "chosen",
+            "min": 2,
+            "max": 2,
+            "then": {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "chosen"
+              },
+              "bind": "victim",
+              "body": {
+                "op": "discard",
+                "target": {
+                  "var": "victim"
+                }
+              }
+            },
+            "allow_shortfall": true
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0494-A02",
+      "source_card_id": "TS-0494",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "reveal",
+          "count": 5,
+          "bind": "revealed",
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "revealed",
+              "tag": "英雄",
+              "magic_min": 1
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0592-A01",
+      "source_card_id": "TS-0592",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "reveal",
+          "count": 5,
+          "bind": "revealed",
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "revealed",
+              "tag": "弓箭手"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0593-A02",
+      "source_card_id": "TS-0593",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "reveal",
+          "count": 5,
+          "bind": "revealed",
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "revealed",
+              "tag": "牧师"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0594-A01",
+      "source_card_id": "TS-0594",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "reveal",
+          "count": 5,
+          "bind": "revealed",
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "revealed",
+              "tag": "法师"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0501-A02",
+      "source_card_id": "TS-0501",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "reveal",
+          "count": 5,
+          "bind": "revealed",
+          "then": {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "bound",
+                "var": "revealed",
+                "card_id": "TS-0001"
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "bound",
+                "var": "revealed",
+                "card_id": "TS-0001"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "for_each",
+                "query": {
+                  "zone": "bound",
+                  "var": "chosen"
+                },
+                "bind": "victim",
+                "body": {
+                  "op": "destroy",
+                  "target": {
+                    "var": "victim"
+                  }
+                }
+              },
+              "allow_shortfall": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0502-A01",
+      "source_card_id": "TS-0502",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "reveal",
+          "count": 5,
+          "bind": "revealed",
+          "then": {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "bound",
+                "var": "revealed",
+                "tag": "英雄",
+                "level_min": 1,
+                "level_max": 1
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "bound",
+                "var": "revealed",
+                "tag": "英雄",
+                "level_min": 1,
+                "level_max": 1
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "for_each",
+                "query": {
+                  "zone": "bound",
+                  "var": "chosen"
+                },
+                "bind": "victim",
+                "body": {
+                  "op": "destroy",
+                  "target": {
+                    "var": "victim"
+                  }
+                }
+              },
+              "allow_shortfall": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0503-A02",
+      "source_card_id": "TS-0503",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "reveal",
+          "count": 5,
+          "bind": "revealed",
+          "then": {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "bound",
+                "var": "revealed",
+                "tag": "英雄",
+                "level_min": 2,
+                "level_max": 2
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "bound",
+                "var": "revealed",
+                "tag": "英雄",
+                "level_min": 2,
+                "level_max": 2
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "for_each",
+                "query": {
+                  "zone": "bound",
+                  "var": "chosen"
+                },
+                "bind": "victim",
+                "body": {
+                  "op": "destroy",
+                  "target": {
+                    "var": "victim"
+                  }
+                }
+              },
+              "allow_shortfall": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0504-A01",
+      "source_card_id": "TS-0504",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "reveal",
+          "count": 5,
+          "bind": "revealed",
+          "then": {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "bound",
+                "var": "revealed",
+                "vp_present": true
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "bound",
+                "var": "revealed",
+                "vp_present": true
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "for_each",
+                "query": {
+                  "zone": "bound",
+                  "var": "chosen"
+                },
+                "bind": "victim",
+                "body": {
+                  "op": "destroy",
+                  "target": {
+                    "var": "victim"
+                  }
+                }
+              },
+              "allow_shortfall": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0463-A01",
+      "source_card_id": "TS-0463",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "reveal",
+          "count": 1000,
+          "bind": "revealed",
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "revealed",
+              "tag": "英雄"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          },
+          "until": {
+            "tag": "英雄"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0461-A02",
+      "source_card_id": "TS-0461",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "village_supply_top",
+          "gold_min": 3
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "destroy_supply",
+          "target": {
+            "var": "chosen"
+          },
+          "count": 2
+        }
+      }
+    },
+    {
+      "id": "TS-0521-A01",
+      "source_card_id": "TS-0521",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "village_supply_top",
+          "light_min": 1
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "destroy_supply",
+          "target": {
+            "var": "chosen"
+          },
+          "count": 3
+        }
+      }
+    },
+    {
+      "id": "TS-0564-A01",
+      "source_card_id": "TS-0564",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "hero_supply_top"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "destroy_supply",
+          "target": {
+            "var": "chosen"
+          },
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0585-A02",
+      "source_card_id": "TS-0585",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "hero_supply_top"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "destroy_supply",
+          "target": {
+            "var": "chosen"
+          },
+          "count": 2
+        }
+      }
+    },
+    {
+      "id": "TS-0565-A01",
+      "source_card_id": "TS-0565",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "for_each",
+            "query": {
+              "zone": "hero_supply_top"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "destroy_supply",
+              "target": {
+                "var": "chosen"
+              },
+              "count": 2
+            }
+          },
+          {
+            "op": "for_each",
+            "query": {
+              "zone": "village_supply_top"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "destroy_supply",
+              "target": {
+                "var": "chosen"
+              },
+              "count": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0603-A01",
+      "source_card_id": "TS-0603",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "for_each",
+            "query": {
+              "zone": "hero_supply_top"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "destroy_supply",
+              "target": {
+                "var": "chosen"
+              },
+              "count": 1
+            }
+          },
+          {
+            "op": "for_each",
+            "query": {
+              "zone": "village_supply_top",
+              "tag": "村民"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "destroy_supply",
+              "target": {
+                "var": "chosen"
+              },
+              "count": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0631-A02",
+      "source_card_id": "TS-0631",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "hero_supply_top",
+            "max_by": "pile_size"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "hero_supply_top",
+            "max_by": "pile_size"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "destroy_supply",
+            "target": {
+              "var": "chosen"
+            },
+            "count": 10000
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0556-A01",
+      "source_card_id": "TS-0556",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "HALL_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "village_supply_top",
+            "cost_present": true,
+            "min_by": "purchase_cost"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "village_supply_top",
+            "cost_present": true,
+            "min_by": "purchase_cost"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "destroy_supply",
+            "target": {
+              "var": "chosen"
+            },
+            "count": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0557-A01",
+      "source_card_id": "TS-0557",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "HALL_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "village_supply_top",
+            "cost_present": true,
+            "min_by": "purchase_cost"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "village_supply_top",
+            "cost_present": true,
+            "min_by": "purchase_cost"
+          },
+          "bind": "first",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "village_supply_top",
+                "cost_present": true,
+                "min_by": "purchase_cost",
+                "exclude_pile_var": "first"
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "village_supply_top",
+                "cost_present": true,
+                "min_by": "purchase_cost",
+                "exclude_pile_var": "first"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "sequence",
+                "children": [
+                  {
+                    "op": "destroy_supply",
+                    "target": {
+                      "var": "first"
+                    },
+                    "count": 2
+                  },
+                  {
+                    "op": "destroy_supply",
+                    "target": {
+                      "var": "chosen"
+                    },
+                    "count": 2
+                  }
+                ]
+              }
+            },
+            "else": {
+              "op": "destroy_supply",
+              "target": {
+                "var": "first"
+              },
+              "count": 2
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0558-A01",
+      "source_card_id": "TS-0558",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "HALL_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "village_supply_top",
+            "cost_present": true,
+            "max_by": "purchase_cost"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "village_supply_top",
+            "cost_present": true,
+            "max_by": "purchase_cost"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "destroy_supply",
+            "target": {
+              "var": "chosen"
+            },
+            "count": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0559-A01",
+      "source_card_id": "TS-0559",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "HALL_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "village_supply_top",
+            "cost_present": true,
+            "max_by": "purchase_cost"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "village_supply_top",
+            "cost_present": true,
+            "max_by": "purchase_cost"
+          },
+          "bind": "first",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "village_supply_top",
+                "cost_present": true,
+                "max_by": "purchase_cost",
+                "exclude_pile_var": "first"
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "village_supply_top",
+                "cost_present": true,
+                "max_by": "purchase_cost",
+                "exclude_pile_var": "first"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "sequence",
+                "children": [
+                  {
+                    "op": "destroy_supply",
+                    "target": {
+                      "var": "first"
+                    },
+                    "count": 2
+                  },
+                  {
+                    "op": "destroy_supply",
+                    "target": {
+                      "var": "chosen"
+                    },
+                    "count": 2
+                  }
+                ]
+              }
+            },
+            "else": {
+              "op": "destroy_supply",
+              "target": {
+                "var": "first"
+              },
+              "count": 2
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0560-A01",
+      "source_card_id": "TS-0560",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "HALL_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "village_supply_top",
+            "cost_present": true,
+            "max_by": "purchase_cost"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "village_supply_top",
+            "cost_present": true,
+            "max_by": "purchase_cost"
+          },
+          "bind": "first",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "village_supply_top",
+                "cost_present": true,
+                "max_by": "purchase_cost",
+                "exclude_pile_var": "first"
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "village_supply_top",
+                "cost_present": true,
+                "max_by": "purchase_cost",
+                "exclude_pile_var": "first"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "sequence",
+                "children": [
+                  {
+                    "op": "destroy_supply",
+                    "target": {
+                      "var": "first"
+                    },
+                    "count": 2
+                  },
+                  {
+                    "op": "destroy_supply",
+                    "target": {
+                      "var": "chosen"
+                    },
+                    "count": 2
+                  }
+                ]
+              }
+            },
+            "else": {
+              "op": "destroy_supply",
+              "target": {
+                "var": "first"
+              },
+              "count": 2
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0515-A01",
+      "source_card_id": "TS-0515",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "HALL_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "schedule",
+        "event": "TURN_START",
+        "body": {
+          "op": "mod_next_gold",
+          "amount": -2
+        }
+      }
+    },
+    {
+      "id": "TS-0516-A01",
+      "source_card_id": "TS-0516",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "HALL_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "schedule",
+        "event": "TURN_START",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "chosen"
+              },
+              "bind": "victim",
+              "body": {
+                "op": "discard",
+                "target": {
+                  "var": "victim"
+                }
+              }
+            },
+            "allow_shortfall": true
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0517-A01",
+      "source_card_id": "TS-0517",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "HALL_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "schedule",
+        "event": "TURN_START",
+        "body": {
+          "op": "gain_disease",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0518-A01",
+      "source_card_id": "TS-0518",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "HALL_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "schedule",
+        "event": "TURN_START",
+        "body": {
+          "op": "random_discard",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0519-A01",
+      "source_card_id": "TS-0519",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "HALL_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "schedule",
+        "event": "TURN_START",
+        "body": {
+          "op": "force_dungeon"
+        }
+      }
+    },
+    {
+      "id": "TS-0522-A01",
+      "source_card_id": "TS-0522",
+      "kind": "triggered",
+      "source_zone": "hall",
+      "event": "DUNGEON_ENTER",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_card",
+        "card_id": "TS-0001"
+      }
+    },
+    {
+      "id": "TS-0676-A01",
+      "source_card_id": "TS-0676",
+      "kind": "triggered",
+      "source_zone": "hall",
+      "event": "VILLAGE_ENTER",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0527-A01",
+      "source_card_id": "TS-0527",
+      "kind": "triggered",
+      "source_zone": "hall",
+      "event": "HERO_UPGRADED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "lose_xp",
+        "amount": 1
+      }
+    },
+    {
+      "id": "TS-0683-A01",
+      "source_card_id": "TS-0683",
+      "kind": "triggered",
+      "source_zone": "hall",
+      "event": "DUNGEON_ENTER",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "subcategory": "怪物"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "destroy",
+          "target": {
+            "var": "chosen"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0228-A01",
+      "source_card_id": "TS-0228",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "CARD_PURCHASED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_xp",
+        "amount": 2
+      }
+    },
+    {
+      "id": "TS-0247-A02",
+      "source_card_id": "TS-0247",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "CARD_EQUIPPED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "event_hero"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "grant_turn_buff",
+          "target": {
+            "var": "chosen"
+          },
+          "buff": "discard_instead_of_destroy"
+        }
+      }
+    },
+    {
+      "id": "TS-0323-A03",
+      "source_card_id": "TS-0323",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_xp",
+        "amount": 1
+      }
+    },
+    {
+      "id": "TS-0324-A03",
+      "source_card_id": "TS-0324",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_xp",
+        "amount": 2
+      }
+    },
+    {
+      "id": "TS-0307-A03",
+      "source_card_id": "TS-0307",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [
+        {
+          "compare": {
+            "left": {
+              "context": "rank"
+            },
+            "op": "eq",
+            "right": 3
+          }
+        }
+      ],
+      "body": {
+        "op": "gain_xp",
+        "amount": 1
+      }
+    },
+    {
+      "id": "TS-0365-A03",
+      "source_card_id": "TS-0365",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [
+        {
+          "compare": {
+            "left": {
+              "context": "rank"
+            },
+            "op": "eq",
+            "right": 3
+          }
+        }
+      ],
+      "body": {
+        "op": "gain_xp",
+        "amount": 1
+      }
+    },
+    {
+      "id": "TS-0446-A03",
+      "source_card_id": "TS-0446",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_next_hand",
+        "amount": 1
+      }
+    },
+    {
+      "id": "TS-0523-A02",
+      "source_card_id": "TS-0523",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "schedule",
+        "event": "HAND_REFILL_COMPLETE",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand"
+            },
+            "bind": "chosen",
+            "min": 3,
+            "max": 3,
+            "then": {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "chosen"
+              },
+              "bind": "victim",
+              "body": {
+                "op": "discard",
+                "target": {
+                  "var": "victim"
+                }
+              }
+            },
+            "allow_shortfall": true
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0528-A02",
+      "source_card_id": "TS-0528",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "schedule",
+        "event": "HAND_REFILL_COMPLETE",
+        "body": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "for_each",
+              "query": {
+                "zone": "subject_hand",
+                "tag": "英雄"
+              },
+              "bind": "chosen",
+              "body": {
+                "op": "discard",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            },
+            {
+              "op": "draw",
+              "count": {
+                "max": [
+                  0,
+                  {
+                    "sub": [
+                      6,
+                      {
+                        "count": {
+                          "zone": "subject_hand"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0561-A01",
+      "source_card_id": "TS-0561",
+      "kind": "triggered",
+      "source_zone": "hall",
+      "event": "TURN_WILL_END",
+      "usage": "once_per_event",
+      "conditions": [
+        {
+          "action_in": [
+            "dungeon"
+          ]
+        }
+      ],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "card_id": "TS-0001"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "card_id": "TS-0001"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "chosen"
+            },
+            "bind": "victim",
+            "body": {
+              "op": "destroy",
+              "target": {
+                "var": "victim"
+              }
+            }
+          },
+          "allow_shortfall": true
+        }
+      }
+    },
+    {
+      "id": "TS-0682-A03",
+      "source_card_id": "TS-0682",
+      "kind": "triggered",
+      "source_zone": "hall",
+      "event": "TURN_WILL_END",
+      "usage": "once_per_event",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "bound",
+            "var": "source",
+            "rank": 0
+          }
+        }
+      ],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "chosen"
+            },
+            "bind": "victim",
+            "body": {
+              "op": "destroy",
+              "target": {
+                "var": "victim"
+              }
+            }
+          },
+          "allow_shortfall": true
+        }
+      }
+    },
+    {
+      "id": "TS-0235-A02",
+      "source_card_id": "TS-0235",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "CARD_EQUIPPED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0242-A02",
+      "source_card_id": "TS-0242",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "CARD_EQUIPPED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "gain_disease",
+        "count": 1
+      }
+    },
+    {
+      "id": "TS-0686-A01",
+      "source_card_id": "TS-0686",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "TRAP_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "for_each",
+          "query": {
+            "zone": "subject_hand",
+            "tag": "法术"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0687-A01",
+      "source_card_id": "TS-0687",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "TRAP_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "tag": "英雄",
+            "min_by": "strength"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "tag": "英雄",
+            "min_by": "strength"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "chosen"
+            },
+            "bind": "victim",
+            "body": {
+              "op": "destroy",
+              "target": {
+                "var": "victim"
+              }
+            }
+          },
+          "allow_shortfall": true
+        }
+      }
+    },
+    {
+      "id": "TS-0691-A01",
+      "source_card_id": "TS-0691",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "TRAP_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "tag": "英雄",
+            "min_by": "strength"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "tag": "英雄",
+            "min_by": "strength"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "chosen"
+            },
+            "bind": "victim",
+            "body": {
+              "op": "destroy",
+              "target": {
+                "var": "victim"
+              }
+            }
+          },
+          "allow_shortfall": true
+        }
+      }
+    },
+    {
+      "id": "TS-0692-A02",
+      "source_card_id": "TS-0692",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "TRAP_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "reveal",
+          "count": 1,
+          "bind": "revealed",
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "revealed",
+              "subcategory": "怪物"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0685-A01",
+      "source_card_id": "TS-0685",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "TRAP_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "tag": "英雄",
+            "tags_any": [
+              "牧师",
+              "盗贼"
+            ]
+          },
+          "bind": "shown",
+          "min": 0,
+          "max": 1,
+          "then": {
+            "op": "if",
+            "condition": {
+              "not": {
+                "exists": {
+                  "zone": "bound",
+                  "var": "shown"
+                }
+              }
+            },
+            "then": {
+              "op": "gain_disease",
+              "count": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0688-A01",
+      "source_card_id": "TS-0688",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "TRAP_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "tag": "英雄"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "tag": "英雄"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "if",
+              "condition": {
+                "not": {
+                  "exists": {
+                    "zone": "bound",
+                    "var": "chosen",
+                    "tag": "盗贼"
+                  }
+                }
+              },
+              "then": {
+                "op": "destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0690-A01",
+      "source_card_id": "TS-0690",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "TRAP_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "if",
+          "condition": {
+            "not": {
+              "exists": {
+                "zone": "subject_hand",
+                "tag": "英雄",
+                "tags_any": [
+                  "盗贼"
+                ]
+              }
+            }
+          },
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "subject_hand",
+              "tag": "村民"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0687-A02",
+      "source_card_id": "TS-0687",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "TRAP_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "reveal",
+          "count": 2,
+          "bind": "revealed",
+          "then": {
+            "op": "if",
+            "condition": {
+              "all": [
+                {
+                  "compare": {
+                    "left": {
+                      "count": {
+                        "zone": "bound",
+                        "var": "revealed",
+                        "tag": "英雄"
+                      }
+                    },
+                    "op": "eq",
+                    "right": 2
+                  }
+                },
+                {
+                  "compare": {
+                    "left": {
+                      "mul": [
+                        2,
+                        {
+                          "maximum": {
+                            "query": {
+                              "zone": "bound",
+                              "var": "revealed"
+                            },
+                            "field": "strength"
+                          }
+                        }
+                      ]
+                    },
+                    "op": "ne",
+                    "right": {
+                      "sum": {
+                        "query": {
+                          "zone": "bound",
+                          "var": "revealed"
+                        },
+                        "field": "strength"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "then": {
+              "op": "if",
+              "condition": {
+                "exists": {
+                  "zone": "bound",
+                  "var": "revealed",
+                  "tag": "英雄",
+                  "min_by": "strength"
+                }
+              },
+              "then": {
+                "op": "select",
+                "query": {
+                  "zone": "bound",
+                  "var": "revealed",
+                  "tag": "英雄",
+                  "min_by": "strength"
+                },
+                "bind": "chosen",
+                "min": 1,
+                "max": 1,
+                "then": {
+                  "op": "for_each",
+                  "query": {
+                    "zone": "bound",
+                    "var": "chosen"
+                  },
+                  "bind": "victim",
+                  "body": {
+                    "op": "destroy",
+                    "target": {
+                      "var": "victim"
+                    }
+                  }
+                },
+                "allow_shortfall": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0691-A02",
+      "source_card_id": "TS-0691",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "TRAP_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "reveal",
+          "count": 3,
+          "bind": "revealed",
+          "then": {
+            "op": "if",
+            "condition": {
+              "exists": {
+                "zone": "bound",
+                "var": "revealed",
+                "tag": "英雄"
+              }
+            },
+            "then": {
+              "op": "select",
+              "query": {
+                "zone": "bound",
+                "var": "revealed",
+                "tag": "英雄",
+                "max_by": "strength"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "sequence",
+                "children": [
+                  {
+                    "op": "discard",
+                    "target": {
+                      "var": "chosen"
+                    }
+                  },
+                  {
+                    "op": "for_each",
+                    "query": {
+                      "zone": "bound",
+                      "var": "revealed",
+                      "tag": "英雄",
+                      "revealed_only": true
+                    },
+                    "bind": "chosen",
+                    "body": {
+                      "op": "destroy",
+                      "target": {
+                        "var": "chosen"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0689-A01",
+      "source_card_id": "TS-0689",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "TRAP_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "reveal_cycle",
+        "filter": {
+          "tag": "英雄"
+        },
+        "goal": 3
+      }
+    },
+    {
+      "id": "TS-0693-A01",
+      "source_card_id": "TS-0693",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "TRAP_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "reveal_cycle",
+        "filter": {
+          "tag": "武器"
+        },
+        "goal": 3
+      }
+    },
+    {
+      "id": "TS-0692-A01",
+      "source_card_id": "TS-0692",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "TRAP_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "not": {
+            "exists": {
+              "zone": "subject_hand",
+              "tag": "英雄",
+              "tags_any": [
+                "盗贼"
+              ]
+            }
+          }
+        },
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "defeated_monster"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "destroy",
+            "target": {
+              "var": "chosen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0358-A03",
+      "source_card_id": "TS-0358",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "tag": "武器"
+        },
+        "destination": "discard",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0332-A03",
+      "source_card_id": "TS-0332",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "tag": "武器"
+        },
+        "destination": "discard",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0338-A03",
+      "source_card_id": "TS-0338",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "card_type": "村庄牌",
+          "tag": "佣兵"
+        },
+        "destination": "discard",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0340-A03",
+      "source_card_id": "TS-0340",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "tag": "武器"
+        },
+        "destination": "discard",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0371-A03",
+      "source_card_id": "TS-0371",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "tag": "物品",
+          "light_min": 1
+        },
+        "destination": "discard",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0374-A03",
+      "source_card_id": "TS-0374",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "card_type": "村庄牌"
+        },
+        "destination": "discard",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0380-A03",
+      "source_card_id": "TS-0380",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "tag": "村民"
+        },
+        "destination": "discard",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0407-A03",
+      "source_card_id": "TS-0407",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "tag": "法术"
+        },
+        "destination": "discard",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0445-A03",
+      "source_card_id": "TS-0445",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "tag": "村民"
+        },
+        "destination": "discard",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0579-A02",
+      "source_card_id": "TS-0579",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "tag": "食物"
+        },
+        "destination": "discard",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0595-A03",
+      "source_card_id": "TS-0595",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "buy",
+        "filter": {
+          "card_type": "村庄牌"
+        },
+        "destination": "discard",
+        "payment": "none"
+      }
+    },
+    {
+      "id": "TS-0482-A01",
+      "source_card_id": "TS-0482",
+      "kind": "triggered",
+      "source_zone": "hall",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "all",
+        "body": {
+          "op": "gain_disease",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0675-A01",
+      "source_card_id": "TS-0675",
+      "kind": "triggered",
+      "source_zone": "hall",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "schedule",
+        "event": "TURN_START",
+        "body": {
+          "op": "force_dungeon"
+        }
+      }
+    },
+    {
+      "id": "TS-0652-A02",
+      "source_card_id": "TS-0652",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "reveal",
+        "count": 6,
+        "bind": "revealed",
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "bound",
+            "var": "revealed"
+          },
+          "bind": "victims",
+          "min": 0,
+          "max": 100,
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "bound",
+              "var": "victims"
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "destroy",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0195-A01",
+      "source_card_id": "TS-0195",
+      "kind": "triggered",
+      "source_zone": "settings",
+      "event": "TURN_WILL_END",
+      "usage": "once_per_event",
+      "conditions": [
+        {
+          "action_in": [
+            "village",
+            "rest"
+          ]
+        }
+      ],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "hall",
+          "rank": 1,
+          "subcategory": "怪物",
+          "movable": true
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "relocate_hall",
+          "target": {
+            "var": "chosen"
+          },
+          "destination": "rank3"
+        }
+      }
+    },
+    {
+      "id": "TS-0240-A02",
+      "source_card_id": "TS-0240",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "bound",
+          "var": "source",
+          "in_hand": true
+        },
+        "bind": "retained",
+        "min": 0,
+        "max": 1,
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "retained"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "move",
+            "target": {
+              "var": "chosen"
+            },
+            "destination": "draw_top"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0352-A02",
+      "source_card_id": "TS-0352",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "TURN_WILL_END",
+      "usage": "once_per_event",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "defeated_this_turn",
+            "vp_max": 3
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "bound",
+          "var": "source",
+          "in_hand": true
+        },
+        "bind": "retained",
+        "min": 0,
+        "max": 1,
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "retained"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "move",
+            "target": {
+              "var": "chosen"
+            },
+            "destination": "draw_top"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0353-A02",
+      "source_card_id": "TS-0353",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "TURN_WILL_END",
+      "usage": "once_per_event",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "defeated_this_turn",
+            "vp_max": 3
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "bound",
+          "var": "source",
+          "in_hand": true
+        },
+        "bind": "retained",
+        "min": 0,
+        "max": 1,
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "retained"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "move",
+            "target": {
+              "var": "chosen"
+            },
+            "destination": "refill_add"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0344-A04",
+      "source_card_id": "TS-0344",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "subject_hand",
+          "tag": "佣兵"
+        },
+        "bind": "retained",
+        "min": 0,
+        "max": 100,
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "retained"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "move",
+            "target": {
+              "var": "chosen"
+            },
+            "destination": "refill_add"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0409-A02",
+      "source_card_id": "TS-0409",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "hall",
+          "subcategory": "怪物",
+          "movable": true
+        },
+        "bind": "returned",
+        "min": 0,
+        "max": 1,
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "returned"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "relocate_hall",
+            "target": {
+              "var": "chosen"
+            },
+            "destination": "dungeon_bottom"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0678-A02",
+      "source_card_id": "TS-0678",
+      "kind": "triggered",
+      "source_zone": "hall",
+      "event": "TURN_START",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "hall",
+          "subcategory": "雷霆之石"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "relocate_hall",
+          "target": {
+            "var": "chosen"
+          },
+          "destination": "dungeon_bottom"
+        }
+      }
+    },
+    {
+      "id": "TS-0601-A01",
+      "source_card_id": "TS-0601",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "destroy_basic_supply",
+        "card_id": "TS-0001",
+        "count": 5
+      }
+    },
+    {
+      "id": "TS-0562-A01",
+      "source_card_id": "TS-0562",
+      "kind": "triggered",
+      "source_zone": "hall",
+      "event": "CARD_PURCHASED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "not": {
+            "exists": {
+              "zone": "event_source",
+              "tag": "英雄"
+            }
+          }
+        },
+        "then": {
+          "op": "destroy_purchased_supply"
+        }
+      }
+    },
+    {
+      "id": "TS-0563-A01",
+      "source_card_id": "TS-0563",
+      "kind": "triggered",
+      "source_zone": "hall",
+      "event": "CARD_PURCHASED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "event_source",
+            "tag": "英雄"
+          }
+        },
+        "then": {
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "tag": "英雄"
+            }
+          },
+          "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "tag": "英雄"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "chosen"
+              },
+              "bind": "victim",
+              "body": {
+                "op": "destroy",
+                "target": {
+                  "var": "victim"
+                }
+              }
+            },
+            "allow_shortfall": true
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0673-A02",
+      "source_card_id": "TS-0673",
+      "kind": "triggered",
+      "source_zone": "hall",
+      "event": "CARD_PURCHASED",
+      "usage": "once_per_event",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "bound",
+            "var": "source",
+            "rank": 0
+          }
+        }
+      ],
+      "body": {
+        "op": "destroy_purchased_supply"
+      }
+    },
+    {
+      "id": "TS-0261-A02",
+      "source_card_id": "TS-0261",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "CARD_PURCHASED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "sequence",
+        "children": [
+          {
+            "op": "grant_buy",
+            "amount": 1
+          },
+          {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "card_id": "TS-0001"
+            },
+            "bind": "sacrificed",
+            "min": 0,
+            "max": 1,
+            "then": {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "sacrificed"
+              },
+              "bind": "chosen",
+              "body": {
+                "op": "destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "TS-0288-A01",
+      "source_card_id": "TS-0288",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "add_global_rule",
+        "kind": "light",
+        "scope": "all",
+        "amount": 1,
+        "until": "owner_next_turn_end"
+      }
+    },
+    {
+      "id": "TS-0499-A03",
+      "source_card_id": "TS-0499",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_players",
+        "scope": "others",
+        "body": {
+          "op": "reveal",
+          "count": 3,
+          "bind": "revealed",
+          "then": {
+            "op": "for_each",
+            "query": {
+              "zone": "reveal_zone",
+              "subcategory": "怪物",
+              "vp_max": 3
+            },
+            "bind": "chosen",
+            "body": {
+              "op": "move",
+              "target": {
+                "var": "chosen"
+              },
+              "destination": "discard",
+              "recipient": "active"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0526-A01",
+      "source_card_id": "TS-0526",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "BREACH",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "shuffle_destroyed_traps"
+      }
+    },
+    {
+      "id": "TS-0696-A01",
+      "source_card_id": "TS-0696",
+      "kind": "triggered",
+      "source_zone": "active_control",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "event_source",
+            "subcategory": "怪物",
+            "vp_max": 3
+          }
+        }
+      ],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "bound",
+          "var": "source"
+        },
+        "bind": "sacrificed",
+        "min": 0,
+        "max": 1,
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "sacrificed"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "sequence",
+            "children": [
+              {
+                "op": "destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              },
+              {
+                "op": "grant_extra_turn"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0684-A01",
+      "source_card_id": "TS-0684",
+      "kind": "triggered",
+      "source_zone": "event_source",
+      "event": "TRAP_REVEALED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "subject_hand",
+          "tag": "英雄"
+        },
+        "bind": "captured",
+        "min": 1,
+        "max": 1,
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "captured"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "attach_card",
+            "target": {
+              "var": "chosen"
+            },
+            "anchor": {
+              "var": "source"
+            },
+            "kind": "cage"
+          }
+        },
+        "allow_shortfall": true
+      }
+    },
+    {
+      "id": "TS-0684-A02",
+      "source_card_id": "TS-0684",
+      "kind": "triggered",
+      "source_zone": "attached",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "release_attachment",
+        "target": {
+          "var": "source"
+        }
+      }
+    },
+    {
+      "id": "TS-0704-A01",
+      "source_card_id": "TS-0704",
+      "kind": "triggered",
+      "source_zone": "active_control",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "subject_hand"
+        },
+        "bind": "hidden",
+        "min": 0,
+        "max": 1,
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "hidden"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "attach_card",
+            "target": {
+              "var": "chosen"
+            },
+            "anchor": {
+              "var": "source"
+            },
+            "kind": "emerald"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0704-A02",
+      "source_card_id": "TS-0704",
+      "kind": "triggered",
+      "source_zone": "attached",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "event_source",
+            "vp_min": 7
+          }
+        }
+      ],
+      "body": {
+        "op": "release_attachment",
+        "target": {
+          "var": "source"
+        },
+        "recipient": "active"
+      }
+    },
+    {
+      "id": "TS-0705-A01",
+      "source_card_id": "TS-0705",
+      "kind": "triggered",
+      "source_zone": "active_control",
+      "event": "MONSTER_DEFEATED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "select",
+        "query": {
+          "zone": "event_source",
+          "subcategory": "怪物"
+        },
+        "bind": "captured",
+        "min": 0,
+        "max": 1,
+        "then": {
+          "op": "for_each",
+          "query": {
+            "zone": "bound",
+            "var": "captured"
+          },
+          "bind": "chosen",
+          "body": {
+            "op": "attach_card",
+            "target": {
+              "var": "chosen"
+            },
+            "anchor": {
+              "var": "source"
+            },
+            "kind": "sapphire"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+﻿card_id,ability_id,actions,usage,op,amount,source_line
+TS-0211,TS-0211-A01,village,once_per_turn,draw,2,村庄：抽 2 张牌。
+TS-0222,TS-0222-A01,village,once_per_turn,draw,1,村庄：抽 1 张牌。
+TS-0225,TS-0225-A01,village|dungeon,once_per_turn,draw,1,村庄 / 地下城：抽 1 张牌。
+TS-0227,TS-0227-A01,village|dungeon,once_per_turn,draw,1,村庄 / 地下城：抽 1 张牌。
+TS-0373,TS-0373-A03,dungeon,once_per_turn,draw,1,地下城：抽 1 张牌。
+TS-0374,TS-0374-A02,dungeon,once_per_turn,draw,1,地下城：抽 1 张牌。
+TS-0427,TS-0427-A03,village|dungeon,once_per_turn,draw,1,村庄 / 地下城：抽 1 张牌。
+TS-0429,TS-0429-A02,dungeon,once_per_turn,draw,1,地下城：抽 1 张牌。
+TS-0430,TS-0430-A03,dungeon,once_per_turn,draw,1,地下城：抽 1 张牌。
+TS-0431,TS-0431-A02,dungeon,once_per_turn,draw,1,地下城：抽 1 张牌。
+TS-0433,TS-0433-A02,dungeon,once_per_turn,draw,1,地下城：抽 1 张牌。
+TS-0434,TS-0434-A02,dungeon,once_per_turn,draw,2,地下城：抽 2 张牌。
+TS-0446,TS-0446-A02,dungeon,once_per_turn,draw,1,地下城：抽 1 张牌。
+TS-0492,TS-0492-A03,dungeon,once_per_turn,draw,1,地下城：抽 1 张牌。
+TS-0494,TS-0494-A03,dungeon,once_per_turn,draw,1,地下城：抽 1 张牌。
+TS-0537,TS-0537-A02,dungeon,once_per_turn,draw,1,地下城：抽 1 张牌。
+TS-0708,TS-0708-A02,dungeon,once_per_turn,draw,2,地下城：抽 2 张牌。
+TS-0435,TS-0435-A02,dungeon,once_per_turn,gain_xp,1,地下城：获得 1 点经验值。
+TS-0436,TS-0436-A02,dungeon,once_per_turn,gain_xp,2,地下城：获得 2 点经验值。
+TS-0527,TS-0527-A04,village|dungeon,once_per_turn,gain_xp,1,村庄 / 地下城：获得 1 点经验值。
+TS-0219,TS-0219-A02,dungeon,once_per_turn,mod_attack,1,地下城：攻击 +1。
+TS-0227,TS-0227-A02,dungeon,once_per_turn,mod_magic_attack,1,地下城：魔法攻击 +1。
+TS-0210,TS-0210-A02,village,once_per_turn,destroy_self_gold,2,村庄：摧毁此牌，获得 2 金币。
+TS-0213,TS-0213-A02,village,once_per_turn,destroy_self_gold,2,村庄：摧毁此牌，获得 2 金币。
+TS-0215,TS-0215-A02,village,once_per_turn,destroy_self_gold,2,村庄：摧毁此牌，获得 2 金币。
+TS-0220,TS-0220-A01,village,once_per_turn,grant_buy,1,村庄：你可以额外购买 1 张牌。
+TS-0225,TS-0225-A02,village,once_per_turn,grant_buy,1,村庄：你可以额外购买 1 张牌。
+TS-0215,TS-0215-A01,village,once_per_turn,grant_buy,1,村庄：本回合你可以额外购买 1 张牌。
+TS-0372,TS-0372-A02,dungeon,repeatable,destroy_disease_draw,1,重复地下城：摧毁 1 张疾病，以抽 1 张牌。
+TS-0373,TS-0373-A04,dungeon,repeatable,destroy_disease_draw,1,重复地下城：摧毁 1 张疾病，抽 1 张牌。
+TS-0376,TS-0376-A03,dungeon,once_per_turn,destroy_disease_draw,1,地下城：摧毁 1 张疾病，抽 1 张牌。
+TS-0426,TS-0426-A02,village|dungeon,once_per_turn,destroy_disease_draw,1,村庄 / 地下城：摧毁 1 张疾病，抽 1 张牌。
+TS-0431,TS-0431-A03,village|dungeon,once_per_turn,destroy_disease_draw,3,村庄 / 地下城：摧毁 1 张疾病，以抽 3 张牌。
+TS-0432,TS-0432-A02,dungeon,repeatable,destroy_disease_draw,1,重复地下城：摧毁 1 张疾病，抽 1 张牌。
+TS-0433,TS-0433-A03,dungeon,repeatable,destroy_disease_draw,1,重复地下城：摧毁 1 张疾病，抽 1 张牌。
+TS-0434,TS-0434-A03,dungeon,repeatable,destroy_disease_draw,2,重复地下城：摧毁 1 张疾病，抽 2 张牌。
+TS-0524,TS-0524-A03,dungeon,once_per_turn,destroy_disease_draw,1,地下城：摧毁 1 张疾病，抽取 1 张牌。
+TS-0213,TS-0213-A01,village,once_per_turn,destroy_militia_xp,2,村庄：摧毁 1 名民兵，获得 2 点经验值。
