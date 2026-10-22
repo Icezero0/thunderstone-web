@@ -7,7 +7,7 @@
 在项目根目录启动现有面板；如果已经运行，更新代码后重新启动：
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\run_config_panel.py --host 127.0.0.1 --port 8765
+.\.venv\Scripts\python.exe backend\run_backend.py --host 127.0.0.1 --port 8765
 ```
 
 访问 `http://127.0.0.1:8765/monster-audit`。效果实验台顶部也有入口。
@@ -28,17 +28,17 @@
 
 规则或原文发生变化时，指纹不同的旧结论恢复为待审核，旧备注保留。编辑备注不会自动确认过期结论。原文、CSV、SQLite 和引擎规则均由后续明确的修正操作更新。
 
-2026-10-22 的导出记录已归档到 `archive/reviews/`；能力级判定及落实后的绑定指纹保存于 `data/effects/monster-symbols.json`。页面仅在当前绑定指纹与落实记录一致时继承已完成结论，保留原备注；之后的新审核操作优先，规则再次变化仍需重新审核。该文件记录审核证据，运行时直接执行修正后的正式效果定义。[本轮修正清单](monster-review-resolution.md)列出全部备注的处理结果。
+2026-10-22 的导出记录已归档到 `archive/reviews/`；能力级判定及落实后的绑定指纹保存于 `cards/reviews/monster-symbols.json`。页面仅在当前绑定指纹与落实记录一致时继承已完成结论，保留原备注；之后的新审核操作优先，规则再次变化仍需重新审核。该文件记录审核证据，运行时直接执行修正后的正式效果定义。[本轮修正清单](monster-review-resolution.md)列出全部备注的处理结果。
 
 ## 数据来源与实现
 
-`devtools/monster_audit.py` 从当前目录和 `load_ruleset` 取得正式能力与机制。原始设计 JSON 只提供能力 ID 和原文，不用其草案 AST 或触发标签解释当前实现。基础数值、目标免疫及大厅容量通过相应的实际共用入口解释；它们不是虚构的卡牌 DSL。中文解释器 `devtools/effect_explanation.py` 根据节点、条件、查询和参数生成流程树；尚不支持的节点会明确提示，而不会回退成原文冒充实现解释。
+`backend/devtools/monster_audit.py` 从当前目录和 `load_ruleset` 取得正式能力与机制。原始设计 JSON 只提供能力 ID 和原文，不用其草案 AST 或触发标签解释当前实现。基础数值、目标免疫及大厅容量通过相应的实际共用入口解释；它们不是虚构的卡牌 DSL。中文解释器 `backend/devtools/effect_explanation.py` 根据节点、条件、查询和参数生成流程树；尚不支持的节点会明确提示，而不会回退成原文冒充实现解释。
 
-页面为 `web/monster_audit.*`，只读数据入口为 `GET /monster-audit/data`。界面标记不改变当前运行语义。新增路由与效果实验台共用本地预览服务。
+页面为 `frontend/monster-audit.*`，只读数据入口为 `GET /monster-audit/data`。界面标记不改变当前运行语义。新增路由与效果实验台共用本地预览服务。
 
 ```powershell
-.\.venv\Scripts\python.exe -X utf8 -m unittest tests.test_monster_audit tests.test_effect_lab -v
-node --test tests\monster_audit_ui.test.cjs
+.\.venv\Scripts\python.exe -X utf8 -m unittest backend.tests.test_monster_audit backend.tests.test_effect_lab -v
+npm test --workspace @thunderstone/frontend
 ```
 
 Python 测试核对全卡／全词条、实际绑定一致性、手牌与战斗区分、负值、条件、延迟摧毁和只读接口；Node 离线测试核对页面列表、筛选、本地保存、下一张、过期结论、转义以及导入导出。Node 测试使用内存 DOM 边界，无需启动服务。

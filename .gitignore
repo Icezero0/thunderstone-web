@@ -8,14 +8,18 @@
 
 # Local Python environment and tooling
 /.venv/
-/backend/instance/
+# Local runtime databases, SQLite journals, secrets and migration backups
+/data/*
+!/data/README.md
 /.uv-cache/
 __pycache__/
 *.py[cod]
 .pytest_cache/
 node_modules/
-/packages/engine/dist/
-/packages/engine/src/build-info.ts
+/engine/dist/
+/engine/src/build-info.ts
+/frontend/dist/
+/frontend/.test-dist/
 
 # Local configuration and operating system files
 .env

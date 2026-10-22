@@ -1,6 +1,6 @@
-﻿# `cards.csv` 数据字典
+# `cards.csv` 数据字典
 
-[`data/cards.csv`](../data/cards.csv) 是纳入版本管理的卡牌定义导入源；[`assets/cards/`](../assets/cards/) 保存与之对应的卡图。文件现有 **722 行、47 列**：720 张可玩卡正面、1 张回合顺序参考卡、1 张公共牌背。每一行表示一种牌面定义，不表示对局中的一张卡牌实例；牌库、玩家手牌等实例应引用 `card_id`。后端将它导入 SQLite 供运行时使用，表结构和迁移流程见 [卡牌目录数据库设计](card-catalog-database-design.md)。
+[`cards/cards.csv`](../cards/cards.csv) 是纳入版本管理的卡牌定义导入源；[`cards/assets/`](../cards/assets/) 保存与之对应的卡图。文件现有 **722 行、47 列**：720 张可玩卡正面、1 张回合顺序参考卡、1 张公共牌背。每一行表示一种牌面定义，不表示对局中的一张卡牌实例；牌库、玩家手牌等实例应引用 `card_id`。后端将它导入 SQLite 供运行时使用，表结构和迁移流程见 [卡牌目录数据库设计](card-catalog-database-design.md)。
 
 CSV 使用带 BOM 的 UTF-8 编码。读取时所有单元格先按字符串处理；下表的“整数文本”表示非空值可转换为整数。**空字符串表示未记录、未知或不适用，不等于数值 `0`**。部分数值可以为负数，部分文字单元格（尤其 `effect_text`）含有被 CSV 引号包裹的换行。
 
@@ -35,7 +35,7 @@ CSV 使用带 BOM 的 UTF-8 编码。读取时所有单元格先按字符串处�
 | `review_status` | 枚举 | 早期中文文字整理状态：`extracted`、`reviewed`、`not_applicable`。这是历史记录，不表示当前存在审核页面。 |
 | `review_reasons` | 文本或空 | 早期文字待核对原因码，多个值原拟用 `\|` 分隔；当前全部为空。 |
 | `legacy_edited` | 布尔样式文本 | 早期嵌字工程的编辑标记，当前全部为字面值 `True`；不应用它推断最终人工核对状态。 |
-| `image_path` | 项目根目录相对路径 | 正式中文卡图，例如 `assets/cards/TS-0679.png`；公共牌背为 `assets/cards/TS-BACK-001.jpg`。该路径对应的文件是正式资产。 |
+| `image_path` | 项目根目录相对路径 | 正式中文卡图，例如 `cards/assets/TS-0679.png`；公共牌背为 `cards/assets/TS-BACK-001.jpg`。该路径对应的文件是正式资产。 |
 | `english_image_path` | 相对路径 | 英文原卡图路径，位于本地 `black_edges/`；该初期资产目录被 Git 忽略，部署时不保证存在。 |
 | `clean_image_path` | 相对路径 | 英文文字抹除后的中间图路径，位于本地 `black_edges/.card_localizer_work/`；同样不属于正式卡图。 |
 

@@ -2,7 +2,7 @@
 
 ## TypeScript rules package
 
-[packages/engine](../../../../packages/engine/README.md) executes classic setup, turn
+[engine](../../../../engine/README.md) executes classic setup, turn
 commands, the effect DSL, hall and scenario transitions, disease gains, combat,
 economy and scoring. Build it with `npm ci` and `npm run build`. This Python
 package loads the catalog and reviewed JSON, then calls the stateless Node worker.
@@ -28,8 +28,8 @@ The Python entry points are `setup.start_game`, `turn.apply_command`,
 `turn.legal_commands`, `disease.take_disease` and `input_config`, all under
 `backend.app.integrations.game_engine`.
 The old Python interpreter is archived under
-[`tests/migration/reference/python_engine`](../../../../tests/migration/reference/python_engine/)
-for parity tests. The backend loads a matching catalog snapshot from SQLite and
+[`backend/tests/migration/reference/python_engine`](../../../../backend/tests/migration/reference/python_engine/)
+for parity backend.tests. The backend loads a matching catalog snapshot from SQLite and
 passes it to the engine; database access stays outside the rules package.
 
 ## Basic turn commands
@@ -54,11 +54,11 @@ passes it to the engine; database access stays outside the rules package.
 | Pending response | `ResolveResponse` with `source_instance_id`, then `recipient_id` if redirecting; omit both to decline a source-stage offer |
 | Pending spell reuse | `ResolveReusedAbility` with an offered `ability_id` |
 
-The turn transition emits start, action and end timing events even when no card ability is registered. Village gold comes from printed card values; one purchase is available by default. Basic cards have infinite supply. A militia can upgrade to an available level 1 hero; other heroes upgrade within their selected series, paying the XP cost printed on the source hero. Rest destroys at most one card, returning a disease instance to its infinite supply. Cleanup discards the remaining hand, draws six, shuffles the discard pile only when needed, and passes the turn in seat order. A dungeon action resolves printed attack, magic attack, light, weapon weight, monster health and reward XP, then refills the hall. A thunderstone reaching rank 1 enters `SETTLING` before cleanup.
+The turn transition emits start, action and end timing events even when no card ability is registered. Village gold comes from printed card values; one purchase is available by default. Basic cards have infinite supply. A militia can upgrade to an available level 1 hero; other heroes upgrade within their selected series, paying the XP cost printed on the source hero. Rest destroys at most one card, returning a disease instance to its infinite supply. Cleanup discards the remaining hand, draws six, shuffles the discard pile only when needed, and passes the turn in player order. A dungeon action resolves printed attack, magic attack, light, weapon weight, monster health and reward XP, then refills the hall. A thunderstone reaching rank 1 enters `SETTLING` before cleanup.
 
-The [reviewed JSON rulesets](../../../../data/effects/) contain 446 executable abilities and 222 continuous mechanic bindings. All 520 effect cards have complete line coverage and per-card behavior tests. Hall refill and turn timings use serializable workflow steps: a trap can interrupt an ability, request a player's choice, and resume the original ability. Source zones distinguish hand trophies, battle targets, hall globals, settings, attachments and controlled treasures. Reviewed rules include responses, replacements, borrowing/copying, disease attachments, extra turns, reserves, supply replenishment, dynamic scoring, Flying Spire and Banishing Ritual. See the [runtime implementation](../../../../docs/game-engine/ability-runtime-implementation.md) for contracts and confirmed rulings. Cooperative/solo variants and the multiplayer transport layer remain separate work.
+The [reviewed JSON rulesets](../../../../cards/effects/) contain 446 executable abilities and 222 continuous mechanic bindings. All 520 effect cards have complete line coverage and per-card behavior backend.tests. Hall refill and turn timings use serializable workflow steps: a trap can interrupt an ability, request a player's choice, and resume the original ability. Source zones distinguish hand trophies, battle targets, hall globals, settings, attachments and controlled treasures. Reviewed rules include responses, replacements, borrowing/copying, disease attachments, extra turns, reserves, supply replenishment, dynamic scoring, Flying Spire and Banishing Ritual. See the [runtime implementation](../../../../docs/game-engine/ability-runtime-implementation.md) for contracts and confirmed rulings. Cooperative/solo variants and the multiplayer transport layer remain separate work.
 
-For a local JSON replay, save the `state` from `scripts/run_setup.py` and a list of command objects, then run:
+For a local JSON replay, save the `state` from `backend/scripts/run_setup.py` and a list of command objects, then run:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\run_turns.py --state setup-result.json --commands commands.json --output turn-result.json

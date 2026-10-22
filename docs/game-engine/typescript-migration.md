@@ -1,8 +1,8 @@
-﻿# TypeScript engine migration
+# TypeScript engine migration
 
 ## Runtime boundary
 
-`packages/engine` is the single implementation of classic setup, turn commands,
+`engine` is the single implementation of classic setup, turn commands,
 card effects, disease gains, dungeon hall and scenario transitions, combat,
 economy, and scoring. Its inputs and outputs are plain JSON. A command clones
 its input state, validates the actor and version, runs one deterministic
@@ -14,7 +14,7 @@ and publishes player-specific views. Python loads card definitions from CSV or
 SQLite, loads the reviewed effect artifacts, and sends the frozen snapshot to the
 Node worker. The thin Python adapters live in `backend/app/integrations/game_engine/`;
 the former repository-root `engine/` package has been removed. The worker opens no network port. The old Python rules
-are archived under `tests/migration/reference/python_engine` for regression
+are archived under `backend/tests/migration/reference/python_engine` for regression
 comparison and are not used by the production command path.
 
 The browser imports the same TypeScript build for read-only calculations.
@@ -25,7 +25,7 @@ routing belong to the backend, not this rules package.
 ## Package layout
 
 ```text
-packages/engine/src/
+engine/src/
   catalog/       card identity, numeric fields and filters
   setup/         configuration, seeded setup and initial state
   random/        portable SHA-256 counter stream
@@ -35,7 +35,7 @@ packages/engine/src/
   scoring/       final score
 backend/engine-worker/worker.mjs    JSON-lines adapter
 backend/app/integrations/game_engine/ Python data, transport and API adapters
-tests/migration/reference/          frozen Python implementation and formulas
+backend/tests/migration/reference/          frozen Python implementation and formulas
 ```
 
 `npm ci` installs locked dependencies; `npm run build` emits the Node ESM package

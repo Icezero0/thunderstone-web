@@ -58,7 +58,7 @@ Once combat has been declared, declining or being unable to pay a Spectral cost 
 
 ## Reviewed monster symbols and continuous effects
 
-The [monster review record](../../data/effects/monster-symbols.json) records explicit
+The [monster review record](../../cards/reviews/monster-symbols.json) records explicit
 loot symbols and the user's default of no symbol for unfinished entries. The
 formal definitions and generators incorporate these decisions. Unmarked monster
 light text uses target-only `battle_aura` mechanics; printed light icons still
@@ -71,7 +71,7 @@ pile from the shuffled discard pile on demand. Continuous searches record failed
 checks by player and instance; shuffles and successful checks keep those records,
 while changed instances become eligible for rechecking. Searches stop when all
 currently reachable instances have valid no-progress records. `reveal_cycle`
-applies this condition across all affected players, preserving reverse seat order
+applies this condition across all affected players, preserving reverse player order
 and normal processing of previously seen cards. No arbitrary reveal count is used.
 
 Spell immunity is continuous in the hall. `effectTargets` filters effect choices
@@ -91,25 +91,25 @@ The second reviewed JSON adds exact draw, XP, extra purchase, self destruction f
 
 Continuous combat rules recalculate rank, equipment, strength, hand conditions, hall auras, light and target restrictions. Ordinary rank 1/2/3 requires 1/2/3 light; every missing light costs 2 attack. Thornwood Forest requires 1 light at ordinary ranks, while rank 0 stays exempt. Disease attack penalties apply to one positive attack type, with `AssignDiseasePenalty` allowing an explicit allocation. Fatigue affects one hero; `AssignStrengthPenalty` changes that allocation. Zero strength reached in battle creates one sticky turn-end destruction mark, even if strength later recovers.
 
-The generated [ability report](../../data/effects/coverage.csv) and [card report](../../data/effects/card-coverage.csv) track coverage. As of 2026-10-22: 446 `READY`, 227 `MECHANIC_READY`, 210 `PRINTED_BASELINE`, 19 `TARGET_RULE`, 6 `SETUP_READY`, 2 `ENV_RULE`, 38 `SYSTEM_RULE`, 16 `RULE_REFERENCE`. All 520 effect cards are `COMPLETE`; there are no draft or partially covered cards. The reference card's 16 instruction lines are documentation, outside the 520 playable effect cards. Treefolk expand and refill both the initial hall and the hall during play; setup and runtime share the capacity calculation. This is line-and-behavior coverage for the current catalog and confirmed classic rulings, not exhaustive proof of every possible card combination.
+The generated [ability report](../../cards/reports/coverage.csv) and [card report](../../cards/reports/card-coverage.csv) track coverage. As of 2026-10-22: 446 `READY`, 227 `MECHANIC_READY`, 210 `PRINTED_BASELINE`, 19 `TARGET_RULE`, 6 `SETUP_READY`, 2 `ENV_RULE`, 38 `SYSTEM_RULE`, 16 `RULE_REFERENCE`. All 520 effect cards are `COMPLETE`; there are no draft or partially covered cards. The reference card's 16 instruction lines are documentation, outside the 520 playable effect cards. Treefolk expand and refill both the initial hall and the hall during play; setup and runtime share the capacity calculation. This is line-and-behavior coverage for the current catalog and confirmed classic rulings, not exhaustive proof of every possible card combination.
 
-Verify generated files with `--check` on `build_simple_effects.py`, `build_action_effects.py`, `build_battle_effects.py`, `build_event_effects.py` and `build_mechanics.py`. Regenerate reports with `scripts/audit_effects.py --output data/effects/coverage.csv --card-output data/effects/card-coverage.csv --require-complete`. The completeness gate fails if any card is unfinished.
+Verify generated files with `--check` on `build_simple_effects.py`, `build_action_effects.py`, `build_battle_effects.py`, `build_event_effects.py` and `build_mechanics.py`. Regenerate reports with `backend/scripts/audit_effects.py --output cards/reports/coverage.csv --card-output cards/reports/card-coverage.csv --require-complete`. The completeness gate fails if any card is unfinished.
 
-`tests/test_card_effects.py` creates a stable `test_effect_TS_XXXX` entry for every one of the 520 effect cards. Every card entry executes its reviewed behaviors, with separate card ID named tests for the underlying printed, activated, target, battle, setup, event, mechanic and system contracts. The manifest checks exact card lines and requires all cards to be complete. An incomplete card fails the suite rather than being skipped. A card is complete only when **every** decomposed ability line is covered. Cross-card public-command tests also check timing, ownership, authorization, immutable input and JSON continuations.
+`backend/tests/test_card_effects.py` creates a stable `test_effect_TS_XXXX` entry for every one of the 520 effect cards. Every card entry executes its reviewed behaviors, with separate card ID named tests for the underlying printed, activated, target, battle, setup, event, mechanic and system contracts. The manifest checks exact card lines and requires all cards to be complete. An incomplete card fails the suite rather than being skipped. A card is complete only when **every** decomposed ability line is covered. Cross-card public-command tests also check timing, ownership, authorization, immutable input and JSON continuations.
 
 ## Turn integration
 
-`packages/engine/src/turn/workflow.ts` serializes event dispatch, hall refill, effect continuation and turn cleanup. Timings include dungeon/village entry, equipment, purchases, upgrades, battle before/after outcome, monster defeat, hall reveal, breach, traps, hand refill and turn start/end. If refill reveals a trap, the original ability stack stays in the workflow while the trap runs; after its choices complete, the original ability continues. The previous parallel implementations of combat and hall refill were removed.
+`engine/src/turn/workflow.ts` serializes event dispatch, hall refill, effect continuation and turn cleanup. Timings include dungeon/village entry, equipment, purchases, upgrades, battle before/after outcome, monster defeat, hall reveal, breach, traps, hand refill and turn start/end. If refill reveals a trap, the original ability stack stays in the workflow while the trap runs; after its choices complete, the original ability continues. The previous parallel implementations of combat and hall refill were removed.
 
-`packages/engine/src/effects/purchase-transition.ts` gives each spoils offer its own allowance from the current surviving hand, rather than sharing the village gold pool. `packages/engine/src/scoring/score.ts` handles printed VP and reviewed insect/horde/stone scoring at settlement, excluding eliminated players from winner and fewest-monster comparisons. `packages/engine/src/turn/settlement.ts` centralizes terminal state changes; queued ordinary turn work stops immediately after settlement.
+`engine/src/effects/purchase-transition.ts` gives each spoils offer its own allowance from the current surviving hand, rather than sharing the village gold pool. `engine/src/scoring/score.ts` handles printed VP and reviewed insect/horde/stone scoring at settlement, excluding eliminated players from winner and fewest-monster comparisons. `engine/src/turn/settlement.ts` centralizes terminal state changes; queued ordinary turn work stops immediately after settlement.
 
 Banishing Ritual permits dungeon turns. Claiming a stone continues play; an unclaimed stone at rank 1 returns to the dungeon bottom. Defeating Heart of Doom ends play and includes the gained guardian in scoring; its breach ends play before it moves to rank 0. A failed attack eliminates only the attacker when its battle effect applies. Remaining players continue; if everyone has been eliminated there is no winner. The Heart's stones gain **+6** magic attack, corrected in the catalog from the English card text with user confirmation on 2026-10-20. Flying Spire continues after its first acquired stone, ends after its second, and also ends if a stone reaches rank 1 without being acquired.
 
-`packages/engine/src/turn/transaction.ts` supplies the surviving participant list. Turn passage retains the original player order but skips eliminated seats; a round wraps relative to `first_player_id`. Delays for the next own turn are consumed at that player's next actual turn, even if elimination has shortened the rotation. The backend submits commands and persists states; calculations stay independent of network and database code.
+`engine/src/turn/transaction.ts` supplies the surviving participant list. Turn passage retains the original player order but skips eliminated players; a round wraps relative to `first_player_id`. Delays for the next own turn are consumed at that player's next actual turn, even if elimination has shortened the rotation. The backend submits commands and persists states; calculations stay independent of network and database code.
 
 ## Disease replacement decisions
 
-`packages/engine/src/effects/disease-transition.ts` resolves Plague Breaker and the two Sidhe disease redirects. The receiving player chooses between applicable replacements. A redirect then selects another surviving player, whose own hand can provide a replacement. Per user ruling on 2026-10-20, each source instance may replace the same disease gain only once. The disease is sampled once, retaining its instance and RNG result throughout redirections; Sidhe always redirects to a discard pile. A destroyed disease returns to the infinite supply by removing its instance.
+`engine/src/effects/disease-transition.ts` resolves Plague Breaker and the two Sidhe disease redirects. The receiving player chooses between applicable replacements. A redirect then selects another surviving player, whose own hand can provide a replacement. Per user ruling on 2026-10-20, each source instance may replace the same disease gain only once. The disease is sampled once, retaining its instance and RNG result throughout redirections; Sidhe always redirects to a discard pile. A destroyed disease returns to the infinite supply by removing its instance.
 
 Pending arbitration uses `ResolveDiseaseReplacement` with either `source_instance_id` or `recipient_id`, according to its recorded stage. The disease waits in an unowned pending zone. Batch disease effects create one disease, finish its replacement chain, then create the next and resume the original ability. The public `backend.app.integrations.game_engine.disease.take_disease` uses this same transition; it can return a pending choice, and its `instance` is `None` after an automatic destruction. Tests in `test_disease_replacements.py` exercise recipient authorization, conflict choice, JSON restoration, loops and batch interruption.
 
@@ -132,7 +132,7 @@ Per user rulings on 2026-10-20, ordinary battle destruction uses `mark_destroy` 
 | `effects/supply.ts` | Supply destruction, Regian return replacement, Stormhold replenishment |
 | `turn/hall.ts` | Hall movement, refill and reserve-marker replacement |
 
-These module paths are relative to `packages/engine/src/`.
+These module paths are relative to `engine/src/`.
 
 The interpreter composes these domain operations into the same serializable workflow. `listen` registers an event/body/condition with its captured bindings and current turn; a one-shot listener is consumed only when its conditions match. `remove_listener` can consume a listener after an optional successful gain. `collect` builds an explicit set across players for a later global selection. `BEFORE_HALL_REFILL` runs before filling vacancies, allowing Broadsword to claim a remaining low-VP monster without defeat XP.
 
@@ -161,8 +161,8 @@ Horde/Swarm marker copies go into the dungeon, with increasing-health monster ca
 ## Verification commands
 
 ```powershell
-.\.venv\Scripts\python.exe -X utf8 -m unittest discover -s tests -v
-.\.venv\Scripts\python.exe -X utf8 scripts\audit_effects.py --require-complete
+.\.venv\Scripts\python.exe -X utf8 -m unittest discover -s backend/tests -t . -v
+.\.venv\Scripts\python.exe -X utf8 backend\scripts\audit_effects.py --require-complete
 ```
 
-`tests/test_advanced_effects.py` exercises real card combinations through the public command API with JSON roundtrips between commands. `tests/response_cases.py` supplies the six response-source card contracts. The temporary [effect lab](effect-lab.md) exposes deterministic traces for 23 selected cases and a searchable manifest of all 520 effect cards; the manifest shows binding coverage, while each trace runs its engine assertions live. Multiplayer transport, account integration, private client projections and cooperative/solo variants are outside this effect coverage milestone.
+`backend/tests/test_advanced_effects.py` exercises real card combinations through the public command API with JSON roundtrips between commands. `backend/tests/response_cases.py` supplies the six response-source card contracts. The temporary [effect lab](effect-lab.md) exposes deterministic traces for 23 selected cases and a searchable manifest of all 520 effect cards; the manifest shows binding coverage, while each trace runs its engine assertions live. Multiplayer transport, account integration, private client projections and cooperative/solo variants are outside this effect coverage milestone.

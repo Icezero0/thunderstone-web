@@ -1,8 +1,8 @@
 # 回合与三种行动
 
-`PLAYING` 阶段从引擎设置时选出的首位玩家开始，随后按联机层提交的固定座位顺序轮转，交接见[引擎边界](00-engine-boundary.md)。规则书第 5 页及第 24 页规定：玩家每回合必须选择**访问村庄、进入地下城、休整**中的一种，随后按该行动列出的步骤顺序执行。状态和区域见[状态模型](02-state-model.md)；地下城内部结算详见[地下城与战斗](05-dungeon-and-combat.md)。
+`PLAYING` 阶段从引擎设置时选出的首位玩家开始，随后按联机层提交的固定玩家列表顺序轮转，交接见[引擎边界](00-engine-boundary.md)。规则书第 5 页及第 24 页规定：玩家每回合必须选择**访问村庄、进入地下城、休整**中的一种，随后按该行动列出的步骤顺序执行。状态和区域见[状态模型](02-state-model.md)；地下城内部结算详见[地下城与战斗](05-dungeon-and-combat.md)。
 
-当前 [TypeScript 回合内核](../../packages/engine/src/turn/commands.ts)已实现三种行动的指令转换，以及完整的卡牌效果、特殊场景与终局计分。没有额外卡牌效果的步骤自动越过，但仍产生回合与行动边界事件；[已审核能力](ability-runtime-implementation.md)在对应窗口运行，并可暂停等待选择。Python 后端通过[适配层](../../backend/app/integrations/game_engine/README.md)提交指令，具体格式见[接口说明](../../backend/app/integrations/game_engine/README.md)。
+当前 [TypeScript 回合内核](../../engine/src/turn/commands.ts)已实现三种行动的指令转换，以及完整的卡牌效果、特殊场景与终局计分。没有额外卡牌效果的步骤自动越过，但仍产生回合与行动边界事件；[已审核能力](ability-runtime-implementation.md)在对应窗口运行，并可暂停等待选择。Python 后端通过[适配层](../../backend/app/integrations/game_engine/README.md)提交指令，具体格式见[接口说明](../../backend/app/integrations/game_engine/README.md)。
 
 ## 1. 回合状态机
 
@@ -76,7 +76,7 @@ flowchart TD
 
 ## 6. 统一回合清理与抽牌
 
-普通行动结束后先进入 `TURN_WILL_END`，结算应在清理前发生的效果，包括战斗中被标记“回合末摧毁”的英雄，每个实体只处理一次。然后将剩余手牌，无论能力是否使用，放入当前玩家弃牌堆，清除本回合能力使用记录与临时资源，抽 6 张形成下一手牌。完成 `TURN_ENDED` 时点后才沿座位顺序切换到下一玩家，并发出其 `TURN_WILL_START`。实际卡牌可能改变某一步时机；应由事件规则覆盖并记录。
+普通行动结束后先进入 `TURN_WILL_END`，结算应在清理前发生的效果，包括战斗中被标记“回合末摧毁”的英雄，每个实体只处理一次。然后将剩余手牌，无论能力是否使用，放入当前玩家弃牌堆，清除本回合能力使用记录与临时资源，抽 6 张形成下一手牌。完成 `TURN_ENDED` 时点后才沿玩家列表顺序切换到下一玩家，并发出其 `TURN_WILL_START`。实际卡牌可能改变某一步时机；应由事件规则覆盖并记录。
 
 任何效果需要从玩家个人抽牌堆取牌时，都共用按需重洗规则，包括抽进手牌、展示、翻牌和弃牌检定。抽 `n` 张的原子操作：
 

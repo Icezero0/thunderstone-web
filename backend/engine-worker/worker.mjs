@@ -5,7 +5,7 @@ import {combatValues, monsterHealth, equipmentCapacity, previewBattle, scoreGame
   RandomStream, exactInteger, wireInteger, startGame, SetupBuilder, validateRulesConfig, effectiveCopyCount, effectiveGroupCounts, validateSetupState,
   drawCards, sampleDisease, applyResourceEffect, advanceTurn, applyCommand, legalCommands, takeDisease, battlePreparation,
   validateTurnBuffs, grantTurnBuff, destructionReplacement, expireTurnBuffs, planDiseaseGain}
-  from '../../packages/engine/dist/index.js';
+  from '../../engine/dist/index.js';
 
 const operations = {
   runtime_info: () => ({engine_version: ENGINE_VERSION}),

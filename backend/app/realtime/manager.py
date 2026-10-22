@@ -58,3 +58,9 @@ class RealtimeManager:
                 await connection.websocket.send_json(message)
             except Exception:
                 await self.disconnect(connection_id)
+
+    async def broadcast(self, message: dict) -> None:
+        """Publish public invalidations after a room transaction has committed."""
+        async with self._lock:
+            user_ids = list(self.user_connections)
+        await asyncio.gather(*(self.send_to_user(user_id, message) for user_id in user_ids))

@@ -19,7 +19,7 @@ for the new `game_version`. The server rejects drafts built for an older version
 
 ## Shared TypeScript interface
 
-All functions and types below are exported from `packages/engine`. The local
+All functions and types below are exported from `engine`. The local
 backend serves the browser ESM bundle at `/engine/engine.js`.
 
 | Function | Result |
@@ -171,8 +171,8 @@ malformed selections return 422; an unavailable worker/build returns 503.
 
 ## Verification
 
-`packages/engine/tests/battle-team.test.mjs` covers local click updates, immutable
+`engine/tests/battle-team.test.mjs` covers local click updates, immutable
 Node/browser parity, hidden-zone projection, the benched-mage decision, spell-only
 combat, mandatory negative cards, hand versus participant scope, source abilities,
 equipment validation, version/actor rejection, and equipment-trigger interruption.
-`tests/test_battle_team_api.py` checks Python and HTTP contracts and error paths.
+`backend/tests/test_battle_team_api.py` checks Python and HTTP contracts and error paths.

@@ -6,7 +6,7 @@ from pathlib import Path
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from backend.app.core.paths import PROJECT_ROOT
+from backend.app.core.paths import DATA_ROOT, PROJECT_ROOT
 
 
 class Settings(BaseSettings):
@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     api_v1_prefix: str = "/api/v1"
     log_sql: bool = False
     database_url: str = Field(default_factory=lambda: (
-        f"sqlite+aiosqlite:///{(PROJECT_ROOT / 'backend' / 'instance' / 'thunderstone.db').as_posix()}"
+        f"sqlite+aiosqlite:///{(DATA_ROOT / 'thunderstone.db').as_posix()}"
     ))
     jwt_secret_key: str | None = None
     jwt_algorithm: str = "HS256"

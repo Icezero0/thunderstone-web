@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 
 from backend.app.core.config import get_settings
 from backend.app.core.exceptions import UnauthorizedError
-from backend.app.core.paths import PROJECT_ROOT
+from backend.app.core.paths import DATA_ROOT
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -28,7 +28,7 @@ def _jwt_secret() -> str:
         return settings.jwt_secret_key
     if settings.app_env != "development":
         raise RuntimeError("THUNDERSTONE_JWT_SECRET_KEY is required outside development")
-    path = PROJECT_ROOT / "backend" / "instance" / "jwt_secret"
+    path = DATA_ROOT / "jwt_secret"
     path.parent.mkdir(parents=True, exist_ok=True)
     try:
         with path.open("x", encoding="ascii") as handle:

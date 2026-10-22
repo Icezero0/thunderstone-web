@@ -2,7 +2,7 @@
 
 现有规则已完成 [TypeScript 迁移](typescript-migration.md)。战斗数值、怪物生命、金币／价格、计分、[DSL 编译与纯计算](typescript-dsl.md)、[规则配置与 setup](typescript-setup.md)、回合和有状态效果处理器均由共享 TS 包执行。前端复用只读计算，正式状态由后端维护。
 
-本目录把 [总览](../game-engine-design.md) 展开为可直接指导 TypeScript 实现的规则与接口约定。正文中的“规则书要求”来自 [`TS4_rules_CN.pdf`](../../game_TTS/TS4_rules_CN.pdf) 的标准竞争对局；“设计约定”是网页版的实现选择；“待裁定”表示资料尚不足以写成确定行为。目前已实现[规则配置校验](../../packages/engine/src/setup/validation.ts)、[确定性组局](../../packages/engine/src/setup/builder.ts)、[疾病供应及回合转换](../../packages/engine/src/turn/commands.ts)、[全量效果绑定与逐卡测试](ability-runtime-implementation.md)、特殊场景战斗、计分和[本地面板 API](../../backend/app/api/v1/setup.py)。520 张有效果的卡牌均已完整覆盖；联机层与正式客户端仍待开发。
+本目录把 [总览](../game-engine-design.md) 展开为可直接指导 TypeScript 实现的规则与接口约定。正文中的“规则书要求”来自 [`TS4_rules_CN.pdf`](../../game_TTS/TS4_rules_CN.pdf) 的标准竞争对局；“设计约定”是网页版的实现选择；“待裁定”表示资料尚不足以写成确定行为。目前已实现[规则配置校验](../../engine/src/setup/validation.ts)、[确定性组局](../../engine/src/setup/builder.ts)、[疾病供应及回合转换](../../engine/src/turn/commands.ts)、[全量效果绑定与逐卡测试](ability-runtime-implementation.md)、特殊场景战斗、计分和[本地面板 API](../../backend/app/api/v1/setup.py)。520 张有效果的卡牌均已完整覆盖；联机层与正式客户端仍待开发。
 
 ## 文档树与阅读顺序
 
@@ -45,7 +45,7 @@ docs/
 
 ## 来源优先级
 
-1. **卡牌身份、中文显示和已整理静态数值**：[`data/cards.csv`](../../data/cards.csv)，字段解释见 [数据字典](../data-model.md)。图片使用 CSV 的 `image_path`。卡牌定义与实体牌实例分开。
+1. **卡牌身份、中文显示和已整理静态数值**：[`cards/cards.csv`](../../cards/cards.csv)，字段解释见 [数据字典](../data-model.md)。图片使用 CSV 的 `image_path`。卡牌定义与实体牌实例分开。
 2. **标准游戏通则**：[`TS4_rules_CN.pdf`](../../game_TTS/TS4_rules_CN.pdf)。规则书明确卡牌可以覆盖通则。非标准变体和其他扩展不能未经选择就混入标准模式。
 3. **卡牌能力设计输入与人工裁定**：[`thunderstone_card_rules_v0.3.2_engine.json`](../游戏引擎设计参考/thunderstone_card_rules_v0.3.2_engine.json) 和 [人工审阅工作簿](../游戏引擎设计参考/thunderstone_card_atoms_v0.3.2_author_reviewed.xlsx)。它们保留触发、条件、原子、AST 草案及裁定，但尚不是可直接执行的规则包。
 4. **TTS 初始设置**：已从 [`TDS_CN.json`](../../game_TTS/TDS_CN.json) 的具体供应袋/牌堆一次性导入每张卡的**默认实例数**到 `cards.csv.initial_copy_count`；Lua 脚本用于核对组局操作和特殊分支。本局仅对村庄、英雄、怪物牌应用各自的实例倍率；坐标、GUID、等待帧和手工步骤不进入 TypeScript 规则内核。
@@ -54,4 +54,4 @@ docs/
 
 ## 第一阶段范围
 
-当前阶段覆盖**标准竞争对局**与现有目录的全部效果卡，采用已确认的逐卡裁定。合作、单人变体另行设计。规则内核负责冻结配置的规则校验、组局、状态转换和计分；不管理房间、玩家座位、准备状态、HTTP、数据库连接、图像渲染或 TTS 操作。
+当前阶段覆盖**标准竞争对局**与现有目录的全部效果卡，采用已确认的逐卡裁定。合作、单人变体另行设计。规则内核负责冻结配置的规则校验、组局、状态转换和计分；不管理房间、玩家列表、准备状态、HTTP、数据库连接、图像渲染或 TTS 操作。

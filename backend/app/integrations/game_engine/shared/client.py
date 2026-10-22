@@ -34,7 +34,7 @@ class EngineClient:
         self._build_stamp = None
 
     def _start(self):
-        if not (self.root / "packages/engine/dist/index.js").is_file():
+        if not (self.root / "engine/dist/index.js").is_file():
             raise SharedEngineUnavailable("TypeScript engine is not built; run npm ci then npm run build")
         node = shutil.which("node")
         if node is None:
@@ -47,7 +47,7 @@ class EngineClient:
             creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
         )
         process, responses = self._process, self._responses
-        self._build_stamp = (self.root / "packages/engine/dist/index.js").stat().st_mtime_ns
+        self._build_stamp = (self.root / "engine/dist/index.js").stat().st_mtime_ns
 
         def receive():
             try:
@@ -62,7 +62,7 @@ class EngineClient:
 
     def call(self, operation: str, payload: dict):
         with self._lock:
-            output = self.root / "packages/engine/dist/index.js"
+            output = self.root / "engine/dist/index.js"
             stamp = output.stat().st_mtime_ns if output.is_file() else None
             if self._process is None or self._process.poll() is not None or stamp != self._build_stamp:
                 self.close()

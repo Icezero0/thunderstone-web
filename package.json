@@ -1,12 +1,14 @@
 {
   "name": "thunderstone-web",
   "private": true,
-  "workspaces": ["packages/engine"],
+  "workspaces": ["engine", "frontend"],
   "scripts": {
-    "build": "npm run build --workspace @thunderstone/engine",
-    "typecheck": "npm run typecheck --workspace @thunderstone/engine",
-    "test": "npm run build && node --test packages/engine/tests/*.test.mjs"
+    "build": "npm run build:engine && npm run build --workspace @thunderstone/frontend",
+    "build:engine": "npm run build --workspace @thunderstone/engine",
+    "build:frontend": "npm run build:engine && npm run build --workspace @thunderstone/frontend",
+    "typecheck": "npm run typecheck --workspace @thunderstone/engine && npm run typecheck --workspace @thunderstone/frontend",
+    "test": "npm run build && node --test engine/tests/*.test.mjs && npm test --workspace @thunderstone/frontend"
   },
-  "engines": {"node": ">=22"},
+  "engines": {"node": ">=22.12"},
   "devDependencies": {"typescript": "~5.9.3", "esbuild": "^0.25.12"}
 }

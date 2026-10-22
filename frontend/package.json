@@ -1,0 +1,16 @@
+{
+  "name": "@thunderstone/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "npm run build --workspace @thunderstone/engine",
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "node tests/build.mjs && node --test tests/*.test.mjs tests/*.test.cjs"
+  },
+  "dependencies": {"@thunderstone/engine": "*"},
+  "devDependencies": {"vite": "^7.2.4"},
+  "engines": {"node": ">=22.12"}
+}

@@ -1,6 +1,6 @@
 # 卡牌能力编译与结算
 
-当前可执行规则及 JSON 格式见 [实现说明](ability-runtime-implementation.md)。独立规则包已有 446 条可执行能力及 227 条持续规则绑定；配合基础数值、设置和系统规则，520 张有效果的卡牌均已完整绑定并有逐卡行为测试，见 [覆盖清单](../../data/effects/coverage.csv)。覆盖审计禁止未完成能力，逐卡测试也不再以跳过代替未实现行为。
+当前可执行规则及 JSON 格式见 [实现说明](ability-runtime-implementation.md)。独立规则包已有 446 条可执行能力及 227 条持续规则绑定；配合基础数值、设置和系统规则，520 张有效果的卡牌均已完整绑定并有逐卡行为测试，见 [覆盖清单](../../cards/reports/coverage.csv)。覆盖审计禁止未完成能力，逐卡测试也不再以跳过代替未实现行为。
 
 原始参考 JSON 含 722 张牌与 964 条能力，词典覆盖触发、条件、效果原子、控制流和选择器。其 `implementation_maturity` 为 `AST_DESIGN_DRAFT_NOT_DIRECTLY_EXECUTABLE`，不能直接运行；正式规则由逐能力 ID 的独立绑定覆盖全部 964 条来源，其中 16 条说明牌文字仅作规则参考。本文件规定从草案到 TypeScript 可执行规则的门槛。
 

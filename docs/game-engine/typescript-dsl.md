@@ -95,7 +95,7 @@ being interpreted as absent optional fields.
 
 ## Visibility and transport
 
-`packages/engine/src/turn/transaction.ts` supplies the current state and reviewed
+`engine/src/turn/transaction.ts` supplies the current state and reviewed
 mechanics to `EffectEvaluation` during a command. This is a **private server-only**
 input, including hidden zones and revealed collections. It is not an HTTP response.
 

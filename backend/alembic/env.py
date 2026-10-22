@@ -9,6 +9,7 @@ from backend.app.core.config import get_settings
 from backend.app.db.base import Base
 from backend.app.modules.users.models import User  # noqa: F401
 from backend.app.modules.cards.models import CardDefinition, CardTag, CatalogMeta  # noqa: F401
+from backend.app.modules.rooms.models import Room, RoomPlayer  # noqa: F401
 
 config = context.config
 config.set_main_option("sqlalchemy.url", get_settings().alembic_database_url)

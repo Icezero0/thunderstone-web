@@ -55,7 +55,7 @@ def compile_ruleset(data: object, cards: dict[str, dict[str, str]]) -> EffectsRu
 
 
 def load_ruleset(cards: dict[str, dict[str, str]], root: Path = PROJECT_ROOT) -> EffectsRuleset:
-    directory = root / "data" / "effects"
+    directory = root / "cards" / "effects"
     source = json.loads((directory / "classic-v1.json").read_text(encoding="utf-8"))
     simple = json.loads((directory / "simple-reviewed.json").read_text(encoding="utf-8"))
     if simple.get("schema_version") != source.get("schema_version"):

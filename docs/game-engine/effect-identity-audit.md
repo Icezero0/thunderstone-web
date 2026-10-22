@@ -107,4 +107,4 @@
 
 全部宝藏牌均已具有独立“宝藏”标签。
 
-复查命令：`.\.venv\Scripts\python.exe -X utf8 scripts/audit_effect_identity.py --output docs/game-engine/effect-identity-audit.md`。
+复查命令：`.\.venv\Scripts\python.exe -X utf8 backend/scripts/audit_effect_identity.py --output docs/game-engine/effect-identity-audit.md`。

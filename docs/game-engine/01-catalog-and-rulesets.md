@@ -10,7 +10,7 @@
 | `SetupCatalog` | 随机设置牌的 `card_id` | 从分类/标签生成的组映射、少量例外、特征设置动作；默认数量引用 `CardCatalog.initial_copy_count` | 每局实际抽到了哪些组、洗牌结果和类别倍率 |
 | `CompiledRuleset` | 能力 ID / 系统规则 ID | 已绑定参数的触发、条件、选择、效果和适用范围 | 原始中文句子直接执行、TTS 物件坐标 |
 
-`CardCatalog` 的导入源是 [`cards.csv`](../../data/cards.csv)，字段详见 [数据字典](../data-model.md)。命令行引擎可直接读取 CSV；联网后端从 SQLite 载入相同的目录快照，再传给引擎，详见 [数据库设计](../card-catalog-database-design.md)。`SetupCatalog` 在**构建时只从 CSV** 生成组映射、应用小型例外表并发布为版本化只读索引；该索引和 CSV 一起导入 SQLite，默认实例数使用 `initial_copy_count`。TTS 初始存档只用于一次性数据导入及必要的复核，部署和组局均不读取它，**也不要求把 `random_card_id` 加回 CSV**。`CompiledRuleset` 由已审核的规则 JSON 和绑定参数构成；Python 加载规则快照，TypeScript 编译并执行受限 DSL，编译约束见 [能力运行时](06-ability-runtime.md)。
+`CardCatalog` 的导入源是 [`cards.csv`](../../cards/cards.csv)，字段详见 [数据字典](../data-model.md)。命令行引擎可直接读取 CSV；联网后端从 SQLite 载入相同的目录快照，再传给引擎，详见 [数据库设计](../card-catalog-database-design.md)。`SetupCatalog` 在**构建时只从 CSV** 生成组映射、应用小型例外表并发布为版本化只读索引；该索引和 CSV 一起导入 SQLite，默认实例数使用 `initial_copy_count`。TTS 初始存档只用于一次性数据导入及必要的复核，部署和组局均不读取它，**也不要求把 `random_card_id` 加回 CSV**。`CompiledRuleset` 由已审核的规则 JSON 和绑定参数构成；Python 加载规则快照，TypeScript 编译并执行受限 DSL，编译约束见 [能力运行时](06-ability-runtime.md)。
 
 ## 2. CSV 到 `CardDefinition`
 
@@ -50,7 +50,7 @@ CardDefinition
 
 ## 4. 初始化实例数量与本局倍率
 
-已通过一次性导入脚本 [`import_tts_initial_counts.py`](../../archive/legacy-code/import_tts_initial_counts.py) 从 [`TDS_CN.json`](../../game_TTS/TDS_CN.json) 的实际初始牌堆/供应袋读取数量：递归数叶子卡的 `CardID`，以 CSV 的 `tts_card_id` 对应正式 `card_id`，将结果写入 `cards.csv` 的 `initial_copy_count`。脚本已归档；后续构建从 CSV 生成索引，联网组局使用导入 SQLite 的同一份目录快照。英雄通常呈现 6/4/2 张，特殊系列依目录实值。生成的 [`setup_catalog.json`](../../data/setup_catalog.json) 只存组成员 ID 与特征动作，不另存一份数量。
+已通过一次性导入脚本 [`import_tts_initial_counts.py`](../../archive/legacy-code/import_tts_initial_counts.py) 从 [`TDS_CN.json`](../../game_TTS/TDS_CN.json) 的实际初始牌堆/供应袋读取数量：递归数叶子卡的 `CardID`，以 CSV 的 `tts_card_id` 对应正式 `card_id`，将结果写入 `cards.csv` 的 `initial_copy_count`。脚本已归档；后续构建从 CSV 生成索引，联网组局使用导入 SQLite 的同一份目录快照。英雄通常呈现 6/4/2 张，特殊系列依目录实值。生成的 [`setup_catalog.json`](../../cards/setup_catalog.json) 只存组成员 ID 与特征动作，不另存一份数量。
 
 不能把全存档的 `tts_copy_count` 当成默认供应数量：`TS-0018`“地下城特征”在随机设置牌堆有 10 张、怪物袋另有 10 张，全存档数量为 20；CSV 的 `initial_copy_count=10` 取其设置牌堆数量。该字段是网页版的默认配置，不是不可修改的规则上限。
 

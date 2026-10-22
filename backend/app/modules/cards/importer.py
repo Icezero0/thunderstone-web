@@ -17,7 +17,7 @@ from backend.app.modules.cards.repository import load_catalog_snapshot
 
 
 def _read_source(root: Path) -> CatalogSnapshot:
-    with (root / "data" / "cards.csv").open(encoding="utf-8-sig", newline="") as handle:
+    with (root / "cards" / "cards.csv").open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
         if reader.fieldnames != list(CSV_TO_DB):
             raise ValueError("cards.csv columns do not match the SQLite import mapping")

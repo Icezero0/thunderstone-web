@@ -6,7 +6,7 @@
 
 ```text
 FrozenSetupInput  # 由联机层提交，非引擎内的房间状态
-  match_id, 有序 player_ids / seat_index
+  match_id, 有序 player_ids
   ruleset_mode = classic
   catalog_version, ruleset_version
   village_groups = 8, hero_groups = 4, monster_groups = 3  # 可修改的默认值
@@ -64,7 +64,7 @@ flowchart TD
 
 ## 5. 玩家初始牌库
 
-对每位玩家生成 6 张民兵、2 张匕首、2 张应急干粮、2 张火把，共 12 个独立 `instance_id`。分别洗混玩家抽牌堆并抽 6 张起始手牌；其余 6 张留在抽牌堆。玩家经验点从 0 开始，金币等回合资源为空。`first_player=random` 时引擎从提交的玩家中随机选择；`fixed` 时使用联机层解析出的本局 `player_id`，并检查它属于本局。上一局赢家和房主的身份由联机层解析，`source` 只作来源记录。此后沿已提交的座位顺序循环。初始手牌在选择村庄或地下城行动并展示前属于玩家私有信息。
+对每位玩家生成 6 张民兵、2 张匕首、2 张应急干粮、2 张火把，共 12 个独立 `instance_id`。分别洗混玩家抽牌堆并抽 6 张起始手牌；其余 6 张留在抽牌堆。玩家经验点从 0 开始，金币等回合资源为空。`first_player=random` 时引擎从提交的玩家中随机选择；`fixed` 时使用联机层解析出的本局 `player_id`，并检查它属于本局。上一局赢家和房主的身份由联机层解析，`source` 只作来源记录。此后沿已提交的玩家列表顺序循环。初始手牌在选择村庄或地下城行动并展示前属于玩家私有信息。
 
 `TDS_CN.json` 的 Lua 脚本把 12 张起始牌发到每名入座玩家区域，并提供手动抽牌/新回合按钮。网页引擎应完成规则书规定的洗牌与起始抽 6 张，不把 TTS 的手动操作步骤当作游戏规则。
 
@@ -78,7 +78,7 @@ flowchart TD
 
 ## 7. 当前实现接口
 
-`backend.app.integrations.game_engine.setup.start_game(request)` 接收 `match_id`、按座位顺序排列的 `player_ids`、`rng_seed` 和面板导出的 `config`，返回完整初始 `state` 与供服务器保存的设置 `events`。随机流使用固定版本的 SHA-256 计数器，同一目录、输入和种子生成相同结果；状态保存种子、算法版本和计数器。本地配置面板通过 `POST /api/v1/setup` 调用这一接口，展示所选牌组、初始大厅与玩家牌数；`scripts/run_setup.py` 也提供一次性命令行入口。
+`backend.app.integrations.game_engine.setup.start_game(request)` 接收 `match_id`、按回合顺序排列的 `player_ids`、`rng_seed` 和面板导出的 `config`，返回完整初始 `state` 与供服务器保存的设置 `events`。随机流使用固定版本的 SHA-256 计数器，同一目录、输入和种子生成相同结果；状态保存种子、算法版本和计数器。本地配置面板通过 `POST /api/v1/setup` 调用这一接口，展示所选牌组、初始大厅与玩家牌数；`backend/scripts/run_setup.py` 也提供一次性命令行入口。
 
 `backend.app.integrations.game_engine.disease.take_disease(state, player_id, destination="discard")` 从本局无限疾病供应取一张牌，返回新 `state`、新实例与事件。函数使用状态内保存的权重和随机计数器，每次调用都分配新的 `instance_id`，默认加入该玩家弃牌堆；原状态保持不变。调用方须将返回的状态和事件作为同一次状态转换保存。它是供后续能力运行时调用的内核接口，不向客户端开放指定疾病种类的参数。
 

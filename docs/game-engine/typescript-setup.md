@@ -19,7 +19,7 @@ setup panel and Python public API keep their request/response contracts.
 ## Modules
 
 ```text
-packages/engine/src/
+engine/src/
   random/sha256.ts       SHA-256 and strict UTF-8, independent of platform APIs
   random/stream.ts       seeded counter stream, rejection sampling and shuffle
   setup/contracts.ts    request, catalog, state and event contracts
@@ -110,8 +110,8 @@ changes. No CSV/SQLite migration or catalog rebuild is needed for this engine po
 
 ## Verification
 
-`tests/migration/reference/setup/` retains the old Python implementation for tests only.
-`tests/migration/test_shared_setup.py` compares entire state/event results across classic
+`backend/tests/migration/reference/setup/` retains the old Python implementation for tests only.
+`backend/tests/migration/test_shared_setup.py` compares entire state/event results across classic
 seeds, Unicode/large integer seeds, all environments, every hero/monster group,
 all multipliers, feature combinations, allocations, random-environment trimming,
 configuration errors and focused initial Treefolk halls. The existing per-card

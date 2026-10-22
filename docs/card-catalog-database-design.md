@@ -2,7 +2,7 @@
 
 ## Scope and ownership
 
-This design migrates all 722 definitions and 47 CSV fields from `data/cards.csv` into the backend's SQLite database. It also stores the generated `data/setup_catalog.json` index, whose `cards_csv_sha256` must match the exact CSV bytes. The database becomes the backend's runtime catalog snapshot. The CSV and generated index remain checked-in import inputs; changes are imported explicitly, never silently reapplied on every startup.
+This design migrates all 722 definitions and 47 CSV fields from `cards/cards.csv` into the backend's SQLite database. It also stores the generated `cards/setup_catalog.json` index, whose `cards_csv_sha256` must match the exact CSV bytes. The database becomes the backend's runtime catalog snapshot. The CSV and generated index remain checked-in import inputs; changes are imported explicitly, never silently reapplied on every startup.
 
 The TypeScript game engine remains independent of SQLite and SQLAlchemy. `backend.app.integrations.game_engine.catalog` can load the CSV for command-line use. The backend loads an equivalent catalog snapshot from SQLite and passes it to engine setup and rule validation through the same integration. A card definition is distinct from an in-game card instance; match state and user accounts are outside these catalog tables.
 
@@ -63,15 +63,15 @@ The following CSV-to-column mapping covers every source field. `INTEGER?` means 
 4. The backend loads the database snapshot for panel options, validation and setup. The engine receives the card rows and setup index through an explicit input parameter; it never opens the backend database.
 5. The importer verifies a complete round trip: 722 database rows, exact CSV-shaped values for all 47 fields, and the same setup index/hash. Tests additionally compare deterministic setup output using CSV and SQLite snapshots.
 
-The database lives at `backend/instance/thunderstone.db` by default and is ignored by Git because it also contains local accounts and eventually matches. A fresh deployment runs migrations and this explicit import. Card images remain in `assets/cards/` and are referenced by `image_path`; they are not stored as BLOBs.
+The database lives at `data/thunderstone.db` by default and is ignored by Git because it also contains local accounts and eventually matches. A fresh deployment runs migrations and this explicit import. Card images remain in `cards/assets/` and are referenced by `image_path`; they are not stored as BLOBs.
 
 The implemented import command, run from the repository root with the project venv, is:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\import_cards_to_sqlite.py
+.\.venv\Scripts\python.exe backend\scripts\import_cards_to_sqlite.py
 ```
 
-It applies Alembic migrations before importing. After editing the CSV, rebuild `data/setup_catalog.json`, then use `scripts\import_cards_to_sqlite.py --replace` to replace the catalog revision. The command reports `imported`, `unchanged` or `replaced` and the imported card count and hash.
+It applies Alembic migrations before importing. After editing the CSV, rebuild `cards/setup_catalog.json`, then use `backend\scripts\import_cards_to_sqlite.py --replace` to replace the catalog revision. The command reports `imported`, `unchanged` or `replaced` and the imported card count and hash.
 
 ## Revision and rollback policy
 
