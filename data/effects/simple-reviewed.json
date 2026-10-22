@@ -466,7 +466,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -474,7 +474,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "disease",
         "min": 1,
@@ -507,7 +507,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -515,7 +515,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "disease",
         "min": 1,
@@ -548,7 +548,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -556,7 +556,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "disease",
         "min": 1,
@@ -590,7 +590,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -598,7 +598,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "disease",
         "min": 1,
@@ -632,7 +632,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -640,7 +640,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "disease",
         "min": 1,
@@ -673,7 +673,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -681,7 +681,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "disease",
         "min": 1,
@@ -714,7 +714,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -722,7 +722,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "disease",
         "min": 1,
@@ -755,7 +755,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -763,7 +763,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "disease",
         "min": 1,
@@ -796,7 +796,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -804,7 +804,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "disease",
         "min": 1,

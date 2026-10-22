@@ -3,8 +3,8 @@
 from copy import deepcopy
 from dataclasses import replace
 
-from engine.effects.combat import stat, matches, is_hero
-from engine.turn import apply_command
+from tests.migration.reference.python_engine.effects.combat import stat, matches, is_hero
+from backend.app.integrations.game_engine.turn import apply_command
 from tests.mechanic_cases import Fixture
 
 

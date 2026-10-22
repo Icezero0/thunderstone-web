@@ -1,6 +1,6 @@
 # Network backend
 
-The backend follows the infrastructure, API and domain layering of [iCinema's backend](https://github.com/Icezero0/iCinema/tree/main/backend). It owns accounts, SQLite persistence and HTTP transport. The independent [game engine](../engine/README.md) owns card rules and state transitions; backend setup preview calls into it.
+The backend follows the infrastructure, API and domain layering of [iCinema's backend](https://github.com/Icezero0/iCinema/tree/main/backend). It owns accounts, SQLite persistence and HTTP transport. The independent [TypeScript game engine](../packages/engine/README.md) owns card rules and state transitions; the [Python adapter](app/integrations/game_engine/README.md) loads data and calls it through the Node worker.
 
 ```text
 backend/
@@ -9,6 +9,7 @@ backend/
     ├── main.py            FastAPI composition and startup
     ├── core/              settings, database sessions, passwords, JWTs, errors
     ├── db/                SQLAlchemy model base
+    ├── integrations/      Python adapters; game_engine/ calls the TS rules package
     ├── realtime/          authenticated WebSocket connections and heartbeat
     ├── modules/
     │   ├── users/          account model, repository and service
@@ -24,10 +25,25 @@ From the repository root, install into the existing venv and start the service y
 
 ```powershell
 uv pip install --python .\.venv\Scripts\python.exe -r backend\requirements.txt
+npm ci
+npm run build
 .\.venv\Scripts\python.exe scripts\import_cards_to_sqlite.py
 .\.venv\Scripts\python.exe scripts\run_config_panel.py --host 127.0.0.1 --port 8765
 ```
 
 The panel is at `http://127.0.0.1:8765/`. Account routes are `/api/v1/auth/register`, `/login`, `/refresh` and `/api/v1/users/me`. `/ws` accepts an initial JSON message `{"type":"auth","payload":{"token":"<access token>"}}`, then supports `{"type":"heartbeat"}`. The panel uses `/api/v1/options`, `/validate` and `/setup`; the old `/api/...` preview paths remain as compatibility aliases. `/health` reports process availability. Install `backend/requirements-dev.txt` and run `.\.venv\Scripts\python.exe -m unittest discover -s tests` to test both layers.
 
+The [battle team API](../docs/game-engine/battle-team-api.md) adds visible preparation
+and formal submission adapters, plus `/api/v1/battle/context` and `/api/v1/battle/submit`
+for the stateless local sandbox. A future room layer supplies its persisted server
+state directly to the adapter.
+
 The import command applies migrations and is safe to repeat when the source hash is unchanged. After changing card definitions, rebuild `data/setup_catalog.json` and rerun the import with `--replace`. The runtime database is local and ignored by Git.
+
+The [shared TypeScript engine](../docs/game-engine/typescript-migration.md) handles
+setup, formal turn commands, card effects, disease gains and calculations through
+`engine-worker/worker.mjs`. Node.js 22+ is required. Python starts the stateless
+worker lazily, reuses it and closes it on shutdown; it opens no HTTP port. Build
+after TypeScript changes. `/engine/engine.js` serves the same rule package to the
+browser for local previews. The backend remains responsible for authentication,
+catalog persistence and future room/network state.

@@ -2,10 +2,10 @@
 
 from dataclasses import replace
 
-from engine.effects.combat import reconcile_equipment
-from engine.turn.hall import remember_fronts
-from engine.turn.state import validate_turn_state
-from engine.turn.workflow import queue_steps
+from tests.migration.reference.python_engine.effects.combat import reconcile_equipment
+from tests.migration.reference.python_engine.turn.hall import remember_fronts
+from tests.migration.reference.python_engine.turn.state import validate_turn_state
+from tests.migration.reference.python_engine.turn.workflow import queue_steps
 from tests.mechanic_cases import Fixture
 
 
@@ -33,8 +33,8 @@ def verify_system(test, base, snapshot, ruleset, card_id, kinds):
                     s["zones"]["destroyed"].extend(s["zones"][zone])
                     s["zones"][zone] = []
             if kind == "sapphire_restore_at_end":
-                from engine.effects.attachments import attach
-                from engine.turn.settlement import settle_game
+                from tests.migration.reference.python_engine.effects.attachments import attach
+                from tests.migration.reference.python_engine.turn.settlement import settle_game
                 source = f.add("TS-0705", f"player:{f.player}:control")
                 monster = f.add("TS-0464", f"player:{f.player}:discard")
                 attach(tx, monster, source, "sapphire", owner=f.player)

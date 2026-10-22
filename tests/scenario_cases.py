@@ -2,8 +2,8 @@
 
 from dataclasses import replace
 
-from engine.turn.state import validate_turn_state
-from engine.turn.workflow import queue_steps
+from tests.migration.reference.python_engine.turn.state import validate_turn_state
+from tests.migration.reference.python_engine.turn.workflow import queue_steps
 from tests.mechanic_cases import Fixture
 
 
@@ -45,8 +45,8 @@ def verify_flying_spire(test, base, snapshot, ruleset):
 
 
 def verify_banishing(test, base, snapshot, ruleset, kind):
-    from engine.setup import start_game
-    from engine.turn import apply_command
+    from backend.app.integrations.game_engine.setup import start_game
+    from backend.app.integrations.game_engine.turn import apply_command
     from tests.test_setup_engine import config, request
 
     if kind == "banishing_setup":

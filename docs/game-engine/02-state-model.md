@@ -86,7 +86,8 @@ TurnContext
 
 BattleContext
   target_instance_id, target_rank_at_declaration
-  participant_hero_ids, blocked_hero_ids
+  battle_team?: {hero_instance_ids, support_instance_ids}
+  excluded_participants
   equipped_weapon_by_hero, used_card_ids
   attack_components, magic_attack_components, light_components
   conditional_restrictions, pending_battle_destruction
@@ -94,6 +95,8 @@ BattleContext
 ```
 
 这些是**结算上下文**，不是把最终攻击值永久写回卡牌。装备是否合法要随力量变化复核；武器脱落后失去加成，但某些“曾装备过”的条件仍可能成立，因此需要保留历史标记。地下城准备阶段摧毁的牌立即离场；战斗摧毁默认先标记、留在本次战斗中，结算后再执行，明确的立即摧毁和费用除外。英雄曾在战斗中力量到 0 的标记保留至回合末，即使力量恢复也不撤销。
+
+`BattleDraft` 属于前端本地草稿，服务端只在 `SubmitBattleTeam` 完成装备事件和校验后写入 `battle_context.battle_team`。装备事件等待选择时，提交意图保存在可序列化工作流中；卡牌仍处于原手牌区。接口与作用域详见[战斗队伍接口](battle-team-api.md)。
 
 实例的 `flags.turn_buffs` 保存回合状态，当前支持 `discard_instead_of_destroy`：包含 `buff`、`expires_after_turn`、`ability_id`、`source_instance_id`。状态跟随原英雄实例，离开手牌不清除，来源移除不撤销；它在回合末摧毁和补牌流程中仍有效，到移交回合前才移除。摧毁被替代为弃牌仍算支付了摧毁费用。实际执行或替代摧毁后，清除对应实例的待摧毁标记。
 

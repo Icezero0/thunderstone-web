@@ -4,7 +4,7 @@
 
 This design migrates all 722 definitions and 47 CSV fields from `data/cards.csv` into the backend's SQLite database. It also stores the generated `data/setup_catalog.json` index, whose `cards_csv_sha256` must match the exact CSV bytes. The database becomes the backend's runtime catalog snapshot. The CSV and generated index remain checked-in import inputs; changes are imported explicitly, never silently reapplied on every startup.
 
-The game engine remains independent of SQLite and SQLAlchemy. `engine.catalog` can load the CSV for command-line use. The backend loads an equivalent catalog snapshot from SQLite and passes it to engine setup and rule validation. A card definition is distinct from an in-game card instance; match state and user accounts are outside these catalog tables.
+The TypeScript game engine remains independent of SQLite and SQLAlchemy. `backend.app.integrations.game_engine.catalog` can load the CSV for command-line use. The backend loads an equivalent catalog snapshot from SQLite and passes it to engine setup and rule validation through the same integration. A card definition is distinct from an in-game card instance; match state and user accounts are outside these catalog tables.
 
 Current input: **722 rows, 47 columns**: 720 fronts, one reference, one shared back. Empty CSV cells mean unknown or not applicable and become SQL `NULL`, not numeric zero. Existing `card_id` values and image paths are preserved.
 

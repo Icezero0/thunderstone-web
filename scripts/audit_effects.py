@@ -12,8 +12,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from engine.catalog.repository import load_catalog  # noqa: E402
-from engine.effects.compiler import load_ruleset  # noqa: E402
+from backend.app.integrations.game_engine.catalog.repository import load_catalog  # noqa: E402
+from backend.app.integrations.game_engine.effects.compiler import load_ruleset  # noqa: E402
 
 DRAFT = (ROOT / "docs" / "游戏引擎设计参考"
          / "thunderstone_card_rules_v0.3.2_engine.json")

@@ -26,6 +26,11 @@ MONSTER_TAG_ALIASES = {
 COLOR_DRAGONS = {"白龙", "绿龙", "蓝龙", "红龙", "黑龙"}
 
 
+def monster_group_tags(card: dict) -> list[str]:
+    """Setup families use printed tags; the shared monster identity is not a family."""
+    return [tag for tag in card["tags"].split("|") if tag and tag != "怪物"]
+
+
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise ValueError(message)
@@ -50,26 +55,26 @@ def members_for_randomizer(randomizer: dict, fronts: list[dict], by_id: dict) ->
     monsters = [card for card in fronts if card["subcategory"] == "怪物"]
     if card_id == "TS-0043":
         members = [card["card_id"] for card in monsters
-                   if card["tags"].split("|")[0] == "龙"
-                   and len(card["tags"].split("|")) == 2
-                   and card["tags"].split("|")[1] in COLOR_DRAGONS]
+                   if len(monster_group_tags(card)) == 2
+                   and monster_group_tags(card)[0] == "龙"
+                   and monster_group_tags(card)[1] in COLOR_DRAGONS]
         return "monster", members, "color_dragon_exception"
     if card_id in MONSTER_PREFIX_GROUPS:
         members = [card["card_id"] for card in monsters
-                   if card["tags"].split("|")[0] == randomizer["name"]]
+                   if monster_group_tags(card)[0] == randomizer["name"]]
         return "monster", members, "monster_first_tag"
     if card_id in MONSTER_TAG_ALIASES:
         members = [card["card_id"] for card in monsters
-                   if card["tags"] == MONSTER_TAG_ALIASES[card_id]]
+                   if "|".join(monster_group_tags(card)) == MONSTER_TAG_ALIASES[card_id]]
         return "monster", members, "monster_tag_alias"
     tags = re.sub(r"\s*[・·]\s*", "|", randomizer["name"]).strip()
-    members = [card["card_id"] for card in monsters if card["tags"] == tags]
+    members = [card["card_id"] for card in monsters if "|".join(monster_group_tags(card)) == tags]
     return "monster", members, "monster_exact_tags"
 
 
 def feature_actions(features: list[dict], fronts: list[dict]) -> list[dict]:
     selectors = {
-        "TS-0200": ("treasure_group", "宝藏", "乌布里克的宝藏"),
+        "TS-0200": ("treasure_group", "宝藏", "乌布里克的宝藏|宝藏"),
         "TS-0203": ("treasure_group", "宝藏", "宝藏|宝石"),
         "TS-0204": ("treasure_group", "宝藏", "护符|宝藏"),
         "TS-0206": ("trap_group", "陷阱", "陷阱|凶险"),

@@ -27,6 +27,14 @@ def panel_js() -> FileResponse:
     return FileResponse(PROJECT_ROOT / "web" / "panel.js", media_type="text/javascript")
 
 
+@router.get("/engine/engine.js", include_in_schema=False)
+def shared_engine_module() -> FileResponse:
+    path = PROJECT_ROOT / "packages/engine/dist/browser/engine.js"
+    if not path.is_file():
+        raise HTTPException(503, "TypeScript engine is not built; run npm ci then npm run build")
+    return FileResponse(path, media_type="text/javascript")
+
+
 @router.get("/effect-lab", include_in_schema=False)
 def effect_lab_page() -> FileResponse:
     return FileResponse(PROJECT_ROOT / "web" / "effect_lab.html")

@@ -20,8 +20,8 @@ from backend.app.core.startup import _upgrade_database
 from backend.app.modules.cards.importer import import_catalog
 from backend.app.modules.cards.models import CardTag
 from backend.app.modules.cards.repository import load_catalog_snapshot
-from engine.catalog.repository import load_catalog
-from engine.paths import PROJECT_ROOT
+from backend.app.integrations.game_engine.catalog.repository import load_catalog
+from backend.app.integrations.game_engine.paths import PROJECT_ROOT
 
 
 def write_revision(root: Path, *, name: str, initial_count: str) -> None:
@@ -71,6 +71,19 @@ class CardCatalogSQLiteTests(unittest.TestCase):
                         expected = {card_id for card_id, card in load_catalog(root).cards.items()
                                     if "英雄" in card["tags"].split("|")}
                         self.assertEqual(hero_tags, expected)
+                        monster_tags = set(await db.scalars(select(CardTag.card_id).where(CardTag.tag == "怪物")))
+                        expected_monsters = {card_id for card_id, card in load_catalog(root).cards.items()
+                                             if "怪物" in card["tags"].split("|")}
+                        self.assertEqual(monster_tags, expected_monsters)
+                        self.assertTrue({card_id for card_id, card in load_catalog(root).cards.items()
+                                         if card["subcategory"] == "守护者"} <= monster_tags)
+                        treasure_tags = set(await db.scalars(select(CardTag.card_id).where(CardTag.tag == "宝藏")))
+                        self.assertTrue({'TS-0694', 'TS-0695', 'TS-0696'} <= treasure_tags)
+                        village_tags = set(await db.scalars(select(CardTag.card_id).where(CardTag.tag == "村庄")))
+                        self.assertEqual(village_tags, {card_id for card_id, card in load_catalog(root).cards.items()
+                                                       if "村庄" in card["tags"].split("|")})
+                        self.assertTrue({'TS-0002', 'TS-0003', 'TS-0004', 'TS-0261'} <= village_tags)
+                        self.assertNotIn('TS-0001', village_tags)
 
                     write_revision(root, name="Revised catalog name", initial_count="6")
                     async with get_session_factory()() as db:

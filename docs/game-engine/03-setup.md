@@ -78,10 +78,10 @@ flowchart TD
 
 ## 7. 当前实现接口
 
-`engine.setup.start_game(request)` 接收 `match_id`、按座位顺序排列的 `player_ids`、`rng_seed` 和面板导出的 `config`，返回完整初始 `state` 与供服务器保存的设置 `events`。随机流使用固定版本的 SHA-256 计数器，同一目录、输入和种子生成相同结果；状态保存种子、算法版本和计数器。本地配置面板通过 `POST /api/v1/setup` 调用这一接口，展示所选牌组、初始大厅与玩家牌数；`scripts/run_setup.py` 也提供一次性命令行入口。
+`backend.app.integrations.game_engine.setup.start_game(request)` 接收 `match_id`、按座位顺序排列的 `player_ids`、`rng_seed` 和面板导出的 `config`，返回完整初始 `state` 与供服务器保存的设置 `events`。随机流使用固定版本的 SHA-256 计数器，同一目录、输入和种子生成相同结果；状态保存种子、算法版本和计数器。本地配置面板通过 `POST /api/v1/setup` 调用这一接口，展示所选牌组、初始大厅与玩家牌数；`scripts/run_setup.py` 也提供一次性命令行入口。
 
-`engine.disease.take_disease(state, player_id, destination="discard")` 从本局无限疾病供应取一张牌，返回新 `state`、新实例与事件。函数使用状态内保存的权重和随机计数器，每次调用都分配新的 `instance_id`，默认加入该玩家弃牌堆；原状态保持不变。调用方须将返回的状态和事件作为同一次状态转换保存。它是供后续能力运行时调用的内核接口，不向客户端开放指定疾病种类的参数。
+`backend.app.integrations.game_engine.disease.take_disease(state, player_id, destination="discard")` 从本局无限疾病供应取一张牌，返回新 `state`、新实例与事件。函数使用状态内保存的权重和随机计数器，每次调用都分配新的 `instance_id`，默认加入该玩家弃牌堆；原状态保持不变。调用方须将返回的状态和事件作为同一次状态转换保存。它是供后续能力运行时调用的内核接口，不向客户端开放指定疾病种类的参数。
 
 飞龙尖塔的两个怪物组分配和地下城特征分配由玩家决定。首次调用若缺少 `scenario_choices.two_dungeons`，抛出 `SetupChoiceRequired`，其中列出本次随机选中的可分配组；面板会显示分配控件，联机层将来可使用相同协议。选择后用相同输入和种子附上 `group_a_ids`（恰好两个）及 `group_a_feature_ids` 重新调用，剩余项分配给另一座地下城。在选择完成前不发布初始状态。
 
-当前版本生成首回合开始前的状态和设置事件，并提供独立的取疾病接口；完整回合指令、卡牌能力编译及其运行时仍待实现。设置期间直接影响牌区的上述环境和特殊疾病规则已编码，其余环境的持续/回合效果只登记为生效设置。
+Setup 返回首回合开始前的状态和设置事件，后续由 TypeScript 回合指令与效果运行时继续推进。设置期间直接影响牌区的环境和特殊疾病规则在这里执行；环境的持续与回合效果由运行时按登记的生效设置应用。

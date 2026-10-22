@@ -17,7 +17,7 @@ def tag_group(card: dict[str, str]) -> tuple[str, ...]:
 
 
 def is_color_dragon(card: dict[str, str]) -> bool:
-    tags = card["tags"].split("|")
+    tags = [tag for tag in card["tags"].split("|") if tag != "怪物"]
     return (card["card_type"] == "地下城牌" and card["subcategory"] == "怪物"
             and len(tags) == 2 and tags[0] == "龙"
             and tags[1] in {"白龙", "红龙", "绿龙", "蓝龙", "黑龙"})
@@ -72,11 +72,11 @@ class CatalogIntegrityTests(unittest.TestCase):
     def test_dragon_color_and_humanoid_groups_are_distinct(self) -> None:
         colors = [card for card in self.fronts if is_color_dragon(card)]
         humanoids = [card for card in self.fronts if card["card_type"] == "地下城牌"
-                     and card["subcategory"] == "怪物" and card["tags"] == "龙|类人生物"]
+                     and card["subcategory"] == "怪物" and card["tags"] == "龙|类人生物|怪物"]
         self.assertEqual(len(colors), 5)
         self.assertEqual(len(humanoids), 5)
         self.assertEqual({card["tags"].split("|")[0] for card in colors + humanoids}, {"龙"})
-        self.assertEqual({card["tags"] for card in humanoids}, {"龙|类人生物"})
+        self.assertEqual({card["tags"] for card in humanoids}, {"龙|类人生物|怪物"})
         for group in (colors, humanoids):
             positions = [int(card["catalog_order"]) for card in group]
             self.assertEqual(positions, list(range(min(positions), max(positions) + 1)))
@@ -103,20 +103,20 @@ class CatalogIntegrityTests(unittest.TestCase):
         card = next(card for card in self.cards if card["source_card_id"] == "deck_19_10x3_r03_c07")
         self.assertEqual(card["card_id"], "TS-0238")
         self.assertEqual(card["catalog_order"], "238")
-        self.assertEqual(card["tags"], "武器|钝器")
+        self.assertEqual(card["tags"], "武器|钝器|村庄")
         self.assertEqual(card["waist_text"], "武器・钝器")
         self.assertEqual(card["image_path"], "assets/cards/TS-0238.png")
         group = [row for row in self.fronts
-                 if row["card_type"] == "村庄牌" and row["tags"] == "武器|钝器"]
+                 if row["card_type"] == "村庄牌" and row["tags"] == "武器|钝器|村庄"]
         positions = [int(row["catalog_order"]) for row in group]
         self.assertEqual(positions, list(range(min(positions), max(positions) + 1)))
         self.assertIn(card, group)
 
     def test_real_villager_groups_are_adjacent(self) -> None:
         village = [card for card in self.fronts if card["card_type"] == "村庄牌"]
-        first = next(index for index, card in enumerate(village) if card["tags"] == "村民")
-        second = next(index for index, card in enumerate(village) if card["tags"] == "村民|佣兵")
-        self.assertEqual(second, first + sum(card["tags"] == "村民" for card in village))
+        first = next(index for index, card in enumerate(village) if card["tags"] == "村民|村庄")
+        second = next(index for index, card in enumerate(village) if card["tags"] == "村民|佣兵|村庄")
+        self.assertEqual(second, first + sum(card["tags"] == "村民|村庄" for card in village))
 
     def test_experience_fields_match_card_semantics(self) -> None:
         for card in self.cards:
@@ -142,6 +142,19 @@ class CatalogIntegrityTests(unittest.TestCase):
                 self.assertEqual(tags.count("英雄"), 1)
                 printed = list(dict.fromkeys(tag.strip() for tag in card["waist_text"].split("・") if tag.strip()))
                 self.assertEqual(tags, list(dict.fromkeys(printed + ["英雄"])))
+                self.assertEqual(draft[card["card_id"]]["tags"], tags)
+
+    def test_monsters_and_guardians_have_one_explicit_monster_tag(self) -> None:
+        draft_path = ROOT / "docs/游戏引擎设计参考/thunderstone_card_rules_v0.3.2_engine.json"
+        draft = {card["id"]: card for card in json.loads(draft_path.read_text(encoding="utf-8"))["cards"]}
+        monsters = [card for card in self.fronts if card["card_type"] == "地下城牌"
+                    and card["subcategory"] in ("怪物", "守护者")]
+        self.assertEqual(len(monsters), 225)
+        for card in monsters:
+            with self.subTest(card_id=card["card_id"]):
+                tags = card["tags"].split("|")
+                self.assertEqual(tags.count("怪物"), 1)
+                self.assertEqual(tags[-1], "怪物")
                 self.assertEqual(draft[card["card_id"]]["tags"], tags)
 
     def test_published_images_match_card_ids(self) -> None:

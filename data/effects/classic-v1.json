@@ -10,11 +10,11 @@
       "source_zone": "active_hand",
       "usage": "once_per_turn",
       "conditions": [
-        {"exists": {"zone": "active_hand", "card_type": "疾病牌"}}
+        {"exists": {"zone": "active_hand", "tag": "疾病"}}
       ],
       "body": {
         "op": "select",
-        "query": {"zone": "active_hand", "card_type": "疾病牌"},
+        "query": {"zone": "active_hand", "tag": "疾病"},
         "bind": "disease",
         "min": 1,
         "max": 1,
@@ -36,7 +36,7 @@
       "body": {
         "op": "draw",
         "count": {
-          "mul": [2, {"count": {"zone": "active_hand", "subcategory": "怪物"}}]
+          "mul": [2, {"count": {"zone": "active_hand", "tag": "怪物"}}]
         }
       }
     },

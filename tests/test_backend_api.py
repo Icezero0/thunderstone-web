@@ -15,7 +15,7 @@ from backend.app.core.database import get_engine, get_session_factory
 from backend.app.core.startup import _upgrade_database
 from backend.app.main import create_app
 from backend.app.modules.cards.importer import import_catalog
-from engine.setup import start_game
+from backend.app.integrations.game_engine.setup import start_game
 
 
 def draft() -> dict:

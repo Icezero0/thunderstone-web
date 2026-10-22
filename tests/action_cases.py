@@ -2,7 +2,7 @@
 
 from collections import defaultdict
 
-from engine.turn import apply_command, legal_commands, TurnError
+from backend.app.integrations.game_engine.turn import apply_command, legal_commands, TurnError
 from tests.mechanic_cases import Fixture
 
 

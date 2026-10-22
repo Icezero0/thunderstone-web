@@ -6,11 +6,11 @@ import copy
 import json
 import unittest
 
-from engine.catalog.repository import load_catalog
-from engine.effects.compiler import (EffectCompileError, compile_ruleset,
+from backend.app.integrations.game_engine.catalog.repository import load_catalog
+from backend.app.integrations.game_engine.effects.compiler import (EffectCompileError, compile_ruleset,
                                      load_ruleset)
-from engine.setup import start_game
-from engine.turn import TurnError, apply_command, legal_commands
+from backend.app.integrations.game_engine.setup import start_game
+from backend.app.integrations.game_engine.turn import TurnError, apply_command, legal_commands
 from tests.test_setup_engine import config, request
 
 

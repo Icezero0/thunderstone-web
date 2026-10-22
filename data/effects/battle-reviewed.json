@@ -14,7 +14,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "武器"
           }
@@ -23,7 +25,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "武器"
           },
@@ -52,7 +56,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "武器"
           }
@@ -61,7 +67,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "武器"
           },
@@ -90,7 +98,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "武器"
           }
@@ -99,7 +109,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "武器"
           },
@@ -128,7 +140,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "武器"
           }
@@ -137,7 +151,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "武器"
           },
@@ -166,7 +182,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "法术"
           }
@@ -175,7 +193,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "法术"
           },
@@ -204,7 +224,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "法术"
           }
@@ -213,7 +235,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "法术"
           },
@@ -242,7 +266,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "法术"
           }
@@ -251,7 +277,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "法术"
           },
@@ -280,7 +308,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           }
@@ -289,7 +319,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           },
@@ -318,7 +350,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           }
@@ -327,7 +361,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           },
@@ -356,7 +392,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           }
@@ -365,7 +403,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           },
@@ -394,7 +434,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           }
@@ -403,7 +445,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           },
@@ -432,7 +476,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           }
@@ -441,7 +487,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           },
@@ -470,7 +518,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           }
@@ -479,7 +529,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           },
@@ -508,7 +560,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           }
@@ -517,7 +571,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           },
@@ -546,7 +602,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           }
@@ -555,7 +613,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           },
@@ -584,7 +644,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "佣兵"
           }
@@ -593,7 +655,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "佣兵"
           },
@@ -622,7 +686,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "战士"
           }
@@ -631,7 +697,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "战士"
           },
@@ -660,7 +728,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "战士"
           }
@@ -669,7 +739,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "战士"
           },
@@ -698,7 +770,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "战士"
           }
@@ -707,7 +781,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "战士"
           },
@@ -736,7 +812,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "战士"
           }
@@ -745,7 +823,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "战士"
           },
@@ -774,9 +854,7 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
             "unmarked": true,
-            "tag": "英雄",
             "tags_any": [
               "牧师",
               "法师"
@@ -787,9 +865,7 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
             "unmarked": true,
-            "tag": "英雄",
             "tags_any": [
               "牧师",
               "法师"
@@ -820,7 +896,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "魔法",
             "tags_any": [
@@ -833,7 +911,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "魔法",
             "tags_any": [
@@ -866,9 +946,11 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
-            "card_type": "村庄牌",
+            "tag": "村庄",
             "max_by": "gold"
           }
         },
@@ -876,9 +958,11 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
-            "card_type": "村庄牌",
+            "tag": "村庄",
             "max_by": "gold"
           },
           "bind": "chosen",
@@ -906,7 +990,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true
           }
         },
@@ -914,7 +1000,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true
           },
           "bind": "chosen",
@@ -942,7 +1030,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "物品"
           }
@@ -951,7 +1041,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "物品"
           },
@@ -980,7 +1072,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "gold_present": true
           }
@@ -989,7 +1083,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "gold_present": true
           },
@@ -1018,7 +1114,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄"
           }
@@ -1027,7 +1125,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄"
           },
@@ -1056,7 +1156,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄"
           }
@@ -1065,7 +1167,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄"
           },
@@ -1094,7 +1198,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄"
           }
@@ -1103,7 +1209,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄"
           },
@@ -1132,7 +1240,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "食物"
           }
@@ -1141,7 +1251,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "食物"
           },
@@ -1170,7 +1282,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "牧师"
           }
@@ -1179,7 +1293,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "牧师"
           },
@@ -1208,7 +1324,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "exclude_card_id": "TS-0001"
@@ -1218,7 +1336,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "exclude_card_id": "TS-0001"
@@ -1248,7 +1368,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "物品"
           }
@@ -1257,7 +1379,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "物品"
           },
@@ -1286,7 +1410,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tags_any": [
               "武器",
@@ -1298,7 +1424,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tags_any": [
               "武器",
@@ -1330,7 +1458,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "level_min": 1,
@@ -1341,7 +1471,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "level_min": 1,
@@ -1372,7 +1504,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "level_min": 2,
@@ -1383,7 +1517,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "level_min": 2,
@@ -1414,7 +1550,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "light_min": 1
           }
@@ -1423,7 +1561,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "light_min": 1
           },
@@ -1452,7 +1592,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "法师"
           }
@@ -1461,7 +1603,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "法师"
           },
@@ -1490,7 +1634,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "min_by": "strength"
@@ -1500,7 +1646,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "min_by": "strength"
@@ -1530,7 +1678,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "min_by": "strength"
@@ -1540,7 +1690,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "min_by": "strength"
@@ -1570,7 +1722,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "max_by": "strength"
@@ -1580,7 +1734,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "max_by": "strength"
@@ -1610,7 +1766,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "max_by": "attack"
@@ -1620,7 +1778,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "max_by": "attack"
@@ -1650,7 +1810,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "strength_max": 4
@@ -1660,7 +1822,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "strength_max": 4
@@ -1702,7 +1866,9 @@
             "condition": {
               "exists": {
                 "zone": "subject_hand",
-                "exclude_card_type": "疾病牌",
+                "tags_none": [
+                  "疾病"
+                ],
                 "unmarked": true,
                 "tag": "英雄",
                 "strength_max": 5
@@ -1712,7 +1878,9 @@
               "op": "select",
               "query": {
                 "zone": "subject_hand",
-                "exclude_card_type": "疾病牌",
+                "tags_none": [
+                  "疾病"
+                ],
                 "unmarked": true,
                 "tag": "英雄",
                 "strength_max": 5
@@ -1742,7 +1910,9 @@
             "condition": {
               "exists": {
                 "zone": "subject_hand",
-                "exclude_card_type": "疾病牌",
+                "tags_none": [
+                  "疾病"
+                ],
                 "unmarked": true,
                 "tag": "武器",
                 "min_by": "weight"
@@ -1752,7 +1922,9 @@
               "op": "select",
               "query": {
                 "zone": "subject_hand",
-                "exclude_card_type": "疾病牌",
+                "tags_none": [
+                  "疾病"
+                ],
                 "unmarked": true,
                 "tag": "武器",
                 "min_by": "weight"
@@ -1783,7 +1955,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "英雄"
         },
@@ -1823,7 +1997,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "英雄"
         },
@@ -1863,7 +2039,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "英雄"
         },
@@ -1903,7 +2081,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "英雄"
         },
@@ -1943,7 +2123,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "英雄"
         },
@@ -1983,7 +2165,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "英雄"
         },
@@ -2023,7 +2207,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "英雄"
         },
@@ -2064,7 +2250,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "participating": true
@@ -2074,7 +2262,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "participating": true
@@ -2104,7 +2294,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "participating": true
@@ -2114,7 +2306,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "participating": true
@@ -2144,7 +2338,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "participating": true
@@ -2154,7 +2350,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "participating": true
@@ -2195,7 +2393,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "participating": true
@@ -2205,7 +2405,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "participating": true
@@ -2254,7 +2456,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "弓箭手"
         },
@@ -2279,7 +2483,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "弓箭手"
         },
@@ -2304,7 +2510,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "card_id": "TS-0001"
         },
@@ -2329,9 +2537,7 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
           "unmarked": true,
-          "tag": "英雄",
           "tags_any": [
             "牧师",
             "法师"
@@ -2358,7 +2564,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "duplicate_names": true
         },
@@ -2383,10 +2591,14 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "物品",
-          "light_min": 1
+          "tags_any": [
+            "光照"
+          ]
         },
         "bind": "chosen",
         "body": {
@@ -2411,7 +2623,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "card_id": "TS-0002"
         },
@@ -2438,7 +2652,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "card_id": "TS-0001"
         },
@@ -2465,7 +2681,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "武器"
         },
@@ -2565,7 +2783,9 @@
             "count": {
               "count": {
                 "zone": "subject_hand",
-                "exclude_card_type": "疾病牌",
+                "tags_none": [
+                  "疾病"
+                ],
                 "unmarked": true,
                 "card_id": "TS-0001"
               }
@@ -2575,7 +2795,9 @@
             "op": "for_each",
             "query": {
               "zone": "subject_hand",
-              "exclude_card_type": "疾病牌",
+              "tags_none": [
+                "疾病"
+              ],
               "unmarked": true,
               "card_id": "TS-0001"
             },
@@ -2603,7 +2825,9 @@
         "count": {
           "count": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "tags_any": [
@@ -2629,7 +2853,9 @@
             "op": "for_each",
             "query": {
               "zone": "subject_hand",
-              "exclude_card_type": "疾病牌",
+              "tags_none": [
+                "疾病"
+              ],
               "unmarked": true,
               "tag": "食物"
             },
@@ -2666,20 +2892,28 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "物品",
-            "light_min": 1
+            "tags_any": [
+              "光照"
+            ]
           }
         },
         "then": {
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "物品",
-            "light_min": 1
+            "tags_any": [
+              "光照"
+            ]
           },
           "bind": "chosen",
           "min": 1,
@@ -2715,7 +2949,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           }
@@ -2724,7 +2960,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "card_id": "TS-0001"
           },
@@ -2771,7 +3009,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "战士"
           }
@@ -2780,7 +3020,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "战士"
           },
@@ -2823,18 +3065,22 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
-            "subcategory": "怪物"
+            "tag": "怪物"
           }
         },
         "then": {
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
-            "subcategory": "怪物"
+            "tag": "怪物"
           },
           "bind": "chosen",
           "min": 1,
@@ -2875,7 +3121,7 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         },
         "then": {
@@ -2904,7 +3150,7 @@
             {
               "count": {
                 "zone": "subject_hand",
-                "card_type": "疾病牌"
+                "tag": "疾病"
               }
             }
           ]
@@ -2915,7 +3161,9 @@
           "condition": {
             "exists": {
               "zone": "subject_hand",
-              "exclude_card_type": "疾病牌",
+              "tags_none": [
+                "疾病"
+              ],
               "unmarked": true
             }
           },
@@ -2923,7 +3171,9 @@
             "op": "select",
             "query": {
               "zone": "subject_hand",
-              "exclude_card_type": "疾病牌",
+              "tags_none": [
+                "疾病"
+              ],
               "unmarked": true
             },
             "bind": "chosen",
@@ -2972,18 +3222,22 @@
           "condition": {
             "exists": {
               "zone": "subject_hand",
-              "exclude_card_type": "疾病牌",
+              "tags_none": [
+                "疾病"
+              ],
               "unmarked": true,
-              "subcategory": "怪物"
+              "tag": "怪物"
             }
           },
           "then": {
             "op": "select",
             "query": {
               "zone": "subject_hand",
-              "exclude_card_type": "疾病牌",
+              "tags_none": [
+                "疾病"
+              ],
               "unmarked": true,
-              "subcategory": "怪物"
+              "tag": "怪物"
             },
             "bind": "chosen",
             "min": 1,
@@ -3045,7 +3299,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "牧师"
           }
@@ -3054,7 +3310,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "牧师"
           },
@@ -3083,7 +3341,9 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "level_min": 1
@@ -3093,7 +3353,9 @@
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "level_min": 1
@@ -3122,7 +3384,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "英雄",
           "equipped": false,
@@ -3151,7 +3415,9 @@
           "not": {
             "exists": {
               "zone": "subject_hand",
-              "exclude_card_type": "疾病牌",
+              "tags_none": [
+                "疾病"
+              ],
               "unmarked": true,
               "tag": "英雄",
               "equipped": true
@@ -3163,7 +3429,9 @@
           "condition": {
             "exists": {
               "zone": "subject_hand",
-              "exclude_card_type": "疾病牌",
+              "tags_none": [
+                "疾病"
+              ],
               "unmarked": true,
               "tag": "英雄"
             }
@@ -3172,7 +3440,9 @@
             "op": "select",
             "query": {
               "zone": "subject_hand",
-              "exclude_card_type": "疾病牌",
+              "tags_none": [
+                "疾病"
+              ],
               "unmarked": true,
               "tag": "英雄"
             },
@@ -3201,7 +3471,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "英雄",
           "equipped": true
@@ -3267,7 +3539,9 @@
             "op": "select",
             "query": {
               "zone": "subject_hand",
-              "exclude_card_type": "疾病牌",
+              "tags_none": [
+                "疾病"
+              ],
               "unmarked": true,
               "tag": "英雄"
             },
@@ -3278,7 +3552,9 @@
               "op": "for_each",
               "query": {
                 "zone": "subject_hand",
-                "exclude_card_type": "疾病牌",
+                "tags_none": [
+                  "疾病"
+                ],
                 "unmarked": true,
                 "tag": "英雄",
                 "exclude_var": "kept"
@@ -3299,7 +3575,9 @@
             "condition": {
               "exists": {
                 "zone": "subject_hand",
-                "exclude_card_type": "疾病牌",
+                "tags_none": [
+                  "疾病"
+                ],
                 "unmarked": true,
                 "tag": "武器"
               }
@@ -3308,7 +3586,9 @@
               "op": "select",
               "query": {
                 "zone": "subject_hand",
-                "exclude_card_type": "疾病牌",
+                "tags_none": [
+                  "疾病"
+                ],
                 "unmarked": true,
                 "tag": "武器",
                 "max_by": "weight"
@@ -3320,7 +3600,9 @@
                 "op": "for_each",
                 "query": {
                   "zone": "subject_hand",
-                  "exclude_card_type": "疾病牌",
+                  "tags_none": [
+                    "疾病"
+                  ],
                   "unmarked": true,
                   "tag": "武器",
                   "exclude_var": "kept_weapon"
@@ -3350,7 +3632,9 @@
         "op": "select",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "英雄"
         },
@@ -3361,7 +3645,9 @@
           "op": "for_each",
           "query": {
             "zone": "subject_hand",
-            "exclude_card_type": "疾病牌",
+            "tags_none": [
+              "疾病"
+            ],
             "unmarked": true,
             "tag": "英雄",
             "exclude_var": "kept"
@@ -3389,7 +3675,9 @@
         "op": "select",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true
         },
         "bind": "victims",
@@ -3432,7 +3720,9 @@
         "op": "select",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "物品",
           "unused": true
@@ -3733,7 +4023,7 @@
                 "left": {
                   "count": {
                     "zone": "active_hand",
-                    "subcategory": "怪物"
+                    "tag": "怪物"
                   }
                 },
                 "op": "ge",
@@ -3760,7 +4050,7 @@
                   "op": "select",
                   "query": {
                     "zone": "active_hand",
-                    "subcategory": "怪物"
+                    "tag": "怪物"
                   },
                   "bind": "paid",
                   "min": 1,
@@ -3892,7 +4182,9 @@
         "op": "select",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "英雄"
         },
@@ -3914,7 +4206,9 @@
                                 {
                                   "count": {
                                     "zone": "subject_hand",
-                                    "exclude_card_type": "疾病牌",
+                                    "tags_none": [
+                                      "疾病"
+                                    ],
                                     "unmarked": true,
                                     "tag": "战士"
                                   }
@@ -3929,7 +4223,9 @@
                             {
                               "count": {
                                 "zone": "subject_hand",
-                                "exclude_card_type": "疾病牌",
+                                "tags_none": [
+                                  "疾病"
+                                ],
                                 "unmarked": true,
                                 "tag": "盗贼"
                               }
@@ -3944,7 +4240,9 @@
                         {
                           "count": {
                             "zone": "subject_hand",
-                            "exclude_card_type": "疾病牌",
+                            "tags_none": [
+                              "疾病"
+                            ],
                             "unmarked": true,
                             "tag": "弓箭手"
                           }
@@ -3959,7 +4257,9 @@
                     {
                       "count": {
                         "zone": "subject_hand",
-                        "exclude_card_type": "疾病牌",
+                        "tags_none": [
+                          "疾病"
+                        ],
                         "unmarked": true,
                         "tag": "法师"
                       }
@@ -3974,7 +4274,9 @@
                 {
                   "count": {
                     "zone": "subject_hand",
-                    "exclude_card_type": "疾病牌",
+                    "tags_none": [
+                      "疾病"
+                    ],
                     "unmarked": true,
                     "tag": "牧师"
                   }
@@ -4000,7 +4302,9 @@
                                 {
                                   "count": {
                                     "zone": "subject_hand",
-                                    "exclude_card_type": "疾病牌",
+                                    "tags_none": [
+                                      "疾病"
+                                    ],
                                     "unmarked": true,
                                     "tag": "战士"
                                   }
@@ -4015,7 +4319,9 @@
                             {
                               "count": {
                                 "zone": "subject_hand",
-                                "exclude_card_type": "疾病牌",
+                                "tags_none": [
+                                  "疾病"
+                                ],
                                 "unmarked": true,
                                 "tag": "盗贼"
                               }
@@ -4030,7 +4336,9 @@
                         {
                           "count": {
                             "zone": "subject_hand",
-                            "exclude_card_type": "疾病牌",
+                            "tags_none": [
+                              "疾病"
+                            ],
                             "unmarked": true,
                             "tag": "弓箭手"
                           }
@@ -4045,7 +4353,9 @@
                     {
                       "count": {
                         "zone": "subject_hand",
-                        "exclude_card_type": "疾病牌",
+                        "tags_none": [
+                          "疾病"
+                        ],
                         "unmarked": true,
                         "tag": "法师"
                       }
@@ -4060,7 +4370,9 @@
                 {
                   "count": {
                     "zone": "subject_hand",
-                    "exclude_card_type": "疾病牌",
+                    "tags_none": [
+                      "疾病"
+                    ],
                     "unmarked": true,
                     "tag": "牧师"
                   }
@@ -4098,7 +4410,9 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "exclude_card_type": "疾病牌",
+          "tags_none": [
+            "疾病"
+          ],
           "unmarked": true,
           "tag": "英雄",
           "participating": false
@@ -4219,7 +4533,7 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "semantic_type": "village"
+          "tag": "村庄"
         },
         "bind": "chosen",
         "body": {

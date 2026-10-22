@@ -3,11 +3,11 @@
 from copy import deepcopy
 from dataclasses import replace
 
-from engine.effects.combat import combat_values, monster_health, stat
-from engine.effects.economy import printed_gold, purchase_price, purchase_allowed
-from engine.scoring import score_game
-from engine.turn.dungeon import equip_weapon, declare_battle_target
-from engine.turn.operations import Transition, TurnError
+from tests.migration.reference.python_engine.effects.combat import combat_values, monster_health, stat
+from tests.migration.reference.python_engine.effects.economy import printed_gold, purchase_price, purchase_allowed
+from backend.app.integrations.game_engine.scoring import score_game
+from tests.migration.reference.python_engine.turn.dungeon import equip_weapon, declare_battle_target
+from tests.migration.reference.python_engine.turn.operations import Transition, TurnError
 
 
 def hero(card):
@@ -106,7 +106,7 @@ def verify_rule(test, base, cards, ruleset, rule):
         test.assertEqual(f.tx.destroy_card(disease)["destination"], "disease_supply")
         return
     elif op == "refill_empty_supply":
-        from engine.catalog.repository import load_catalog
+        from backend.app.integrations.game_engine.catalog.repository import load_catalog
         f.tx.setup_index = load_catalog().setup_index
         f.tx.state["active_settings"] = [rule.source_card_id]
         zone = next(zone for zone in f.tx.state["zones"] if zone.startswith("village_supply:"))
@@ -120,7 +120,7 @@ def verify_rule(test, base, cards, ruleset, rule):
         test.assertTrue(all(f.tx.state["instances"][item]["owner_player_id"] is None for item in event["instance_ids"]))
         return
     elif op == "replace_monster":
-        from engine.turn.workflow import queue_steps
+        from tests.migration.reference.python_engine.turn.workflow import queue_steps
         for zone in list(f.tx.state["zones"]):
             if zone.startswith(("hall:", "dungeon:")):
                 f.tx.state["zones"]["destroyed"].extend(f.tx.state["zones"][zone])
@@ -147,7 +147,7 @@ def verify_rule(test, base, cards, ruleset, rule):
         test.assertEqual(f.tx.state["battle_context"]["equipment_draw_counts"][source], 2)
         return
     elif op == "dungeon_deck_lock":
-        from engine.effects.runtime import available_activations
+        from tests.migration.reference.python_engine.effects.runtime import available_activations
         f.tx.ruleset = ruleset
         source = f.add(rule.source_card_id, "hall:main")
         medium = f.add("TS-0453")
@@ -157,7 +157,7 @@ def verify_rule(test, base, cards, ruleset, rule):
         test.assertIn(option, available_activations(f.tx, ruleset))
         return
     elif op == "repeat_battle":
-        from engine.turn import apply_command
+        from backend.app.integrations.game_engine.turn import apply_command
         source = f.add(rule.source_card_id, "hall:main:rank0")
         target = f.add("TS-0476", "hall:main")
         f.tx.ruleset = ruleset
@@ -440,7 +440,7 @@ def verify_rule(test, base, cards, ruleset, rule):
                 value = int(value >= p["minimum"])
             test.assertEqual(monster_health(f.tx, target), stat(target, "health") + value * p.get("multiplier", 1))
     elif op == "hall_movement_lock":
-        from engine.effects.hall import can_move_monster, relocate
+        from tests.migration.reference.python_engine.effects.hall import can_move_monster, relocate
         blocker = f.add(rule.source_card_id, "hall:main")
         other = f.add("TS-0476", "hall:main")
         test.assertFalse(can_move_monster(f.tx, blocker))
@@ -485,6 +485,16 @@ def verify_rule(test, base, cards, ruleset, rule):
         target = f.add(rule.source_card_id, "hall:main")
         declare_battle_target(f.tx, target)
         test.assertTrue(any(target in pile for zone, pile in f.tx.state["zones"].items() if zone.startswith("hall:")))
+    elif op == "battle_aura":
+        target = cards[rule.source_card_id]
+        h = f.add("TS-0001")
+        before = f.calc(1)
+        against = f.calc(1, target)
+        test.assertEqual(against["light"] - before["light"], p.get("light", 0))
+        test.assertEqual(against["hero_strength"][h] - before["hero_strength"][h], p.get("strength", 0))
+        f.source(rule)
+        as_hand = f.calc(1)
+        test.assertEqual(as_hand["hero_strength"][h], before["hero_strength"][h])
     elif op == "economy":
         if p.get("monster_gold_zero"):
             f.tx.state["active_settings"] = [rule.source_card_id]

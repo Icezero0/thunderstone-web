@@ -379,7 +379,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "diseases",
         "min": 0,
@@ -645,7 +645,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "subcategory": "怪物"
+            "tag": "怪物"
           }
         }
       ],
@@ -671,7 +671,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "subcategory": "怪物"
+            "tag": "怪物"
           }
         }
       ],
@@ -952,7 +952,7 @@
             {
               "count": {
                 "zone": "active_hand",
-                "subcategory": "怪物"
+                "tag": "怪物"
               }
             }
           ]
@@ -981,7 +981,7 @@
             {
               "count": {
                 "zone": "active_hand",
-                "subcategory": "怪物"
+                "tag": "怪物"
               }
             }
           ]
@@ -1012,13 +1012,13 @@
                 {
                   "count": {
                     "zone": "active_hand",
-                    "card_type": "疾病牌"
+                    "tag": "疾病"
                   }
                 },
                 {
                   "count": {
                     "zone": "active_hand",
-                    "subcategory": "怪物"
+                    "tag": "怪物"
                   }
                 }
               ]
@@ -1118,7 +1118,9 @@
           "count": {
             "zone": "active_hand",
             "tag": "物品",
-            "light_min": 1
+            "tags_any": [
+              "光照"
+            ]
           }
         }
       }
@@ -1136,7 +1138,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -1144,7 +1146,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "chosen",
         "min": 1,
@@ -1187,7 +1189,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -1195,7 +1197,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "chosen",
         "min": 1,
@@ -1229,7 +1231,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -1237,7 +1239,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "chosen",
         "min": 1,
@@ -1270,7 +1272,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -1278,7 +1280,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "chosen",
         "min": 1,
@@ -1377,7 +1379,9 @@
           "exists": {
             "zone": "active_hand",
             "tag": "物品",
-            "light_min": 1
+            "tags_any": [
+              "光照"
+            ]
           }
         }
       ],
@@ -1386,7 +1390,9 @@
         "query": {
           "zone": "active_hand",
           "tag": "物品",
-          "light_min": 1
+          "tags_any": [
+            "光照"
+          ]
         },
         "bind": "chosen",
         "min": 1,
@@ -1420,7 +1426,9 @@
           "exists": {
             "zone": "active_hand",
             "tag": "物品",
-            "light_min": 1
+            "tags_any": [
+              "光照"
+            ]
           }
         }
       ],
@@ -1429,7 +1437,9 @@
         "query": {
           "zone": "active_hand",
           "tag": "物品",
-          "light_min": 1
+          "tags_any": [
+            "光照"
+          ]
         },
         "bind": "chosen",
         "min": 1,
@@ -1752,7 +1762,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "subcategory": "怪物"
+            "tag": "怪物"
           }
         }
       ],
@@ -1760,7 +1770,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "subcategory": "怪物"
+          "tag": "怪物"
         },
         "bind": "chosen",
         "min": 1,
@@ -1792,7 +1802,7 @@
           "sum": {
             "query": {
               "zone": "active_hand",
-              "subcategory": "怪物"
+              "tag": "怪物"
             },
             "field": "vp"
           }
@@ -1813,7 +1823,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -1821,7 +1831,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "chosen",
         "min": 1,
@@ -1847,7 +1857,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -1855,7 +1865,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "chosen",
         "min": 1,
@@ -2537,7 +2547,7 @@
             "exists": {
               "zone": "bound",
               "var": "drawn",
-              "subcategory": "怪物"
+              "tag": "怪物"
             }
           },
           "then": {
@@ -3364,7 +3374,9 @@
             "exists": {
               "zone": "subject_hand",
               "tag": "物品",
-              "light_min": 1
+              "tags_any": [
+                "光照"
+              ]
             }
           },
           "then": {
@@ -3372,7 +3384,9 @@
             "query": {
               "zone": "subject_hand",
               "tag": "物品",
-              "light_min": 1
+              "tags_any": [
+                "光照"
+              ]
             },
             "bind": "chosen",
             "min": 1,
@@ -3662,7 +3676,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -3670,7 +3684,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "chosen",
         "min": 1,
@@ -3696,7 +3710,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_type": "疾病牌"
+            "tag": "疾病"
           }
         }
       ],
@@ -3704,7 +3718,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "chosen",
         "min": 1,
@@ -3914,7 +3928,7 @@
         {
           "exists": {
             "zone": "hall",
-            "subcategory": "怪物",
+            "tag": "怪物",
             "movable": true,
             "rank": 1
           }
@@ -3924,7 +3938,7 @@
         "op": "select",
         "query": {
           "zone": "hall",
-          "subcategory": "怪物",
+          "tag": "怪物",
           "movable": true,
           "rank": 1
         },
@@ -3953,7 +3967,7 @@
         {
           "exists": {
             "zone": "hall",
-            "subcategory": "怪物",
+            "tag": "怪物",
             "movable": true
           }
         }
@@ -3973,7 +3987,7 @@
               "op": "select",
               "query": {
                 "zone": "hall",
-                "subcategory": "怪物",
+                "tag": "怪物",
                 "movable": true
               },
               "bind": "chosen",
@@ -4008,7 +4022,7 @@
         {
           "exists": {
             "zone": "hall",
-            "subcategory": "怪物",
+            "tag": "怪物",
             "movable": true
           }
         }
@@ -4020,7 +4034,7 @@
             "op": "select",
             "query": {
               "zone": "hall",
-              "subcategory": "怪物",
+              "tag": "怪物",
               "movable": true
             },
             "bind": "chosen",
@@ -4078,7 +4092,7 @@
         {
           "exists": {
             "zone": "hall",
-            "subcategory": "怪物",
+            "tag": "怪物",
             "movable": true,
             "vp_min": 1,
             "vp_max": 2
@@ -4106,7 +4120,7 @@
             "op": "select",
             "query": {
               "zone": "hall",
-              "subcategory": "怪物",
+              "tag": "怪物",
               "movable": true,
               "vp_min": 1,
               "vp_max": 2
@@ -4138,7 +4152,7 @@
         {
           "exists": {
             "zone": "hall",
-            "subcategory": "怪物",
+            "tag": "怪物",
             "movable": true,
             "rank": 1
           }
@@ -4163,7 +4177,7 @@
           "op": "select",
           "query": {
             "zone": "hall",
-            "subcategory": "怪物",
+            "tag": "怪物",
             "movable": true,
             "rank": 1
           },
@@ -4193,7 +4207,7 @@
         {
           "exists": {
             "zone": "hall",
-            "subcategory": "怪物",
+            "tag": "怪物",
             "movable": true
           }
         },
@@ -4217,7 +4231,7 @@
           "op": "select",
           "query": {
             "zone": "hall",
-            "subcategory": "怪物",
+            "tag": "怪物",
             "movable": true
           },
           "bind": "chosen",
@@ -4246,7 +4260,7 @@
         {
           "exists": {
             "zone": "hall",
-            "subcategory": "怪物",
+            "tag": "怪物",
             "movable": true
           }
         }
@@ -4255,7 +4269,7 @@
         "op": "select",
         "query": {
           "zone": "hall",
-          "subcategory": "怪物",
+          "tag": "怪物",
           "movable": true
         },
         "bind": "chosen",
@@ -4283,7 +4297,7 @@
       "body": {
         "op": "buy",
         "filter": {
-          "card_type": "村庄牌"
+          "tag": "村庄"
         },
         "destination": "discard",
         "payment": "none"
@@ -4359,7 +4373,7 @@
       "body": {
         "op": "buy",
         "filter": {
-          "card_type": "村庄牌"
+          "tag": "村庄"
         },
         "destination": "hand",
         "payment": "discard_source"
@@ -4651,7 +4665,9 @@
                   "zone": "other_discard",
                   "exclude_var": "before",
                   "tag": "物品",
-                  "light_min": 1
+                  "tags_any": [
+                    "光照"
+                  ]
                 }
               },
               "then": {
@@ -5483,7 +5499,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "subcategory": "怪物"
+          "tag": "怪物"
         },
         "bind": "chosen",
         "min": 1,
@@ -5554,7 +5570,7 @@
                       "exists": {
                         "zone": "bound",
                         "var": "flipped",
-                        "semantic_type": "hero"
+                        "tag": "英雄"
                       }
                     }
                   ]
@@ -5578,7 +5594,7 @@
                       "exists": {
                         "zone": "bound",
                         "var": "flipped",
-                        "semantic_type": "village"
+                        "tag": "村庄"
                       }
                     }
                   ]
@@ -5602,7 +5618,7 @@
                       "exists": {
                         "zone": "bound",
                         "var": "flipped",
-                        "semantic_type": "monster"
+                        "tag": "怪物"
                       }
                     }
                   ]
@@ -5724,7 +5740,7 @@
             "op": "select",
             "query": {
               "zone": "hall",
-              "subcategory": "怪物",
+              "tag": "怪物",
               "movable": true
             },
             "bind": "chosen",
@@ -5756,33 +5772,43 @@
       "usage": "once_per_turn",
       "conditions": [],
       "body": {
-        "op": "select",
+        "op": "remember",
         "query": {
           "zone": "hall",
-          "subcategory": "怪物",
-          "movable": true
+          "rank": 0
         },
-        "bind": "first",
-        "min": 1,
-        "max": 1,
+        "bind": "rank_zero",
         "then": {
           "op": "select",
           "query": {
             "zone": "hall",
-            "subcategory": "怪物",
+            "tag": "怪物",
             "movable": true,
-            "adjacent_to_var": "first"
+            "exclude_var": "rank_zero"
           },
-          "bind": "chosen",
+          "bind": "first",
           "min": 1,
           "max": 1,
           "then": {
-            "op": "swap_hall",
-            "target": {
-              "var": "first"
+            "op": "select",
+            "query": {
+              "zone": "hall",
+              "tag": "怪物",
+              "movable": true,
+              "exclude_var": "rank_zero",
+              "adjacent_to_var": "first"
             },
-            "other": {
-              "var": "chosen"
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "swap_hall",
+              "target": {
+                "var": "first"
+              },
+              "other": {
+                "var": "chosen"
+              }
             }
           }
         }
@@ -5814,7 +5840,7 @@
                 "op": "select",
                 "query": {
                   "zone": "reveal_zone",
-                  "subcategory": "怪物"
+                  "tag": "怪物"
                 },
                 "bind": "incoming",
                 "min": 0,
@@ -5830,7 +5856,7 @@
                     "op": "select",
                     "query": {
                       "zone": "hall",
-                      "subcategory": "怪物",
+                      "tag": "怪物",
                       "movable": true,
                       "in_selected_dungeon": true
                     },
@@ -5884,7 +5910,7 @@
                 "op": "select",
                 "query": {
                   "zone": "reveal_zone",
-                  "subcategory": "怪物"
+                  "tag": "怪物"
                 },
                 "bind": "incoming",
                 "min": 0,
@@ -5900,7 +5926,7 @@
                     "op": "select",
                     "query": {
                       "zone": "hall",
-                      "subcategory": "怪物",
+                      "tag": "怪物",
                       "movable": true,
                       "in_selected_dungeon": true,
                       "rank": 1
@@ -6006,8 +6032,7 @@
           "op": "select",
           "query": {
             "zone": "hall",
-            "subcategory": "怪物",
-            "movable": true,
+            "tag": "怪物",
             "compare_stat": {
               "field": "vp",
               "op": "le",
@@ -6063,7 +6088,7 @@
             "op": "for_each",
             "query": {
               "zone": "hall",
-              "subcategory": "怪物"
+              "tag": "怪物"
             },
             "bind": "chosen",
             "body": {
@@ -6078,7 +6103,7 @@
             "op": "for_each",
             "query": {
               "zone": "hall",
-              "subcategory": "怪物",
+              "tag": "怪物",
               "movable": true,
               "compare_stat": {
                 "field": "health",
@@ -6116,7 +6141,7 @@
           "op": "select",
           "query": {
             "zone": "hall",
-            "subcategory": "怪物",
+            "tag": "怪物",
             "movable": true,
             "vp_min": 1,
             "vp_max": 2
@@ -6189,7 +6214,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "chosen",
         "min": 1,
@@ -6422,7 +6447,7 @@
               {
                 "op": "buy",
                 "filter": {
-                  "card_type": "村庄牌",
+                  "tag": "村庄",
                   "tags_none": [
                     "英雄"
                   ]
@@ -6454,7 +6479,7 @@
         "body": {
           "op": "buy",
           "filter": {
-            "card_type": "村庄牌"
+            "tag": "村庄"
           },
           "maximum_cost": {
             "sub": [
@@ -6510,9 +6535,8 @@
                 "kind": "player",
                 "bind": "choice",
                 "then": {
-                  "op": "reveal",
-                  "count": 1000,
-                  "until": {
+                  "op": "discard_until",
+                  "filter": {
                     "tag": "英雄"
                   },
                   "bind": "revealed_hero",
@@ -6704,46 +6728,55 @@
       "usage": "once_per_turn",
       "conditions": [],
       "body": {
-        "op": "select",
+        "op": "remember",
         "query": {
-          "zone": "active_hand",
-          "subcategory": "怪物"
+          "zone": "hall",
+          "rank": 0
         },
-        "bind": "offered",
-        "min": 1,
-        "max": 1,
+        "bind": "rank_zero",
         "then": {
           "op": "select",
           "query": {
-            "zone": "hall",
-            "subcategory": "怪物",
-            "movable": true,
-            "compare_stat": {
-              "field": "vp",
-              "op": "le",
-              "value": {
-                "add": [
-                  {
-                    "stat": {
-                      "var": "offered",
-                      "field": "vp"
-                    }
-                  },
-                  1
-                ]
-              }
-            }
+            "zone": "active_hand",
+            "tag": "怪物"
           },
-          "bind": "chosen",
+          "bind": "offered",
           "min": 1,
           "max": 1,
           "then": {
-            "op": "exchange_hall",
-            "target": {
-              "var": "chosen"
+            "op": "select",
+            "query": {
+              "zone": "hall",
+              "tag": "怪物",
+              "movable": true,
+              "exclude_var": "rank_zero",
+              "compare_stat": {
+                "field": "vp",
+                "op": "le",
+                "value": {
+                  "add": [
+                    {
+                      "stat": {
+                        "var": "offered",
+                        "field": "vp"
+                      }
+                    },
+                    1
+                  ]
+                }
+              }
             },
-            "other": {
-              "var": "offered"
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "exchange_hall",
+              "target": {
+                "var": "chosen"
+              },
+              "other": {
+                "var": "offered"
+              }
             }
           }
         }
@@ -6763,7 +6796,7 @@
         "op": "select",
         "query": {
           "zone": "hall",
-          "subcategory": "怪物"
+          "tag": "怪物"
         },
         "bind": "monster",
         "min": 1,
@@ -6779,7 +6812,7 @@
                   {
                     "count": {
                       "zone": "active_hand",
-                      "card_type": "疾病牌"
+                      "tag": "疾病"
                     }
                   }
                 ]
@@ -6789,7 +6822,7 @@
               "op": "for_each",
               "query": {
                 "zone": "active_hand",
-                "card_type": "疾病牌"
+                "tag": "疾病"
               },
               "bind": "disease",
               "body": {
@@ -6821,7 +6854,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_type": "疾病牌"
+          "tag": "疾病"
         },
         "bind": "diseases",
         "min": 0,
@@ -6837,7 +6870,7 @@
             "op": "select",
             "query": {
               "zone": "hall",
-              "subcategory": "怪物"
+              "tag": "怪物"
             },
             "bind": "chosen",
             "min": 1,
@@ -7050,14 +7083,14 @@
                 "condition": {
                   "exists": {
                     "zone": "subject_hand",
-                    "subcategory": "怪物"
+                    "tag": "怪物"
                   }
                 },
                 "then": {
                   "op": "select",
                   "query": {
                     "zone": "subject_hand",
-                    "subcategory": "怪物"
+                    "tag": "怪物"
                   },
                   "bind": "chosen",
                   "min": 1,
@@ -7079,7 +7112,7 @@
               "query": {
                 "zone": "all_discard",
                 "exclude_var": "before",
-                "subcategory": "怪物"
+                "tag": "怪物"
               },
               "bind": "dropped",
               "then": {

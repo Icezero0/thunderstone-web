@@ -1,0 +1,2671 @@
+{
+  "schema_version": "thunderstone.monster-symbols/1",
+  "source_review": "archive/reviews/monster-review-2026-10-22T07-55-15-436Z.json",
+  "source_sha256": "b8d6e8703423e1bb3ac23378bb853bb85230a60219887717edc17dbc59171d56",
+  "policy": "Only an explicit present symbol is a loot effect; unmarked and unreviewed effects have no loot symbol.",
+  "abilities": {
+    "TS-0459-A01": {
+      "source_line": "战斗：摧毁 1 张武器。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "d30301fee938cde2ba48e8ceac568f5a82a9bc9207a11673436515c3e031d015",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0460-A01": {
+      "source_line": "战斗：摧毁手牌中金币值最高的 1 张村庄牌。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "4e9a2f8ef8f13d9c2e0dc11ff04fabdc115925b54b2342dc87ff506ce5d314c6",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0461-A01": {
+      "source_line": "玩家手牌的金币值小于 5 时，此牌生命值翻倍。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "83d93da0fe079ef0ed78cdc32c16d157f70a95049380b61e5bfa406941c922fc",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0461-A02": {
+      "source_line": "突破：从每个顶部牌金币值为 3 或以上的村庄牌堆顶部，移除 2 张牌。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e909529fd0654b78588c7baab879e1e86b901e97f6953af7a0969d2e5c9cd370",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0462-A01": {
+      "source_line": "当前玩家展示至少 1 金币，否则此牌生命值翻倍。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "da761c6f6da8018e4f917f808659a07b4c480be73f248d66ca7da43239b5e7df",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0462-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "d59980526c227570cfdc4dab735f3e5308e87d3a5a3383e47e30c5423fa46f67",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0463-A01": {
+      "source_line": "突破：每位玩家从自己的牌堆顶弃牌，直到翻出 1 名英雄，然后摧毁该英雄。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "note": "当前实现是翻到英雄后，处理完摧毁效果，才将其余牌放入弃牌堆。这个处理会导致非英雄牌的堆积。\n我感觉应该是这样：\nwhile （抽牌堆牌数>0）\n  翻出牌堆顶\n  if(翻开的牌 contains 英雄 tag)\n    摧毁 这张牌\n    break\n  else\n    将该牌放入对应玩家弃牌堆 ",
+      "expected_scope": "other",
+      "result": "issue",
+      "applied_fingerprint": "4963fd70267ba86f65efd9375200a5be38158d4a6dea67c4b902a43b8d1279c2",
+      "applied_at": "2026-10-22T09:22:37.801Z",
+      "resolution": "逐张翻牌并立即弃掉非英雄；抽牌堆空时洗混弃牌堆继续，找到首名英雄后摧毁。所有可取实例均已有无进展记录时结束，不使用 1000 张上限；成功处理和洗牌均保留无进展记录，状态变化仅使相应实例记录失效。酒馆殴斗、滚石陷阱、龙之颚同步适用。"
+    },
+    "TS-0463-A02": {
+      "source_line": "战斗：每位玩家展示手牌中的 2 名英雄，或展示手牌以证明没有。摧毁展示英雄中力量最高的 1 名英雄。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "d5bc89e11cd0b1f2000d86e3c1b3d14f053a1b94b3017e1072d3aaf9ad0d8bc6",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0464-A01": {
+      "source_line": "攻击此牌时，同名英雄最多只能有 1 名参与战斗。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "pending",
+      "applied_fingerprint": "d073bc808b46d6c360695eeef9be18cb3e0f752cc9d426783b8b16c436632c84",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0464-A02": {
+      "source_line": "战斗：摧毁所有手牌中有复数张同名牌的牌。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "eab374cddae20422d64bec8984d01a32ee0cc6d6de8bdc56713f2bdb5f5f2b73",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0465-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0466-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0466-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "71b2d37179ed33e49457d46913e908fe37ec2eb31c406f0be39d9747ca9efb8d",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0467-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0467-A02": {
+      "source_line": "战斗：摧毁 1 张法术。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "3c195a147146e9e2a8f501820e6b75a34c70029234fe4ea4722e2df00c9d4a1b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0468-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0468-A02": {
+      "source_line": "战斗：摧毁 1 名牧师或法师。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "note": "该条效果描述并未要求是英雄，只要有牧师tag或者法师的tag应该都可以吧。",
+      "expected_scope": "other",
+      "result": "issue",
+      "applied_fingerprint": "4af9baaf5918dbec6b05c2340b4ac9c3359f6640ee9c7127284a025c5d81de40",
+      "applied_at": "2026-10-22T08:12:46.153Z",
+      "resolution": "仅按牧师或法师标签选取，不额外要求英雄标签；同类的摧毁所有牧师和法师效果也已修正。"
+    },
+    "TS-0469-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0469-A02": {
+      "source_line": "战斗：所有英雄承受攻击 -1 和 力量 -4。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "697ec7f9b5aa544313d0bbf67b10e96d98d151b6294fb79a90efafa74f5f2b07",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0470-A01": {
+      "source_line": "当你选择与此怪物战斗时，除非你立即摧毁 1 张食物，否则无法击败此牌。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "9bb2078cfa557363ca23eb30138f6cf614b88daec6899cc1ab44324c46e4bf3c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0471-A01": {
+      "source_line": "当你选择与此怪物战斗时，除非你立即摧毁 1 名英雄，否则无法击败此牌。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "6421e55734b6d17c91e993ebf597562651d9a97aba4f37f8e85074c983a96da3",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0472-A01": {
+      "source_line": "当你选择与此怪物战斗时，除非你立即摧毁 2 点经验值，否则无法击败此牌。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "2f1325a0efba9e2215f965c87005f1c77f84c1760c969fd5e9da6210891bfd09",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0473-A01": {
+      "source_line": "当你选择与此怪物战斗时，除非摧毁 1 张怪物牌，否则无法击败此牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "32fccf6fea26a7fe9eee217ee63c9a5ad56392f66e30ba885845af06cde82532",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0474-A01": {
+      "source_line": "当你选择与此怪物战斗时，除非立即弃掉 3 张牌，否则无法击败此牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "cf32f203bce9e8c768318ac564283651a1844e18ac14226d1c358a2f21ff9a47",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0475-A01": {
+      "source_line": "战斗：摧毁 1 张法术。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "4381b02df8c00c0ce841e0c5959a58ba8bf2ac8a511032838f6c5e426e9cdfbe",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0476-A01": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "db6a5886e0f015da9e5870aafee25abc2d5a327ddd46ea1f46c27bd9fb2515a2",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0477-A01": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "1bd8e9f146ab2dccdadfff75150359eb7654d906b031af6009dd44a9685f04d7",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0478-A01": {
+      "source_line": "战斗：所有英雄承受力量 -2。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "7669903595385eb57d30ab64f20d0f53fd1cfaa73f571336bb5bf6bd11c8a8cb",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0478-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "cb3d7b6d2802ed4e4273892e6dbd3af4d7ba0e16c07e14020d54042d4943dcf9",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0479-A01": {
+      "source_line": "战斗：获得 2 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "1526823c24cbda4ffcd3781e8cf6775d0e5c21128271168fa7292823812f41ad",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0480-A01": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "26d104ce37c1b5fcd065a5367da0890675ec3c35858189317517594e62515104",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0481-A01": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "410b0f26f2e9402dcdc3e25ae63fb74d0c8b711365dabb3e068681a0477d1b04",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0482-A01": {
+      "source_line": "全局：每当另一只怪物被击败时，每位玩家获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "note": "此牌在地下城大厅中，怪物被击败后触发。这个触发事件，在这张怪物自身被击败后会触发吗？应该不能触发吧？",
+      "expected_scope": "other",
+      "result": "pending",
+      "applied_fingerprint": "91c1963d13ec003dbfd99dbfb1118724a5fb8e628ffbe1274bb665ae09bfe480",
+      "applied_at": "2026-10-22T08:12:46.153Z",
+      "resolution": "仅当另一张怪物实例被击败时触发；自身被击败不触发，另一张同名播疫者仍然会触发。"
+    },
+    "TS-0482-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "41911da5eed0bcb0677e7c0298e92878ac0e1e3eda553b25192a5ea4b90467b8",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0483-A01": {
+      "source_line": "战斗：手牌中每有 1 张疾病，摧毁 1 张非疾病牌。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "expected_scope": "current",
+      "result": "confirmed",
+      "applied_fingerprint": "d8cb5191727bab2ae56579dbea08e987d31880dc88f19dee090804ecba105701",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0483-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "5d5bc169fe9c1b930304a01a037cca6ec2c3846458ad8e2475a7c0f6b550c782",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0484-A01": {
+      "source_line": "突破：每位玩家获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "f586d6faee93f1b903f95f513be3b68167034e6a41ce55c8fd9362e7f0d2fd68",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0484-A02": {
+      "source_line": "战斗：获得 2 张疾病。其他每位玩家获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "0d7136d21793c6bc0ffc433c68a58a47b684005795125428be94cccaad8400d9",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0485-A01": {
+      "source_line": "战斗：一名英雄无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "5381fd2a4bb8374d89b2236b430673fc2b75b58476743fbf17f7fd4e9992e9ed",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0486-A01": {
+      "source_line": "战斗：摧毁 1 名民兵。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "676f9cf105c373a8092f59c101c88f5c047d88c3b47b8d26690263f5462232ac",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0487-A01": {
+      "source_line": "若没有魔法攻击，则攻击值减半。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "c2239e7782d2ebe403036c3a85ebc5659b3ef2688f96a39cfa8d819452bd3fd8",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0487-A02": {
+      "source_line": "战斗：所有英雄承受力量 -2。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "e8cefec9c843b74fd7ad4e52dc9da7df95d468e341c1a19eb1adcd41c0fcef18",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0488-A01": {
+      "source_line": "战斗：摧毁 1 名民兵。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "81c6178e8584164f3000bbe02378f61e19ce670f2f0aba97daa221ae712e14e2",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0489-A01": {
+      "source_line": "需要魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "e01aa27aee5d4095cfc918d98d5e3fe89851e1b77cb54b4a1920dd950c5715f0",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0489-A02": {
+      "source_line": "战斗：所有英雄承受力量 -4。摧毁所有力量降至 0 或以下的英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "f2f35385b47a334ea05ce40975d1bdd29cfac20147a7e2135a44e99647f0dcc5",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0490-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0491-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0491-A02": {
+      "source_line": "战斗：摧毁 1 张法术。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "821b72fe3ba97406fa35d16bf116f6454c707e76ed43e70c52602bf21ef4127b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0492-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0492-A02": {
+      "source_line": "战斗：摧毁 1 张魔法物品或魔法武器。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "5e5ba017eee3d2a1071d19b81588e52fd3fe3c625dd2723ddde56e46b4488297",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0492-A03": {
+      "source_line": "地下城：抽 1 张牌。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "cf14cff2d0d9138d8296d286cacf0618bd3fe967dc75c2ce26883acb78dcc5a4",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0493-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0493-A02": {
+      "source_line": "战斗：所有英雄承受力量 -3。任何英雄的力量在任意时点降至 0 或以下，则被摧毁。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "0bb489aae3c2cae9696a7563468e22944dceb1285cc4c448390a08eadea301f4",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0494-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0494-A02": {
+      "source_line": "突破：每位玩家从自己的牌堆顶翻开 5 张牌。摧毁其中所有具有魔法攻击的英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a2167304666c73c2c74f490bf2c87ed1a1e20c3fa2e46ec55b8f143aff510beb",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0494-A03": {
+      "source_line": "地下城：抽 1 张牌。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "01f7a71e3244d43284f22077e62b0952055c3f81b9c4fc49fc9bfca93d4f5235",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0495-A01": {
+      "source_line": "光照 +1。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "note": "该怪物的光照+1应该是战斗时触发的，而作为玩家手牌时也会增加一点光照因为卡牌数值本身就有1光照，这是正常应用的。",
+      "expected_scope": "other",
+      "result": "issue",
+      "applied_fingerprint": "7aea8c22870fedcbe6fb3c3d7752dd6ebb9f04c1c8e5855cd7a1a7aa561883fe",
+      "applied_at": "2026-10-22T08:12:46.153Z",
+      "resolution": "无战利品符号的光照 +1 改为对抗此怪物时持续生效；作为手牌仍保留卡面光照数值 1，两处分别计算。"
+    },
+    "TS-0496-A01": {
+      "source_line": "全局：光照 +1。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "daa702a5dbd4881deb96eba0b7f75942e6ab9c45930e68eec75a46e998412372",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0496-A02": {
+      "source_line": "战斗：摧毁 1 张牌。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "ab2333b161d911be1337c31a595569534bd7f60a954e22578c24f51a1554df95",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0497-A01": {
+      "source_line": "全局：光照 +2。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "bce78a5f6d941bb510d3bf408de57d0b925e560e09afd10ce8c83e8448ae29b0",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0497-A02": {
+      "source_line": "除非本回合使用过法术或物品，否则无法击败此牌。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "c3537f9f16087e01e21a2bf10557cf04c03020d6282033f38edfb4af2abbc56a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0497-A03": {
+      "source_line": "地下城：摧毁手牌中的 1 张疾病。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "a149d052ed44f9d5c998497e70f5d095343cc839dd59ea80b7c2dc58210c0ada",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0498-A01": {
+      "source_line": "全局：光照 -2。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "6456be7235d6879c46963a3d50634e573efd5bcb0b8dd8fa63c77e39e8694b06",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0498-A02": {
+      "source_line": "战斗：每位玩家获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e038f066462aafb15828cd449fe219cfd11ade165eb84846c28940ee19b26187",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0499-A01": {
+      "source_line": "全局：光照 +3。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "a470617500f80316bd76d6dbed21a3148bade656a17c052982b268362596d417",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0499-A02": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0499-A03": {
+      "source_line": "凯旋：翻开每位对手抽牌堆顶的 3 张牌。将以此方式翻出的所有胜利点为 3 或以下的怪物牌置入你的弃牌堆。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "bec58a72f93985031f2e389d8901222d93cdf201473c3a5208cfb96d29da6192",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0500-A01": {
+      "source_line": "全局：所有怪物必须被击败，才能离开地下城大厅。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "442397cef6f02aa7f68e4acc4a01dfd2ffedca2f5f387aa81ae237c53f6b8610",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0500-A02": {
+      "source_line": "攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0501-A01": {
+      "source_line": "只能使用魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "f27d4dd436dd52fcfab6b9e87d9c5ca6ecdd6e3b0667c624c62a22b9bbf97158",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0501-A02": {
+      "source_line": "突破：每位玩家展示并弃掉自己牌堆顶的 5 张牌，摧毁其中 1 名民兵（若有）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "510b807b83f9da29e8b1ef643b20d04849df5be30d2a87eacae42de83911c096",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0502-A01": {
+      "source_line": "突破：每位玩家展示并弃掉自己牌堆顶的 5 张牌，摧毁其中 1 名等级 1 的英雄（若有）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "b5908f4a9f5920b6f2a0e05cc48d9babe0d05f20f6ba1941f1d15155fdd54a86",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0503-A01": {
+      "source_line": "只能使用魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "f27d4dd436dd52fcfab6b9e87d9c5ca6ecdd6e3b0667c624c62a22b9bbf97158",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0503-A02": {
+      "source_line": "突破：每位玩家展示并弃掉自己牌堆顶的 5 张牌，摧毁其中 1 名等级 2 的英雄（若有）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "8679e2b69ed7b84b8d5a8a0792dbf2e3be0ad279365b8199fe12366c717f8429",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0504-A01": {
+      "source_line": "突破：每位玩家展示并弃掉自己牌堆顶的 5 张牌，摧毁其中 1 张具有胜利点数值的牌（若有）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "8f75b1d72c647c5a1f032de4213bc88136af9afa91365964612a1e0dac4b0b0b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0504-A02": {
+      "source_line": "战斗：每位玩家展示手牌并摧毁其中 1 张怪物牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "8498ffcdb5094c48557dc4e7f190dcee1a23e56550ea43aba64d723c5ab37b3b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0505-A01": {
+      "source_line": "若本回合已使用过法术，则不能攻击此牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "d79b5cea8692e3c0e8f5fd0a62c59b58a8f9f172073e5372e6ce42bd98b631e7",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0506-A01": {
+      "source_line": "免疫法术。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "note": "本效果没有战斗：前缀，所以是持续生效的效果。\n免疫法术不仅意味着法术牌不贡献攻击，法术的其他效果也无法指定或影响该怪物。但是法术的其他和该怪物无关的效果可以正常生效。",
+      "expected_scope": "other",
+      "result": "issue",
+      "applied_fingerprint": "ba65721a8fdc2613e402b501945958fea62f20e658e01439428fa94cda1f5042",
+      "applied_at": "2026-10-22T08:12:46.153Z",
+      "resolution": "持续免疫法术，准备阶段也不能被法术选取或移动；直接修改该怪物的效果被阻止，法术中与它无关的部分照常执行。"
+    },
+    "TS-0506-A02": {
+      "source_line": "免疫未装备武器的英雄。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "f50c822ef41eea6c935defb7f1c047dae4d241ca9a7667c8ced86aa78676ce20",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0507-A01": {
+      "source_line": "光照惩罚无法被降低。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "d967e25df14342ae7e574d6bdc2d13e46196537df70ca246e85af0a313bfc212",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0507-A02": {
+      "source_line": "战斗：摧毁所有未装备武器且没有魔法攻击的英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "af845b90fd4ac835d09da356b348658dfac7e0d7c60bb6448da12e70dddd4b29",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0508-A01": {
+      "source_line": "需要魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "e2ffd0685ff1bde404d0a7ce53d3b60e04ddf33f4db6ac87cbf4dd8299146423",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0508-A02": {
+      "source_line": "战斗：若当前玩家手牌中没有元素牌，则只受到一半伤害。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "43a38415fd8739e575d90b3bb1beb7920729b392f53a99e2db58a36afccc484b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0509-A01": {
+      "source_line": "若本回合已使用过法术，或是有英雄装备了武器，则无法攻击此牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "41cfdab024d5b9605eba12f6a1aeac3a38713614d025e88a6676453fc82f99bc",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0509-A02": {
+      "source_line": "战斗：战斗结束时，从手牌中随机抽取一张牌，若不是元素牌，则摧毁该牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "ab95d18e71f09e479f71ccfa58af507f2c5f1d4e6fe4846ea462f6ab72c18e00",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0511-A01": {
+      "source_line": "对抗类人生物时，获得 攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "pending",
+      "applied_fingerprint": "96ffad50bccb99a08bfc078ce8050565e14856a26ff76a5ae39619d75f6c9187",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0512-A01": {
+      "source_line": "战斗：摧毁 1 名佣兵。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "b9090b69ea1c448946dd7c3232c953a4184079ecf76788f180c2d01a8ccad83a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0514-A01": {
+      "source_line": "未装备武器的英雄无法对其造成伤害。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "cdda1e16a6c8da54a474b6440b858d571df93de1c9af965707daaae2329226fe",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0515-A01": {
+      "source_line": "追猎：当前玩家在其下个回合获得金币 -2。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "76386e16d58d45ec7c8c66d089b24f9b7d146118dbf8fe222f70a638db5cea6d",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0516-A01": {
+      "source_line": "追猎：当前玩家在其下个回合开始时，弃掉 1 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "141823fe0767f65f2e8ce0b5c6132810d633175ca79f41f4e61348eb3e3968fd",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0517-A01": {
+      "source_line": "追猎：当前玩家在其下个回合开始时获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "13493ad5e81c84af213cc180e224053b6203ea3f444a1f4bf0cf990ba6160adf",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0517-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "63a44ff6bdb15fd7427affd1b4a843052126db02c15b8018695d48f035e226d6",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0518-A01": {
+      "source_line": "追猎：当前玩家在其下个回合开始时随机弃掉 1 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "904b056f0f2eef69ad1d6b640062b893690fa66b71d9e9d38ab2ed4245e57788",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0519-A01": {
+      "source_line": "追猎：当前玩家下个回合必须前往地下城。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "1fdfc5aaeb1b9ab99abd9041adf72f7eaa0634ce8475cccc62f957ca1a5ad00e",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0519-A02": {
+      "source_line": "战斗：摧毁 1 名战士。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "0febab303da844c4d629e5a25a8ff54ef1a9dfed08966cad35661545a4ca08a0",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0520-A01": {
+      "source_line": "全局：手牌中每有 1 张法术，所有英雄承受力量 -1。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "0cc599ae45259de5a4264606fc0c0abf76e7a2a6f75a7ddcafada77059ec1046",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0520-A02": {
+      "source_line": "地下城：手牌中每有 1 张法术，获得魔法攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "810bab32aaf8168e64ff96a02da14de6c48ec2a945064bf42783c575ac610c08",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0521-A01": {
+      "source_line": "突破：从每个能产生光照的村庄牌堆顶部，各摧毁 3 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "de2fd9797b8add7fbceb9e56b3c553cc9e8ec10f267e74d9fa4f028d137b3dac",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0522-A01": {
+      "source_line": "全局：前往地下城后，将村庄中的 1 名民兵置入你的弃牌堆。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a7fb3de1d86e28d4136d0a966d1f6accc47a6781268e6670f6ad5cbd39611b1b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0522-A02": {
+      "source_line": "地下城：你的民兵获得力量 +3。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "d015441047e06a81d9f1bc0f565c5e7a9feb1f260bf21e57f3a6bd895e7fd5d7",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0523-A01": {
+      "source_line": "全局：无法使用以地下城牌堆为目标的效果。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "dcf4024f44046779ad24322235e46a92885bf88016bf48a5027e668f3ec61b0f",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0523-A02": {
+      "source_line": "战斗：回合结束抽牌后，弃掉 3 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "82abaa06b6671646a4933dfe7034781bb11417f35754bc9a4e8a99e5aaf5be3a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0523-A03": {
+      "source_line": "地下城：抽 1 张牌，然后将 1 张手牌置于你的抽牌堆顶部。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "8ba8e7c552ceef305925e1b0907b3bd41392d0dc7df9bf5dc042b382c6e42147",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0524-A01": {
+      "source_line": "全局：每张疾病额外提供攻击 -1。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "8c431ac4f0abe31bff4c827c40cc2e50407a35139a238b3f0045ef405c6a69f8",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0524-A02": {
+      "source_line": "战斗：获得 2 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "6b2e55bc5ce1391b8972f106393c53b46a57e45abb6687ed950fb5b7432f87ca",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0524-A03": {
+      "source_line": "地下城：摧毁 1 张疾病，抽取 1 张牌。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "480e962fd3070f339acb8ada8c7474d2b8d4f1ab9ccfc2ac2cae71cf3fd32e77",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0525-A01": {
+      "source_line": "突破：每位玩家摧毁 1 张具有金币值的牌，或展示手牌以证明没有。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "0f1fad960394859734ebda2892d9d01792ba59cc34ccb63c17a71c9316158694",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0525-A02": {
+      "source_line": "村庄：这局游戏每有 1 名玩家，获得 1 金币。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "4158bbf4fc0a571b6d7e64fd91e9e3b0b4f9542a29723cc7b0202bf0c488fba9",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0526-A01": {
+      "source_line": "突破：取地下城牌堆顶部的 10 张牌，加入所有已被摧毁的陷阱牌，将它们洗混后放回地下城牌堆顶部。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "dc0e55180e7dafab8a7da697acc16a99d6b15e1b54bb89e1536547f3f98b5db3",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0527-A01": {
+      "source_line": "全局：玩家升级英雄后，摧毁 1 点经验值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "c6c91de34d737279377a8b28ee5b0432f63f127489163c785e098ff0c4945182",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0527-A02": {
+      "source_line": "战斗：摧毁 1 名民兵。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "8d7c859399c574874dce75068833f938c4f07b4551d088d987c038dce1f28d40",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0527-A03": {
+      "source_line": "所有玩家摧毁 1 点经验值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "9e5810821ff20654634dcc9ba997ab66e8179edcda644c6a7b6631aae086204a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0527-A04": {
+      "source_line": "村庄 / 地下城：获得 1 点经验值。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "041e985dbce0a302253aa1f9cc211c7497e51dd717d1b1d59a544f98959f63c2",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0528-A01": {
+      "source_line": "全局：无论其他卡牌效果如何，玩家每回合无法购买超过 1 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "e45dc00f516050d840f894c6b7e06833cdb147cfa992c56db37ea22b10ae97e4",
+      "applied_at": "2026-10-22T08:12:46.153Z",
+      "resolution": "无战利品符号的全局购买限制仅在大厅生效，持有此怪物手牌不会限制购买。"
+    },
+    "TS-0528-A02": {
+      "source_line": "战斗：回合结束抽牌后，展示你的手牌。弃掉所有英雄，然后抽牌直到你的手牌达到 6 张。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "f6665ea435db2dfb48be0582b8d63b7365f593a8793d63212fbc53b54c047a5a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0529-A01": {
+      "source_line": "突破：每位玩家摧毁 1 件武器；或展示手牌以证明没有武器。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "0a3aff9477b2dafe1a91fbcc5251ee34c6d3b77848c231da75a49f813a75eb67",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0529-A02": {
+      "source_line": "战斗：每件武器承受 攻击 -1。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "8c9dc2cfa3d56a6d28d2f5ccc011e2f74411fc7d5bd691fd9a0fde192f64712d",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0529-A03": {
+      "source_line": "地下城：每件武器获得 攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "96c8ef11c2cfd458898a9ee2fc211345480f58ebe55272f7374f3104fdf580d2",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0530-A01": {
+      "source_line": "战斗：摧毁力量最低的 1 名英雄。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "35afd1a918800b913e5debeb7c6545479f732b9a3060905f1215d98d2168f80e",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0530-A02": {
+      "source_line": "地下城：一名英雄获得力量 +3。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "8f5230881e1ec16623cceb0a1f39ac0520785f10fc3521bf2a7490e496007628",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0531-A01": {
+      "source_line": "战斗：摧毁力量最低的 1 名英雄。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "pending",
+      "applied_fingerprint": "83b3afccff03aceee057e526921480f7c5dfa08a1389f279dc7fae435a8734cf",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0532-A01": {
+      "source_line": "战斗：摧毁 2 名力量为 4 或以下的英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "b7936c8748fa4597d00a74428cf29e91f42b2be0c3ead7ca9047a4adaff807ad",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0533-A01": {
+      "source_line": "战斗：摧毁 2 名力量为 5 或以下的英雄。摧毁重量最低的 1 张武器。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "f427133bcdca5bfb3e729afc0568ff9d6f0d6e1bf50e9e8057076aaf0c68e0b9",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0534-A01": {
+      "source_line": "战斗：摧毁除力量最高的 2 名英雄以外的所有英雄。摧毁除重量最高的 1 张武器以外的所有武器。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "12ea286ca7ab083c3ba110b45cde503cf4cac719a2a37cfd05f4055dc1b1610d",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0535-A01": {
+      "source_line": "若在场英雄少于 3 名，则无法击败此牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "59ac44b7ffbba8e41c62d549c211c3c73cabe02f4105c682560f35d7f169a74b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0536-A01": {
+      "source_line": "若在场英雄少于 3 名，则无法击败此牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "0b6d940898621a2dc70fc6e9fe991ea623f988d83670c6422cb2cdf1b95937ca",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0536-A02": {
+      "source_line": "免疫 1 次陷阱效果。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "1ce0d5f0902b5c8fcd26547b71ccd5631d1ea0518ed16fb42e690630e79548bb",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0537-A01": {
+      "source_line": "若在场英雄少于 5 名，则无法击败此牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "e472fc9f85ecd689ceee450f44b9244706e14ffe083169022a2510bd15a4ea04",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0537-A02": {
+      "source_line": "地下城：抽 1 张牌。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "1810abc11f625a86eb87ee8d6cd5d03c03aacea4db1fbc325c5f2eb7e5859ae3",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0538-A01": {
+      "source_line": "若在场英雄少于 4 名，则无法击败此牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "99b4ec8b2d0759797fafd50110efab194833f4bd56488ba391b40d31c51a4229",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0539-A01": {
+      "source_line": "若在场英雄少于 5 名，则无法击败此牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "b13f1c32e50a5afc8b836e54afb647758c76feaa23ea6027129ac6f67d41bc30",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0539-A02": {
+      "source_line": "攻击 +2。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "5cd734393fd37708d10aa5548577023083ea1ea638a6657f580f5965d3195f90",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0540-A01": {
+      "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a8452d56cb02c96619c4fc137a560199a645ae50fb63d4f9bd09a6a2e64f08d3",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0541-A01": {
+      "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "0c556e138c2212ad7a9f4707c919d5fd07f8272feb80b6fee5c732fb05efaad8",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0542-A01": {
+      "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "3389ed77a2c6bba1b275c5df8cfaa00a2f9ba708631ad639229569dea0b4f162",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0543-A01": {
+      "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "87be2978e98a8e16c18a9318caee19da1c0cdd61f269b8482885237b2d84514c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0544-A01": {
+      "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "54113cdce7dab69d6cc490e648940efeb98891a04db353dba462965d6f678250",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0545-A01": {
+      "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "e5c7dd8447fe84354cea78e491c23709115e772e8cec226657bcd8d014d17187",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0546-A01": {
+      "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "32824f237b3a6912e22b796fac9c46879bebe1ea288732bc0cd82ce6b3e39af1",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0547-A01": {
+      "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "0b0232c123680c1cff2c9b186ef4bd709720796b47087b7d789c34b12fd934ef",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0548-A01": {
+      "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "1beba100cb944fe3916f772e6c026f376fcbd120970110b9bb236054d86e73ec",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0549-A01": {
+      "source_line": "游戏结束时，每张怪潮的胜利点数等同于你牌组中怪潮的数量（包括此牌）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "9292bd13c664201f924b63735c5cc701060825f88e8da08b90f2ed4bcd666e19",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0550-A01": {
+      "source_line": "用怪潮牌堆顶部的 1 张牌替换此牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "cd04ca37b49972e0f3382839b1ec77db4a8a5da1f4f6574da4c7fbefa2f13cc9",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0551-A01": {
+      "source_line": "战斗：手牌中每有 1 张物品，此怪物获得 +3 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "57dcd78697db7154e06344052061b63c6fa43b46f57c5a391f0b2fc30fc14803",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0551-A02": {
+      "source_line": "战斗：摧毁 1 张物品。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "6693f2da3a49587e44f058a65d992425c947e67e65fdecccfae782567f55b0c1",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0552-A01": {
+      "source_line": "战斗：手牌中每有 1 张武器，此怪物获得 +4 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "4e03d603c458e5bc2e8cd6a010e5e9b5bbb140ff1c8ff3763f2500be4bb40e16",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0552-A02": {
+      "source_line": "战斗：摧毁 1 张武器。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "d59e63300335a2d456419bc99e0811e2eb1cadf1e81db25d2326d533ad9e4d4a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0553-A01": {
+      "source_line": "战斗：此怪物获得等同于手牌中金币值总和的生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "56a7a7b063b62621482fbd16ff83fe32d3faa8aa6309d534f689e2eaa0b089cb",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0553-A02": {
+      "source_line": "战斗：摧毁 1 张具有金币值的牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "0ea8a74c1c6064d59ee564ac48b61552f21be0c8592771c835fb365a7c673813",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0554-A01": {
+      "source_line": "战斗：手牌中每有 1 名英雄，此怪物获得 +4 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "791758bb612d0acb9711a779c484d7094f1bf646b0e033cbc0deb42f51d8873e",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0554-A02": {
+      "source_line": "战斗：摧毁 1 名英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "8f08863703a7383f24fa7f54a23c0e3029ae67cd7d5abe887d9c69b5c9acd694",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0555-A01": {
+      "source_line": "战斗：每有 1 张手牌，此怪物获得 +2 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "d16c9c6cd1b600b61de170df84eae042c4e780b7ae58a6bce23114805ad792c1",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0555-A02": {
+      "source_line": "战斗：摧毁 2 张手牌，其中最多只能有 1 张英雄牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "65b1b3cc7bd67c7330052df1c1ede0a81b41b7e28fcf96252e68b1f606c8bd61",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0556-A01": {
+      "source_line": "掠袭：当此牌被翻开时，摧毁购买价格最低的村庄牌堆顶部的 2 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "5aa0107d63dd7b5153696de6adb5a0d4574a942a70e2708cd18e46fb00e63aa4",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0557-A01": {
+      "source_line": "掠袭：当此牌被翻开时，从购买价格最低的两个村庄牌堆顶部各摧毁 2 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "373ca4c155c6f083827c3797c62f3844fc145ecf8efd4705cf387e60ef81edd0",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0558-A01": {
+      "source_line": "掠袭：当此牌被翻开时，从购买价格最高的村庄牌堆顶部摧毁 2 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "3628960a294f191ffba7170b0d46b0b4afea629ae15a1ae570bf08df993a8668",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0559-A01": {
+      "source_line": "掠袭：当此牌被翻开时，从购买价格最高的两个村庄牌堆顶部各摧毁 2 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "39de0997a441577870f63e782fb63280422d25124bd3478b3c226c0c1816ef07",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0560-A01": {
+      "source_line": "掠袭：当此牌被翻开时，从购买价格最高的两个村庄牌堆顶部各摧毁 2 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "19f945d3b86283a829a831490e1761e16d9a2087982e2b6b6b05de3b3eeab9c0",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0560-A02": {
+      "source_line": "战斗：手牌中每有 1 张村庄牌，摧毁其对应村庄牌堆顶部的 1 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "79ef647fd313616f50fe6995aa06814faea44dfd0df06f569c6a0291f4a1ed14",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0561-A01": {
+      "source_line": "全局：若玩家前往地下城，则在回合结束时摧毁 1 名民兵。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "087018cd871734e26b890f5e5b0d115bd0d7ed98ef675cf651d1ad794eb67f4f",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0562-A01": {
+      "source_line": "全局：每当玩家购买一张非英雄牌时，摧毁该牌堆顶部的 1 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a0c72b860aa1fbeebc2892d9dc4847508ab15c1245ae99617a9ffa4723da7ae6",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0563-A01": {
+      "source_line": "全局：每当玩家购买一名英雄时，该玩家必须摧毁 1 名英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "d2ad154b97c53243983efc637d137e4d67c03ea6d0a95b72af319a6f04da5297",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0564-A01": {
+      "source_line": "突破：摧毁每个英雄牌堆顶部的 1 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "6eaf8b0098b54ad85aabbfc448eb677be22337e3d080620da35a415253d97253",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0565-A01": {
+      "source_line": "突破：摧毁每个村庄牌堆和英雄牌堆顶部的 2 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "df7f6890c8bc149a2f28489227011be0ee0cd172262d6f267795e73a7de43bc8",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0566-A01": {
+      "source_line": "光照 -1。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "expected_scope": "battle",
+      "result": "issue",
+      "applied_fingerprint": "2edb49b6ae144b4278fc6af9322bd70b82e388ddd12391024d7ba07cfb4527fb",
+      "applied_at": "2026-10-22T08:12:46.153Z",
+      "resolution": "无战利品符号，光照 -1 仅在对抗此怪物时持续生效，不作为手牌光照。"
+    },
+    "TS-0567-A01": {
+      "source_line": "战斗：所有英雄承受力量 -2 和 攻击 -1。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "ea69270bfeee93b78b705dca86c620dbecffb4a5d37be5b58f8846894bb4ef8c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0568-A01": {
+      "source_line": "未装备武器的英雄无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "5b008dab6a04dcf659efe50d666a60b0ed3b98cd071607c49080d09863746654",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0568-A02": {
+      "source_line": "光照值 -1。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "expected_scope": "battle",
+      "result": "issue",
+      "applied_fingerprint": "d5239ff718efb8ddc29aa031e2fb839c96fe6d7aad03d30dfd51866cd7f3bef9",
+      "applied_at": "2026-10-22T08:12:46.153Z",
+      "resolution": "无战利品符号，光照 -1 仅在对抗此怪物时持续生效，不作为手牌光照。"
+    },
+    "TS-0569-A01": {
+      "source_line": "战斗：所有英雄承受力量 -2。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "3699e8299f2e8e2024f8953a11f86e24f22252f8427cea0b76aaa421003dad2c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0569-A02": {
+      "source_line": "战斗：摧毁 1 名战士。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "eaba3397f799cfec1649924e4a57e8110512884be583e376e5212de024e53c1c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0570-A01": {
+      "source_line": "光照 -2。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "expected_scope": "battle",
+      "result": "issue",
+      "applied_fingerprint": "97abab652ff59a9c25570625d409ef4c82a6a6dd375b697b3c4c01cc79ba9f75",
+      "applied_at": "2026-10-22T08:12:46.153Z",
+      "resolution": "无战利品符号，光照 -2 仅在对抗此怪物时持续生效，不作为手牌光照。"
+    },
+    "TS-0570-A02": {
+      "source_line": "战斗：摧毁 1 名战士。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "7fac473f537e7d3747ffcdaedf6c44549117842ff4685b9627b49b2eeb93daee",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0571-A01": {
+      "source_line": "当此牌进入大厅后，启用 1 个临时阶层，并从地下城牌堆补充 1 张牌。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "c6521a4e2bf817064628c3559e0d5f84378e4c212aeb9151d7244375b5ae712b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0571-A02": {
+      "source_line": "当此牌离开大厅时，失去该临时阶层，怪物正常前移。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "545b1159e600f49c05d9f96438159d06ffba5f74a1578500345fb5ba811252bf",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0572-A01": {
+      "source_line": "当此牌进入大厅后，启用 1 个临时阶层，并从地下城牌堆补充 1 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "c6521a4e2bf817064628c3559e0d5f84378e4c212aeb9151d7244375b5ae712b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0572-A02": {
+      "source_line": "当此牌离开大厅时，失去该临时阶层，怪物正常前移。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "545b1159e600f49c05d9f96438159d06ffba5f74a1578500345fb5ba811252bf",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0573-A01": {
+      "source_line": "当此牌进入大厅后，启用 1 个临时阶层，并从地下城牌堆补充 1 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "c6521a4e2bf817064628c3559e0d5f84378e4c212aeb9151d7244375b5ae712b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0573-A02": {
+      "source_line": "当此牌离开大厅时，失去该临时阶层，怪物正常前移。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "545b1159e600f49c05d9f96438159d06ffba5f74a1578500345fb5ba811252bf",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0574-A01": {
+      "source_line": "当此牌进入大厅后，启用 1 个临时阶层，并从地下城牌堆补充 1 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "c6521a4e2bf817064628c3559e0d5f84378e4c212aeb9151d7244375b5ae712b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0574-A02": {
+      "source_line": "当此牌离开大厅时，失去该临时阶层，怪物正常前移。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "545b1159e600f49c05d9f96438159d06ffba5f74a1578500345fb5ba811252bf",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0575-A01": {
+      "source_line": "当此牌进入大厅后，启用 1 个临时阶层，并从地下城牌堆补充 1 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "c6521a4e2bf817064628c3559e0d5f84378e4c212aeb9151d7244375b5ae712b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0575-A02": {
+      "source_line": "当此牌离开大厅时，失去该临时阶层，怪物正常前移。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "545b1159e600f49c05d9f96438159d06ffba5f74a1578500345fb5ba811252bf",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0576-A01": {
+      "source_line": "战斗：摧毁 1 名民兵。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "36757370d4a3960e2ef863fb856322a08390816cfae5add6938d8f7b8c133fed",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0577-A01": {
+      "source_line": "战斗：摧毁 1 张武器。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "f33b5d91f631200d44085b3ead5b7e529292b064bb41be71ae22e4e58aad3168",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0578-A01": {
+      "source_line": "战斗：摧毁 1 张食物。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a8e00b3e89037fca5b71be95d11c63bcf06530e8b330bdff297dc895f78ddda8",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0579-A01": {
+      "source_line": "战斗：除非队伍中至少装备了 1 张武器，否则摧毁 1 名英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "7dd7b72cea375ec154d2f500176063531ff4ef20211ae74f1ea0e709c1af9526",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0579-A02": {
+      "source_line": "凯旋：获得一次购买村庄牌（食物）的机会。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "53ba2ed8d6fcb535f6d80e1eeeddb24f637fca97c3cad3a5044b6e156630f376",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0580-A01": {
+      "source_line": "来自魔法攻击的攻击减半。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "9a4bb2b3c1f8946457b6a0cb4006ad44dee563eb6a6aaf22adc1d69fa4a77a71",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0580-A02": {
+      "source_line": "免疫利刃武器。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "b07d808be6e6d3faf714534d13e9f7c0052e8bc66e42bc2641d42a3f07548878",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0582-A01": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "49d6398b456f1b88af7a108b25717bca9c8d3074e690fbf76318348fc734f75e",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0582-A02": {
+      "source_line": "魔法攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "f30989d64decfd2f7d4e8319c4d8d9e57b1bb0518ab7e92e41b10194a696b8ed",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0583-A01": {
+      "source_line": "若没有魔法攻击，则攻击减半。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "fc7e6279e75e3112575e65a61150330b96d9d1df69c8a075633cbc46c8e06e27",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0584-A01": {
+      "source_line": "没有武器时，攻击减半。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "895fc20e65f438a56f9a98774e950bba7c5cf8e3a954e7b85b5019eb72175dc4",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0584-A02": {
+      "source_line": "战斗：销毁一名牧师。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "e505cc1a42f28d151c4645b96e3699184b01818517dcbc0b0b1cf76e41c9ba2e",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0585-A01": {
+      "source_line": "需要魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "2d0d7bf0d665fcdaf1788de2de7a07a70476313c2de496ea18bc8a138a07a523",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0585-A02": {
+      "source_line": "突破：摧毁村庄中每个英雄牌堆顶部的 2 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "c6b52486dc0e2020afeec8a8cb008ef1d98d5e5c26b1a5e0b22815965996ea02",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0585-A03": {
+      "source_line": "战斗：摧毁所有牧师和法师。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "7b3f579649976feb586428f55f98a0d28db4d415afb74b8d7afbe330c3be9fb1",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0586-A01": {
+      "source_line": "战斗：摧毁所有食物物品。每摧毁 1 张食物，获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "7988b1142d61cbbf06d44409342a946179bb2d12565cf6bea8b87029c4999508",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0587-A01": {
+      "source_line": "战斗：摧毁 1 张光照物品。若成功摧毁了物品，获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "note": "光照是一个tag，可以通过tag来判定，而不是根据光照值来判定。此处可能需要横展开。",
+      "expected_scope": "other",
+      "result": "issue",
+      "applied_fingerprint": "913c77896e68a441a903cb280788effe3fce39c6f21607f1cdf6d648ed8f0a61",
+      "applied_at": "2026-10-22T08:12:46.153Z",
+      "resolution": "光照物品按物品与光照两个标签选取；其他提到光照物品的效果同步修改，不再用光照数值推断类别。"
+    },
+    "TS-0588-A01": {
+      "source_line": "战斗：摧毁 2 名民兵。每摧毁 1 名民兵，获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "11f0e174017e54e8421371a45fbff78520984a7d56646eeab4d3a4344ced6b65",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0589-A01": {
+      "source_line": "战斗：摧毁 1 名战士。获得等同于该战士等级数量的疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "24e5e4f1dc841860b1b1daad73f3faec379cc11e09b7cf4974993a5dcb0e50f5",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0590-A01": {
+      "source_line": "战斗：摧毁 1 张怪物牌。获得数量等同于被摧毁怪物经验值的疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "4702c1d84ec3cda500c152100d7303836d6aaa7e7fc1c123278388b035c7f988",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0591-A01": {
+      "source_line": "战斗：获得 1 张疾病。若手牌中有任意疾病牌，则额外获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "d60072ac9404e21bcc62661b5c18ffb32e008e422793157aeae659feacbffb6d",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0592-A01": {
+      "source_line": "突破：每位玩家翻开自己牌堆顶的 5 张牌，并摧毁其中所有弓箭手。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "256232dac33619955d4b98f743427e2ca4e8a43e9a238d3d668327a3d287c846",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0592-A02": {
+      "source_line": "战斗：摧毁所有弓箭手。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "849c34691e21da796ca3bb531ebf5100667c97f4d1f1cac2ff967466e77e359c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0593-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0593-A02": {
+      "source_line": "突破：每位玩家翻开自己牌堆顶的 5 张牌，并摧毁其中所有牧师。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "1ee4a90100ae6aebe27e39d1a34702d2282fe2965e0876be756ce17ff4d89b48",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0594-A01": {
+      "source_line": "突破：每位玩家翻开自己牌堆顶的 5 张牌，并摧毁其中所有法师。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "5c079cd36a31fca1e00c5a77e6aad6e3b9755629b7f8dd560c8f43d892738c08",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0594-A02": {
+      "source_line": "战斗：摧毁总攻击值最高的 1 名英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "345c73ba67e44b940aaf350331dec83a7e974b1e28a54ddcacb731dd02c92bf4",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0595-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0595-A02": {
+      "source_line": "战斗：摧毁除 2 名英雄以外的所有英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "67382f567728e2975b924971f811b3879e1a9bfa7ce9fd0786f8e1339ebf6be8",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0595-A03": {
+      "source_line": "凯旋：获得一次购买任意村庄牌的机会。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "69cea5e2e70666c3a42a74f58ff7ca6e2a8b86c01f0ca8b13d92097215c9e51b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0596-A01": {
+      "source_line": "此牌位于阶层 1 时，该阶层的光照惩罚提升到 3。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "fb8ce212a51a720a3575a28cc7004b4029420a538773a345afb6b181955a9d39",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0596-A02": {
+      "source_line": "除非被击败，否则不会离开大厅。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "9fc0662040310d3086fd6a5766749eec05dffe38da1c21c8c31c4ce409cb7d13",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0597-A01": {
+      "source_line": "此怪物位于阶层 1 时，光照惩罚为 5；位于阶层 2 时，光照惩罚为 4（取代正常光照惩罚）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "c22a6d208b14b120b18bf522f14e54a57d13731d72cb682e599eae3acdd36b8a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0597-A02": {
+      "source_line": "除非被击败，否则不会离开大厅。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "2c389fc7f62603ae90f8d4a300560ae3dd2a87aab80bc26c65bb11cb46733bd1",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0598-A01": {
+      "source_line": "此怪物位于阶层 1 时，光照惩罚为 5；位于阶层 2 时，光照惩罚为 4（取代正常光照惩罚）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "2bba8551b43710c87e518b4b205c4b55743b6425d171e5b0003d65f50e420933",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0598-A02": {
+      "source_line": "除非被击败，否则不会离开大厅。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "cbc934a4fa7b11ac1aacd4607b77391d531cb36b29c120fb8803a25ffbef7128",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0599-A01": {
+      "source_line": "此怪物位于阶层 1 时，光照惩罚为 6；位于阶层 2 时，光照惩罚为 5；位于阶层 3 时，光照惩罚为 4（取代正常光照惩罚）。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "4be38e6c90c5c385d7c22fa8075b389cc21b1113752b74b232437558d8b620ee",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0599-A02": {
+      "source_line": "除非被击败，否则不会离开大厅。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "da050de280cb3d81fc5cb2565bdbe0ae6e57a173b614b2f52e5e8a3457d6447d",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0600-A01": {
+      "source_line": "手牌中每有 1 名村民或民兵，此牌额外获得 +1 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "1d9e72ebfb9b8f8e3cdaa66176202e3cd4a1e4bcd3f0470c4cc8be241da9d878",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0601-A01": {
+      "source_line": "突破：摧毁民兵牌堆顶部 5 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "13cb8b197ec8fcbeba360ef2b23f8da414ffd4aa215bcb3b7362e2660f941685",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0602-A01": {
+      "source_line": "手牌中每有 1 名村民或民兵，此牌额外获得 +2 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "7c097ebe60e5d9f4e4cbac7c151d45f33492464f58889307b455a367af8ddf81",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0603-A01": {
+      "source_line": "突破：摧毁每个英雄牌堆和村民牌堆顶部 1 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "2a37a717bbac78072aedc6b58da5925ff4730b1ff84598f55780100654fa7d09",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0604-A01": {
+      "source_line": "战斗：摧毁每个参与战斗的英雄对应的英雄牌堆底部 1 张牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "0a13758a910ecfacad97b4771c329ee470181c7f7e9445490e1fe7379367a4f0",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0607-A01": {
+      "source_line": "战斗：装备了武器的英雄获得攻击 +1。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "3d9e5c8d76ad113bb374a4b0591b435163c1444584dd6723fda14ed968ee2fde",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0609-A01": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "53af99879a478f6794ff456a91e67da9aad471f78914db7d53cee934f3f36d89",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0610-A01": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a185cdae16a1b4b4a41c7efd8c1c54b84cb1bde03d10c3ccb38f64968d1a29a5",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0610-A02": {
+      "source_line": "魔法攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "f30989d64decfd2f7d4e8319c4d8d9e57b1bb0518ab7e92e41b10194a696b8ed",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0611-A01": {
+      "source_line": "战斗：若手牌中或地下城大厅中有另一名腐化德鲁伊，德鲁伊君主获得 +3 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "e512053964fa96b162df8efe7c401dfa04e5f088a17386ceaa55b95c28033083",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0611-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "e49c20cf011b926b50b87ea2b468d8caeb9517aa6dc122e98b6e334c49a39e69",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0612-A01": {
+      "source_line": "突破：每位玩家获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "df9c73edaa78513044716bcceae7cfdf7b7175a22f95d6e3b5aebff5d8baa794",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0612-A02": {
+      "source_line": "地下城：摧毁 1 张疾病。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "a12df06cf4778f4b6707a53ad4f9f942f73418d4ea7d461d0cc046bca4d3f970",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0613-A01": {
+      "source_line": "战斗：每位玩家获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "db71ff389aaa4b69aed435bf57c9bcfba651c85859190c797c62ea4c2d25a65a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0613-A02": {
+      "source_line": "战斗：手牌中每有 1 张疾病，蛛影妖姬获得 +2 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "b141d69f5fd2fc4f4d8dcc171597d48bdcf33f50a458e4acbd12261b0ca115a6",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0613-A03": {
+      "source_line": "战斗：摧毁 1 名牧师。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "0a6961bcc6bf85a859bb45e41074cb8b5714addeca5bb29573b95bf5061a8bac",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0614-A01": {
+      "source_line": "战斗：每位玩家获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "c8e9bab922e3e3de3dc6fc771ad3fd807fc6252f8eb8ad122e3c3f6c15035de8",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0614-A02": {
+      "source_line": "战斗：当前玩家每拥有 1 点经验值，此牌获得 +1 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a31d8801fd1432793098fab123f51471e7b620eec7e9ed6698c54bbb0b215b64",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0614-A03": {
+      "source_line": "战斗：摧毁 1 名等级 1 或以上的英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "46db9237a0b9892570f9fa6414b8f613c2353ecac8cd2a5f0103512f27eab0a5",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0615-A01": {
+      "source_line": "全局：地下城中存在猛犸时，无法攻击其他腐化德鲁伊。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "722e813f0d3549e37b87209ec6c8fe69a3668b2bd616af25fdc08254846e0ac7",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0615-A02": {
+      "source_line": "战斗：地下城中每有 1 名其他腐化德鲁伊，猛犸获得 +2 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "cda144e8584f225b3c90f4cedd2b22937cde1fc4bb38c9c7e66b42d214c18f16",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0616-A01": {
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "ed4f12bf507f4d5ef6bd2721718877381347041c366f407e82b1d71c00917d86",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0616-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "b73b6fe6168a055a3edf63c01ffb16bd0998dd4119c8b45db2c85e79e663a904",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0616-A03": {
+      "source_line": "攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0617-A01": {
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "dd31c038c89cb311ed3ad2e9d23e0aa29101f1f8367533938ca2068d1c698f14",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0617-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "22e21d4700201c4d96a31fa2a4e2b8b7af529fb30d738cfe6b83a374259df280",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0617-A03": {
+      "source_line": "攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0618-A01": {
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "0dcf8bea5ce343dab151ddd516490a1773d0c3ea1c45439374adbdb8e07f5f0f",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0618-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "2664dac8361c390e87438efee2f6a4ebfcbdc6f2f0c679b60ec63dc0a1af6705",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0618-A03": {
+      "source_line": "攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0619-A01": {
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "bb98ab57242da774cd1a0899583a26964b8130cdfd75af067fd5ebe05509b1ce",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0619-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "6e9d15e0edf99bc292c231b735d4f1004512f1575611df46538d864f87acf585",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0619-A03": {
+      "source_line": "攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0620-A01": {
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "4acbc73767a2ef164402252d10fe5bb834cca2cf03e4da60a80eb8a0e96fbb6b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0620-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "6213b657a783f9b64fbc949c7969de7148977f2e4bce03a6ea93e1367aa70930",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0620-A03": {
+      "source_line": "攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0621-A01": {
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "aefefae66c65dd771ad9c1c9f6e67117e761193cca8508ee19965b5378e39329",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0621-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "57a00744b6eee96c9fc4df7010cdfa513bc942dc70dd318983d60030c508c5cd",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0621-A03": {
+      "source_line": "攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0622-A01": {
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "10d8f5f0d97e2f9a7351226e773d51ff5a61faf76b92e7eb31fed659025eca19",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0622-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "9fd057950cafe1b29af4c4b7527bd4984427b15066d73a2d8479724b8ba50044",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0622-A03": {
+      "source_line": "攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0623-A01": {
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "4baf441a52ca2cfee58404994eece737d2201fb69bb65dea0848bf5b2277d69b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0623-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "ec2d210904c40e06e07af097841e22ef84f525814d11f31c9d7da18bb63a3be4",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0623-A03": {
+      "source_line": "攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0624-A01": {
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "72183b248aa5bba50eddae9cd85a1a4df3ebbc644ee732e03f2dcdb05c6f3bc3",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0624-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "15fe8e8d7c52306c1238c639d11d837d36ee4969f9acb2bdd12b4ecf4a5f2c8f",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0624-A03": {
+      "source_line": "攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0625-A01": {
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "e394b89dcef1b9737cd5fb5ef5f577ec81f17fdbb469202d75e0616c1672ac3f",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0625-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "result": "confirmed",
+      "applied_fingerprint": "3cc8f85d5702d5c429803b15d2f284ff86c1b230bac3ee5c5de2c0ae6d0fdcc1",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0625-A03": {
+      "source_line": "攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0626-A01": {
+      "source_line": "用虫群牌堆顶部的 1 张牌替换此牌。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "f5c4f68e71baa71f5c30078a455a6fce464e0a923bfb0f632eb0f67f6f602f7f",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0627-A01": {
+      "source_line": "突破：每位玩家摧毁 1 名英雄，或展示手牌以证明没有。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "8e165c33d7f25968b31979fb050b571bc10811a4206a290eb6fad664a5c19443",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0628-A01": {
+      "source_line": "突破：每位玩家摧毁 2 名英雄，或展示手牌以证明没有英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "cff265993008e0ea3399115f2615339ede14089464d8adbcbffc23a3ee66d165",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0629-A01": {
+      "source_line": "战斗：1 名英雄无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "27e05410ba7252cdc4483bebfc2a585c18e70b214c4d8c986e2293b7ae294ca4",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0629-A02": {
+      "source_line": "突破：每位玩家摧毁 1 名英雄，或展示手牌以证明没有英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "62e07f0b3e9edf92d6a25bc56b8654781be387479e9e82f0447c73b042b85c0d",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0630-A01": {
+      "source_line": "战斗：1 名英雄无法攻击。摧毁该英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "c3f85cfc1894f4df39c4663d29a6a3a486019b3c1e3223dc5dd256dc496a6a18",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0630-A02": {
+      "source_line": "突破：当前回合玩家摧毁手牌中的所有英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "776265ebd75e53e915db178462753e70b6100fc2035e1b28a2bbf1b0618e9a5b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0631-A01": {
+      "source_line": "战斗：2 名英雄无法攻击。摧毁这些英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "86f467bc9c877d67587e9d20b169280704543fb65b6171bc958172a1cd584121",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0631-A02": {
+      "source_line": "突破：摧毁村庄中牌数最多的英雄牌堆中的所有牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "e8e0afd47e53b515ccf80537bc27ce6a766946ab19a94f04621add6fa70b037a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0632-A01": {
+      "source_line": "战斗：摧毁 1 名非民兵英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "5704d37dddcc11405f29f47fb8253bf578aaca99cceb89a3a5e56663486b047e",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0633-A01": {
+      "source_line": "战斗：光照物品获得攻击 +1。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "0a7b3180085cf84f6bdd7bea518cf53b288f0683eb632e9fa1b2734000b6afc9",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0634-A01": {
+      "source_line": "战斗：匕首获得攻击 +4。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "87216959421c4385b04769a8d4ae0aa63fe9e8e14ca456d46241ab13a2817073",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0635-A01": {
+      "source_line": "战斗：你可以摧毁手牌中任意数量的物品。每摧毁 1 件物品，获得 攻击 +3。不能摧毁本回合已经使用过地下城效果的物品。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "9991f3679b79930deb43af6f500cbb4a95c82df52efe9539b9dd363296a56bd6",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0636-A01": {
+      "source_line": "战斗：民兵获得攻击 +2。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "eb5c8c60ce2e221d5c00c39fd6d2089d5199b1393cf38792460422844febb326",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0637-A01": {
+      "source_line": "战斗：摧毁 1 张物品。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a63ea3bffdfcbb69b6836e5ffaa6359d1e96dfea8eb50aa995016346e2bf986a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0638-A01": {
+      "source_line": "战斗：手牌中每有 1 名民兵，此牌获得 +1 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "adbaa81eee644bfdc548ef1120f9b0593a5ad52035a7a4fe0f5e447b16716dad",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0638-A02": {
+      "source_line": "战斗：摧毁 1 张武器或法术。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "4177f7ef46cdd05492d028028e35420408827d7f1bc2c913ad469319bba35f26",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0639-A01": {
+      "source_line": "战斗：手牌中每有 1 名等级 1 的英雄，此牌获得 +2 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "36185ce014eb54d762403b01115a7e267eead52163e003d90a79802400fe066f",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0639-A02": {
+      "source_line": "战斗：摧毁所有民兵。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "afa3e2cae34790db49d8c247cbdea990847251274e2d51ae53c39c711411ce46",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0640-A01": {
+      "source_line": "战斗：手牌中每有 1 名等级 2 的英雄，此牌获得 +3 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "da4411f02e84e42f1f0729ef61ebf9c0b51eaabc1c5eb0a894e28f4aa8ae38eb",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0640-A02": {
+      "source_line": "战斗：摧毁 1 名等级 1 的英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "37e8995116203b4e9a36c0430c6d1bf0b1b6f7c92c329c0e21f01ea1c5031ea8",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0641-A01": {
+      "source_line": "战斗：若手牌中有至少 1 名等级 3 的英雄，则此牌获得 +4 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "c5c2dd420e544ec8a3e4f22940786e9d923edb0e23c88373f26ae2ae5988a1a5",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0641-A02": {
+      "source_line": "战斗：摧毁 1 名等级 2 的英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "8d6fbeb7325137cea50774741bb76c4b564cf432823c449fa8b779173e8c4451",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0642-A01": {
+      "source_line": "战斗：手牌中每有 1 名英雄，此牌获得 +2 生命值。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "155423fdedcc6eff7305283b99f4c7d206a99c9da22ca12b809afc5f39212565",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0642-A02": {
+      "source_line": "战斗：摧毁 1 张具有光照的牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "2ad81a1a08522dbf70eb6fde9ddea4185c99fb0087b0573ed4460c6553130fe6",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0643-A01": {
+      "source_line": "力量低于 4 的英雄无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "1aed1698485b6f59d9ad9f0bda53b3def81702ce9614e82b85ad4dfc1635b287",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0644-A01": {
+      "source_line": "力量低于 5 的英雄无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "f8f2cb483042968d916af810a2bbd4a07a07fad93c5c4755d72c66d9b4027dc7",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0644-A02": {
+      "source_line": "地下城：一名英雄获得 力量 +2。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "4845acc8ddca9b4786603c5d6a8b954753a16a49ddbdde5ddcee01c2920ae856",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0645-A01": {
+      "source_line": "力量低于 6 的英雄无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "3dced0c0a0460b7c7168bbfdf3665a3a695ff270d8d592f85a277b7edd66cef7",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0646-A01": {
+      "source_line": "魔法攻击减半。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "3e8aa243bccedeebad0d5e9889450a39655091551b458b741bc1ddef9ee735c4",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0646-A02": {
+      "source_line": "力量低于 7 的英雄无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "7974b0325e38e3713eb7ed096deef009abf805baf6c61804e3c1d99e46ee0e23",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0647-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0647-A02": {
+      "source_line": "力量低于 8 的英雄无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "fdc6ef388faaf1a73c2ba07f1b1f4857780861b1518937fe36abfbef85356aa1",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0649-A01": {
+      "source_line": "攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0650-A01": {
+      "source_line": "光照 -1。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "expected_scope": "battle",
+      "result": "issue",
+      "applied_fingerprint": "68c5205bbca1179e1506059be8f0cc0366139328003c147ecaf4c97f7091e39f",
+      "applied_at": "2026-10-22T08:12:46.153Z",
+      "resolution": "无战利品符号，光照 -1 纳入对抗此怪物时的持续计算，预览和能否攻击的判断均先应用此修正。"
+    },
+    "TS-0650-A02": {
+      "source_line": "若存在光照惩罚，则不能攻击此牌。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "423193f357df81cbf8ffd8cc70b7e9173953b89fa4d3cbeed23d635d322fed05",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0651-A01": {
+      "source_line": "魔法攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "f30989d64decfd2f7d4e8319c4d8d9e57b1bb0518ab7e92e41b10194a696b8ed",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0652-A01": {
+      "source_line": "只能使用魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "f27d4dd436dd52fcfab6b9e87d9c5ca6ecdd6e3b0667c624c62a22b9bbf97158",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0652-A02": {
+      "source_line": "凯旋：从你的牌堆顶翻开 6 张牌，摧毁其中任意数量的牌，其余弃掉。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "6c1a9a3802f28c881e168580150312c8d3b9be3e98d640aa27aff26f1678132c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0652-A03": {
+      "source_line": "魔法攻击 +2。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "c12fdf4f550c77aed8a5742b03278d3a93db581e186471d8e3cdad99293d0a6e",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0654-A01": {
+      "source_line": "战斗：摧毁 1 名民兵。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "91781a1b9649fac9d91a470484079113fad1c05ae6fb5ad8a249e3e215d5a1b3",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0655-A01": {
+      "source_line": "战斗：摧毁所有弓箭手。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "272e89ee8da9a507c3b18354c13e6374919ab645748a3ee34161e58f5e7afd20",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0656-A01": {
+      "source_line": "战斗：在计算你的总攻击值前，摧毁 1 名未装备锋利武器的英雄。战斗结束时，摧毁所有未装备锋利武器的英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "4eac7090b26084feef90e3b1feada7d2eadfab5c4abc70f74bf8bf73902dc8b7",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0657-A01": {
+      "source_line": "只能使用魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "f27d4dd436dd52fcfab6b9e87d9c5ca6ecdd6e3b0667c624c62a22b9bbf97158",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0658-A01": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "b7f535cfb502cb3655b881c1de5aea8129f07b541ce8a9d7e22d74414d55f385",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0659-A01": {
+      "source_line": "民兵无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "35f1412f379fa737ee5e35468ff7574a45e2e15a81bcca5bced22af97a835a2b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0659-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "1d4a733953a0400a8ad42bbe5befd901dfd56ba950b0aa3d4495e5b0c1de265a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0660-A01": {
+      "source_line": "所有英雄承受力量 -1。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "note": "这条没有战利品符号，应当是战斗效果。",
+      "expected_scope": "other",
+      "result": "issue",
+      "applied_fingerprint": "a3193ce5340bc5665345696bdb65d1d0ddd4b3c47210aa351701fd919725d43b",
+      "applied_at": "2026-10-22T08:12:46.153Z",
+      "resolution": "无战利品符号，所有英雄力量 -1 改为仅在对抗迅尾时持续生效，作为手牌或相邻大厅怪物不提供该修正。"
+    },
+    "TS-0660-A02": {
+      "source_line": "战斗：获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "5ffc9bf04af19512a9518c392ef810dd9763671de8ef012669f2ab9ba5a55bae",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0661-A01": {
+      "source_line": "战斗：每有 1 名民兵，获得 1 张疾病。摧毁所有民兵。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "c5985807e005c859a812c6622e823d94cbec258e99494ef6b8bb8b70b063dea4",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0662-A01": {
+      "source_line": "魔法攻击减半。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "0382bb2c2343a1baf4435e998488a2dce71f28212fc21ad8e41c603a5cb043d5",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0662-A02": {
+      "source_line": "战斗：每有 1 名战士或民兵，获得 1 张疾病。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "1ed74d776d49ea406e86caeab5dfd62fdc86b0b9447b48c016e5425714a57d72",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0663-A01": {
+      "source_line": "战斗：摧毁 1 张武器。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "6a051390e6721b8f6745347a5ee3b51a0903be9d7d6b1d8e0994e7bfe30251e6",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0664-A01": {
+      "source_line": "战斗：摧毁 1 名英雄。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "f133082d39d4e1fbf7e47216ebb8faec619c863cf40b3545c9aca8ec1b0a2a06",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0665-A01": {
+      "source_line": "没有魔法攻击时，攻击减半。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "ef4e49f6967f18d42ea524cc294a0f122a4d8bb4770bf255011fbf3c154d9a93",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0665-A02": {
+      "source_line": "战斗：摧毁 1 名民兵。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "1b0d624d88c982f2006c46c713861216ca5d0cd9d6f169b795731946b850c28d",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0665-A03": {
+      "source_line": "攻击 +1。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0666-A01": {
+      "source_line": "突破：每位玩家必须弃掉 2 张牌。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "d8b0ffdfb60c9490ba0756c3b4d7b35b457aecfe44417a3705a44ff090952714",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0666-A02": {
+      "source_line": "战斗：摧毁 1 名英雄。",
+      "symbol": "absent",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "294d1e2497426cc5a64f0c1195e64d68f3cb1bf620c14af1581efe79685a9bd7",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0666-A03": {
+      "source_line": "魔法攻击 +2。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "c12fdf4f550c77aed8a5742b03278d3a93db581e186471d8e3cdad99293d0a6e",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0667-A01": {
+      "source_line": "免疫魔法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0667-A02": {
+      "source_line": "战斗：摧毁力量最高的 1 名英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "76d3367ed138cc5070daa0fd45f24b2b54d95d7fa3af784b5a7e9210c7c36e18",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0667-A03": {
+      "source_line": "攻击 +3。",
+      "symbol": "present",
+      "basis": "explicit_symbol",
+      "result": "confirmed",
+      "applied_fingerprint": "bf86632ef020d261f7461eaf99a93941534ee57c0db5c58064bca15d772fb81d",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0668-A01": {
+      "source_line": "法师无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "1317f8514f1f53ef2a8bf4d1bb976e4360be0da5333c96be9edd6b8a147b7990",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0668-A02": {
+      "source_line": "战斗：摧毁 1 名战士。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "d35c4ab2b5393f1da48d3df5d8927d1d23ff144461c2e775c76dd922bcacd450",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0669-A01": {
+      "source_line": "牧师无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "96b4569dddf694f623e94349068d7f0c15d5d6449236ab89ed2d6a11599b02d6",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0669-A02": {
+      "source_line": "战斗：摧毁 1 名民兵。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "2e6175c90cfb724ed74774275b318e5d238ffb7829249c9989886961f39f2f48",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0670-A01": {
+      "source_line": "盗贼和弓箭手无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "bef04b67f2b744fb62bc76a019894b4f5069be0db9fd1ae2de4047edddf52d70",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0670-A02": {
+      "source_line": "战斗：摧毁 1 名民兵。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "e36b607809a0a0095c07a8cce15d50cb98319a7625537eb27af6d19bdcf9ebc7",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0671-A01": {
+      "source_line": "战士无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "78dec8a4b53f422e98e22cf203135c28d1afcc860f3fd721f08f9128ea2215e0",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0671-A02": {
+      "source_line": "战斗：摧毁 1 名法师。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "14d163e7056166a729a991445a87ecdb74e98d3fa6e8ac940e2cd0b2a9ecc99d",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0672-A01": {
+      "source_line": "手牌中每有 1 种英雄职业，便有 1 名英雄无法攻击。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "ca12726aa958339ea8b4d76887f1764193278326cb8d6c8e2fd8d15f5d407166",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0672-A02": {
+      "source_line": "战斗：摧毁所有未参与战斗的英雄。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "3edf7965b6c40b0a5eb6094e04214c56f9beafe3e5175a1a973d9e3e076821cb",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0672-A03": {
+      "source_line": "战斗：若此牌未被击败，将其放入地下城牌堆，自牌堆顶起第 3 张的位置。",
+      "symbol": "absent",
+      "basis": "user_default_absent",
+      "applied_fingerprint": "1e341bdb9a81c3573cafcf0f1db2918ff79975456c0416d8e29aefaaaa047ff5",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    }
+  },
+  "card_reviews": {
+    "card:TS-0510": {
+      "review_id": "card:TS-0510",
+      "card_id": "TS-0510",
+      "card_name": "兽人剑术大师",
+      "ability_id": null,
+      "source_line": "",
+      "current_scope_ids": [],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "b18e8d7ca2d589c7376a53351da5a2ad13f78e1c4f5d2844ca00b07e96fe6fee",
+      "updated_at": "2026-10-22T07:12:03.857Z"
+    },
+    "card:TS-0513": {
+      "review_id": "card:TS-0513",
+      "card_id": "TS-0513",
+      "card_name": "半食人魔",
+      "ability_id": null,
+      "source_line": "",
+      "current_scope_ids": [],
+      "result": "confirmed",
+      "fingerprint": "27aa247497550a01b0a2e5bd4e7d466030392c83e4f7c8bd34bb49594a89a1dd",
+      "updated_at": "2026-10-22T07:12:38.336Z",
+      "symbol": "absent"
+    },
+    "card:TS-0581": {
+      "review_id": "card:TS-0581",
+      "card_id": "TS-0581",
+      "card_name": "怨恨兽",
+      "ability_id": null,
+      "source_line": "",
+      "current_scope_ids": [],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "07e2d05e700f2681fe938626112941bbab873dbbfdc4ecbfb5ad6290a50279e8",
+      "updated_at": "2026-10-22T07:38:48.388Z"
+    }
+  },
+  "cards": {
+    "TS-0510": {
+      "symbol": "absent",
+      "basis": "user_completion",
+      "applied_fingerprint": "b18e8d7ca2d589c7376a53351da5a2ad13f78e1c4f5d2844ca00b07e96fe6fee",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0513": {
+      "symbol": "absent",
+      "basis": "user_completion",
+      "applied_fingerprint": "27aa247497550a01b0a2e5bd4e7d466030392c83e4f7c8bd34bb49594a89a1dd",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0581": {
+      "symbol": "absent",
+      "basis": "user_completion",
+      "applied_fingerprint": "07e2d05e700f2681fe938626112941bbab873dbbfdc4ecbfb5ad6290a50279e8",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0605": {
+      "symbol": "absent",
+      "basis": "user_completion",
+      "applied_fingerprint": "2dbfe5b0431a4c8700ea17dcb3f1e05525c400b6c115488a7dad879022867041",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0606": {
+      "symbol": "absent",
+      "basis": "user_completion",
+      "applied_fingerprint": "b200e548b8cac7371ce9f35439684b724efd7c4216f63402a10f1ca9dcb85fc4",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0608": {
+      "symbol": "absent",
+      "basis": "user_completion",
+      "applied_fingerprint": "9a178933e112f614dc1cb1d64e2499290880cf0883bab04540830a0e2137b1ac",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0648": {
+      "symbol": "absent",
+      "basis": "user_completion",
+      "applied_fingerprint": "79bf6657484a33e2a1dddf054d0d693139ca6ccf6a080070603c1945bdcdb0ef",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    },
+    "TS-0653": {
+      "symbol": "absent",
+      "basis": "user_completion",
+      "applied_fingerprint": "bdb269af1ac1468faa3e321a5d0d85c2711a4c624fe44ec31d0ab7882f06bd8b",
+      "applied_at": "2026-10-22T08:12:46.153Z"
+    }
+  }
+}

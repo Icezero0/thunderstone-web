@@ -184,12 +184,8 @@ TS-0455,TS-0455-A01,magic_attack,3,魔法攻击 +3。
 TS-0456,TS-0456-A01,magic_attack,2,魔法攻击 +2。
 TS-0457,TS-0457-A01,magic_attack,3,魔法攻击 +3。
 TS-0458,TS-0458-A01,magic_attack,3,魔法攻击 +3。
-TS-0495,TS-0495-A01,light,1,光照 +1。
 TS-0500,TS-0500-A02,attack,1,攻击 +1。
 TS-0539,TS-0539-A02,attack,2,攻击 +2。
-TS-0566,TS-0566-A01,light,-1,光照 -1。
-TS-0568,TS-0568-A02,light,-1,光照值 -1。
-TS-0570,TS-0570-A01,light,-2,光照 -2。
 TS-0582,TS-0582-A02,magic_attack,1,魔法攻击 +1。
 TS-0610,TS-0610-A02,magic_attack,1,魔法攻击 +1。
 TS-0616,TS-0616-A03,attack,1,攻击 +1。
@@ -203,7 +199,6 @@ TS-0623,TS-0623-A03,attack,1,攻击 +1。
 TS-0624,TS-0624-A03,attack,1,攻击 +1。
 TS-0625,TS-0625-A03,attack,1,攻击 +1。
 TS-0649,TS-0649-A01,attack,1,攻击 +1。
-TS-0650,TS-0650-A01,light,-1,光照 -1。
 TS-0651,TS-0651-A01,magic_attack,1,魔法攻击 +1。
 TS-0652,TS-0652-A03,magic_attack,2,魔法攻击 +2。
 TS-0665,TS-0665-A03,attack,1,攻击 +1。

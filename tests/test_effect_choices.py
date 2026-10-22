@@ -4,10 +4,10 @@ from copy import deepcopy
 import json
 import unittest
 
-from engine.catalog.repository import load_catalog
-from engine.effects.compiler import load_ruleset, compile_ruleset, EffectCompileError
-from engine.setup import start_game
-from engine.turn import apply_command, TurnError
+from backend.app.integrations.game_engine.catalog.repository import load_catalog
+from backend.app.integrations.game_engine.effects.compiler import load_ruleset, compile_ruleset, EffectCompileError
+from backend.app.integrations.game_engine.setup import start_game
+from backend.app.integrations.game_engine.turn import apply_command, TurnError
 from tests.mechanic_cases import Fixture
 from tests.test_setup_engine import config, request
 
@@ -192,8 +192,8 @@ class EffectChoiceTests(unittest.TestCase):
                     self.assertIn(source, state["zones"]["player:alice:discard"])
                     self.assertIn(militia, state["zones"]["destroyed"])
                     self.assertIn(next_hero, state["zones"]["player:alice:hand"])
-                    from engine.turn.operations import Transition
-                    from engine.turn.village import upgrade_options
+                    from tests.migration.reference.python_engine.turn.operations import Transition
+                    from tests.migration.reference.python_engine.turn.village import upgrade_options
                     options = upgrade_options(Transition(state, self.snapshot.cards, self.rules))
                     self.assertFalse(any(item["source_instance_id"] == next_hero for item in options))
 

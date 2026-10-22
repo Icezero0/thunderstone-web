@@ -1,0 +1,12 @@
+{
+  "name": "thunderstone-web",
+  "private": true,
+  "workspaces": ["packages/engine"],
+  "scripts": {
+    "build": "npm run build --workspace @thunderstone/engine",
+    "typecheck": "npm run typecheck --workspace @thunderstone/engine",
+    "test": "npm run build && node --test packages/engine/tests/*.test.mjs"
+  },
+  "engines": {"node": ">=22"},
+  "devDependencies": {"typescript": "~5.9.3", "esbuild": "^0.25.12"}
+}

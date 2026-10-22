@@ -207,7 +207,7 @@
     "op": "target_health",
     "params": {
       "filter": {
-        "card_type": "疾病牌"
+        "tag": "疾病"
       },
       "multiplier": 2
     }
@@ -815,7 +815,9 @@
     "params": {
       "filter": {
         "tag": "物品",
-        "light_min": 1
+        "tags_any": [
+          "光照"
+        ]
       },
       "minimum": 1,
       "flat": true,
@@ -913,7 +915,9 @@
     "params": {
       "filter": {
         "tag": "物品",
-        "light_min": 1
+        "tags_any": [
+          "光照"
+        ]
       },
       "absent": true,
       "magic_attack": 3
@@ -927,7 +931,9 @@
     "params": {
       "filter": {
         "tag": "物品",
-        "light_min": 1
+        "tags_any": [
+          "光照"
+        ]
       },
       "absent": true,
       "attack": 1
@@ -1911,9 +1917,54 @@
     "id": "TS-0660-A01",
     "source_card_id": "TS-0660",
     "source_line": "所有英雄承受力量 -1。",
-    "op": "hero_aura",
+    "op": "battle_aura",
     "params": {
       "strength": -1
+    }
+  },
+  {
+    "id": "TS-0495-A01",
+    "source_card_id": "TS-0495",
+    "source_line": "光照 +1。",
+    "op": "battle_aura",
+    "params": {
+      "light": 1
+    }
+  },
+  {
+    "id": "TS-0566-A01",
+    "source_card_id": "TS-0566",
+    "source_line": "光照 -1。",
+    "op": "battle_aura",
+    "params": {
+      "light": -1
+    }
+  },
+  {
+    "id": "TS-0568-A02",
+    "source_card_id": "TS-0568",
+    "source_line": "光照值 -1。",
+    "op": "battle_aura",
+    "params": {
+      "light": -1
+    }
+  },
+  {
+    "id": "TS-0570-A01",
+    "source_card_id": "TS-0570",
+    "source_line": "光照 -2。",
+    "op": "battle_aura",
+    "params": {
+      "light": -2
+    }
+  },
+  {
+    "id": "TS-0650-A01",
+    "source_card_id": "TS-0650",
+    "source_line": "光照 -1。",
+    "op": "battle_aura",
+    "params": {
+      "light": -1
     }
   },
   {
@@ -2044,7 +2095,8 @@
     "source_line": "全局：无论其他卡牌效果如何，玩家每回合无法购买超过 1 张牌。",
     "op": "economy",
     "params": {
-      "one_purchase": true
+      "one_purchase": true,
+      "scope": "hall"
     }
   },
   {

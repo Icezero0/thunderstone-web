@@ -2,7 +2,7 @@
 
 ## Sources and release boundary
 
-`docs/游戏引擎设计参考/thunderstone_card_rules_v0.3.2_engine.json` is a decomposition draft of 964 ability lines. The engine does not execute its generic AST. The reviewed `classic-v1.json`, `simple-reviewed.json`, `action-reviewed.json`, `battle-reviewed.json` and `event-reviewed.json` contain 446 fully bound abilities. `mechanics.json` contains 222 continuous rule and replacement bindings. Each binding names an ability ID, card source and its applicable zone or rule hook. Offline generators check the exact source line against the catalog. Runtime dispatch uses these bindings rather than parsing arbitrary Chinese text.
+`docs/游戏引擎设计参考/thunderstone_card_rules_v0.3.2_engine.json` is a decomposition draft of 964 ability lines. The engine does not execute its generic AST. The reviewed `classic-v1.json`, `simple-reviewed.json`, `action-reviewed.json`, `battle-reviewed.json` and `event-reviewed.json` contain 446 fully bound abilities. `mechanics.json` contains 227 continuous rule and replacement bindings. Each binding names an ability ID, card source and its applicable zone or rule hook. Offline generators check the exact source line against the catalog. Runtime dispatch uses these bindings rather than parsing arbitrary Chinese text.
 
 The JSON has no embedded Python. Compilation rejects unknown keys, unknown operations, unsupported expressions, invalid source IDs, duplicate IDs, unbounded loops and missing bindings. The runtime receives the same `CatalogSnapshot` as setup/turn code; it does not open SQLite. It uses the game state's event, instance and RNG sequences, and one command either returns a complete new state or raises without changing its input.
 
@@ -42,7 +42,7 @@ An activated ability is submitted as `ActivateAbility` with `source_instance_id`
 | Conditions | `all`, `any`, `not`, `compare`, `exists`, `action_in`, `setting_active` | no evaluation of free text |
 | Queries | active/subject hand and discard; controlled treasures; supply tops; bound reveals; hall/rank; event source; just-defeated monster; typed filters and extrema | hero identity uses only the explicit 英雄 tag on hero, village and basic cards; no category fallback |
 | Flow | sequence, condition, optional/multiple selection, cost, per-card/per-player loops, bounded repeat, numeric and card-set bindings, reveal, draw-and-bind, scheduling, effect purchase and upgrade, value selection and card ordering | choices serialize frames; per-player effects select the correct responding player |
-| Atoms/hooks | resources, disease replacement, card movement/destruction, per-card modifiers, turn buffs, deferred battle destruction, supply destruction/replenishment, hall changes, reveal cycles, next-hand bonus, retreat and elimination, copying, borrowing, responses, attachments, extra turns | domain hooks remain explicit, typed Python operations; no free-form evaluation |
+| Atoms/hooks | resources, disease replacement, card movement/destruction, per-card modifiers, turn buffs, deferred battle destruction, supply destruction/replenishment, hall changes, reveal cycles, next-hand bonus, retreat and elimination, copying, borrowing, responses, attachments, extra turns | explicit TypeScript transition functions; no free-form evaluation |
 
 The interpreter executes depth-first. A `select` with one legal candidate binds automatically; with several candidates it stores `pending_choice` and serializable continuation frames. `ResolveChoice` must come from the named player, choose current candidates and satisfy count bounds. Other commands are rejected while a choice is pending. A failed `cost_gate` never runs its benefit. `source` is a reserved binding for the ability's own instance. Abilities can be once per turn or repeatable; the once per turn limit is stored per source instance and ability and reset during turn cleanup. The canonical JSON hash is stored as `GameState.effects_version`; a changed ruleset cannot silently continue an old state.
 
@@ -56,6 +56,29 @@ Once combat has been declared, declining or being unable to pay a Spectral cost 
 
 `upgrade` offers the same legal levels, series, XP costs and inventory as a village upgrade. `ResolveEffectUpgrade` chooses a source/target pair or skips. It returns the new hero to the specified zone and pays a treasure cost only after a valid upgrade. A hero gained by upgrading is marked with `upgraded_on_turn` so it cannot be levelled again that turn. Upgrade timing and source identity survive JSON restoration.
 
+## Reviewed monster symbols and continuous effects
+
+The [monster review record](../../data/effects/monster-symbols.json) records explicit
+loot symbols and the user's default of no symbol for unfinished entries. The
+formal definitions and generators incorporate these decisions. Unmarked monster
+light text uses target-only `battle_aura` mechanics; printed light icons still
+contribute from hand. Target strength penalties apply before equipment and hero
+selection checks. Scoped `economy` rules distinguish hall and hand sources.
+
+`discard_until` discards each nonmatching card immediately and binds the first
+matching card for its continuation. All player-deck access refills an empty draw
+pile from the shuffled discard pile on demand. Continuous searches record failed
+checks by player and instance; shuffles and successful checks keep those records,
+while changed instances become eligible for rechecking. Searches stop when all
+currently reachable instances have valid no-progress records. `reveal_cycle`
+applies this condition across all affected players, preserving reverse seat order
+and normal processing of previously seen cards. No arbitrary reveal count is used.
+
+Spell immunity is continuous in the hall. `effectTargets` filters effect choices
+and per-card application without filtering ordinary counts; resumed choices and
+direct bound mutations recheck immunity. Unrelated parts of a spell continue.
+See [the completed review](monster-review-resolution.md) for individual rulings.
+
 ## Initial verified bindings
 
 | Ability | Binding | Test focus |
@@ -68,7 +91,7 @@ The second reviewed JSON adds exact draw, XP, extra purchase, self destruction f
 
 Continuous combat rules recalculate rank, equipment, strength, hand conditions, hall auras, light and target restrictions. Ordinary rank 1/2/3 requires 1/2/3 light; every missing light costs 2 attack. Thornwood Forest requires 1 light at ordinary ranks, while rank 0 stays exempt. Disease attack penalties apply to one positive attack type, with `AssignDiseasePenalty` allowing an explicit allocation. Fatigue affects one hero; `AssignStrengthPenalty` changes that allocation. Zero strength reached in battle creates one sticky turn-end destruction mark, even if strength later recovers.
 
-The generated [ability report](../../data/effects/coverage.csv) and [card report](../../data/effects/card-coverage.csv) track coverage. As of 2026-10-21: 446 `READY`, 222 `MECHANIC_READY`, 215 `PRINTED_BASELINE`, 19 `TARGET_RULE`, 6 `SETUP_READY`, 2 `ENV_RULE`, 38 `SYSTEM_RULE`, 16 `RULE_REFERENCE`. All 520 effect cards are `COMPLETE`; there are no draft or partially covered cards. The reference card's 16 instruction lines are documentation, outside the 520 playable effect cards. Treefolk expand and refill both the initial hall and the hall during play; setup and runtime share the capacity calculation. This is line-and-behavior coverage for the current catalog and confirmed classic rulings, not exhaustive proof of every possible card combination.
+The generated [ability report](../../data/effects/coverage.csv) and [card report](../../data/effects/card-coverage.csv) track coverage. As of 2026-10-22: 446 `READY`, 227 `MECHANIC_READY`, 210 `PRINTED_BASELINE`, 19 `TARGET_RULE`, 6 `SETUP_READY`, 2 `ENV_RULE`, 38 `SYSTEM_RULE`, 16 `RULE_REFERENCE`. All 520 effect cards are `COMPLETE`; there are no draft or partially covered cards. The reference card's 16 instruction lines are documentation, outside the 520 playable effect cards. Treefolk expand and refill both the initial hall and the hall during play; setup and runtime share the capacity calculation. This is line-and-behavior coverage for the current catalog and confirmed classic rulings, not exhaustive proof of every possible card combination.
 
 Verify generated files with `--check` on `build_simple_effects.py`, `build_action_effects.py`, `build_battle_effects.py`, `build_event_effects.py` and `build_mechanics.py`. Regenerate reports with `scripts/audit_effects.py --output data/effects/coverage.csv --card-output data/effects/card-coverage.csv --require-complete`. The completeness gate fails if any card is unfinished.
 
@@ -76,19 +99,19 @@ Verify generated files with `--check` on `build_simple_effects.py`, `build_actio
 
 ## Turn integration
 
-`engine/turn/workflow.py` serializes event dispatch, hall refill, effect continuation and turn cleanup. Timings include dungeon/village entry, equipment, purchases, upgrades, battle before/after outcome, monster defeat, hall reveal, breach, traps, hand refill and turn start/end. If refill reveals a trap, the original ability stack stays in the workflow while the trap runs; after its choices complete, the original ability continues. The previous parallel implementations of combat and hall refill were removed.
+`packages/engine/src/turn/workflow.ts` serializes event dispatch, hall refill, effect continuation and turn cleanup. Timings include dungeon/village entry, equipment, purchases, upgrades, battle before/after outcome, monster defeat, hall reveal, breach, traps, hand refill and turn start/end. If refill reveals a trap, the original ability stack stays in the workflow while the trap runs; after its choices complete, the original ability continues. The previous parallel implementations of combat and hall refill were removed.
 
-`engine/effects/purchase.py` gives each spoils offer its own allowance from the current surviving hand, rather than sharing the village gold pool. `engine/scoring.py` handles printed VP and reviewed insect/horde/stone scoring at settlement, excluding eliminated players from winner and fewest-monster comparisons. `engine/turn/settlement.py` centralizes terminal state changes; queued ordinary turn work stops immediately after settlement.
+`packages/engine/src/effects/purchase-transition.ts` gives each spoils offer its own allowance from the current surviving hand, rather than sharing the village gold pool. `packages/engine/src/scoring/score.ts` handles printed VP and reviewed insect/horde/stone scoring at settlement, excluding eliminated players from winner and fewest-monster comparisons. `packages/engine/src/turn/settlement.ts` centralizes terminal state changes; queued ordinary turn work stops immediately after settlement.
 
 Banishing Ritual permits dungeon turns. Claiming a stone continues play; an unclaimed stone at rank 1 returns to the dungeon bottom. Defeating Heart of Doom ends play and includes the gained guardian in scoring; its breach ends play before it moves to rank 0. A failed attack eliminates only the attacker when its battle effect applies. Remaining players continue; if everyone has been eliminated there is no winner. The Heart's stones gain **+6** magic attack, corrected in the catalog from the English card text with user confirmation on 2026-10-20. Flying Spire continues after its first acquired stone, ends after its second, and also ends if a stone reaches rank 1 without being acquired.
 
-`engine/rules/players.py` supplies the surviving participant list. Turn passage retains the original player order but skips eliminated seats; a round wraps relative to `first_player_id`. Delays for the next own turn are consumed at that player's next actual turn, even if elimination has shortened the rotation. The backend submits commands and persists states; calculations stay independent of network and database code.
+`packages/engine/src/turn/transaction.ts` supplies the surviving participant list. Turn passage retains the original player order but skips eliminated seats; a round wraps relative to `first_player_id`. Delays for the next own turn are consumed at that player's next actual turn, even if elimination has shortened the rotation. The backend submits commands and persists states; calculations stay independent of network and database code.
 
 ## Disease replacement decisions
 
-`engine/effects/disease.py` resolves Plague Breaker and the two Sidhe disease redirects. The receiving player chooses between applicable replacements. A redirect then selects another surviving player, whose own hand can provide a replacement. Per user ruling on 2026-10-20, each source instance may replace the same disease gain only once. The disease is sampled once, retaining its instance and RNG result throughout redirections; Sidhe always redirects to a discard pile. A destroyed disease returns to the infinite supply by removing its instance.
+`packages/engine/src/effects/disease-transition.ts` resolves Plague Breaker and the two Sidhe disease redirects. The receiving player chooses between applicable replacements. A redirect then selects another surviving player, whose own hand can provide a replacement. Per user ruling on 2026-10-20, each source instance may replace the same disease gain only once. The disease is sampled once, retaining its instance and RNG result throughout redirections; Sidhe always redirects to a discard pile. A destroyed disease returns to the infinite supply by removing its instance.
 
-Pending arbitration uses `ResolveDiseaseReplacement` with either `source_instance_id` or `recipient_id`, according to its recorded stage. The disease waits in an unowned pending zone. Batch disease effects create one disease, finish its replacement chain, then create the next and resume the original ability. The public `engine.disease.take_disease` uses this same transition; it can return a pending choice, and its `instance` is `None` after an automatic destruction. Tests in `test_disease_replacements.py` exercise recipient authorization, conflict choice, JSON restoration, loops and batch interruption.
+Pending arbitration uses `ResolveDiseaseReplacement` with either `source_instance_id` or `recipient_id`, according to its recorded stage. The disease waits in an unowned pending zone. Batch disease effects create one disease, finish its replacement chain, then create the next and resume the original ability. The public `backend.app.integrations.game_engine.disease.take_disease` uses this same transition; it can return a pending choice, and its `instance` is `None` after an automatic destruction. Tests in `test_disease_replacements.py` exercise recipient authorization, conflict choice, JSON restoration, loops and batch interruption.
 
 ## Destruction timing and turn protection
 
@@ -96,20 +119,20 @@ Per user rulings on 2026-10-20, ordinary battle destruction uses `mark_destroy` 
 
 `grant_turn_buff` binds `discard_instead_of_destroy` to one hero instance. `flags.turn_buffs` records the ability, source instance and `expires_after_turn`. Guardian Blade (`TS-0247-A02`) grants this buff to the `event_hero` on `CARD_EQUIPPED`; Feast and Ambrosia (`TS-0295-A01`, `TS-0296-A01`) grant it alongside their strength and attack bonuses to the heroes in hand when activated. The buff survives leaving hand, losing the weapon or removing its source, and is not consumed by a replacement. It applies to immediate costs, deferred battle destruction and turn-end destruction, including sticky zero-strength marks. It expires only after end effects and hand refill, just before `TURN_ENDED` and turn passage.
 
-`Transition.destroy_card` is the shared replacement boundary. Replacement keeps the hero's owner and emits `card_destruction_replaced`, not `card_destroyed`. A fulfilled destruction clears its pending destruction marks so they cannot fire in a later battle. Turn-end marks follow the instance even if another effect has already discarded it. Buffs belong to instances; upgrading creates a new instance without inheriting the old hero's buff. Tests in `test_destruction_replacements.py` cover timing, explicit payments, upgrades, simultaneous weapon/hero removal, repeated replacement, JSON restoration and expiry.
+`Transition.destroyCard` is the shared replacement boundary. Replacement keeps the hero's owner and emits `card_destruction_replaced`, not `card_destroyed`. A fulfilled destruction clears its pending destruction marks so they cannot fire in a later battle. Turn-end marks follow the instance even if another effect has already discarded it. Buffs belong to instances; upgrading creates a new instance without inheriting the old hero's buff. Tests in `test_destruction_replacements.py` cover timing, explicit payments, upgrades, simultaneous weapon/hero removal, repeated replacement, JSON restoration and expiry.
 
 ## Advanced runtime modules
 
 | Module | Responsibility |
 | --- | --- |
-| `responses.py` | Per-recipient trap/battle/opponent response windows and optional hero destruction prevention |
-| `abilities.py` | Source identity for copied abilities; copying and explicit spell reuse |
-| `borrowing.py` | Temporary ownership and return obligations on the same instance |
-| `attachments.py` | Caged heroes, Emerald/Sapphire pairs and diseases beneath monsters |
-| `durations.py` | Cross-turn light and forced-dungeon rules with explicit expiry |
-| `inventory.py` | Supply destruction, Regian return replacement, Stormhold replenishment |
-| `hall_actions.py` | Adjacent swaps, held/revealed monster exchange, shuffle-with-top and trap reshuffle |
-| `rules/reserves.py` | Shared Horde/Swarm reserve marker rules for setup and runtime |
+| `effects/responses.ts` | Per-recipient trap/battle/opponent response windows and optional hero destruction prevention |
+| `effects/execute.ts`, `effects/choice-transition.ts`, `effects/atoms.ts` | Source identity for copied abilities; copying and explicit spell reuse |
+| `effects/ownership.ts` | Temporary ownership, return obligations, caged heroes, paired gems and attached diseases |
+| `effects/durations.ts` | Cross-turn light and forced-dungeon rules with explicit expiry |
+| `effects/supply.ts` | Supply destruction, Regian return replacement, Stormhold replenishment |
+| `turn/hall.ts` | Hall movement, refill and reserve-marker replacement |
+
+These module paths are relative to `packages/engine/src/`.
 
 The interpreter composes these domain operations into the same serializable workflow. `listen` registers an event/body/condition with its captured bindings and current turn; a one-shot listener is consumed only when its conditions match. `remove_listener` can consume a listener after an optional successful gain. `collect` builds an explicit set across players for a later global selection. `BEFORE_HALL_REFILL` runs before filling vacancies, allowing Broadsword to claim a remaining low-VP monster without defeat XP.
 
@@ -121,11 +144,11 @@ Per user confirmation, immunity and redirect change only the responding player's
 
 ### Copying, reuse and borrowing
 
-User ruling on 2026-10-21 for `TS-0415-A02`: the selected Militia keeps its printed name, level, strength and tags. It copies the other hero's effect abilities and replaces its original attack with the copied attack; the original hero remains independently usable. The binding is `preserve_attack=false, full_card=false`. The physical instance keeps `card_id=TS-0001`; `copied_heroes` supplies additional ability/mechanic sources and is cleared at turn end. Physical destruction and supply return use `printed_card`, never a copied identity. Choices inside a copied active ability retain this source identity across JSON snapshots.
+User ruling on 2026-10-22 for `TS-0415-A02`: the selected Militia keeps its printed name, level, strength and tags. It copies the other hero's effect abilities and replaces its original attack with the copied attack; the original hero remains independently usable. The binding is `preserve_attack=false, full_card=false`. The physical instance keeps `card_id=TS-0001`; `copied_heroes` supplies additional ability/mechanic sources and is cleared at turn end. Physical destruction and supply return use `printed_card`, never a copied identity. Choices inside a copied active ability retain this source identity across JSON snapshots.
 
 Bluefire Staff offers `ResolveReusedAbility` with the selected used spell's available dungeon ability IDs. The chosen compiled ability is run again through the normal interpreter, retaining target/cost choices and scheduling that spell for turn-end destruction. The staff must be equipped to an appropriate hero.
 
-Borrowing moves the same card instance into the active player's hand and changes its owner temporarily. `borrowed_cards` records the original owner and return time. Selurin and Toryn return after battle; Lurker returns at turn end. Per user ruling on 2026-10-21, a destroyed borrowed card is **not** resurrected or returned. A discarded card that survived through a destruction replacement still returns. Deferred destruction is settled before the corresponding return step, and settlement resolves surviving return obligations before scoring.
+Borrowing moves the same card instance into the active player's hand and changes its owner temporarily. `borrowed_cards` records the original owner and return time. Selurin and Toryn return after battle; Lurker returns at turn end. Per user ruling on 2026-10-22, a destroyed borrowed card is **not** resurrected or returned. A discarded card that survived through a destruction replacement still returns. Deferred destruction is settled before the corresponding return step, and settlement resolves surviving return obligations before scoring.
 
 ### Attachments, durations and reserves
 

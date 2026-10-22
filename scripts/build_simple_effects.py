@@ -83,6 +83,7 @@ def build_artifacts() -> dict[Path, bytes]:
     abilities = {ability["id"]: ability for card in draft["cards"]
                  for ability in card["abilities"]}
     card_abilities = {card["id"]: card["abilities"] for card in draft["cards"]}
+    symbol_reviews = json.loads((ROOT / "data/effects/monster-symbols.json").read_text(encoding="utf-8"))["abilities"]
 
     executable = []
     activation_contracts = []
@@ -130,7 +131,7 @@ def build_artifacts() -> dict[Path, bytes]:
         add_reviewed(ability_id, ("village",), "grant_buy", 1,
                      f"村庄：{clause}", {"op": "grant_buy", "amount": 1})
 
-    disease = {"zone": "active_hand", "card_type": "疾病牌"}
+    disease = {"zone": "active_hand", "tag": "疾病"}
     for ability_id, actions, usage, verb, amount in DISEASE_DRAW:
         prefix = ("重复地下城" if usage == "repeatable" else
                   "村庄 / 地下城" if len(actions) == 2 else "地下城")
@@ -168,6 +169,12 @@ def build_artifacts() -> dict[Path, bytes]:
                    if item["source_line"] == line]
             if len(ids) != 1:
                 raise ValueError(f"unmatched plain stat line: {card_id}: {line}")
+            if "怪物" in card["tags"].split("|"):
+                review = symbol_reviews[ids[0]]
+                if review["source_line"] != line:
+                    raise ValueError(f"monster symbol review needs updating: {ids[0]}")
+                if review["symbol"] != "present":
+                    continue
             printed_contracts.append({
                 "card_id": card_id, "ability_id": ids[0],
                 "stat": STAT[match.group(1)], "amount": int(match.group(2)),
@@ -178,7 +185,7 @@ def build_artifacts() -> dict[Path, bytes]:
     battle_line = "战斗：获得 1 张疾病。"
     battle_contracts = []
     for card_id, card in cards.items():
-        if card["subcategory"] != "怪物":
+        if "怪物" not in card["tags"].split("|"):
             continue
         for line in card["effect_text"].splitlines():
             if line not in target_lines:

@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from engine.setup import SetupChoiceRequired, SetupError, start_game  # noqa: E402
+from backend.app.integrations.game_engine.setup import SetupChoiceRequired, SetupError, start_game  # noqa: E402
 
 
 def main() -> int:

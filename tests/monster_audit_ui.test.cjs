@@ -11,11 +11,11 @@ const {execFileSync} = require("node:child_process");
 
 const root = path.resolve(__dirname, "..");
 const python = path.join(root, ".venv", "Scripts", "python.exe");
-const payload = JSON.parse(execFileSync(python, ["-X", "utf8", "-c",
+const payload = JSON.parse(execFileSync(python, ["-B", "-X", "utf8", "-c",
   "import json; from devtools.monster_audit import monster_audit_data; print(json.dumps(monster_audit_data(),ensure_ascii=False))"], {cwd: root, encoding: "utf8", maxBuffer: 8_000_000}));
 const source = fs.readFileSync(path.join(root, "web", "monster_audit.js"), "utf8");
 
-async function fixture(saved = null) {
+async function fixture(saved = null, applied = false) {
   const nodes = new Map();
   const scrolls = [];
   const downloads = [];
@@ -38,7 +38,13 @@ async function fixture(saved = null) {
     querySelectorAll: () => toolbar,
     createElement: () => { const a = {click: () => downloads.push({download: a.download, href: a.href})}; return a; },
   };
-  const context = vm.createContext({document, fetch: async () => ({ok: true, json: async () => structuredClone(payload)}),
+  const projection = structuredClone(payload);
+  if (!applied) for (const card of projection.cards) {
+    if (card.symbol_review) delete card.symbol_review.applied_fingerprint;
+    for (const ability of card.abilities)
+      if (ability.symbol_review) delete ability.symbol_review.applied_fingerprint;
+  }
+  const context = vm.createContext({document, fetch: async () => ({ok: true, json: async () => projection}),
     localStorage: {getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value)},
     location: {hash: ""}, window: {scrollBy() {}}, URL: {createObjectURL: blob => { blobs.push(blob); return "blob:test"; }, revokeObjectURL() {}},
     Blob, setTimeout, clearTimeout, console});
@@ -120,4 +126,16 @@ test("export and import preserve per-ability verdict, symbol and suggestion", as
   await fresh.element("import").events.change({target: input});
   assert.equal(fresh.evaluate("reviews['TS-0582-A02'].symbol"), "present");
   assert.equal(fresh.evaluate("itemStatus(reviewItems.get('TS-0582-A02'))"), "confirmed");
+});
+
+test("applied review decisions supersede old issues, retain notes, and allow fresh corrections", async () => {
+  const f = await fixture({'TS-0660-A01': {result: 'issue', fingerprint: 'old-binding',
+    symbol: 'absent', note: '这条没有战利品符号，应当是战斗效果。', updated_at: '2026-10-21T07:36:44.255Z'}}, true);
+  assert.equal(f.evaluate("itemStatus(reviewItems.get('TS-0660-A01'))"), 'confirmed');
+  assert.equal(f.evaluate("savedFor(reviewItems.get('TS-0660-A01')).symbol"), 'absent');
+  assert.equal(f.evaluate("data.cards.filter(card => cardStatus(card) === 'confirmed').length"), 214);
+  assert.match(f.element('cards').innerHTML, /审核处理/);
+  assert.match(f.element('cards').innerHTML, /这条没有战利品符号/);
+  change(f, 'TS-0660-A01', 'result', 'issue');
+  assert.equal(f.evaluate("itemStatus(reviewItems.get('TS-0660-A01'))"), 'issue');
 });

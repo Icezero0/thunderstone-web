@@ -5,13 +5,13 @@ from dataclasses import replace
 import json
 import unittest
 
-from engine.catalog.repository import load_catalog
-from engine.effects.compiler import load_ruleset, compile_ruleset, EffectCompileError
-from engine.effects.combat import stat
-from engine.setup import start_game
-from engine.turn import apply_command, TurnError
-from engine.turn.hall import remember_fronts
-from engine.turn.workflow import queue_steps
+from backend.app.integrations.game_engine.catalog.repository import load_catalog
+from backend.app.integrations.game_engine.effects.compiler import load_ruleset, compile_ruleset, EffectCompileError
+from tests.migration.reference.python_engine.effects.combat import stat
+from backend.app.integrations.game_engine.setup import start_game
+from backend.app.integrations.game_engine.turn import apply_command, TurnError
+from tests.migration.reference.python_engine.turn.hall import remember_fronts
+from tests.migration.reference.python_engine.turn.workflow import queue_steps
 from tests.mechanic_cases import Fixture
 from tests.test_setup_engine import config, request
 

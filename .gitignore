@@ -1,4 +1,6 @@
 # Supplied source assets and TTS export
+/game/
+/black_edges/
 /game_TTS/
 
 # Optional local audit reports
@@ -11,6 +13,9 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+node_modules/
+/packages/engine/dist/
+/packages/engine/src/build-info.ts
 
 # Local configuration and operating system files
 .env

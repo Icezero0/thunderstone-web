@@ -13,7 +13,7 @@ from build_action_effects import atom, each, mod, select, seq, target
 ROOT = Path(__file__).resolve().parents[1]
 ABILITIES = []
 CASES = []
-ANY = {"zone": "subject_hand", "exclude_card_type": "疾病牌", "unmarked": True}
+ANY = {"zone": "subject_hand", "tags_none": ["疾病"], "unmarked": True}
 HEROES = {**ANY, "tag": "英雄"}
 MILITIA = {**ANY, "card_id": "TS-0001"}
 
@@ -50,11 +50,11 @@ for ability_id in ("TS-0512-A01",):
     add(ability_id, destroy({**ANY, "tag": "佣兵"}), hand=("TS-0226",), expected={"destroyed": ["TS-0226"]})
 for ability_id in ("TS-0519-A02", "TS-0569-A02", "TS-0570-A02", "TS-0668-A02"):
     add(ability_id, destroy({**HEROES, "tag": "战士"}), hand=("TS-0339",), expected={"destroyed": ["TS-0339"]})
-add("TS-0468-A02", destroy({**HEROES, "tags_any": ["牧师", "法师"]}),
+add("TS-0468-A02", destroy({"zone": "subject_hand", "unmarked": True, "tags_any": ["牧师", "法师"]}),
     hand=("TS-0401",), expected={"destroyed": ["TS-0401"]})
 add("TS-0492-A02", destroy({**ANY, "tag": "魔法", "tags_any": ["武器", "物品"]}),
     hand=("TS-0260",), expected={"destroyed": ["TS-0260"]})
-add("TS-0460-A01", destroy({**ANY, "card_type": "村庄牌", "max_by": "gold"}),
+add("TS-0460-A01", destroy({**ANY, "tag": "村庄", "max_by": "gold"}),
     hand=("TS-0285", "TS-0210"), expected={"destroyed": ["TS-0285"]})
 add("TS-0496-A02", destroy(ANY), hand=("TS-0004",), expected={"destroyed": ["TS-0004"]})
 add("TS-0551-A02", destroy({**ANY, "tag": "物品"}), hand=("TS-0003",), expected={"destroyed": ["TS-0003"]})
@@ -101,11 +101,11 @@ for ability_id in ("TS-0592-A02", "TS-0655-A01"):
     add(ability_id, each({**HEROES, "tag": "弓箭手"}, target("mark_destroy")),
         hand=("TS-0302", "TS-0303"), expected={"destroyed": ["TS-0302", "TS-0303"]})
 add("TS-0639-A02", each(MILITIA, target("mark_destroy")), hand=("TS-0001", "TS-0001"), expected={"destroyed": ["TS-0001", "TS-0001"]})
-add("TS-0585-A03", each({**HEROES, "tags_any": ["牧师", "法师"]}, target("mark_destroy")),
+add("TS-0585-A03", each({"zone": "subject_hand", "unmarked": True, "tags_any": ["牧师", "法师"]}, target("mark_destroy")),
     hand=("TS-0401", "TS-0426"), expected={"destroyed": ["TS-0401", "TS-0426"]})
 add("TS-0464-A02", each({**ANY, "duplicate_names": True}, target("mark_destroy")),
     hand=("TS-0001", "TS-0001", "TS-0004"), expected={"destroyed": ["TS-0001", "TS-0001"]})
-for ability_id, q, amount in (("TS-0633-A01", {**ANY, "tag": "物品", "light_min": 1}, 1),
+for ability_id, q, amount in (("TS-0633-A01", {**ANY, "tag": "物品", "tags_any": ["光照"]}, 1),
                              ("TS-0634-A01", {**ANY, "card_id": "TS-0002"}, 4),
                              ("TS-0636-A01", MILITIA, 2),
                              ("TS-0529-A02", {**ANY, "tag": "武器"}, -1)):
@@ -125,7 +125,7 @@ add("TS-0662-A02", atom("gain_disease", {"count": {**HEROES, "tags_any": ["民�
 q = {**ANY, "tag": "食物"}
 add("TS-0586-A01", seq(each(q, target("mark_destroy")), atom("gain_disease", {"count": {"zone": "subject_hand", "tag": "食物"}})),
     hand=("TS-0004", "TS-0004"), expected={"diseases": 2, "destroyed": ["TS-0004", "TS-0004"]})
-q = {**ANY, "tag": "物品", "light_min": 1}
+q = {**ANY, "tag": "物品", "tags_any": ["光照"]}
 add("TS-0587-A01", conditional(q, select(q, seq(target("mark_destroy"), atom("gain_disease", 1)))),
     hand=("TS-0003",), expected={"diseases": 1, "destroyed": ["TS-0003"]})
 q = MILITIA
@@ -133,17 +133,17 @@ body = select(q, each({"zone": "bound", "var": "victims"}, seq(target("mark_dest
 body["allow_shortfall"] = True
 add("TS-0588-A01", conditional(q, body), hand=("TS-0001", "TS-0001"), expected={"diseases": 2, "destroyed": ["TS-0001", "TS-0001"]})
 for ability_id, q, field, hand in (("TS-0589-A01", {**HEROES, "tag": "战士"}, "level", ("TS-0340",)),
-                                  ("TS-0590-A01", {**ANY, "subcategory": "怪物"}, "xp_reward", ("TS-0476",))):
+                                  ("TS-0590-A01", {**ANY, "tag": "怪物"}, "xp_reward", ("TS-0476",))):
     add(ability_id, conditional(q, select(q, seq(target("mark_destroy"), atom("gain_disease", {"stat": {"var": "chosen", "field": field}})))),
         hand=hand, expected={"diseases_from_stat": {"card_id": hand[0], "field": field}, "destroyed": list(hand)})
-add("TS-0591-A01", {"op": "if", "condition": {"exists": {"zone": "subject_hand", "card_type": "疾病牌"}},
+add("TS-0591-A01", {"op": "if", "condition": {"exists": {"zone": "subject_hand", "tag": "疾病"}},
                     "then": atom("gain_disease", 2), "else": atom("gain_disease", 1)},
     hand=("TS-0714",), expected={"diseases": 2})
-add("TS-0483-A01", {"op": "repeat", "times": {"min": [100, {"count": {"zone": "subject_hand", "card_type": "疾病牌"}}]},
+add("TS-0483-A01", {"op": "repeat", "times": {"min": [100, {"count": {"zone": "subject_hand", "tag": "疾病"}}]},
                     "limit": 100, "body": destroy(ANY)}, hand=("TS-0714", "TS-0004"), expected={"destroyed": ["TS-0004"]})
 
 add("TS-0527-A03", {"op": "for_players", "scope": "all", "body": atom("lose_xp")}, expected={"xp_loss_each": 1})
-add("TS-0504-A02", {"op": "for_players", "scope": "all", "body": destroy({**ANY, "subcategory": "怪物"})},
+add("TS-0504-A02", {"op": "for_players", "scope": "all", "body": destroy({**ANY, "tag": "怪物"})},
     hand=("TS-0476",), expected={"destroy_count_each": 1})
 for id in ("TS-0613-A01", "TS-0614-A01"):
     add(id, {"op": "for_players", "scope": "all", "body": atom("gain_disease")}, expected={"diseases": 1, "other_diseases": 1})
@@ -200,7 +200,7 @@ for ability_id, predicate, count, removal, fixture in (
     ("TS-0470-A01", {"tag": "食物"}, 1, "destroy", ("TS-0004",)),
     ("TS-0471-A01", {"tag": "英雄"}, 1, "destroy", ("TS-0001",)),
     ("TS-0472-A01", None, 2, "spend_xp", ()),
-    ("TS-0473-A01", {"subcategory": "怪物"}, 1, "destroy", ("TS-0476",)),
+    ("TS-0473-A01", {"tag": "怪物"}, 1, "destroy", ("TS-0476",)),
     ("TS-0474-A01", {}, 3, "discard", ("TS-0001", "TS-0003", "TS-0004")),
 ):
     if predicate is None:
@@ -244,7 +244,7 @@ add("TS-0509-A02", {"op": "schedule", "event": "BATTLE_AFTER_OUTCOME",
     "body": {"op": "random_destroy", "filter": {"tag": "元素"}}}, hand=("TS-0003",),
     expected={"random_destroyed": 1})
 CASES[-1]["variants"] = [{"hand": ["TS-0495"], "expected": {"random_destroyed": 0}}]
-add("TS-0560-A02", each({"zone": "subject_hand", "semantic_type": "village"},
+add("TS-0560-A02", each({"zone": "subject_hand", "tag": "村庄"},
     {"op": "destroy_matching_supply", "target": {"var": "chosen"}, "count": 1}),
     hand=("TS-0226", "TS-0226"), expected={"supply_destroyed": 2})
 CASES[-1]["supplies"] = [{"card_id": "TS-0226", "kind": "village", "count": 4}]

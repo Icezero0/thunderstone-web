@@ -16,13 +16,13 @@ from copy import deepcopy
 from dataclasses import replace
 from pathlib import Path
 
-from engine.catalog.repository import load_catalog
-from engine.effects.compiler import load_ruleset
-from engine.disease import take_disease
-from engine.setup import start_game
-from engine.turn import TurnError, apply_command, legal_commands
-from engine.turn.dungeon import _combat_trace
-from engine.turn.operations import Transition
+from backend.app.integrations.game_engine.catalog.repository import load_catalog
+from backend.app.integrations.game_engine.effects.compiler import load_ruleset
+from backend.app.integrations.game_engine.disease import take_disease
+from backend.app.integrations.game_engine.setup import start_game
+from backend.app.integrations.game_engine.turn import TurnError, apply_command, legal_commands
+from tests.migration.reference.python_engine.turn.dungeon import _combat_trace
+from tests.migration.reference.python_engine.turn.operations import Transition
 from scripts.audit_effects import build_card_rows, build_rows
 from tests.test_setup_engine import config, request
 from tests.mechanic_cases import verify_card
@@ -366,7 +366,11 @@ class CardEffectContractTests(unittest.TestCase):
                   for line in card["effect_text"].splitlines()
                   if pattern.fullmatch(line)}
         frozen = {(row["card_id"], row["source_line"]) for row in PRINTED}
-        self.assertEqual(source, frozen)
+        # Unmarked monster light text belongs to target mechanics, not loot.
+        target_stats = {(m.source_card_id, m.source_line) for m in self.ruleset.mechanics
+                        if m.op == "battle_aura" and "light" in m.params}
+        self.assertEqual(source, frozen | target_stats)
+        self.assertFalse(frozen & target_stats)
         self.assertEqual(len(PRINTED), len(frozen))
         self.assertEqual(len({row["ability_id"] for row in ACTIVATED}),
                          len(ACTIVATED))

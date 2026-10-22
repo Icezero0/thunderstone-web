@@ -1,6 +1,6 @@
 # 异地多人联机与持久化
 
-联机层持有房间、参赛者/座位、配置草稿、准备状态，以及每局的持久化记录。Python 游戏引擎只接收冻结后的启动请求和本局指令，产出组局状态、规则事件及结果；边界见[交接契约](00-engine-boundary.md)。引擎不感知 HTTP、WebSocket、数据库连接或登录会话。局内状态见[状态模型](02-state-model.md)，合法指令与能力结算见[回合流程](04-turn-flow.md)和[能力运行时](06-ability-runtime.md)。
+联机层持有房间、参赛者/座位、配置草稿、准备状态，以及每局的持久化记录。TypeScript 游戏引擎只接收冻结后的启动请求和本局指令，产出组局状态、规则事件及结果；边界见[交接契约](00-engine-boundary.md)。引擎不感知 HTTP、WebSocket、数据库连接或登录会话。局内状态见[状态模型](02-state-model.md)，合法指令与能力结算见[回合流程](04-turn-flow.md)和[能力运行时](06-ability-runtime.md)。
 
 ## 1. 请求契约
 
@@ -47,7 +47,7 @@ def settle(terminal_state, catalog, ruleset) -> MatchResult: ...
 def project_state(state, viewer_id, catalog) -> PlayerView: ...
 ```
 
-`SetupTransition` 与 `Transition` 包含新状态、可记录事件、可能的 `PendingChoice` 与必要的可解释计算结果。`viewer_id` 是已由联机层鉴权并映射的本局玩家 ID。联机服务不能绕过引擎直接改抽牌堆或玩家经验点；引擎也不能更改参赛者、座位、准备标志或房间状态。现有其他 Python 项目的身份、房间或 API 基建可以复用，但规则判断保持在这个独立边界内。
+`SetupTransition` 与 `Transition` 包含新状态、可记录事件、可能的 `PendingChoice` 与必要的可解释计算结果。`viewer_id` 是已由联机层鉴权并映射的本局玩家 ID。联机服务不能绕过引擎直接改抽牌堆或玩家经验点；引擎也不能更改参赛者、座位、准备标志或房间状态。现有其他 TypeScript 项目的身份、房间或 API 基建可以复用，但规则判断保持在这个独立边界内。
 
 ## 3. 随机数与重放
 

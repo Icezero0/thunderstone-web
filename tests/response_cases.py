@@ -1,10 +1,10 @@
 """Behavior contracts for each reviewed response source."""
 
-from engine.effects.responses import resolve_response
-from engine.effects.runtime import activate, dispatch_event, resolve_choice
-from engine.effects.choices import resolve_value
-from engine.turn.dungeon import declare_battle_target
-from engine.turn.state import validate_turn_state
+from tests.migration.reference.python_engine.effects.responses import resolve_response
+from tests.migration.reference.python_engine.effects.runtime import activate, dispatch_event, resolve_choice
+from tests.migration.reference.python_engine.effects.choices import resolve_value
+from tests.migration.reference.python_engine.turn.dungeon import declare_battle_target
+from tests.migration.reference.python_engine.turn.state import validate_turn_state
 
 
 def settle(test, tx, source=None, recipient=None):

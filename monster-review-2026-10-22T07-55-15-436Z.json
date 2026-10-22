@@ -1,0 +1,1851 @@
+{
+  "schema_version": "thunderstone.monster-review/1",
+  "catalog_version": "f89c8b14f1adb1a49ecb7ff4a289a095dc40032a2d9783e953c37a50e3a0fa3f",
+  "effects_version": "a24642d083a89d4c4be6cd1514b45d5809d5bb401f7463cc4ab8f6a72c1aa9c3",
+  "exported_at": "2026-10-22T07:55:15.435Z",
+  "reviews": [
+    {
+      "review_id": "TS-0459-A01",
+      "card_id": "TS-0459",
+      "card_name": "幽林飞龙",
+      "ability_id": "TS-0459-A01",
+      "source_line": "战斗：摧毁 1 张武器。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "d30301fee938cde2ba48e8ceac568f5a82a9bc9207a11673436515c3e031d015",
+      "updated_at": "2026-10-21T08:48:04.559Z"
+    },
+    {
+      "review_id": "TS-0460-A01",
+      "card_id": "TS-0460",
+      "card_name": "焰怒龙",
+      "ability_id": "TS-0460-A01",
+      "source_line": "战斗：摧毁手牌中金币值最高的 1 张村庄牌。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "4e9a2f8ef8f13d9c2e0dc11ff04fabdc115925b54b2342dc87ff506ce5d314c6",
+      "updated_at": "2026-10-22T06:03:46.131Z"
+    },
+    {
+      "review_id": "TS-0461-A01",
+      "card_id": "TS-0461",
+      "card_name": "风怒龙",
+      "ability_id": "TS-0461-A01",
+      "source_line": "玩家手牌的金币值小于 5 时，此牌生命值翻倍。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "83d93da0fe079ef0ed78cdc32c16d157f70a95049380b61e5bfa406941c922fc",
+      "updated_at": "2026-10-21T01:04:25.453Z"
+    },
+    {
+      "review_id": "TS-0461-A02",
+      "card_id": "TS-0461",
+      "card_name": "风怒龙",
+      "ability_id": "TS-0461-A02",
+      "source_line": "突破：从每个顶部牌金币值为 3 或以上的村庄牌堆顶部，移除 2 张牌。",
+      "current_scope_ids": [
+        "breach"
+      ],
+      "result": "confirmed",
+      "fingerprint": "e909529fd0654b78588c7baab879e1e86b901e97f6953af7a0969d2e5c9cd370",
+      "updated_at": "2026-10-21T01:05:15.636Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0462-A01",
+      "card_id": "TS-0462",
+      "card_name": "岩岚巨龙",
+      "ability_id": "TS-0462-A01",
+      "source_line": "当前玩家展示至少 1 金币，否则此牌生命值翻倍。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "da761c6f6da8018e4f917f808659a07b4c480be73f248d66ca7da43239b5e7df",
+      "updated_at": "2026-10-21T01:05:39.128Z"
+    },
+    {
+      "review_id": "TS-0462-A02",
+      "card_id": "TS-0462",
+      "card_name": "岩岚巨龙",
+      "ability_id": "TS-0462-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "d59980526c227570cfdc4dab735f3e5308e87d3a5a3383e47e30c5423fa46f67",
+      "updated_at": "2026-10-21T01:06:05.062Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0463-A01",
+      "card_id": "TS-0463",
+      "card_name": "海德拉",
+      "ability_id": "TS-0463-A01",
+      "source_line": "突破：每位玩家从自己的牌堆顶弃牌，直到翻出 1 名英雄，然后摧毁该英雄。",
+      "current_scope_ids": [
+        "breach"
+      ],
+      "result": "issue",
+      "expected_scope": "other",
+      "fingerprint": "61fa61da023f9b0b41d27dd5233b1126c82efff73250ee1dda2e618438a7822b",
+      "updated_at": "2026-10-21T01:40:09.428Z",
+      "symbol": "absent",
+      "note": "当前实现是翻到英雄后，处理完摧毁效果，才将其余牌放入弃牌堆。这个处理会导致非英雄牌的堆积。\n我感觉应该是这样：\nwhile （抽牌堆牌数>0）\n  翻出牌堆顶\n  if(翻开的牌 contains 英雄 tag)\n    摧毁 这张牌\n    break\n  else\n    将该牌放入对应玩家弃牌堆 "
+    },
+    {
+      "review_id": "TS-0463-A02",
+      "card_id": "TS-0463",
+      "card_name": "海德拉",
+      "ability_id": "TS-0463-A02",
+      "source_line": "战斗：每位玩家展示手牌中的 2 名英雄，或展示手牌以证明没有。摧毁展示英雄中力量最高的 1 名英雄。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "d5bc89e11cd0b1f2000d86e3c1b3d14f053a1b94b3017e1072d3aaf9ad0d8bc6",
+      "updated_at": "2026-10-21T01:43:19.083Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0464-A01",
+      "card_id": "TS-0464",
+      "card_name": "虚空终焉",
+      "ability_id": "TS-0464-A01",
+      "source_line": "攻击此牌时，同名英雄最多只能有 1 名参与战斗。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "pending",
+      "symbol": "absent",
+      "fingerprint": "d073bc808b46d6c360695eeef9be18cb3e0f752cc9d426783b8b16c436632c84",
+      "updated_at": "2026-10-21T01:43:25.288Z"
+    },
+    {
+      "review_id": "TS-0464-A02",
+      "card_id": "TS-0464",
+      "card_name": "虚空终焉",
+      "ability_id": "TS-0464-A02",
+      "source_line": "战斗：摧毁所有手牌中有复数张同名牌的牌。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "eab374cddae20422d64bec8984d01a32ee0cc6d6de8bdc56713f2bdb5f5f2b73",
+      "updated_at": "2026-10-22T06:52:27.149Z"
+    },
+    {
+      "review_id": "TS-0465-A01",
+      "card_id": "TS-0465",
+      "card_name": "坟冢骑士",
+      "ability_id": "TS-0465-A01",
+      "source_line": "免疫魔法攻击。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "updated_at": "2026-10-21T03:55:22.364Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0466-A01",
+      "card_id": "TS-0466",
+      "card_name": "墓穴萦魂",
+      "ability_id": "TS-0466-A01",
+      "source_line": "免疫魔法攻击。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "updated_at": "2026-10-21T03:55:30.100Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0466-A02",
+      "card_id": "TS-0466",
+      "card_name": "墓穴萦魂",
+      "ability_id": "TS-0466-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "71b2d37179ed33e49457d46913e908fe37ec2eb31c406f0be39d9747ca9efb8d",
+      "updated_at": "2026-10-21T03:55:43.248Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0467-A01",
+      "card_id": "TS-0467",
+      "card_name": "死亡使者",
+      "ability_id": "TS-0467-A01",
+      "source_line": "免疫魔法攻击。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "updated_at": "2026-10-21T04:04:14.325Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0467-A02",
+      "card_id": "TS-0467",
+      "card_name": "死亡使者",
+      "ability_id": "TS-0467-A02",
+      "source_line": "战斗：摧毁 1 张法术。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "3c195a147146e9e2a8f501820e6b75a34c70029234fe4ea4722e2df00c9d4a1b",
+      "updated_at": "2026-10-22T06:53:06.640Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0468-A01",
+      "card_id": "TS-0468",
+      "card_name": "逆命者",
+      "ability_id": "TS-0468-A01",
+      "source_line": "免疫魔法攻击。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "updated_at": "2026-10-21T04:04:55.678Z"
+    },
+    {
+      "review_id": "TS-0468-A02",
+      "card_id": "TS-0468",
+      "card_name": "逆命者",
+      "ability_id": "TS-0468-A02",
+      "source_line": "战斗：摧毁 1 名牧师或法师。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "issue",
+      "symbol": "absent",
+      "fingerprint": "851cd232dd18160fc6917881a2f2d26f2553e6e9321d85fd3c8290a02c49cac3",
+      "updated_at": "2026-10-22T06:55:17.010Z",
+      "expected_scope": "other",
+      "note": "该条效果描述并未要求是英雄，只要有牧师tag或者法师的tag应该都可以吧。"
+    },
+    {
+      "review_id": "TS-0469-A01",
+      "card_id": "TS-0469",
+      "card_name": "巫妖领主",
+      "ability_id": "TS-0469-A01",
+      "source_line": "免疫魔法攻击。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "updated_at": "2026-10-21T04:07:36.337Z"
+    },
+    {
+      "review_id": "TS-0469-A02",
+      "card_id": "TS-0469",
+      "card_name": "巫妖领主",
+      "ability_id": "TS-0469-A02",
+      "source_line": "战斗：所有英雄承受攻击 -1 和 力量 -4。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "0a4b216f9576f98aea8adb0aeebcca2e3fe8c65018422d52d28615650d670851",
+      "updated_at": "2026-10-21T04:07:36.337Z"
+    },
+    {
+      "review_id": "TS-0470-A01",
+      "card_id": "TS-0470",
+      "card_name": "诱魂鬼火",
+      "ability_id": "TS-0470-A01",
+      "source_line": "当你选择与此怪物战斗时，除非你立即摧毁 1 张食物，否则无法击败此牌。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "9bb2078cfa557363ca23eb30138f6cf614b88daec6899cc1ab44324c46e4bf3c",
+      "updated_at": "2026-10-21T04:23:28.397Z"
+    },
+    {
+      "review_id": "TS-0471-A01",
+      "card_id": "TS-0471",
+      "card_name": "残酷幽影",
+      "ability_id": "TS-0471-A01",
+      "source_line": "当你选择与此怪物战斗时，除非你立即摧毁 1 名英雄，否则无法击败此牌。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "6421e55734b6d17c91e993ebf597562651d9a97aba4f37f8e85074c983a96da3",
+      "updated_at": "2026-10-21T04:23:53.678Z"
+    },
+    {
+      "review_id": "TS-0472-A01",
+      "card_id": "TS-0472",
+      "card_name": "尸妖",
+      "ability_id": "TS-0472-A01",
+      "source_line": "当你选择与此怪物战斗时，除非你立即摧毁 2 点经验值，否则无法击败此牌。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "2f1325a0efba9e2215f965c87005f1c77f84c1760c969fd5e9da6210891bfd09",
+      "updated_at": "2026-10-21T04:26:11.038Z"
+    },
+    {
+      "review_id": "TS-0475-A01",
+      "card_id": "TS-0475",
+      "card_name": "末日先行官",
+      "ability_id": "TS-0475-A01",
+      "source_line": "战斗：摧毁 1 张法术。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "4381b02df8c00c0ce841e0c5959a58ba8bf2ac8a511032838f6c5e426e9cdfbe",
+      "updated_at": "2026-10-22T06:56:10.438Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0476-A01",
+      "card_id": "TS-0476",
+      "card_name": "饥荒行者",
+      "ability_id": "TS-0476-A01",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "db6a5886e0f015da9e5870aafee25abc2d5a327ddd46ea1f46c27bd9fb2515a2",
+      "updated_at": "2026-10-21T04:42:01.811Z"
+    },
+    {
+      "review_id": "TS-0477-A01",
+      "card_id": "TS-0477",
+      "card_name": "末日王国守卫",
+      "ability_id": "TS-0477-A01",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "1bd8e9f146ab2dccdadfff75150359eb7654d906b031af6009dd44a9685f04d7",
+      "updated_at": "2026-10-21T04:42:05.902Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0478-A01",
+      "card_id": "TS-0478",
+      "card_name": "苦难骑士",
+      "ability_id": "TS-0478-A01",
+      "source_line": "战斗：所有英雄承受力量 -2。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "7669903595385eb57d30ab64f20d0f53fd1cfaa73f571336bb5bf6bd11c8a8cb",
+      "updated_at": "2026-10-22T06:55:52.414Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0478-A02",
+      "card_id": "TS-0478",
+      "card_name": "苦难骑士",
+      "ability_id": "TS-0478-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "cb3d7b6d2802ed4e4273892e6dbd3af4d7ba0e16c07e14020d54042d4943dcf9",
+      "updated_at": "2026-10-21T04:42:42.408Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0479-A01",
+      "card_id": "TS-0479",
+      "card_name": "死亡领主",
+      "ability_id": "TS-0479-A01",
+      "source_line": "战斗：获得 2 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "1526823c24cbda4ffcd3781e8cf6775d0e5c21128271168fa7292823812f41ad",
+      "updated_at": "2026-10-21T04:42:48.595Z"
+    },
+    {
+      "review_id": "TS-0480-A01",
+      "card_id": "TS-0480",
+      "card_name": "疫病僵尸",
+      "ability_id": "TS-0480-A01",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "26d104ce37c1b5fcd065a5367da0890675ec3c35858189317517594e62515104",
+      "updated_at": "2026-10-21T04:44:28.347Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0481-A01",
+      "card_id": "TS-0481",
+      "card_name": "躁动腐尸",
+      "ability_id": "TS-0481-A01",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "410b0f26f2e9402dcdc3e25ae63fb74d0c8b711365dabb3e068681a0477d1b04",
+      "updated_at": "2026-10-21T04:44:34.852Z"
+    },
+    {
+      "review_id": "TS-0482-A01",
+      "card_id": "TS-0482",
+      "card_name": "播疫者",
+      "ability_id": "TS-0482-A01",
+      "source_line": "全局：每当另一只怪物被击败时，每位玩家获得 1 张疾病。",
+      "current_scope_ids": [
+        "hall"
+      ],
+      "result": "pending",
+      "symbol": "absent",
+      "fingerprint": "3f5bf29101be752d94b672f6b454a648724e76623590df89c7bf249dc3bef561",
+      "updated_at": "2026-10-22T06:57:11.497Z",
+      "expected_scope": "other",
+      "note": "此牌在地下城大厅中，怪物被击败后触发。这个触发事件，在这张怪物自身被击败后会触发吗？应该不能触发吧？"
+    },
+    {
+      "review_id": "TS-0482-A02",
+      "card_id": "TS-0482",
+      "card_name": "播疫者",
+      "ability_id": "TS-0482-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "41911da5eed0bcb0677e7c0298e92878ac0e1e3eda553b25192a5ea4b90467b8",
+      "updated_at": "2026-10-22T06:57:20.152Z"
+    },
+    {
+      "review_id": "TS-0483-A01",
+      "card_id": "TS-0483",
+      "card_name": "殍尸",
+      "ability_id": "TS-0483-A01",
+      "source_line": "战斗：手牌中每有 1 张疾病，摧毁 1 张非疾病牌。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "d8cb5191727bab2ae56579dbea08e987d31880dc88f19dee090804ecba105701",
+      "updated_at": "2026-10-22T06:57:32.182Z",
+      "expected_scope": "current",
+      "note": ""
+    },
+    {
+      "review_id": "TS-0483-A02",
+      "card_id": "TS-0483",
+      "card_name": "殍尸",
+      "ability_id": "TS-0483-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "5d5bc169fe9c1b930304a01a037cca6ec2c3846458ad8e2475a7c0f6b550c782",
+      "updated_at": "2026-10-21T04:50:56.993Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0484-A01",
+      "card_id": "TS-0484",
+      "card_name": "行走灾疫",
+      "ability_id": "TS-0484-A01",
+      "source_line": "突破：每位玩家获得 1 张疾病。",
+      "current_scope_ids": [
+        "breach"
+      ],
+      "result": "confirmed",
+      "fingerprint": "f586d6faee93f1b903f95f513be3b68167034e6a41ce55c8fd9362e7f0d2fd68",
+      "updated_at": "2026-10-21T04:52:09.425Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0484-A02",
+      "card_id": "TS-0484",
+      "card_name": "行走灾疫",
+      "ability_id": "TS-0484-A02",
+      "source_line": "战斗：获得 2 张疾病。其他每位玩家获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "0d7136d21793c6bc0ffc433c68a58a47b684005795125428be94cccaad8400d9",
+      "updated_at": "2026-10-21T04:52:17.343Z"
+    },
+    {
+      "review_id": "TS-0485-A01",
+      "card_id": "TS-0485",
+      "card_name": "萦魂",
+      "ability_id": "TS-0485-A01",
+      "source_line": "战斗：一名英雄无法攻击。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "5381fd2a4bb8374d89b2236b430673fc2b75b58476743fbf17f7fd4e9992e9ed",
+      "updated_at": "2026-10-22T06:58:03.027Z"
+    },
+    {
+      "review_id": "TS-0492-A03",
+      "card_id": "TS-0492",
+      "card_name": "雷霆凝视",
+      "ability_id": "TS-0492-A03",
+      "source_line": "地下城：抽 1 张牌。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "cf14cff2d0d9138d8296d286cacf0618bd3fe967dc75c2ce26883acb78dcc5a4",
+      "updated_at": "2026-10-21T07:51:59.338Z"
+    },
+    {
+      "review_id": "TS-0494-A03",
+      "card_id": "TS-0494",
+      "card_name": "地狱风暴",
+      "ability_id": "TS-0494-A03",
+      "source_line": "地下城：抽 1 张牌。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "fingerprint": "01f7a71e3244d43284f22077e62b0952055c3f81b9c4fc49fc9bfca93d4f5235",
+      "updated_at": "2026-10-21T07:52:13.323Z",
+      "symbol": "present"
+    },
+    {
+      "review_id": "TS-0495-A01",
+      "card_id": "TS-0495",
+      "card_name": "余烬",
+      "ability_id": "TS-0495-A01",
+      "source_line": "光照 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "issue",
+      "fingerprint": "7e92dd8e2af415edfd56c15376928c273ceeaf9113f2a9ccac50c73c1665f43b",
+      "updated_at": "2026-10-21T08:15:16.126Z",
+      "symbol": "absent",
+      "expected_scope": "other",
+      "note": "该怪物的光照+1应该是战斗时触发的，而作为玩家手牌时也会增加一点光照因为卡牌数值本身就有1光照，这是正常应用的。"
+    },
+    {
+      "review_id": "TS-0496-A01",
+      "card_id": "TS-0496",
+      "card_name": "闪焰",
+      "ability_id": "TS-0496-A01",
+      "source_line": "全局：光照 +1。",
+      "current_scope_ids": [
+        "hall"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "daa702a5dbd4881deb96eba0b7f75942e6ab9c45930e68eec75a46e998412372",
+      "updated_at": "2026-10-21T08:17:43.387Z"
+    },
+    {
+      "review_id": "TS-0496-A02",
+      "card_id": "TS-0496",
+      "card_name": "闪焰",
+      "ability_id": "TS-0496-A02",
+      "source_line": "战斗：摧毁 1 张牌。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "ab2333b161d911be1337c31a595569534bd7f60a954e22578c24f51a1554df95",
+      "updated_at": "2026-10-22T06:58:47.287Z"
+    },
+    {
+      "review_id": "TS-0497-A01",
+      "card_id": "TS-0497",
+      "card_name": "炽焰",
+      "ability_id": "TS-0497-A01",
+      "source_line": "全局：光照 +2。",
+      "current_scope_ids": [
+        "hall"
+      ],
+      "result": "confirmed",
+      "fingerprint": "bce78a5f6d941bb510d3bf408de57d0b925e560e09afd10ce8c83e8448ae29b0",
+      "updated_at": "2026-10-21T08:22:17.542Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0497-A02",
+      "card_id": "TS-0497",
+      "card_name": "炽焰",
+      "ability_id": "TS-0497-A02",
+      "source_line": "除非本回合使用过法术或物品，否则无法击败此牌。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "c3537f9f16087e01e21a2bf10557cf04c03020d6282033f38edfb4af2abbc56a",
+      "updated_at": "2026-10-21T08:22:43.911Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0497-A03",
+      "card_id": "TS-0497",
+      "card_name": "炽焰",
+      "ability_id": "TS-0497-A03",
+      "source_line": "地下城：摧毁手牌中的 1 张疾病。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "a149d052ed44f9d5c998497e70f5d095343cc839dd59ea80b7c2dc58210c0ada",
+      "updated_at": "2026-10-22T07:01:34.197Z"
+    },
+    {
+      "review_id": "TS-0498-A01",
+      "card_id": "TS-0498",
+      "card_name": "窒息活烟",
+      "ability_id": "TS-0498-A01",
+      "source_line": "全局：光照 -2。",
+      "current_scope_ids": [
+        "hall"
+      ],
+      "result": "confirmed",
+      "fingerprint": "6456be7235d6879c46963a3d50634e573efd5bcb0b8dd8fa63c77e39e8694b06",
+      "updated_at": "2026-10-21T08:22:52.816Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0498-A02",
+      "card_id": "TS-0498",
+      "card_name": "窒息活烟",
+      "ability_id": "TS-0498-A02",
+      "source_line": "战斗：每位玩家获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "e038f066462aafb15828cd449fe219cfd11ade165eb84846c28940ee19b26187",
+      "updated_at": "2026-10-21T08:23:00.936Z"
+    },
+    {
+      "review_id": "TS-0499-A01",
+      "card_id": "TS-0499",
+      "card_name": "炼狱烈焰",
+      "ability_id": "TS-0499-A01",
+      "source_line": "全局：光照 +3。",
+      "current_scope_ids": [
+        "hall"
+      ],
+      "result": "confirmed",
+      "fingerprint": "a470617500f80316bd76d6dbed21a3148bade656a17c052982b268362596d417",
+      "updated_at": "2026-10-21T08:23:30.843Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0499-A02",
+      "card_id": "TS-0499",
+      "card_name": "炼狱烈焰",
+      "ability_id": "TS-0499-A02",
+      "source_line": "免疫魔法攻击。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "a15bbb82f22e06c9ff841621cb94b2b031f55707d7f9825c441df139c532508a",
+      "updated_at": "2026-10-21T08:23:21.893Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0500-A01",
+      "card_id": "TS-0500",
+      "card_name": "蒸汽苦痛",
+      "ability_id": "TS-0500-A01",
+      "source_line": "全局：所有怪物必须被击败，才能离开地下城大厅。",
+      "current_scope_ids": [
+        "hall"
+      ],
+      "result": "confirmed",
+      "fingerprint": "442397cef6f02aa7f68e4acc4a01dfd2ffedca2f5f387aa81ae237c53f6b8610",
+      "updated_at": "2026-10-22T07:02:23.476Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0500-A02",
+      "card_id": "TS-0500",
+      "card_name": "蒸汽苦痛",
+      "ability_id": "TS-0500-A02",
+      "source_line": "攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "updated_at": "2026-10-22T07:02:04.812Z"
+    },
+    {
+      "review_id": "TS-0506-A01",
+      "card_id": "TS-0506",
+      "card_name": "烈焰怒灵",
+      "ability_id": "TS-0506-A01",
+      "source_line": "免疫法术。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "issue",
+      "symbol": "absent",
+      "fingerprint": "ba65721a8fdc2613e402b501945958fea62f20e658e01439428fa94cda1f5042",
+      "updated_at": "2026-10-22T07:11:06.316Z",
+      "expected_scope": "other",
+      "note": "本效果没有战斗：前缀，所以是持续生效的效果。\n免疫法术不仅意味着法术牌不贡献攻击，法术的其他效果也无法指定或影响该怪物。但是法术的其他和该怪物无关的效果可以正常生效。"
+    },
+    {
+      "review_id": "TS-0506-A02",
+      "card_id": "TS-0506",
+      "card_name": "烈焰怒灵",
+      "ability_id": "TS-0506-A02",
+      "source_line": "免疫未装备武器的英雄。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "f50c822ef41eea6c935defb7f1c047dae4d241ca9a7667c8ced86aa78676ce20",
+      "updated_at": "2026-10-22T07:02:46.166Z"
+    },
+    {
+      "review_id": "card:TS-0510",
+      "card_id": "TS-0510",
+      "card_name": "兽人剑术大师",
+      "ability_id": null,
+      "source_line": "",
+      "current_scope_ids": [],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "b18e8d7ca2d589c7376a53351da5a2ad13f78e1c4f5d2844ca00b07e96fe6fee",
+      "updated_at": "2026-10-22T07:12:03.857Z"
+    },
+    {
+      "review_id": "TS-0511-A01",
+      "card_id": "TS-0511",
+      "card_name": "兽人旗手",
+      "ability_id": "TS-0511-A01",
+      "source_line": "对抗类人生物时，获得 攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "pending",
+      "symbol": "present",
+      "fingerprint": "96ffad50bccb99a08bfc078ce8050565e14856a26ff76a5ae39619d75f6c9187",
+      "updated_at": "2026-10-22T07:12:09.483Z"
+    },
+    {
+      "review_id": "card:TS-0513",
+      "card_id": "TS-0513",
+      "card_name": "半食人魔",
+      "ability_id": null,
+      "source_line": "",
+      "current_scope_ids": [],
+      "result": "confirmed",
+      "fingerprint": "27aa247497550a01b0a2e5bd4e7d466030392c83e4f7c8bd34bb49594a89a1dd",
+      "updated_at": "2026-10-22T07:12:38.336Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0520-A02",
+      "card_id": "TS-0520",
+      "card_name": "假占卜师",
+      "ability_id": "TS-0520-A02",
+      "source_line": "地下城：手牌中每有 1 张法术，获得魔法攻击 +1。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "810bab32aaf8168e64ff96a02da14de6c48ec2a945064bf42783c575ac610c08",
+      "updated_at": "2026-10-22T07:13:12.256Z"
+    },
+    {
+      "review_id": "TS-0522-A02",
+      "card_id": "TS-0522",
+      "card_name": "假教官",
+      "ability_id": "TS-0522-A02",
+      "source_line": "地下城：你的民兵获得力量 +3。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "d015441047e06a81d9f1bc0f565c5e7a9feb1f260bf21e57f3a6bd895e7fd5d7",
+      "updated_at": "2026-10-22T07:13:45.048Z"
+    },
+    {
+      "review_id": "TS-0523-A03",
+      "card_id": "TS-0523",
+      "card_name": "假斥候",
+      "ability_id": "TS-0523-A03",
+      "source_line": "地下城：抽 1 张牌，然后将 1 张手牌置于你的抽牌堆顶部。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "8ba8e7c552ceef305925e1b0907b3bd41392d0dc7df9bf5dc042b382c6e42147",
+      "updated_at": "2026-10-22T07:14:27.978Z"
+    },
+    {
+      "review_id": "TS-0524-A03",
+      "card_id": "TS-0524",
+      "card_name": "假牧师",
+      "ability_id": "TS-0524-A03",
+      "source_line": "地下城：摧毁 1 张疾病，抽取 1 张牌。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "480e962fd3070f339acb8ada8c7474d2b8d4f1ab9ccfc2ac2cae71cf3fd32e77",
+      "updated_at": "2026-10-22T07:15:07.560Z"
+    },
+    {
+      "review_id": "TS-0525-A02",
+      "card_id": "TS-0525",
+      "card_name": "假税吏",
+      "ability_id": "TS-0525-A02",
+      "source_line": "村庄：这局游戏每有 1 名玩家，获得 1 金币。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "4158bbf4fc0a571b6d7e64fd91e9e3b0b4f9542a29723cc7b0202bf0c488fba9",
+      "updated_at": "2026-10-22T07:15:23.360Z"
+    },
+    {
+      "review_id": "TS-0527-A04",
+      "card_id": "TS-0527",
+      "card_name": "假训练师",
+      "ability_id": "TS-0527-A04",
+      "source_line": "村庄 / 地下城：获得 1 点经验值。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "041e985dbce0a302253aa1f9cc211c7497e51dd717d1b1d59a544f98959f63c2",
+      "updated_at": "2026-10-22T07:19:00.603Z"
+    },
+    {
+      "review_id": "TS-0529-A03",
+      "card_id": "TS-0529",
+      "card_name": "假铁匠",
+      "ability_id": "TS-0529-A03",
+      "source_line": "地下城：每件武器获得 攻击 +1。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "96c8ef11c2cfd458898a9ee2fc211345480f58ebe55272f7374f3104fdf580d2",
+      "updated_at": "2026-10-22T07:23:07.684Z"
+    },
+    {
+      "review_id": "TS-0530-A01",
+      "card_id": "TS-0530",
+      "card_name": "火巨人",
+      "ability_id": "TS-0530-A01",
+      "source_line": "战斗：摧毁力量最低的 1 名英雄。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "35afd1a918800b913e5debeb7c6545479f732b9a3060905f1215d98d2168f80e",
+      "updated_at": "2026-10-22T07:28:59.327Z"
+    },
+    {
+      "review_id": "TS-0530-A02",
+      "card_id": "TS-0530",
+      "card_name": "火巨人",
+      "ability_id": "TS-0530-A02",
+      "source_line": "地下城：一名英雄获得力量 +3。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "fingerprint": "8f5230881e1ec16623cceb0a1f39ac0520785f10fc3521bf2a7490e496007628",
+      "updated_at": "2026-10-22T07:29:25.594Z",
+      "symbol": "present"
+    },
+    {
+      "review_id": "TS-0531-A01",
+      "card_id": "TS-0531",
+      "card_name": "山丘巨人",
+      "ability_id": "TS-0531-A01",
+      "source_line": "战斗：摧毁力量最低的 1 名英雄。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "pending",
+      "symbol": "absent",
+      "fingerprint": "83b3afccff03aceee057e526921480f7c5dfa08a1389f279dc7fae435a8734cf",
+      "updated_at": "2026-10-22T07:29:40.730Z"
+    },
+    {
+      "review_id": "TS-0536-A02",
+      "card_id": "TS-0536",
+      "card_name": "拦路匪",
+      "ability_id": "TS-0536-A02",
+      "source_line": "免疫 1 次陷阱效果。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "1ce0d5f0902b5c8fcd26547b71ccd5631d1ea0518ed16fb42e690630e79548bb",
+      "updated_at": "2026-10-22T07:31:17.211Z"
+    },
+    {
+      "review_id": "TS-0537-A02",
+      "card_id": "TS-0537",
+      "card_name": "割喉匪",
+      "ability_id": "TS-0537-A02",
+      "source_line": "地下城：抽 1 张牌。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "1810abc11f625a86eb87ee8d6cd5d03c03aacea4db1fbc325c5f2eb7e5859ae3",
+      "updated_at": "2026-10-22T07:31:24.253Z"
+    },
+    {
+      "review_id": "TS-0539-A02",
+      "card_id": "TS-0539",
+      "card_name": "刺客",
+      "ability_id": "TS-0539-A02",
+      "source_line": "攻击 +2。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "5cd734393fd37708d10aa5548577023083ea1ea638a6657f580f5965d3195f90",
+      "updated_at": "2026-10-22T07:31:34.547Z"
+    },
+    {
+      "review_id": "TS-0566-A01",
+      "card_id": "TS-0566",
+      "card_name": "莫提斯领主",
+      "ability_id": "TS-0566-A01",
+      "source_line": "光照 -1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "issue",
+      "symbol": "absent",
+      "fingerprint": "1f2494a00bea4d4c22e6c6cf8386d619fd59c273249339a76f7b635b992987df",
+      "updated_at": "2026-10-22T07:33:50.792Z",
+      "expected_scope": "battle"
+    },
+    {
+      "review_id": "TS-0568-A02",
+      "card_id": "TS-0568",
+      "card_name": "黑暗化身",
+      "ability_id": "TS-0568-A02",
+      "source_line": "光照值 -1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "issue",
+      "fingerprint": "fbfe33fde40a6bc7b9e7a64c6dc832c4b2e8aa4af2e0b9f76b0264c144bd78d8",
+      "updated_at": "2026-10-22T07:34:30.635Z",
+      "symbol": "absent",
+      "expected_scope": "battle"
+    },
+    {
+      "review_id": "TS-0570-A01",
+      "card_id": "TS-0570",
+      "card_name": "梦魇骑士",
+      "ability_id": "TS-0570-A01",
+      "source_line": "光照 -2。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "issue",
+      "fingerprint": "22abb6779b62e76a9cbcca13f934bab2248be9562f42e214301236b9643c1c9b",
+      "updated_at": "2026-10-22T07:34:45.218Z",
+      "symbol": "absent",
+      "expected_scope": "battle"
+    },
+    {
+      "review_id": "TS-0571-A01",
+      "card_id": "TS-0571",
+      "card_name": "沼泽柳妖",
+      "ability_id": "TS-0571-A01",
+      "source_line": "当此牌进入大厅后，启用 1 个临时阶层，并从地下城牌堆补充 1 张牌。",
+      "current_scope_ids": [
+        "setup",
+        "hall"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "c6521a4e2bf817064628c3559e0d5f84378e4c212aeb9151d7244375b5ae712b",
+      "updated_at": "2026-10-22T07:35:44.177Z"
+    },
+    {
+      "review_id": "TS-0571-A02",
+      "card_id": "TS-0571",
+      "card_name": "沼泽柳妖",
+      "ability_id": "TS-0571-A02",
+      "source_line": "当此牌离开大厅时，失去该临时阶层，怪物正常前移。",
+      "current_scope_ids": [
+        "setup",
+        "hall"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "545b1159e600f49c05d9f96438159d06ffba5f74a1578500345fb5ba811252bf",
+      "updated_at": "2026-10-22T07:35:44.177Z"
+    },
+    {
+      "review_id": "TS-0579-A02",
+      "card_id": "TS-0579",
+      "card_name": "灰色泥浆",
+      "ability_id": "TS-0579-A02",
+      "source_line": "凯旋：获得一次购买村庄牌（食物）的机会。",
+      "current_scope_ids": [
+        "on_defeat"
+      ],
+      "result": "confirmed",
+      "fingerprint": "53ba2ed8d6fcb535f6d80e1eeeddb24f637fca97c3cad3a5044b6e156630f376",
+      "updated_at": "2026-10-22T07:38:11.043Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0580-A01",
+      "card_id": "TS-0580",
+      "card_name": "剧毒岩渣",
+      "ability_id": "TS-0580-A01",
+      "source_line": "来自魔法攻击的攻击减半。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "9a4bb2b3c1f8946457b6a0cb4006ad44dee563eb6a6aaf22adc1d69fa4a77a71",
+      "updated_at": "2026-10-22T07:38:41.663Z"
+    },
+    {
+      "review_id": "TS-0580-A02",
+      "card_id": "TS-0580",
+      "card_name": "剧毒岩渣",
+      "ability_id": "TS-0580-A02",
+      "source_line": "免疫利刃武器。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "b07d808be6e6d3faf714534d13e9f7c0052e8bc66e42bc2641d42a3f07548878",
+      "updated_at": "2026-10-22T07:38:41.663Z"
+    },
+    {
+      "review_id": "card:TS-0581",
+      "card_id": "TS-0581",
+      "card_name": "怨恨兽",
+      "ability_id": null,
+      "source_line": "",
+      "current_scope_ids": [],
+      "result": "confirmed",
+      "symbol": "absent",
+      "fingerprint": "07e2d05e700f2681fe938626112941bbab873dbbfdc4ecbfb5ad6290a50279e8",
+      "updated_at": "2026-10-22T07:38:48.388Z"
+    },
+    {
+      "review_id": "TS-0582-A02",
+      "card_id": "TS-0582",
+      "card_name": "无缚者",
+      "ability_id": "TS-0582-A02",
+      "source_line": "魔法攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "f30989d64decfd2f7d4e8319c4d8d9e57b1bb0518ab7e92e41b10194a696b8ed",
+      "updated_at": "2026-10-22T07:38:57.683Z"
+    },
+    {
+      "review_id": "TS-0587-A01",
+      "card_id": "TS-0587",
+      "card_name": "幽毒",
+      "ability_id": "TS-0587-A01",
+      "source_line": "战斗：摧毁 1 张光照物品。若成功摧毁了物品，获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "issue",
+      "fingerprint": "4a443d4513cd9752e98f59a80d59a4785971c072f7c8e871d09209e18adb803f",
+      "updated_at": "2026-10-22T07:41:51.327Z",
+      "symbol": "absent",
+      "expected_scope": "other",
+      "note": "光照是一个tag，可以通过tag来判定，而不是根据光照值来判定。此处可能需要横展开。"
+    },
+    {
+      "review_id": "TS-0610-A02",
+      "card_id": "TS-0610",
+      "card_name": "鸦语者",
+      "ability_id": "TS-0610-A02",
+      "source_line": "魔法攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "f30989d64decfd2f7d4e8319c4d8d9e57b1bb0518ab7e92e41b10194a696b8ed",
+      "updated_at": "2026-10-22T07:44:58.561Z"
+    },
+    {
+      "review_id": "TS-0612-A02",
+      "card_id": "TS-0612",
+      "card_name": "自然主母",
+      "ability_id": "TS-0612-A02",
+      "source_line": "地下城：摧毁 1 张疾病。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "a12df06cf4778f4b6707a53ad4f9f942f73418d4ea7d461d0cc046bca4d3f970",
+      "updated_at": "2026-10-22T07:45:33.526Z"
+    },
+    {
+      "review_id": "TS-0616-A01",
+      "card_id": "TS-0616",
+      "card_name": "虫群",
+      "ability_id": "TS-0616-A01",
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "current_scope_ids": [
+        "scoring"
+      ],
+      "result": "confirmed",
+      "fingerprint": "ed4f12bf507f4d5ef6bd2721718877381347041c366f407e82b1d71c00917d86",
+      "updated_at": "2026-10-22T07:46:54.470Z"
+    },
+    {
+      "review_id": "TS-0616-A02",
+      "card_id": "TS-0616",
+      "card_name": "虫群",
+      "ability_id": "TS-0616-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "b73b6fe6168a055a3edf63c01ffb16bd0998dd4119c8b45db2c85e79e663a904",
+      "updated_at": "2026-10-22T07:46:54.470Z"
+    },
+    {
+      "review_id": "TS-0616-A03",
+      "card_id": "TS-0616",
+      "card_name": "虫群",
+      "ability_id": "TS-0616-A03",
+      "source_line": "攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "updated_at": "2026-10-22T07:45:50.519Z"
+    },
+    {
+      "review_id": "TS-0617-A01",
+      "card_id": "TS-0617",
+      "card_name": "虫群",
+      "ability_id": "TS-0617-A01",
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "current_scope_ids": [
+        "scoring"
+      ],
+      "result": "confirmed",
+      "fingerprint": "dd31c038c89cb311ed3ad2e9d23e0aa29101f1f8367533938ca2068d1c698f14",
+      "updated_at": "2026-10-22T07:46:57.086Z"
+    },
+    {
+      "review_id": "TS-0617-A02",
+      "card_id": "TS-0617",
+      "card_name": "虫群",
+      "ability_id": "TS-0617-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "22e21d4700201c4d96a31fa2a4e2b8b7af529fb30d738cfe6b83a374259df280",
+      "updated_at": "2026-10-22T07:46:57.086Z"
+    },
+    {
+      "review_id": "TS-0617-A03",
+      "card_id": "TS-0617",
+      "card_name": "虫群",
+      "ability_id": "TS-0617-A03",
+      "source_line": "攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "updated_at": "2026-10-22T07:45:57.027Z"
+    },
+    {
+      "review_id": "TS-0618-A01",
+      "card_id": "TS-0618",
+      "card_name": "虫群",
+      "ability_id": "TS-0618-A01",
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "current_scope_ids": [
+        "scoring"
+      ],
+      "result": "confirmed",
+      "fingerprint": "0dcf8bea5ce343dab151ddd516490a1773d0c3ea1c45439374adbdb8e07f5f0f",
+      "updated_at": "2026-10-22T07:47:00.218Z"
+    },
+    {
+      "review_id": "TS-0618-A02",
+      "card_id": "TS-0618",
+      "card_name": "虫群",
+      "ability_id": "TS-0618-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "2664dac8361c390e87438efee2f6a4ebfcbdc6f2f0c679b60ec63dc0a1af6705",
+      "updated_at": "2026-10-22T07:47:00.218Z"
+    },
+    {
+      "review_id": "TS-0618-A03",
+      "card_id": "TS-0618",
+      "card_name": "虫群",
+      "ability_id": "TS-0618-A03",
+      "source_line": "攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "updated_at": "2026-10-22T07:46:05.213Z"
+    },
+    {
+      "review_id": "TS-0619-A01",
+      "card_id": "TS-0619",
+      "card_name": "虫群",
+      "ability_id": "TS-0619-A01",
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "current_scope_ids": [
+        "scoring"
+      ],
+      "result": "confirmed",
+      "fingerprint": "bb98ab57242da774cd1a0899583a26964b8130cdfd75af067fd5ebe05509b1ce",
+      "updated_at": "2026-10-22T07:47:02.876Z"
+    },
+    {
+      "review_id": "TS-0619-A02",
+      "card_id": "TS-0619",
+      "card_name": "虫群",
+      "ability_id": "TS-0619-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "6e9d15e0edf99bc292c231b735d4f1004512f1575611df46538d864f87acf585",
+      "updated_at": "2026-10-22T07:47:02.876Z"
+    },
+    {
+      "review_id": "TS-0619-A03",
+      "card_id": "TS-0619",
+      "card_name": "虫群",
+      "ability_id": "TS-0619-A03",
+      "source_line": "攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "updated_at": "2026-10-22T07:46:10.182Z"
+    },
+    {
+      "review_id": "TS-0620-A01",
+      "card_id": "TS-0620",
+      "card_name": "虫群",
+      "ability_id": "TS-0620-A01",
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "current_scope_ids": [
+        "scoring"
+      ],
+      "result": "confirmed",
+      "fingerprint": "4acbc73767a2ef164402252d10fe5bb834cca2cf03e4da60a80eb8a0e96fbb6b",
+      "updated_at": "2026-10-22T07:47:08.244Z"
+    },
+    {
+      "review_id": "TS-0620-A02",
+      "card_id": "TS-0620",
+      "card_name": "虫群",
+      "ability_id": "TS-0620-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "6213b657a783f9b64fbc949c7969de7148977f2e4bce03a6ea93e1367aa70930",
+      "updated_at": "2026-10-22T07:47:08.244Z"
+    },
+    {
+      "review_id": "TS-0620-A03",
+      "card_id": "TS-0620",
+      "card_name": "虫群",
+      "ability_id": "TS-0620-A03",
+      "source_line": "攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "updated_at": "2026-10-22T07:46:24.559Z"
+    },
+    {
+      "review_id": "TS-0621-A01",
+      "card_id": "TS-0621",
+      "card_name": "虫群",
+      "ability_id": "TS-0621-A01",
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "current_scope_ids": [
+        "scoring"
+      ],
+      "result": "confirmed",
+      "fingerprint": "aefefae66c65dd771ad9c1c9f6e67117e761193cca8508ee19965b5378e39329",
+      "updated_at": "2026-10-22T07:46:35.614Z"
+    },
+    {
+      "review_id": "TS-0621-A02",
+      "card_id": "TS-0621",
+      "card_name": "虫群",
+      "ability_id": "TS-0621-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "57a00744b6eee96c9fc4df7010cdfa513bc942dc70dd318983d60030c508c5cd",
+      "updated_at": "2026-10-22T07:46:35.614Z"
+    },
+    {
+      "review_id": "TS-0621-A03",
+      "card_id": "TS-0621",
+      "card_name": "虫群",
+      "ability_id": "TS-0621-A03",
+      "source_line": "攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "updated_at": "2026-10-22T07:46:35.614Z"
+    },
+    {
+      "review_id": "TS-0622-A01",
+      "card_id": "TS-0622",
+      "card_name": "虫群",
+      "ability_id": "TS-0622-A01",
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "current_scope_ids": [
+        "scoring"
+      ],
+      "result": "confirmed",
+      "fingerprint": "10d8f5f0d97e2f9a7351226e773d51ff5a61faf76b92e7eb31fed659025eca19",
+      "updated_at": "2026-10-22T07:47:14.250Z"
+    },
+    {
+      "review_id": "TS-0622-A02",
+      "card_id": "TS-0622",
+      "card_name": "虫群",
+      "ability_id": "TS-0622-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "9fd057950cafe1b29af4c4b7527bd4984427b15066d73a2d8479724b8ba50044",
+      "updated_at": "2026-10-22T07:47:14.250Z"
+    },
+    {
+      "review_id": "TS-0622-A03",
+      "card_id": "TS-0622",
+      "card_name": "虫群",
+      "ability_id": "TS-0622-A03",
+      "source_line": "攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "updated_at": "2026-10-22T07:47:14.250Z"
+    },
+    {
+      "review_id": "TS-0623-A01",
+      "card_id": "TS-0623",
+      "card_name": "虫群",
+      "ability_id": "TS-0623-A01",
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "current_scope_ids": [
+        "scoring"
+      ],
+      "result": "confirmed",
+      "fingerprint": "4baf441a52ca2cfee58404994eece737d2201fb69bb65dea0848bf5b2277d69b",
+      "updated_at": "2026-10-22T07:47:20.348Z"
+    },
+    {
+      "review_id": "TS-0623-A02",
+      "card_id": "TS-0623",
+      "card_name": "虫群",
+      "ability_id": "TS-0623-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "ec2d210904c40e06e07af097841e22ef84f525814d11f31c9d7da18bb63a3be4",
+      "updated_at": "2026-10-22T07:47:20.348Z"
+    },
+    {
+      "review_id": "TS-0623-A03",
+      "card_id": "TS-0623",
+      "card_name": "虫群",
+      "ability_id": "TS-0623-A03",
+      "source_line": "攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "updated_at": "2026-10-22T07:47:20.348Z"
+    },
+    {
+      "review_id": "TS-0624-A01",
+      "card_id": "TS-0624",
+      "card_name": "虫群",
+      "ability_id": "TS-0624-A01",
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "current_scope_ids": [
+        "scoring"
+      ],
+      "result": "confirmed",
+      "fingerprint": "72183b248aa5bba50eddae9cd85a1a4df3ebbc644ee732e03f2dcdb05c6f3bc3",
+      "updated_at": "2026-10-22T07:47:30.921Z"
+    },
+    {
+      "review_id": "TS-0624-A02",
+      "card_id": "TS-0624",
+      "card_name": "虫群",
+      "ability_id": "TS-0624-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "15fe8e8d7c52306c1238c639d11d837d36ee4969f9acb2bdd12b4ecf4a5f2c8f",
+      "updated_at": "2026-10-22T07:47:30.921Z"
+    },
+    {
+      "review_id": "TS-0624-A03",
+      "card_id": "TS-0624",
+      "card_name": "虫群",
+      "ability_id": "TS-0624-A03",
+      "source_line": "攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "updated_at": "2026-10-22T07:47:30.921Z"
+    },
+    {
+      "review_id": "TS-0625-A01",
+      "card_id": "TS-0625",
+      "card_name": "虫群",
+      "ability_id": "TS-0625-A01",
+      "source_line": "游戏结束时，每张虫群的胜利点数等同于你牌组中虫群的数量。（包括此牌，最高 5 胜利点）",
+      "current_scope_ids": [
+        "scoring"
+      ],
+      "result": "confirmed",
+      "fingerprint": "e394b89dcef1b9737cd5fb5ef5f577ec81f17fdbb469202d75e0616c1672ac3f",
+      "updated_at": "2026-10-22T07:47:37.314Z"
+    },
+    {
+      "review_id": "TS-0625-A02",
+      "card_id": "TS-0625",
+      "card_name": "虫群",
+      "ability_id": "TS-0625-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "3cc8f85d5702d5c429803b15d2f284ff86c1b230bac3ee5c5de2c0ae6d0fdcc1",
+      "updated_at": "2026-10-22T07:47:37.314Z"
+    },
+    {
+      "review_id": "TS-0625-A03",
+      "card_id": "TS-0625",
+      "card_name": "虫群",
+      "ability_id": "TS-0625-A03",
+      "source_line": "攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "updated_at": "2026-10-22T07:47:37.314Z"
+    },
+    {
+      "review_id": "TS-0626-A01",
+      "card_id": "TS-0626",
+      "card_name": "虫群",
+      "ability_id": "TS-0626-A01",
+      "source_line": "用虫群牌堆顶部的 1 张牌替换此牌。",
+      "current_scope_ids": [
+        "on_enter"
+      ],
+      "result": "confirmed",
+      "fingerprint": "f5c4f68e71baa71f5c30078a455a6fce464e0a923bfb0f632eb0f67f6f602f7f",
+      "updated_at": "2026-10-22T07:48:03.465Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0644-A02",
+      "card_id": "TS-0644",
+      "card_name": "黏土魔像",
+      "ability_id": "TS-0644-A02",
+      "source_line": "地下城：一名英雄获得 力量 +2。",
+      "current_scope_ids": [
+        "hand_active"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "4845acc8ddca9b4786603c5d6a8b954753a16a49ddbdde5ddcee01c2920ae856",
+      "updated_at": "2026-10-22T07:48:36.426Z"
+    },
+    {
+      "review_id": "TS-0649-A01",
+      "card_id": "TS-0649",
+      "card_name": "天马",
+      "ability_id": "TS-0649-A01",
+      "source_line": "攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "updated_at": "2026-10-22T07:49:00.386Z"
+    },
+    {
+      "review_id": "TS-0650-A01",
+      "card_id": "TS-0650",
+      "card_name": "闪现犬",
+      "ability_id": "TS-0650-A01",
+      "source_line": "光照 -1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "issue",
+      "symbol": "absent",
+      "fingerprint": "1f2494a00bea4d4c22e6c6cf8386d619fd59c273249339a76f7b635b992987df",
+      "updated_at": "2026-10-22T07:49:14.158Z",
+      "expected_scope": "battle"
+    },
+    {
+      "review_id": "TS-0651-A01",
+      "card_id": "TS-0651",
+      "card_name": "狮鹫",
+      "ability_id": "TS-0651-A01",
+      "source_line": "魔法攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "f30989d64decfd2f7d4e8319c4d8d9e57b1bb0518ab7e92e41b10194a696b8ed",
+      "updated_at": "2026-10-22T07:49:53.570Z"
+    },
+    {
+      "review_id": "TS-0652-A03",
+      "card_id": "TS-0652",
+      "card_name": "斯芬克斯",
+      "ability_id": "TS-0652-A03",
+      "source_line": "魔法攻击 +2。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "c12fdf4f550c77aed8a5742b03278d3a93db581e186471d8e3cdad99293d0a6e",
+      "updated_at": "2026-10-22T07:50:01.156Z"
+    },
+    {
+      "review_id": "TS-0660-A01",
+      "card_id": "TS-0660",
+      "card_name": "迅尾",
+      "ability_id": "TS-0660-A01",
+      "source_line": "所有英雄承受力量 -1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "issue",
+      "symbol": "absent",
+      "fingerprint": "434aa771b58932925339272a096f5d8f5e597c7058d6f221aa79a1a776664b5a",
+      "updated_at": "2026-10-21T07:36:44.255Z",
+      "expected_scope": "other",
+      "note": "这条没有战利品符号，应当是战斗效果。"
+    },
+    {
+      "review_id": "TS-0660-A02",
+      "card_id": "TS-0660",
+      "card_name": "迅尾",
+      "ability_id": "TS-0660-A02",
+      "source_line": "战斗：获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "5ffc9bf04af19512a9518c392ef810dd9763671de8ef012669f2ab9ba5a55bae",
+      "updated_at": "2026-10-21T07:37:03.249Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0661-A01",
+      "card_id": "TS-0661",
+      "card_name": "怖齿",
+      "ability_id": "TS-0661-A01",
+      "source_line": "战斗：每有 1 名民兵，获得 1 张疾病。摧毁所有民兵。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "323ec5147074dacd0b9a6efaa7a922a7e2dbefcd556f7c473d9ca37d432ca20b",
+      "updated_at": "2026-10-21T07:39:08.582Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0662-A01",
+      "card_id": "TS-0662",
+      "card_name": "长牙",
+      "ability_id": "TS-0662-A01",
+      "source_line": "魔法攻击减半。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "0382bb2c2343a1baf4435e998488a2dce71f28212fc21ad8e41c603a5cb043d5",
+      "updated_at": "2026-10-21T07:39:50.394Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0662-A02",
+      "card_id": "TS-0662",
+      "card_name": "长牙",
+      "ability_id": "TS-0662-A02",
+      "source_line": "战斗：每有 1 名战士或民兵，获得 1 张疾病。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "43ab852814a549b3c9a99c4e9e844e44f8bf3543a0f382c5db32abdf14417717",
+      "updated_at": "2026-10-21T07:40:14.421Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0663-A01",
+      "card_id": "TS-0663",
+      "card_name": "史卡拉狄克",
+      "ability_id": "TS-0663-A01",
+      "source_line": "战斗：摧毁 1 张武器。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "d6c5e088301fed3de32fa16ef3a98d04dacec079d00458eda3e05f0e431b9255",
+      "updated_at": "2026-10-21T07:40:30.916Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0664-A01",
+      "card_id": "TS-0664",
+      "card_name": "米索鲁尼恩",
+      "ability_id": "TS-0664-A01",
+      "source_line": "战斗：摧毁 1 名英雄。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "c2035f8a85be59393b6522df3304cbda28909f46916cd6d2f7226a4b81c104df",
+      "updated_at": "2026-10-21T07:40:53.020Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0665-A01",
+      "card_id": "TS-0665",
+      "card_name": "永恒尤利欧",
+      "ability_id": "TS-0665-A01",
+      "source_line": "没有魔法攻击时，攻击减半。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "ef4e49f6967f18d42ea524cc294a0f122a4d8bb4770bf255011fbf3c154d9a93",
+      "updated_at": "2026-10-21T07:40:49.529Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0665-A02",
+      "card_id": "TS-0665",
+      "card_name": "永恒尤利欧",
+      "ability_id": "TS-0665-A02",
+      "source_line": "战斗：摧毁 1 名民兵。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "bd76b1819c9f3e087747662ee123b877ae80103eb6561aa98d231e9336aa019f",
+      "updated_at": "2026-10-21T07:41:00.802Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0665-A03",
+      "card_id": "TS-0665",
+      "card_name": "永恒尤利欧",
+      "ability_id": "TS-0665-A03",
+      "source_line": "攻击 +1。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "fingerprint": "e545d5e86c6eb4c5c3b6e16c5ba5f3dd46c5bf1f212f34a15ce3e8021b8e938c",
+      "updated_at": "2026-10-21T07:45:27.742Z",
+      "symbol": "present"
+    },
+    {
+      "review_id": "TS-0666-A01",
+      "card_id": "TS-0666",
+      "card_name": "远古泰尔",
+      "ability_id": "TS-0666-A01",
+      "source_line": "突破：每位玩家必须弃掉 2 张牌。",
+      "current_scope_ids": [
+        "breach"
+      ],
+      "result": "confirmed",
+      "fingerprint": "d8b0ffdfb60c9490ba0756c3b4d7b35b457aecfe44417a3705a44ff090952714",
+      "updated_at": "2026-10-21T07:46:28.937Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0666-A02",
+      "card_id": "TS-0666",
+      "card_name": "远古泰尔",
+      "ability_id": "TS-0666-A02",
+      "source_line": "战斗：摧毁 1 名英雄。",
+      "current_scope_ids": [
+        "battle"
+      ],
+      "result": "confirmed",
+      "fingerprint": "32b8e987097107d577df70cc0fec489e2f67b2b2bfcc0d420f6e9c1150b03aee",
+      "updated_at": "2026-10-21T07:46:40.232Z",
+      "symbol": "absent"
+    },
+    {
+      "review_id": "TS-0666-A03",
+      "card_id": "TS-0666",
+      "card_name": "远古泰尔",
+      "ability_id": "TS-0666-A03",
+      "source_line": "魔法攻击 +2。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "c12fdf4f550c77aed8a5742b03278d3a93db581e186471d8e3cdad99293d0a6e",
+      "updated_at": "2026-10-21T07:46:54.916Z"
+    },
+    {
+      "review_id": "TS-0667-A03",
+      "card_id": "TS-0667",
+      "card_name": "黑檀烟龙",
+      "ability_id": "TS-0667-A03",
+      "source_line": "攻击 +3。",
+      "current_scope_ids": [
+        "hand_passive"
+      ],
+      "result": "confirmed",
+      "symbol": "present",
+      "fingerprint": "bf86632ef020d261f7461eaf99a93941534ee57c0db5c58064bca15d772fb81d",
+      "updated_at": "2026-10-21T07:47:12.495Z"
+    }
+  ]
+}

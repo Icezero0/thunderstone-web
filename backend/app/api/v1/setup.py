@@ -6,10 +6,10 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from engine.catalog.repository import CatalogSnapshot
-from engine.catalog.service import build_panel_catalog
-from engine.rules.service import validate_rules_config
-from engine.setup import SetupChoiceRequired, SetupError, start_game
+from backend.app.integrations.game_engine.catalog.repository import CatalogSnapshot
+from backend.app.integrations.game_engine.catalog.service import build_panel_catalog
+from backend.app.integrations.game_engine.rules.service import validate_rules_config
+from backend.app.integrations.game_engine.setup import SetupChoiceRequired, SetupError, start_game
 
 from backend.app.core.database import get_db
 from backend.app.modules.cards.repository import load_catalog_snapshot

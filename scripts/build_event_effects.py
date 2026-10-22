@@ -82,8 +82,8 @@ for id, query, fixture in (
     add(id, "BREACH", players(reveal(choose_remove({**BOUND, **query}))),
         draw=(fixture, fixture, "TS-0003", "TS-0004", "TS-0002"),
         expected={"destroy_count_each": 1, "discard_count_each": 4})
-add("TS-0463-A01", "BREACH", players(reveal(each({**BOUND, "tag": "英雄"}, target("destroy")),
-    count=1000, until={"tag": "英雄"})), draw=("TS-0003", "TS-0004", "TS-0001", "TS-0302"),
+add("TS-0463-A01", "BREACH", players({"op": "discard_until", "filter": {"tag": "英雄"}, "bind": "revealed",
+    "then": each(BOUND, target("destroy"))}), draw=("TS-0003", "TS-0004", "TS-0001", "TS-0302"),
     expected={"destroy_count_each": 1, "discard_count_each": 2, "draw_remaining_each": 1})
 
 for id, query, count in (
@@ -135,7 +135,7 @@ for id, body in (
 add("TS-0522-A01", "DUNGEON_ENTER", {"op": "gain_card", "card_id": "TS-0001"}, zone="hall", expected={"gained": "TS-0001"})
 add("TS-0676-A01", "VILLAGE_ENTER", atom("gain_disease"), zone="hall", expected={"diseases": 1})
 add("TS-0527-A01", "HERO_UPGRADED", atom("lose_xp"), zone="hall", expected={"xp": 4})
-add("TS-0683-A01", "DUNGEON_ENTER", each({**HAND, "subcategory": "怪物"}, target("destroy")),
+add("TS-0683-A01", "DUNGEON_ENTER", each({**HAND, "tag": "怪物"}, target("destroy")),
     zone="hall", hand=("TS-0476", "TS-0476", "TS-0001"), expected={"destroyed": ["TS-0476", "TS-0476"]})
 add("TS-0228-A01", "CARD_PURCHASED", atom("gain_xp", 2), expected={"xp": 7})
 add("TS-0247-A02", "CARD_EQUIPPED", each({"zone": "event_hero"},
@@ -166,7 +166,7 @@ add("TS-0686-A01", "TRAP_REVEALED", players(each({**HAND, "tag": "法术"}, targ
 for id in ("TS-0687-A01", "TS-0691-A01"):
     add(id, "TRAP_REVEALED", choose_remove({**HERO, "min_by": "strength"}), hand=("TS-0001", "TS-0302"),
         expected={"destroyed": ["TS-0001"]})
-add("TS-0692-A02", "TRAP_REVEALED", players(reveal(each({**BOUND, "subcategory": "怪物"}, target("destroy")), 1), "others"),
+add("TS-0692-A02", "TRAP_REVEALED", players(reveal(each({**BOUND, "tag": "怪物"}, target("destroy")), 1), "others"),
     draw=("TS-0476", "TS-0003"), expected={"other_destroy_count": 1})
 
 shield = {**HERO, "tags_any": ["牧师", "盗贼"]}
@@ -205,21 +205,23 @@ CASES[-1]["variants"] = [{"hand": ["TS-0447"], "expected": {"destroyed": []}}]
 for id, predicate, purchased, supply in (
     ("TS-0358-A03", {"tag": "武器"}, "TS-0002", None),
     ("TS-0332-A03", {"tag": "武器"}, "TS-0002", None),
-    ("TS-0338-A03", {"card_type": "村庄牌", "tag": "佣兵"}, "TS-0226", "TS-0226"),
+    ("TS-0338-A03", {"tag": "村庄", "tags_any": ["佣兵"]}, "TS-0226", "TS-0226"),
     ("TS-0340-A03", {"tag": "武器"}, "TS-0002", None),
-    ("TS-0371-A03", {"tag": "物品", "light_min": 1}, "TS-0003", None),
-    ("TS-0374-A03", {"card_type": "村庄牌"}, "TS-0002", None),
+    ("TS-0371-A03", {"tag": "物品", "tags_any": ["光照"]}, "TS-0003", None),
+    ("TS-0374-A03", {"tag": "村庄"}, "TS-0002", None),
     ("TS-0380-A03", {"tag": "村民"}, "TS-0226", "TS-0226"),
     ("TS-0407-A03", {"tag": "法术"}, "TS-0267", "TS-0267"),
     ("TS-0445-A03", {"tag": "村民"}, "TS-0226", "TS-0226"),
     ("TS-0579-A02", {"tag": "食物"}, "TS-0004", None),
-    ("TS-0595-A03", {"card_type": "村庄牌"}, "TS-0002", None),
+    ("TS-0595-A03", {"tag": "村庄"}, "TS-0002", None),
 ):
     add(id, "MONSTER_DEFEATED", buy_offer(predicate), zone="event_source" if id.startswith(("TS-0579", "TS-0595")) else "active_hand",
         hand=("TS-0003",) * 5, supplies=({"card_id": supply, "count": 3, "kind": "village"},) if supply else (),
         expected={"purchased_card": purchased})
 
-add("TS-0482-A01", "MONSTER_DEFEATED", players(atom("gain_disease")), zone="hall", expected={"diseases_each": 1})
+add("TS-0482-A01", "MONSTER_DEFEATED", players(atom("gain_disease")), zone="hall",
+    conditions=({"exists": {"zone": "event_source", "tag": "怪物", "exclude_var": "source"}},),
+    expected={"diseases_each": 1})
 add("TS-0675-A01", "MONSTER_DEFEATED", {"op": "schedule", "event": "TURN_START", "body": {"op": "force_dungeon"}},
     zone="hall", scheduled=True, expected={"forced_dungeon": 1})
 
@@ -231,7 +233,7 @@ CASES[-1]["variants"] = [{"choose_count": 0, "expected": {"destroy_total": 0, "a
                           {"choose_count": 2, "expected": {"destroy_total": 2, "active_discard": 4}}]
 
 
-add("TS-0195-A01", "TURN_WILL_END", each({"zone": "hall", "rank": 1, "subcategory": "怪物", "movable": True},
+add("TS-0195-A01", "TURN_WILL_END", each({"zone": "hall", "rank": 1, "tag": "怪物", "movable": True},
     relocate("rank3")), zone="settings", conditions=({"action_in": ["village", "rest"]},),
     expected={"front_rotated": True})
 add("TS-0240-A02", "MONSTER_DEFEATED", select({"zone": "bound", "var": "source", "in_hand": True},
@@ -246,10 +248,10 @@ for id, destination in (("TS-0352-A02", "draw_top"), ("TS-0353-A02", "refill_add
 add("TS-0344-A04", "MONSTER_DEFEATED", select({"zone": "subject_hand", "tag": "佣兵"},
     each({"zone": "bound", "var": "retained"}, {"op": "move", "target": {"var": "chosen"}, "destination": "refill_add"}),
     bind="retained", minimum=0, maximum=100), zone="active_hand", hand=("TS-0226", "TS-0229"), expected={"refill_count": 2})
-add("TS-0409-A02", "MONSTER_DEFEATED", select({"zone": "hall", "subcategory": "怪物", "movable": True},
+add("TS-0409-A02", "MONSTER_DEFEATED", select({"zone": "hall", "tag": "怪物", "movable": True},
     each({"zone": "bound", "var": "returned"}, relocate("dungeon_bottom")),
     bind="returned", minimum=0, maximum=1), zone="active_hand", expected={"hall_returned": True})
-add("TS-0678-A02", "TURN_START", each({"zone": "hall", "subcategory": "雷霆之石"},
+add("TS-0678-A02", "TURN_START", each({"zone": "hall", "tag": "雷霆之石"},
     relocate("dungeon_bottom")), zone="hall", expected={"stone_returned": True})
 add("TS-0601-A01", "BREACH", {"op": "destroy_basic_supply", "card_id": "TS-0001", "count": 5},
     expected={"basic_destruction": 5})
@@ -269,14 +271,14 @@ add("TS-0261-A02", "CARD_PURCHASED", seq(atom("grant_buy"), select({"zone": "sub
 
 add("TS-0288-A01", "MONSTER_DEFEATED", {"op": "add_global_rule", "kind": "light", "scope": "all", "amount": 1,
     "until": "owner_next_turn_end"}, zone="active_hand", expected={"global_rule": "light"})
-add("TS-0499-A03", "MONSTER_DEFEATED", players(reveal(each({"zone": "reveal_zone", "subcategory": "怪物", "vp_max": 3},
+add("TS-0499-A03", "MONSTER_DEFEATED", players(reveal(each({"zone": "reveal_zone", "tag": "怪物", "vp_max": 3},
     {"op": "move", "target": {"var": "chosen"}, "destination": "discard", "recipient": "active"}), count=3), scope="others"),
     draw=("TS-0476", "TS-0003", "TS-0476"), expected={"harvested_monsters": 2})
 add("TS-0526-A01", "BREACH", {"op": "shuffle_destroyed_traps"}, expected={"shuffled_traps": True})
 add("TS-0696-A01", "MONSTER_DEFEATED", select({"zone": "bound", "var": "source"},
     each({"zone": "bound", "var": "sacrificed"}, seq(target("destroy"), {"op": "grant_extra_turn"})),
     bind="sacrificed", minimum=0, maximum=1), zone="active_control",
-    conditions=({"exists": {"zone": "event_source", "subcategory": "怪物", "vp_max": 3}},), expected={"extra_turn": 1})
+    conditions=({"exists": {"zone": "event_source", "tag": "怪物", "vp_max": 3}},), expected={"extra_turn": 1})
 
 
 attach_hero = select(HERO, each({"zone": "bound", "var": "captured"},
@@ -291,7 +293,7 @@ add("TS-0704-A01", "MONSTER_DEFEATED", select({"zone": "subject_hand"}, each({"z
     bind="hidden", minimum=0, maximum=1), zone="active_control", hand=("TS-0003",), expected={"attachment": "emerald"})
 add("TS-0704-A02", "MONSTER_DEFEATED", {"op": "release_attachment", "target": {"var": "source"}, "recipient": "active"},
     zone="attached", conditions=({"exists": {"zone": "event_source", "vp_min": 7}},), expected={"released": "emerald"})
-add("TS-0705-A01", "MONSTER_DEFEATED", select({"zone": "event_source", "subcategory": "怪物"},
+add("TS-0705-A01", "MONSTER_DEFEATED", select({"zone": "event_source", "tag": "怪物"},
     each({"zone": "bound", "var": "captured"}, {"op": "attach_card", "target": {"var": "chosen"},
         "anchor": {"var": "source"}, "kind": "sapphire"}), bind="captured", minimum=0, maximum=1),
     zone="active_control", expected={"attachment": "sapphire"})

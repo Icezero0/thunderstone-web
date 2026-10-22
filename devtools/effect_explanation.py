@@ -59,7 +59,7 @@ class Explainer:
             elif key == "equipper_card_id":
                 result.append("装备给" + self.card(value))
             elif key == "semantic_type":
-                result.append("按规则视为" + {"hero": "英雄", "village": "村庄牌（含非英雄基础牌）", "monster": "怪物"}.get(value, value))
+                result.append("按规则视为" + {"hero": "英雄", "village": "村庄牌（按村庄标签，可同时为英雄）", "monster": "怪物"}.get(value, value))
             elif key == "compare_stat":
                 result.append(f"{STATS[value['field']]}{COMPARE[value['op']]}{self.expr(value['value'], names)}")
             elif key == "rank":
@@ -209,16 +209,26 @@ class Explainer:
         if op in ("let", "remember"):
             value = self.expr(node["value"], names) if op == "let" else self.query(node["query"], names)
             return item("记住此刻的" + value, [self.node(node["then"], {**names, node["bind"]: "此前记录的数值或牌"})])
+        if op == "discard_until":
+            return item("从受影响玩家当前抽牌堆逐张翻牌，不符合「" + "；".join(self.filters(node["filter"], names))
+                        + "」的牌立即放入该玩家弃牌堆；抽牌堆空时洗混弃牌堆继续。翻到第一张符合的牌时停止并处理下文；所有可取实例均已检定且无进展时结束。重复翻到同一实例仍正常处理。",
+                        [self.node(node["then"], {**names, node["bind"]: "本次找到的牌"})])
+        if op == "reveal_cycle":
+            return item("按逆时针顺序，受影响玩家轮流翻开个人抽牌堆顶 1 张牌；符合「"
+                        + "；".join(self.filters(node["filter"], names)) + "」的牌执行摧毁并累计数量，其余牌立即弃掉。"
+                        + f"抽牌堆空时洗混弃牌堆继续，达到 {node['goal']} 张时结束；若所有参与者的可取实例均已检定且无法推进目标，也结束。"
+                        + "无进展记录按玩家与实例保留，成功处理和洗牌不会清空记录，已记录的牌仍按顺序正常检定。")
         if op == "reveal":
             origin = "地下城牌堆" if node.get("zone") == "dungeon" else "受影响玩家的抽牌堆"
             if "until" in node:
                 text = f"从{origin}逐张翻牌，直到翻到「{'；'.join(self.filters(node['until'], names))}」或无牌可翻（最多 {self.expr(node['count'], names)} 张）"
             else:
                 text = f"从{origin}顶部翻开 {self.expr(node['count'], names)} 张牌"
-            return item(text + "；以下处理完成后，未移走的玩家牌放入其弃牌堆，地下城牌放回原牌堆顶部",
+            ending = "；以下处理完成后，未移走的牌放回原地下城牌堆顶部" if node.get("zone") == "dungeon" else "；抽牌堆空时洗混弃牌堆继续；以下处理完成后，未移走的牌放入该玩家弃牌堆"
+            return item(text + ending,
                         [self.node(node["then"], {**names, node["bind"]: "本次翻开的牌"})])
         if op == "draw":
-            text = f"受影响玩家抽 {self.expr(node['count'], names)} 张牌"
+            text = f"受影响玩家抽 {self.expr(node['count'], names)} 张牌；抽牌堆空时洗混弃牌堆继续"
             return item(text, [self.node(node["then"], {**names, node["bind"]: "本次抽到的牌"})] if "bind" in node else [])
         if op in ("destroy", "discard", "mark_destroy", "show", "exclude_combat"):
             verbs = {"destroy": "立即摧毁", "discard": "弃掉", "mark_destroy": "标记摧毁：本场战斗结算后再摧毁",
@@ -287,7 +297,7 @@ class Explainer:
         p, op = mechanic.params, mechanic.op
         parts = []
         if op == "target_restriction":
-            direct = {"immune_unarmed": "未装备武器的英雄不贡献攻击", "immune_spells": "法术牌不贡献攻击",
+            direct = {"immune_unarmed": "未装备武器的英雄不贡献攻击", "immune_spells": "持续免疫法术：法术牌不贡献攻击，也不能选取或直接影响此大厅怪物；法术的其他无关效果仍可结算",
                       "equipped_only": "未装备武器的英雄不贡献攻击", "magic_required": "队伍没有魔法攻击时，无法击败此怪物",
                       "half_magic": "队伍魔法攻击减半并向下取整", "half_attack_no_magic": "没有魔法攻击时，普通攻击减半并向下取整",
                       "half_attack_no_weapon": "队伍没有装备武器时，总攻击减半并向下取整",
@@ -357,6 +367,11 @@ class Explainer:
             parts.append("大厅内所有怪物只有被击败才能移出；败战和移动效果都不能令其离场")
         elif op == "hall_target_restriction":
             parts.append(f"此牌在大厅时，禁止攻击其他具有「{p['protected_tag']}」标签的怪物")
+        elif op == "battle_aura":
+            if "light" in p:
+                parts.append(f"仅对抗此怪物时，队伍光照 {p['light']:+d}；此文字不作为怪物手牌的光照数值")
+            if "strength" in p:
+                parts.append(f"仅对抗此怪物时，手牌中所有英雄力量 {p['strength']:+d}")
         elif op in ("hero_aura", "target_bonus"):
             if op == "hero_aura":
                 parts.append("对队伍中满足「" + ("；".join(self.filters(p.get("filter", {}))) or "任意英雄") + "」的英雄生效")
@@ -376,7 +391,9 @@ class Explainer:
             parts.append(f"每张此牌的胜利点等于持有者所拥有「{p['group']}」怪物的张数（包括此牌）" + (f"，每张最高 {p['maximum']} 分" if "maximum" in p else ""))
         elif op == "economy":
             for key, value in p.items():
-                if key == "one_purchase":
+                if key == "scope":
+                    parts.append("此规则仅在来源位于" + {"hall": "大厅", "hand": "手牌"}[value] + "时生效")
+                elif key == "one_purchase":
                     parts.append("玩家本回合已购买 1 张牌后，不能继续购买，额外购买次数也不能绕过")
                 else:
                     parts.append(self.unknown("商店机制", key))

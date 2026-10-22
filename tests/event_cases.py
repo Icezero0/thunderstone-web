@@ -2,8 +2,8 @@
 
 from dataclasses import replace
 
-from engine.effects.runtime import dispatch_event, resolve_choice, resolve_effect_order, resolve_purchase
-from engine.turn.state import validate_turn_state
+from tests.migration.reference.python_engine.effects.runtime import dispatch_event, resolve_choice, resolve_effect_order, resolve_purchase
+from tests.migration.reference.python_engine.turn.state import validate_turn_state
 from tests.mechanic_cases import Fixture
 
 
@@ -15,7 +15,7 @@ def settle(test, f):
         if choice["kind"] == "effect_order":
             resolve_effect_order(f.tx, [x["effect_id"] for x in choice["effects"]])
         elif choice["kind"] == "effect_response":
-            from engine.effects.responses import resolve_response
+            from tests.migration.reference.python_engine.effects.responses import resolve_response
             resolve_response(f.tx)
         elif choice["kind"] == "effect_purchase":
             resolve_purchase(f.tx, f.purchase_preference)
@@ -71,7 +71,7 @@ def verify_event(test, base, snapshot, ruleset, case):
         for _ in range(spec["count"]):
             f.add(spec["card_id"], f"{spec['kind']}_supply:event{index}")
     if ability.source_zone == "attached":
-        from engine.effects.attachments import attach
+        from tests.migration.reference.python_engine.effects.attachments import attach
         source = f.add(ability.source_card_id, f"player:{f.player}:control")
         f.attached_item = f.add("TS-0302")
         f.attachment_kind = "cage" if ability.id.startswith("TS-0684") else "emerald"
@@ -93,6 +93,8 @@ def verify_event(test, base, snapshot, ruleset, case):
     else:
         source = f.add(ability.source_card_id, "revealed:main")
     state["event_context"] = {"source_instance_id": source, "rank": 3}
+    if ability.id == "TS-0482-A01":
+        state["event_context"]["source_instance_id"] = f.add("TS-0476", f"player:{f.player}:discard")
     if ability.event == "MONSTER_DEFEATED" and ("attachment" in case["expected"] or "released" in case["expected"]):
         state["event_context"]["source_instance_id"] = f.add("TS-0464", f"player:{f.player}:discard")
     if case["expected"].get("shuffled_traps"):
@@ -112,7 +114,20 @@ def verify_event(test, base, snapshot, ruleset, case):
     if case.get("defeated_monster"):
         state["event_context"]["defeated_instance_id"] = f.add(case["defeated_monster"], f"player:{f.player}:discard")
     test.assertIn(case["source_line"], snapshot.cards[ability.source_card_id]["effect_text"].splitlines())
-    dispatch_event(tx, isolated, ability.event)
+    if ability.id in ("TS-0463-A01", "TS-0689-A01", "TS-0693-A01"):
+        # User-confirmed search rules postdate the frozen Python interpreter.
+        # Exercise the current shared engine through its ordinary command path.
+        from backend.app.integrations.game_engine.turn import apply_command
+        state["subphase"] = "TURN_START"
+        state["started_turn"] = state["turn_number"]
+        state["workflow_steps"] = [{"op": "event", "event": ability.event, "context": {"source_instance_id": source}}]
+        result = apply_command(state, {"type": "ChooseAction", "player_id": f.player, "action": "village"},
+                               snapshot=snapshot, effects=isolated)
+        state.clear()
+        state.update(result["state"])
+        tx.events.extend(result["events"])
+    else:
+        dispatch_event(tx, isolated, ability.event)
     settle(test, f)
     if case.get("scheduled"):
         test.assertEqual(len(state["scheduled_effects"]), 1)

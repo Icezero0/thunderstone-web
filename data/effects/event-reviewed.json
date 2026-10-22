@@ -761,15 +761,16 @@
         "op": "for_players",
         "scope": "all",
         "body": {
-          "op": "reveal",
-          "count": 1000,
+          "op": "discard_until",
+          "filter": {
+            "tag": "英雄"
+          },
           "bind": "revealed",
           "then": {
             "op": "for_each",
             "query": {
               "zone": "bound",
-              "var": "revealed",
-              "tag": "英雄"
+              "var": "revealed"
             },
             "bind": "chosen",
             "body": {
@@ -778,9 +779,6 @@
                 "var": "chosen"
               }
             }
-          },
-          "until": {
-            "tag": "英雄"
           }
         }
       }
@@ -1473,7 +1471,7 @@
         "op": "for_each",
         "query": {
           "zone": "subject_hand",
-          "subcategory": "怪物"
+          "tag": "怪物"
         },
         "bind": "chosen",
         "body": {
@@ -1961,7 +1959,7 @@
             "query": {
               "zone": "bound",
               "var": "revealed",
-              "subcategory": "怪物"
+              "tag": "怪物"
             },
             "bind": "chosen",
             "body": {
@@ -2391,8 +2389,10 @@
       "body": {
         "op": "buy",
         "filter": {
-          "card_type": "村庄牌",
-          "tag": "佣兵"
+          "tag": "村庄",
+          "tags_any": [
+            "佣兵"
+          ]
         },
         "destination": "discard",
         "payment": "none"
@@ -2427,7 +2427,9 @@
         "op": "buy",
         "filter": {
           "tag": "物品",
-          "light_min": 1
+          "tags_any": [
+            "光照"
+          ]
         },
         "destination": "discard",
         "payment": "none"
@@ -2444,7 +2446,7 @@
       "body": {
         "op": "buy",
         "filter": {
-          "card_type": "村庄牌"
+          "tag": "村庄"
         },
         "destination": "discard",
         "payment": "none"
@@ -2529,7 +2531,7 @@
       "body": {
         "op": "buy",
         "filter": {
-          "card_type": "村庄牌"
+          "tag": "村庄"
         },
         "destination": "discard",
         "payment": "none"
@@ -2542,7 +2544,15 @@
       "source_zone": "hall",
       "event": "MONSTER_DEFEATED",
       "usage": "once_per_event",
-      "conditions": [],
+      "conditions": [
+        {
+          "exists": {
+            "zone": "event_source",
+            "tag": "怪物",
+            "exclude_var": "source"
+          }
+        }
+      ],
       "body": {
         "op": "for_players",
         "scope": "all",
@@ -2626,7 +2636,7 @@
         "query": {
           "zone": "hall",
           "rank": 1,
-          "subcategory": "怪物",
+          "tag": "怪物",
           "movable": true
         },
         "bind": "chosen",
@@ -2804,7 +2814,7 @@
         "op": "select",
         "query": {
           "zone": "hall",
-          "subcategory": "怪物",
+          "tag": "怪物",
           "movable": true
         },
         "bind": "returned",
@@ -2839,7 +2849,7 @@
         "op": "for_each",
         "query": {
           "zone": "hall",
-          "subcategory": "雷霆之石"
+          "tag": "雷霆之石"
         },
         "bind": "chosen",
         "body": {
@@ -3037,7 +3047,7 @@
             "op": "for_each",
             "query": {
               "zone": "reveal_zone",
-              "subcategory": "怪物",
+              "tag": "怪物",
               "vp_max": 3
             },
             "bind": "chosen",
@@ -3076,7 +3086,7 @@
         {
           "exists": {
             "zone": "event_source",
-            "subcategory": "怪物",
+            "tag": "怪物",
             "vp_max": 3
           }
         }
@@ -3238,7 +3248,7 @@
         "op": "select",
         "query": {
           "zone": "event_source",
-          "subcategory": "怪物"
+          "tag": "怪物"
         },
         "bind": "captured",
         "min": 0,

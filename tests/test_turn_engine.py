@@ -5,11 +5,11 @@ from __future__ import annotations
 import copy
 import unittest
 
-from engine.catalog.repository import load_catalog
-from engine.disease import take_disease
-from engine.setup import start_game
-from engine.turn import TurnError, apply_command, legal_commands
-from engine.turn.state import validate_turn_state
+from backend.app.integrations.game_engine.catalog.repository import load_catalog
+from backend.app.integrations.game_engine.disease import take_disease
+from backend.app.integrations.game_engine.setup import start_game
+from backend.app.integrations.game_engine.turn import TurnError, apply_command, legal_commands
+from tests.migration.reference.python_engine.turn.state import validate_turn_state
 from tests.test_setup_engine import request
 
 

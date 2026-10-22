@@ -2,9 +2,9 @@
 
 from copy import deepcopy
 
-from engine.catalog.service import build_panel_catalog
-from engine.setup import SetupChoiceRequired, SetupRng, start_game
-from engine.setup.builder import _Builder
+from backend.app.integrations.game_engine.catalog.service import build_panel_catalog
+from backend.app.integrations.game_engine.setup import SetupChoiceRequired, SetupRng, start_game
+from backend.app.integrations.game_engine.setup.builder import _Builder
 from tests.test_setup_engine import config, request
 
 

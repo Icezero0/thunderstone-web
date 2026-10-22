@@ -8,8 +8,8 @@ from fastapi.testclient import TestClient
 
 from backend.app.main import app
 from devtools.effect_lab import CASES, run_case
-from engine.setup import start_game
-from engine.turn import apply_command
+from backend.app.integrations.game_engine.setup import start_game
+from backend.app.integrations.game_engine.turn import apply_command
 from tests.test_setup_engine import request
 
 

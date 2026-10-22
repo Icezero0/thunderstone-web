@@ -58,10 +58,10 @@ D = ("dungeon",)
 VD = ("village", "dungeon")
 HEROES = {"zone": "active_hand", "tag": "英雄"}
 MILITIA = {"zone": "active_hand", "card_id": "TS-0001"}
-DISEASE = {"zone": "active_hand", "card_type": "疾病牌"}
-MONSTERS = {"zone": "active_hand", "subcategory": "怪物"}
+DISEASE = {"zone": "active_hand", "tag": "疾病"}
+MONSTERS = {"zone": "active_hand", "tag": "怪物"}
 SPELLS = {"zone": "active_hand", "tag": "法术"}
-LIGHT_ITEMS = {"zone": "active_hand", "tag": "物品", "light_min": 1}
+LIGHT_ITEMS = {"zone": "active_hand", "tag": "物品", "tags_any": ["光照"]}
 FOOD = {"zone": "active_hand", "tag": "食物"}
 ANY = {"zone": "active_hand"}
 
@@ -115,7 +115,7 @@ for ability_id, amount in (("TS-0345-A02", 2), ("TS-0346-A03", 2), ("TS-0348-A02
         expected={"battle_modifiers": {"attack": amount}, "destroyed": ["TS-0004"]})
 for ability_id, amount in (("TS-0349-A02", 1), ("TS-0350-A02", 2), ("TS-0427-A02", 1)):
     query = MONSTERS if ability_id != "TS-0427-A02" else {"zone": "active_hand", "tags_any": ["疾病", "怪物"]}
-    # Monster status comes from card classification, not an optional waist tag.
+    # Monster identity is the explicit tag, including guardians.
     if ability_id == "TS-0427-A02":
         value = {"add": [{"count": DISEASE}, {"count": MONSTERS}]}
     else:
@@ -218,7 +218,7 @@ add("TS-0217-A02", V, {"op": "cost_gate", "cost": target("destroy", "source"),
 add("TS-0218-A02", V, select(HEROES, seq(each({"zone": "bound", "var": "chosen"},
     target("discard", "victim"), "victim"), atom("draw", {"count": {"zone": "bound", "var": "chosen"}})), minimum=0, maximum=100),
     hand=("TS-0001", "TS-0302"), expected={"draw": 2, "discard_count": 2})
-add("TS-0221-A02", D, draw_then(1, if_exists({"zone": "bound", "var": "drawn", "subcategory": "怪物"}, atom("draw"))),
+add("TS-0221-A02", D, draw_then(1, if_exists({"zone": "bound", "var": "drawn", "tag": "怪物"}, atom("draw"))),
     draw=("TS-0476",), expected={"draw": 2})
 add("TS-0222-A02", D, select({**ANY, "tags_any": ["英雄", "佣兵"]}, seq(mod("attack", 3), target("mark_destroy"))),
     hand=("TS-0001",), choices=("TS-0001",), expected={"modified": {"TS-0001": {"attack": 3}}, "marked_count": 1})
@@ -260,7 +260,7 @@ for id, tag in (("TS-0385-A02", "食物"), ("TS-0386-A02", "物品")):
     q = {**ANY, "tag": tag}
     add(id, D, cost(q, seq(atom("mod_attack", 2), {"op": "for_players", "scope": "others", "body": discard_one})),
         hand=("TS-0004",), conditions=({"exists": q},), expected={"destroyed": ["TS-0004"], "battle_modifiers": {"attack": 2}, "other_discard": 1})
-for id, q in (("TS-0389-A03", {"tag": "物品", "light_min": 1}), ("TS-0439-A02", {"tag": "武器"}),
+for id, q in (("TS-0389-A03", {"tag": "物品", "tags_any": ["光照"]}), ("TS-0439-A02", {"tag": "武器"}),
                ("TS-0442-A03", {"gold_present": True})):
     query = {"zone": "subject_hand", **q}
     fixture = "TS-0003" if id == "TS-0389-A03" else "TS-0002" if id == "TS-0439-A02" else "TS-0004"
@@ -298,7 +298,7 @@ def relocate(destination="dungeon_bottom", var="chosen", **extra):
     return {"op": "relocate_hall", "target": {"var": var}, "destination": destination, **extra}
 
 
-MOVABLE = {"zone": "hall", "subcategory": "怪物", "movable": True}
+MOVABLE = {"zone": "hall", "tag": "怪物", "movable": True}
 add("TS-0241-A02", D, select({**MOVABLE, "rank": 1}, relocate()), hand=("TS-0340",),
     conditions=({"exists": {"zone": "bound", "var": "source", "equipped": True}}, {"exists": {**MOVABLE, "rank": 1}}),
     equipment=["TS-0340", "TS-0241"], hall=("TS-0476",) * 3, expected={"relocations": 1})
@@ -324,11 +324,11 @@ def buy_offer(predicate, destination="discard", payment="none"):
 
 
 for id, predicate, destination, payment, zone, purchased in (
-    ("TS-0301-A02", {"card_type": "村庄牌"}, "discard", "none", "active_hand", "TS-0002"),
+    ("TS-0301-A02", {"tag": "村庄"}, "discard", "none", "active_hand", "TS-0002"),
     ("TS-0397-A02", {"tag": "英雄"}, "discard", "none", "active_hand", "TS-0302"),
     ("TS-0398-A02", {"tag": "英雄"}, "hand", "none", "active_hand", "TS-0302"),
     ("TS-0697-A01", {"tag": "英雄"}, "hand", "discard_source", "active_control", "TS-0302"),
-    ("TS-0699-A01", {"card_type": "村庄牌"}, "hand", "discard_source", "active_control", "TS-0002"),
+    ("TS-0699-A01", {"tag": "村庄"}, "hand", "discard_source", "active_control", "TS-0002"),
 ):
     add(id, D, buy_offer(predicate, destination, payment), hand=("TS-0003",) * 5, zone=zone,
         supplies=({"card_id": "TS-0302", "count": 2, "kind": "hero"},),
@@ -381,7 +381,7 @@ CASES[-1].update(values=["$other"], opponent_draw=5)
 CASES[-1]["variants"] = [{"values": ["$self"], "expected": {"destroy_count": 2, "revealed_discard": 3}}]
 add("TS-0451-A02", D, remember({"zone": "other_discard"}, "before", seq(
     for_others(discard_or_show({"zone": "subject_hand", "tag": "物品"})),
-    {"op": "if", "condition": {"exists": {**new_discards, "tag": "物品", "light_min": 1}},
+    {"op": "if", "condition": {"exists": {**new_discards, "tag": "物品", "tags_any": ["光照"]}},
      "then": atom("mod_light", 1)})), others=("TS-0003",), expected={"other_discard": 1, "battle_modifiers": {"light": 1}})
 CASES[-1]["variants"] = [{"others": ["TS-0004"], "expected": {"other_discard": 1}}]
 add("TS-0458-A03", D, remember({"zone": "other_discard"}, "before", seq(
@@ -475,7 +475,7 @@ declared = {"zone": "bound", "var": "flipped"}
 branches = []
 for kind in ("hero", "village", "monster"):
     branches.append({"op": "if", "condition": {"all": [{"choice_is": {"var": "declared", "option": kind}},
-        {"exists": {**declared, "semantic_type": kind}}]}, "then": atom("draw", 2)})
+        {"exists": {**declared, "tag": {"hero": "英雄", "village": "村庄", "monster": "怪物"}[kind]}}]}, "then": atom("draw", 2)})
 add("TS-0299-A01", VD, choose_value("enum", {"op": "reveal", "count": 1, "bind": "flipped", "then": seq(
     each(declared, target("discard")), *branches)}, bind="declared", options=["hero", "village", "monster"]),
     draw=("TS-0001",), expected={"draw": 2})
@@ -488,21 +488,23 @@ add("TS-0392-A02", D, for_others(choose_value("enum", {"op": "if",
     bind="payment", options=["hero", "two_cards"])), others=("TS-0001", "TS-0001"), expected={"other_discard": 1})
 
 
-hall_monsters = {"zone": "hall", "subcategory": "怪物", "movable": True}
+hall_monsters = {"zone": "hall", "tag": "怪物", "movable": True}
+normal_hall_monsters = {**hall_monsters, "exclude_var": "rank_zero"}
 add("TS-0226-A03", D, seq(select(hall_monsters, {"op": "shuffle_hall_top", "target": {"var": "chosen"}, "count": 3}), atom("draw")),
     hall=("TS-0476", "TS-0477", "TS-0478"), expected={"draw": 1, "hall_shuffle": True})
-add("TS-0232-A02", D, select(hall_monsters, select({**hall_monsters, "adjacent_to_var": "first"},
-    {"op": "swap_hall", "target": {"var": "first"}, "other": {"var": "chosen"}}), bind="first"),
+add("TS-0232-A02", D, remember({"zone": "hall", "rank": 0}, "rank_zero",
+    select(normal_hall_monsters, select({**normal_hall_monsters, "adjacent_to_var": "first"},
+    {"op": "swap_hall", "target": {"var": "first"}, "other": {"var": "chosen"}}), bind="first")),
     hall=("TS-0476", "TS-0477", "TS-0478"), choices=("TS-0477", "TS-0478"),
     expected={"hall_order": ["TS-0476", "TS-0478", "TS-0477"]})
-swap_reveal = select({"zone": "reveal_zone", "subcategory": "怪物"},
+swap_reveal = select({"zone": "reveal_zone", "tag": "怪物"},
     each({"zone": "bound", "var": "incoming"}, select({**hall_monsters, "in_selected_dungeon": True},
         {"op": "exchange_hall", "target": {"var": "chosen"}, "other": {"var": "new_monster"}}), bind="new_monster"),
     bind="incoming", minimum=0, maximum=1)
 add("TS-0263-A01", D, seq(choose_value("dungeon", {"op": "reveal", "zone": "dungeon", "count": 1,
     "bind": "peeked", "then": swap_reveal}, bind="deck"), atom("draw")), expected={"draw": 1, "exchanged": True})
 CASES[-1]["dungeon"] = ["TS-0477", "TS-0478", "TS-0479"]
-swap_front = select({"zone": "reveal_zone", "subcategory": "怪物"},
+swap_front = select({"zone": "reveal_zone", "tag": "怪物"},
     each({"zone": "bound", "var": "incoming"}, select({**hall_monsters, "in_selected_dungeon": True, "rank": 1},
         {"op": "exchange_hall", "target": {"var": "chosen"}, "other": {"var": "new_monster"}}), bind="new_monster"),
     bind="incoming", minimum=0, maximum=1)
@@ -515,11 +517,11 @@ add("TS-0455-A02", D, for_others({"op": "reveal", "count": 5, "bind": "shown", "
     {"op": "reorder", "query": {"zone": "reveal_zone"}, "destination": "draw_top"})}), expected={"opponent_discarded_heroes": 2})
 CASES[-1]["opponent_draw_cards"] = ["TS-0003", "TS-0001", "TS-0004", "TS-0302", "TS-0002"]
 highest_caster = {**HEROES, "tags_any": ["法师", "牧师"], "max_by": "level"}
-add("TS-0266-A01", D, select(highest_caster, select({**hall_monsters,
+add("TS-0266-A01", D, select(highest_caster, select({"zone": "hall", "tag": "怪物",
     "compare_stat": {"field": "vp", "op": "le", "value": {"add": [{"stat": {"var": "caster", "field": "level"}}, 2]}}},
     relocate("discard", defeat=True)), bind="caster"), hand=("TS-0401",), hall=("TS-0476", "TS-0477", "TS-0478"),
     expected={"xp": 1, "direct_defeats": 1})
-add("TS-0271-A01", D, seq(for_others(atom("gain_disease")), each({"zone": "hall", "subcategory": "怪物"},
+add("TS-0271-A01", D, seq(for_others(atom("gain_disease")), each({"zone": "hall", "tag": "怪物"},
     {"op": "mod_monster_health", "target": {"var": "chosen"}, "amount": -2}),
     each({**hall_monsters, "compare_stat": {"field": "health", "op": "le", "value": 0}}, relocate("discard"))),
     hall=("TS-0476", "TS-0477", "TS-0478"), expected={"health_reductions": 3, "other_diseases": 1})
@@ -549,16 +551,16 @@ add("TS-0217-A01", V, seq(atom("draw"), {"op": "listen", "event": "CARD_PURCHASE
     expected={"draw": 1, "listener": "CARD_PURCHASED"})
 add("TS-0231-A01", V, seq(atom("draw"), {"op": "grant_basic_buy"}), expected={"draw": 1, "basic_buy": 1})
 add("TS-0221-A01", V, select(ANY, {"op": "let", "bind": "limit", "value": {"add": [{"stat": {"var": "chosen", "field": "cost"}}, 2]},
-    "then": seq(target("destroy"), {"op": "buy", "filter": {"card_type": "村庄牌", "tags_none": ["英雄"]},
+    "then": seq(target("destroy"), {"op": "buy", "filter": {"tag": "村庄", "tags_none": ["英雄"]},
                                  "destination": "discard", "maximum_cost": {"value": "limit"}})}),
     hand=("TS-0003",), choices=("TS-0003",), expected={"destroyed": ["TS-0003"], "gained_supply_card": "TS-0004"})
 add("TS-0300-A02", VD, {"op": "listen", "event": "CARD_PURCHASED", "body": {"op": "buy",
-    "filter": {"card_type": "村庄牌"}, "maximum_cost": {"sub": [{"context": "price"}, 1]}, "destination": "discard"}},
+    "filter": {"tag": "村庄"}, "maximum_cost": {"sub": [{"context": "price"}, 1]}, "destination": "discard"}},
     expected={"listener": "CARD_PURCHASED"})
 opponent_hero = {"zone": "bound", "var": "revealed_hero", "tag": "英雄"}
 add("TS-0216-A01", V, select(HEROES, {"op": "let", "bind": "strength", "value": {"stat": {"var": "chosen", "field": "strength"}},
-    "then": seq(target("discard"), choose_value("player", {"op": "reveal", "count": 1000,
-        "until": {"tag": "英雄"}, "bind": "revealed_hero", "then": seq(
+    "then": seq(target("discard"), choose_value("player", {"op": "discard_until",
+        "filter": {"tag": "英雄"}, "bind": "revealed_hero", "then": seq(
             each({"zone": "reveal_zone"}, target("discard")), {"op": "if", "condition": {"all": [
                 {"exists": opponent_hero}, {"compare": {"left": {"value": "strength"}, "op": "gt",
                     "right": {"maximum": {"query": opponent_hero, "field": "strength"}}}}]},
@@ -571,19 +573,19 @@ add("TS-0317-A02", D, seq({"op": "clear_collection", "collection": "militia"}, f
     "else": atom("random_discard")}), atom("mod_attack", {"mul": [2, {"add": [{"count": MILITIA},
         {"count": {"zone": "collection", "collection": "militia"}}]}]})), hand=("TS-0001",), others=("TS-0001",),
     expected={"battle_modifiers": {"attack": 4}})
-add("TS-0362-A03", D, select(MONSTERS, select({**hall_monsters,
+add("TS-0362-A03", D, remember({"zone": "hall", "rank": 0}, "rank_zero", select(MONSTERS, select({**normal_hall_monsters,
     "compare_stat": {"field": "vp", "op": "le", "value": {"add": [{"stat": {"var": "offered", "field": "vp"}}, 1]}}},
-    {"op": "exchange_hall", "target": {"var": "chosen"}, "other": {"var": "offered"}}), bind="offered"),
+    {"op": "exchange_hall", "target": {"var": "chosen"}, "other": {"var": "offered"}}), bind="offered")),
     hand=("TS-0476",), hall=("TS-0477", "TS-0478", "TS-0479"), expected={"exchanged": True})
 
 
-add("TS-0422-A02", D, select({"zone": "hall", "subcategory": "怪物"},
+add("TS-0422-A02", D, select({"zone": "hall", "tag": "怪物"},
     seq(atom("mod_magic_attack", {"mul": [2, {"count": DISEASE}]}),
         each(DISEASE, {"op": "attach_card", "target": {"var": "disease"}, "anchor": {"var": "monster"}, "kind": "disease_before"}, bind="disease")), bind="monster"),
     hand=("TS-0714", "TS-0714"), hall=("TS-0476", "TS-0477", "TS-0478"),
     expected={"battle_modifiers": {"magic_attack": 4}, "attached_diseases": 2})
 add("TS-0425-A02", D, select(DISEASE, each({"zone": "bound", "var": "diseases"},
-    select({"zone": "hall", "subcategory": "怪物"}, {"op": "attach_card", "target": {"var": "disease"},
+    select({"zone": "hall", "tag": "怪物"}, {"op": "attach_card", "target": {"var": "disease"},
         "anchor": {"var": "chosen"}, "kind": "disease_after"}), bind="disease"),
     bind="diseases", minimum=0, maximum=100), hand=("TS-0714", "TS-0714"),
     hall=("TS-0476", "TS-0477", "TS-0478"), expected={"attached_diseases": 2})
@@ -611,8 +613,8 @@ add("TS-0298-A01", D, remember({"zone": "all_discard"}, "old", seq(
 
 dropped_monsters = {"zone": "bound", "var": "dropped", "in_discard": True, "same_family_as_event": True, "vp_max": 5}
 add("TS-0320-A02", D, remember({"zone": "all_discard"}, "before", seq(
-    {"op": "for_players", "scope": "all", "body": discard_or_show({"zone": "subject_hand", "subcategory": "怪物"})},
-    remember({"zone": "all_discard", "exclude_var": "before", "subcategory": "怪物"}, "dropped",
+    {"op": "for_players", "scope": "all", "body": discard_or_show({"zone": "subject_hand", "tag": "怪物"})},
+    remember({"zone": "all_discard", "exclude_var": "before", "tag": "怪物"}, "dropped",
         {"op": "listen", "event": "MONSTER_DEFEATED", "conditions": [{"exists": dropped_monsters}],
          "body": select(dropped_monsters, each({"zone": "bound", "var": "claimed"}, seq(
             {"op": "move", "target": {"var": "chosen"}, "destination": "discard", "recipient": "active"}, {"op": "remove_listener"})),

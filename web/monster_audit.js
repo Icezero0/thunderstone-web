@@ -41,6 +41,12 @@ function persist() {
 
 function savedFor(item) {
   const value = reviews[item.review_id];
+  const applied = item.symbol_review;
+  if (applied?.applied_fingerprint === item.fingerprint &&
+      (!value?.updated_at || value.updated_at <= applied.applied_at)) {
+    return {...(value || {}), result: "confirmed", symbol: applied.symbol, expected_scope: "current",
+      fingerprint: item.fingerprint, note: value?.note || applied.note || ""};
+  }
   return value && typeof value === "object" ? value : {};
 }
 
@@ -109,6 +115,7 @@ function abilityView(ability) {
     <p class="timing">${html(ability.timing)}</p><p class="usage">${html(ability.usage)}</p>
     ${ability.warnings.length ? `<div class="warnings">${ability.warnings.map(w => `<p>△ ${html(w)}</p>`).join("")}</div>` : ""}
     ${steps(ability.steps)}
+    ${ability.symbol_review?.resolution ? `<p class="timing">审核处理：${html(ability.symbol_review.resolution)}</p>` : ""}
     <details class="technical"><summary>查看原始运行定义 · ${html(ability.implementation)}</summary><p>绑定状态：${html(ability.binding_status)}。这是当前代码的绑定状态，人工审核结论请在下方记录。</p><pre>${html(JSON.stringify(ability.binding, null, 2))}</pre></details>
     ${reviewForm(item)}
   </section>`;
@@ -269,13 +276,16 @@ async function initialize() {
     data = await response.json();
     for (const card of data.cards) {
       for (const ability of card.abilities) reviewItems.set(ability.ability_id, {...ability, review_id: ability.ability_id, card});
-      if (!card.abilities.length) reviewItems.set("card:" + card.card_id, {review_id: "card:" + card.card_id, card, fingerprint: card.fingerprint});
+      if (!card.abilities.length) reviewItems.set("card:" + card.card_id, {review_id: "card:" + card.card_id, card,
+        fingerprint: card.fingerprint, symbol_review: card.symbol_review});
     }
     $("scope").insertAdjacentHTML("beforeend", options(data.scope_options, ""));
     readSaved();
     render();
     controls.forEach(control => { control.disabled = false; });
-    if (!$("status").classList.contains("error")) message("卡面符号尚需人工核对；可从无前缀词条开始。");
+    if (!$("status").classList.contains("error")) message(data.summary.symbol_checks
+      ? "卡面符号尚需人工核对；可从无前缀词条开始。"
+      : "本轮战利品符号审核已应用；原备注和处理结果可在词条中查看。");
     if (location.hash) jump(decodeURIComponent(location.hash.slice(1)));
   } catch (error) { message(`读取失败：${error.message}。更新代码后请重新启动现有面板。`, true); }
 }

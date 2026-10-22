@@ -4,13 +4,13 @@ from copy import deepcopy
 import json
 import unittest
 
-from engine.catalog.repository import load_catalog
-from engine.effects.compiler import load_ruleset
-from engine.effects.runtime import dispatch_event
-from engine.setup import start_game
-from engine.turn import apply_command, legal_commands, TurnError
-from engine.turn.state import validate_turn_state
-from engine.turn.workflow import queue_steps
+from backend.app.integrations.game_engine.catalog.repository import load_catalog
+from backend.app.integrations.game_engine.effects.compiler import load_ruleset
+from tests.migration.reference.python_engine.effects.runtime import dispatch_event
+from backend.app.integrations.game_engine.setup import start_game
+from backend.app.integrations.game_engine.turn import apply_command, legal_commands, TurnError
+from tests.migration.reference.python_engine.turn.state import validate_turn_state
+from tests.migration.reference.python_engine.turn.workflow import queue_steps
 from tests.mechanic_cases import Fixture
 from tests.test_setup_engine import config, request
 

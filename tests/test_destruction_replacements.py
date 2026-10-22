@@ -4,12 +4,12 @@ from copy import deepcopy
 import json
 import unittest
 
-from engine.catalog.repository import load_catalog
-from engine.effects.compiler import compile_ruleset, EffectCompileError, load_ruleset
-from engine.effects.combat import reconcile_equipment
-from engine.setup import start_game
-from engine.turn import apply_command
-from engine.turn.operations import Transition
+from backend.app.integrations.game_engine.catalog.repository import load_catalog
+from backend.app.integrations.game_engine.effects.compiler import compile_ruleset, EffectCompileError, load_ruleset
+from tests.migration.reference.python_engine.effects.combat import reconcile_equipment
+from backend.app.integrations.game_engine.setup import start_game
+from backend.app.integrations.game_engine.turn import apply_command
+from tests.migration.reference.python_engine.turn.operations import Transition
 from tests.mechanic_cases import Fixture
 from tests.test_setup_engine import config, request
 

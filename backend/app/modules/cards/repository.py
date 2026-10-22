@@ -5,7 +5,7 @@ import json
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from engine.catalog.repository import CatalogSnapshot
+from backend.app.integrations.game_engine.catalog.repository import CatalogSnapshot
 
 from backend.app.core.exceptions import AppError
 from backend.app.modules.cards.mapping import BOOLEAN_FIELDS, CSV_TO_DB

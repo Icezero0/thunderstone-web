@@ -9,9 +9,9 @@ from fastapi.testclient import TestClient
 from backend.app.main import app
 from devtools.effect_explanation import Explainer
 from devtools.monster_audit import monster_audit_data
-from engine.catalog.repository import load_catalog
-from engine.effects.combat import is_hero, matches
-from engine.effects.compiler import load_ruleset
+from backend.app.integrations.game_engine.catalog.repository import load_catalog
+from tests.migration.reference.python_engine.effects.combat import is_hero, matches
+from backend.app.integrations.game_engine.effects.compiler import load_ruleset
 
 
 class MonsterAuditTests(unittest.TestCase):
@@ -61,14 +61,16 @@ class MonsterAuditTests(unittest.TestCase):
         self.assertEqual(self.abilities["TS-0494-A01"]["scope_ids"], ["battle"])
         self.assertEqual(self.abilities["TS-0494-A02"]["scope_ids"], ["breach"])
         self.assertEqual(self.abilities["TS-0494-A03"]["scope_ids"], ["hand_active"])
-        self.assertTrue(self.abilities["TS-0582-A02"]["needs_symbol_check"])
+        self.assertFalse(self.abilities["TS-0582-A02"]["needs_symbol_check"])
+        self.assertEqual(self.abilities["TS-0582-A02"]["symbol_review"]["symbol"], "present")
         self.assertFalse(self.abilities["TS-0582-A01"]["needs_symbol_check"])
 
-    def test_unprefixed_negative_hand_aura_is_not_presented_as_target_effect(self):
+    def test_reviewed_unmarked_strength_penalty_is_a_target_effect(self):
         ability = self.abilities["TS-0660-A01"]
-        self.assertEqual(ability["scope_ids"], ["hand_passive"])
+        self.assertEqual(ability["scope_ids"], ["battle"])
         self.assertIn("力量 -1", self.text("TS-0660-A01"))
-        self.assertTrue(ability["needs_symbol_check"])
+        self.assertFalse(ability["needs_symbol_check"])
+        self.assertEqual(ability["symbol_review"]["symbol"], "absent")
 
     def test_hero_queries_use_explicit_tags_for_hero_village_and_basic_cards(self):
         hero = self.snapshot.cards["TS-0302"]
@@ -88,12 +90,12 @@ class MonsterAuditTests(unittest.TestCase):
         wording = Explainer(self.snapshot.cards).filters({"tag": "英雄"})
         self.assertEqual(wording, ["具有标签「英雄」"])
 
-    def test_conditional_trophy_and_current_double_scope_economy_are_not_hidden(self):
+    def test_conditional_trophy_and_reviewed_hall_only_economy_are_distinguished(self):
         self.assertEqual(self.abilities["TS-0511-A01"]["scope_ids"], ["hand_passive"])
         self.assertIn("类人生物", self.text("TS-0511-A01"))
         economy = self.abilities["TS-0528-A01"]
-        self.assertEqual(set(economy["scope_ids"]), {"hall", "hand_passive"})
-        self.assertTrue(any("同时读取大厅和手牌" in warning for warning in economy["warnings"]))
+        self.assertEqual(economy["scope_ids"], ["hall"])
+        self.assertFalse(any("同时读取大厅和手牌" in warning for warning in economy["warnings"]))
 
     def test_destruction_timing_and_schedules_survive_translation(self):
         self.assertIn("立即摧毁", self.text("TS-0471-A01"))

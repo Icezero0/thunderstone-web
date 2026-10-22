@@ -6,7 +6,7 @@ import unittest
 import csv
 from pathlib import Path
 
-from engine.input_config import (effective_copy_count, effective_group_counts,
+from backend.app.integrations.game_engine.input_config import (effective_copy_count, effective_group_counts,
                                  load_panel_catalog, validate_rules_config)
 
 

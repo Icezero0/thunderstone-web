@@ -1,7 +1,7 @@
 """Reviewed advanced-card traces, composed from public engine commands."""
 
-from engine.effects.combat import combat_values
-from engine.turn.operations import Transition
+from backend.app.integrations.game_engine.shared.client import client
+from backend.app.integrations.game_engine.shared.projection import calculation_input
 
 ADVANCED_IDS = {"hero-copy", "borrowed-weapon", "trap-immunity", "spell-reuse", "attached-disease", "extra-turn"}
 
@@ -52,9 +52,11 @@ def run_advanced(case_id, run_class, choose, choice_index):
     run.do("ChooseAction", action="dungeon")
     if case_id == "hero-copy":
         run.do("ActivateAbility", ability_id="TS-0415-A02", source_instance_id=ids["source"])
-        tx = Transition(run.state, run.cards, run.effects)
-        component = next(row for row in combat_values(tx, 1)["components"] if row["instance_id"] == ids["militia"])
-        run.check("民兵保留名称、等级、力量和标签", tx.card(ids["militia"]) == run.cards["TS-0001"])
+        trace = client.call("combat_values", {"input": calculation_input(run.state, run.cards, run.effects), "rank": 1})
+        component = next(row for row in trace["components"] if row["instance_id"] == ids["militia"])
+        run.check("民兵保留名称、等级、力量和标签",
+                  run.state["instances"][ids["militia"]]["card_id"] == "TS-0001"
+                  and not run.state.get("copied_heroes", {}).get(ids["militia"], {}).get("full_card"))
         run.check("复制的攻击 +3 替换原攻击 +1", component["attack"] == 3)
         run.do("ActivateAbility", ability_id="TS-0428-A02", source_instance_id=ids["militia"])
         chosen = choose(run, choice_index)
@@ -90,8 +92,8 @@ def run_advanced(case_id, run_class, choose, choice_index):
         run.do("ActivateAbility", ability_id="TS-0244-A02", source_instance_id=ids["staff"])
         run.check("等待选择要重用的已发动法术能力", run.state["pending_choice"]["kind"] == "effect_reuse")
         run.do("ResolveReusedAbility", ability_id="TS-0267-A01")
-        tx = Transition(run.state, run.cards, run.effects)
-        component = next(row for row in combat_values(tx, 1)["components"] if row["instance_id"] == ids["hero"])
+        trace = client.call("combat_values", {"input": calculation_input(run.state, run.cards, run.effects), "rank": 1})
+        component = next(row for row in trace["components"] if row["instance_id"] == ids["hero"])
         run.check("两次战斗狂暴累计攻击 +2", component["attack"] == 2)
         run.do("DeclareBattleTarget", target_instance_id=ids["target"])
         run.check("回合末摧毁重用的法术", ids["spell"] in run.state["zones"]["destroyed"])

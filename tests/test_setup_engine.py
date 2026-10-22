@@ -9,9 +9,9 @@ import unittest
 from collections import Counter
 from pathlib import Path
 
-from engine.input_config import load_panel_catalog
-from engine.disease import take_disease
-from engine.setup import SetupChoiceRequired, SetupError, SetupRng, start_game
+from backend.app.integrations.game_engine.input_config import load_panel_catalog
+from backend.app.integrations.game_engine.disease import take_disease
+from backend.app.integrations.game_engine.setup import SetupChoiceRequired, SetupError, SetupRng, start_game
 from scripts.run_config_panel import setup_response
 
 

@@ -7,11 +7,11 @@ import csv
 from functools import lru_cache
 from typing import Callable
 
-from engine.catalog.repository import load_catalog
-from engine.effects.compiler import compile_ruleset, load_ruleset
-from engine.setup import start_game
-from engine.paths import PROJECT_ROOT
-from engine.turn import TurnError, apply_command, legal_commands
+from backend.app.integrations.game_engine.catalog.repository import load_catalog
+from backend.app.integrations.game_engine.effects.compiler import compile_ruleset, load_ruleset
+from backend.app.integrations.game_engine.setup import start_game
+from backend.app.integrations.game_engine.paths import PROJECT_ROOT
+from backend.app.integrations.game_engine.turn import TurnError, apply_command, legal_commands
 
 
 CASES = (

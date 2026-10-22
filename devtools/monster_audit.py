@@ -7,14 +7,18 @@ import json
 import re
 
 from devtools.effect_explanation import ACTIONS, EVENTS, STATS, Explainer
-from engine.catalog.repository import load_catalog
-from engine.effects.combat import stat
-from engine.effects.compiler import load_ruleset
-from engine.paths import PROJECT_ROOT
+from backend.app.integrations.game_engine.catalog.repository import load_catalog
+from backend.app.integrations.game_engine.shared.client import client
+from backend.app.integrations.game_engine.effects.compiler import load_ruleset
+from backend.app.integrations.game_engine.paths import PROJECT_ROOT
 
 SCOPES = {"hand_passive": "手牌 · 自动生效", "hand_active": "手牌 · 主动发动", "battle": "与此怪物战斗时",
           "hall": "此牌位于大厅时", "breach": "突破 · 进入阶层 1", "on_defeat": "此怪物被击败后",
           "scoring": "游戏结束计分", "on_enter": "进入大厅时", "setup": "组局及大厅结构", "unknown": "尚无运行绑定"}
+
+
+def stat(card, key):
+    return client.call("card_stat", {"card": card, "key": key})
 
 
 def _csv(name):
@@ -51,6 +55,10 @@ def _mechanic_scope(mechanic):
     if op == "replace_monster":
         return ["on_enter"], "此标记进入大厅时，用对应储备牌堆的下一张怪物替换。"
     if op == "economy":
+        if mechanic.params.get("scope") == "hall":
+            return ["hall"], "此怪物仅在地下城大厅中时约束村庄购买；作为手牌不提供此规则。"
+        if mechanic.params.get("scope") == "hand":
+            return ["hand_passive"], "此牌在当前玩家手牌中时约束村庄购买。"
         # economy_rules combines both hand_rules and hall_rules. Surface that
         # behavior rather than inferring a hall-only rule from the printed text.
         return ["hall", "hand_passive"], "当前实现同时检查大厅和当前玩家手牌中的此牌，再约束村庄购买。"
@@ -73,6 +81,8 @@ def monster_audit_data():
     targets = _csv("target-contracts.csv")
     system = json.loads((PROJECT_ROOT / "data/effects/system-contracts.json").read_text(encoding="utf-8"))
     coverage = _csv("coverage.csv")
+    review_data = json.loads((PROJECT_ROOT / "data/effects/monster-symbols.json").read_text(encoding="utf-8"))
+    reviews = review_data["abilities"]
     result = []
     for card_id, card in sorted(cards.items(), key=lambda pair: int(pair[1].get("catalog_order") or 0)):
         if card["slot_kind"] != "front" or card["subcategory"] != "怪物":
@@ -103,7 +113,7 @@ def monster_audit_data():
                 usage = "持续检查／专用规则入口"
                 steps = explain.mechanic(mechanic)
                 implementation = "持续机制绑定"
-                if mechanic.op == "economy":
+                if mechanic.op == "economy" and not mechanic.params.get("scope"):
                     warnings.append("当前商店规则同时读取大厅和手牌中的此牌；请重点核对其是否应仅在大厅生效。")
             elif ability_id in printed:
                 p = printed[ability_id]
@@ -140,11 +150,17 @@ def monster_audit_data():
                 warnings.append("部分运行节点尚未翻译，请展开原始定义。")
             fingerprint = hashlib.sha256(json.dumps({"line": line, "binding": binding, "scopes": scopes},
                                                      ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
+            review = reviews.get(ability_id)
+            if review and review["source_line"] != line:
+                raise ValueError(f"monster symbol review source changed: {ability_id}")
+            if review:
+                warnings = [w for w in warnings if "对照卡面左侧符号" not in w]
             entries.append({"ability_id": ability_id, "source_line": line, "scope_ids": scopes,
                             "scope_labels": [SCOPES[scope] for scope in scopes], "timing": timing, "usage": usage,
                             "implementation": implementation, "steps": steps, "binding": binding,
                             "binding_status": coverage.get(ability_id, {}).get("status", "MISSING"),
-                            "needs_symbol_check": not explicit, "warnings": warnings,
+                            "needs_symbol_check": not explicit and not review, "warnings": warnings,
+                            "symbol_review": review,
                             "untranslated": sorted(explain.unsupported), "fingerprint": fingerprint})
         unmapped = [line for line in card["effect_text"].splitlines() if line.strip() and line not in known_lines]
         result.append({"card_id": card_id, "name": card["name"], "english_name": card["wiki_英文卡名"],
@@ -154,7 +170,8 @@ def monster_audit_data():
                        "stats": {label: card[field] for label, field in (
                            ("生命值", "wiki_生命值"), ("金币值", "wiki_金币值"), ("光照", "wiki_光照"),
                            ("击败经验", "defeat_xp_reward"), ("胜利点", "wiki_胜利点"))},
-                       "abilities": entries, "unmapped_lines": unmapped})
+                       "abilities": entries, "unmapped_lines": unmapped,
+                       "symbol_review": review_data.get("cards", {}).get(card_id)})
     return {"schema_version": "thunderstone.monster-audit/1", "catalog_version": snapshot.setup_index["cards_csv_sha256"],
             "effects_version": ruleset.version, "scope_options": SCOPES, "cards": result,
             "summary": {"monsters": len(result), "with_effects": sum(bool(c["abilities"]) for c in result),
