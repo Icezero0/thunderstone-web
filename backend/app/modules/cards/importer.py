@@ -7,7 +7,7 @@ from pathlib import Path
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.integrations.game_engine.catalog.repository import CatalogSnapshot, load_catalog
+from backend.app.integrations.game_engine.api import CatalogSnapshot, load_catalog
 
 from backend.app.core.paths import PROJECT_ROOT
 from backend.app.modules.cards.mapping import (BOOLEAN_FIELDS, CSV_TO_DB,

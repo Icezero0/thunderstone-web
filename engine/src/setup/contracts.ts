@@ -48,6 +48,8 @@ export interface SetupState {
   effects_version: string; frozen_config_id: string; frozen_config: RulesConfig;
   player_order: string[]; first_player_id: string; active_player_id: string;
   turn_number: number; round_number: number; phase: string; subphase: string; timing_window: string;
+  /** The current player's whole hand is public until end-of-turn refill begins. */
+  turn_hand_public: boolean;
   chosen_action: null; players: Record<string, {xp: number; temporary_gold: number; purchases_remaining: number}>;
   zones: Record<string, string[]>; instances: Record<string, SetupInstance>;
   selected_groups: Record<GroupKind, string[]>; selected_features: Record<FeatureKind, string[]>;

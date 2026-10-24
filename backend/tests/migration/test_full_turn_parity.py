@@ -9,7 +9,7 @@ from backend.app.integrations.game_engine.setup import start_game
 from backend.app.integrations.game_engine.shared.client import client
 from backend.tests.migration.reference.python_turn_service import apply_command as python_command
 from backend.tests.migration.reference.python_disease_service import take_disease as python_disease
-from backend.tests.test_setup_engine import request
+from backend.tests.support.setup import request
 
 
 def difference(left, right, path="result"):
@@ -35,10 +35,14 @@ def difference(left, right, path="result"):
 
 
 def legacy_contract_result(result):
-    """The legacy executor predates the additive SubmitBattleTeam command."""
+    """Ignore added UI metadata, retaining the legacy rule/state comparison."""
     if isinstance(result, dict) and "legal_commands" in result:
-        return {**result, "legal_commands": [item for item in result["legal_commands"]
-                                             if item["type"] != "SubmitBattleTeam"]}
+        commands = [{key: value for key, value in item.items()
+                     if not (item["type"] == "BuyCard" and key == "options")}
+                    for item in result["legal_commands"] if item["type"] != "SubmitBattleTeam"]
+        commands = [{**item, "type": "FinishRest"} if item["type"] == "SkipRestDestroy" else item
+                    for item in commands]
+        return {**result, "legal_commands": commands}
     return result
 
 
@@ -57,7 +61,17 @@ class FullTurnParity(TestCase):
         command = {"type": kind, "player_id": state["pending_choice"]["player_id"] if state["pending_choice"] else state["active_player_id"],
                    "expected_version": state["game_version"], **fields}
         expected = python_command(state, command, snapshot=self.catalog, effects=self.rules)
-        actual = client.call("apply_command", {**self.payload, "state": state, "command": command})
+        # The frozen reference predates the explicit end-turn confirmation.
+        # Compare equivalent completed actions, while current-engine tests cover
+        # the new persisted ACTION_END boundary independently.
+        current_command = {**command, "type": "SkipRestDestroy"} if kind == "FinishRest" else command
+        actual = client.call("apply_command", {**self.payload, "state": state, "command": current_command})
+        if actual["state"]["subphase"] == "ACTION_END":
+            ended = client.call("apply_command", {**self.payload, "state": actual["state"], "command": {
+                "type": "FinishTurn", "player_id": actual["state"]["active_player_id"],
+                "expected_version": actual["state"]["game_version"]}})
+            actual = {**ended, "events": actual["events"] + ended["events"]}
+            actual["state"]["game_version"] -= 1  # one additional confirmation command
         mismatch = difference(expected, legacy_contract_result(actual))
         self.assertIsNone(mismatch, mismatch)
         return expected["state"]

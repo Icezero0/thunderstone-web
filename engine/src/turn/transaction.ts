@@ -8,10 +8,11 @@ import {sampleDisease} from './disease.js';
 import {destructionReplacement, expireTurnBuffs} from './buffs.js';
 import {advanceTurn} from './advance.js';
 import {runSteps, queueSteps} from './workflow.js';
-import {returnBorrowed} from '../effects/ownership.js';
+import {returnBorrowed, detachDestroyed} from '../effects/ownership.js';
 import {returnDestroyedToSupply, replenishEmptySupplies} from '../effects/supply.js';
 import {reconcileEquipment} from '../battle/equipment.js';
 import {expireRules} from '../effects/durations.js';
+import {gainSteps} from '../effects/gain.js';
 
 // The state is serialized after every command. No process-local game data lives here.
 export type GameState = Record<string, any>;
@@ -116,6 +117,7 @@ export class Transition {
       this.event('card_destruction_replaced', {...details, reason, replacement});
       return details;
     }
+    detachDestroyed(this, instanceId);
     const returned = returnDestroyedToSupply(this, instanceId, source, reason);
     if (returned) return returned;
     let destination: string;
@@ -178,9 +180,17 @@ export class Transition {
             (!rule.params.rank0_only || zone.endsWith(':rank0'))) result.push([instance, rule]);
     return result;
   }
+  /** Normal actions stop here until their owner explicitly ends the turn. */
+  awaitTurnEnd() {
+    if (this.state.phase !== 'PLAYING') return;
+    // An eliminated player cannot submit commands; advance them automatically.
+    if (this.player.eliminated) {this.finishTurn(); return;}
+    this.state.subphase = this.state.timing_window = 'ACTION_END';
+  }
   finishTurn() {
     const current = this.playerId;
     if (this.player.eliminated) {
+      this.state.turn_hand_public = false;
       for (const item of [...this.zone('hand')]) this.move(item, `player:${current}:hand`, `player:${current}:discard`);
       queueSteps(this, [{op: 'pass_turn'}, {op: 'event', event: 'TURN_START'}]);
       return;
@@ -204,6 +214,8 @@ export class Transition {
       this.event(destination === 'destroyed' ? 'zero_strength_hero_destroyed' : 'zero_strength_hero_discarded', {instance_id: id});
     }
     returnBorrowed(this, 'turn_end');
+    // New refill cards stay private even if a gain/replacement pauses cleanup.
+    this.state.turn_hand_public = false;
     const hand = this.zone('hand'), discard = this.zone('discard'), discarded = [...hand];
     discard.push(...hand); hand.length = 0;
     this.event('turn_hand_discarded', {player_id: current, instance_ids: discarded});
@@ -211,8 +223,14 @@ export class Transition {
     delete this.player.next_hand_bonus;
     this.draw(Math.max(0, 6 + bonus));
     const additions = `player:${current}:refill_add`;
-    for (const id of [...(this.state.zones[additions] ?? [])]) this.move(id, additions, `player:${current}:hand`);
-    queueSteps(this, [{op: 'event', event: 'HAND_REFILL_COMPLETE'}, {op: 'pass_turn'}, {op: 'event', event: 'TURN_START'}]);
+    const gains: Record<string, any>[] = [];
+    for (const id of [...(this.state.zones[additions] ?? [])]) {
+      const owner = this.state.instances[id].owner_player_id;
+      this.move(id, additions, `player:${current}:hand`);
+      gains.push(...gainSteps(this, id, additions, owner, 'refill_set_aside'));
+    }
+    queueSteps(this, [...gains, {op: 'event', event: 'HAND_REFILL_COMPLETE'},
+      {op: 'pass_turn'}, {op: 'event', event: 'TURN_START'}]);
   }
   passTurn() {
     const current = this.playerId;
@@ -238,6 +256,7 @@ export class Transition {
       round_number: this.state.round_number});
     if (next.extra_turn) this.player.extra_turns = next.remaining_extra_turns;
     this.state.active_player_id = next.next_player_id;
+    this.state.turn_hand_public = true;
     this.state.turn_number = next.turn_number; this.state.round_number = next.round_number;
     this.state.subphase = 'TURN_START'; this.state.timing_window = 'TURN_START_BEFORE';
     this.event('turn_passed', {from_player_id: current, to_player_id: next.next_player_id, turn_number: this.state.turn_number});

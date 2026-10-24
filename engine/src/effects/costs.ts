@@ -38,6 +38,6 @@ export function evaluateCost(input: CostInput): CostResult {
     (location.startsWith('village_supply:') || location.startsWith('hero_supply:')) &&
     zones[location][0] === instance;
   const payable = Boolean(owned || input.cost.op === 'destroy' &&
-    (location === `player:${subject}:discard` || supplyTop));
+    (location === `player:${subject}:discard` || location === `player:${subject}:aside` || supplyTop));
   return {payable, subject_id: subject, instance_id: instance, location};
 }

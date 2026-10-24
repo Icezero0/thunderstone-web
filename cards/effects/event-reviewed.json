@@ -56,6 +56,68 @@
       }
     },
     {
+      "id": "TS-0717-A01",
+      "source_card_id": "TS-0717",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "BATTLE_TEAM_COMMITTED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "subject_hand",
+          "tag": "英雄"
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "strength",
+          "amount": -1
+        }
+      }
+    },
+    {
+      "id": "TS-0718-A01",
+      "source_card_id": "TS-0718",
+      "kind": "triggered",
+      "source_zone": "active_hand",
+      "event": "BATTLE_TEAM_COMMITTED",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "tag": "英雄"
+          }
+        },
+        "then": {
+          "op": "select",
+          "query": {
+            "zone": "subject_hand",
+            "tag": "英雄"
+          },
+          "bind": "chosen",
+          "min": 1,
+          "max": 1,
+          "then": {
+            "op": "mod_card",
+            "target": {
+              "var": "chosen"
+            },
+            "stat": "strength",
+            "amount": -2
+          },
+          "allow_shortfall": true
+        }
+      }
+    },
+    {
       "id": "TS-0484-A01",
       "source_card_id": "TS-0484",
       "kind": "triggered",
@@ -1662,6 +1724,9 @@
         "body": {
           "op": "sequence",
           "children": [
+            {
+              "op": "show_hand"
+            },
             {
               "op": "for_each",
               "query": {

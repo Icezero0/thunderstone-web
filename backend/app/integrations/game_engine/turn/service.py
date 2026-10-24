@@ -5,7 +5,7 @@ The server owns and persists the returned state; the worker keeps no match state
 
 from pathlib import Path
 
-from backend.app.integrations.game_engine.paths import PROJECT_ROOT
+from backend.app.core.paths import PROJECT_ROOT
 from backend.app.integrations.game_engine.shared.transition import transition_call
 
 

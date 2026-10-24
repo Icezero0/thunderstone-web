@@ -1,5 +1,6 @@
 import type {Card} from '../types.js';
 import {isThunderstone} from '../catalog/cards.js';
+import {orderedSupplyMembers, supplyZone} from '../catalog/supplies.js';
 import {RandomStream, type RandomState} from '../random/stream.js';
 import type {CatalogGroup, DungeonFeature, FeatureKind, GroupKind, RulesConfig, SetupEvent,
   SetupInput, SetupInstance, SetupRequest, SetupResult, SetupState} from './contracts.js';
@@ -161,12 +162,10 @@ export class SetupBuilder {
     this.event('stones_selected', {chosen}); return chosen;
   }
   private materializeSupplies(): void {
-    for (const randomizer of this.selected.village) for (const id of this.groupById[randomizer].members) {
-      this.create(id, `village_supply:${id}`, {origin: randomizer, count: effectiveCopyCount(this.input.cards[id], this.config)});
-    }
-    for (const randomizer of this.selected.hero) {
-      const ordered = [...this.groupById[randomizer].members].sort((a,b) => Number(this.input.cards[a]['wiki_英雄等级']) - Number(this.input.cards[b]['wiki_英雄等级']) || (a < b ? -1 : a > b ? 1 : 0));
-      for (const id of ordered) this.create(id, `hero_supply:${randomizer}`, {origin: randomizer, count: effectiveCopyCount(this.input.cards[id], this.config)});
+    for (const kind of ['village', 'hero'] as const) for (const randomizer of this.selected[kind]) {
+      const group = this.groupById[randomizer];
+      for (const id of orderedSupplyMembers(group, this.input.cards))
+        this.create(id, supplyZone(group, this.input.cards, id), {origin: randomizer, count: effectiveCopyCount(this.input.cards[id], this.config)});
     }
     if (this.features.environment.includes('TS-0197')) {
       const destroyed = this.zones.destroyed ??= [];
@@ -289,6 +288,7 @@ export class SetupBuilder {
       effects_version: this.input.effects_version, frozen_config_id: this.input.frozen_config_id, frozen_config: this.config,
       player_order: [...this.request.player_ids], first_player_id: firstId, active_player_id: firstId,
       turn_number: 1, round_number: 1, phase: 'PLAYING', subphase: 'TURN_START', timing_window: 'TURN_START_BEFORE', chosen_action: null,
+      turn_hand_public: true,
       players: Object.fromEntries(this.request.player_ids.map(id => [id, {xp: 0, temporary_gold: 0, purchases_remaining: 1}])),
       zones: this.zones, instances: this.instances, selected_groups: this.selected, selected_features: this.features,
       selected_thunderstones: stones, active_settings: [...this.features.environment],

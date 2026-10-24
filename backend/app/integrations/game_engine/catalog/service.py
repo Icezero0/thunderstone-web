@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from backend.app.integrations.game_engine.paths import PROJECT_ROOT
+from backend.app.core.paths import PROJECT_ROOT
 from backend.app.integrations.game_engine.catalog.repository import CatalogSnapshot, load_catalog
 from backend.app.integrations.game_engine.rules.constants import ENVIRONMENT_SETUP_RULES
 

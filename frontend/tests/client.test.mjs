@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
-import vm from 'node:vm';
+import {createPageState} from '../src/pages/config/state.js';
+import {createRoomEditor} from '../src/pages/config/room-editor.js';
 import {ApiClient, ApiError, SESSION_KEY} from '../.test-dist/api.js';
 import {configurationSummary, roomPresentation} from '../.test-dist/room-view.js';
 import {RoomConnection} from '../.test-dist/realtime.js';
@@ -53,6 +53,21 @@ test('login stores a tab session and obtains the authenticated user', async () =
   assert.equal((await client.login('a@example.com', 'secret123')).id, 1);
   assert.deepEqual(JSON.parse(saved.getItem(SESSION_KEY)), tokens);
   client.signOut(); assert.equal(saved.getItem(SESSION_KEY), null);
+});
+
+test('multipart avatar uploads preserve the browser boundary and the same file through token refresh', async () => {
+  const body = new FormData(); body.append('file', new Blob(['image'], {type: 'image/png'}), 'avatar.png');
+  const attempts = [];
+  const client = new ApiClient(storage(), async (url, options) => {
+    if (url.endsWith('/refresh')) return json({access_token: 'new', refresh_token: 'new-refresh'});
+    attempts.push(options);
+    if (attempts.length === 1) return json({error: {message: 'expired'}}, 401);
+    return json({avatar_url: '/api/v1/users/avatars/image.png'});
+  });
+  await client.request('/users/me/avatar', {method: 'PATCH', body});
+  assert.equal(attempts.length, 2);
+  for (const attempt of attempts) {assert.equal(attempt.body, body); assert.equal(attempt.headers.has('Content-Type'), false);}
+  assert.equal(attempts[1].headers.get('Authorization'), 'Bearer new');
 });
 
 test('concurrent expired requests refresh once and retry the original payloads', async () => {
@@ -131,7 +146,8 @@ test('an old rejected refresh cannot clear a newly logged-in account', async () 
 });
 
 function roomFixture() {
-  return {host_user_id: 1, players: [{user_id: 1, ready: true}, {user_id: 2, ready: false}],
+  return {host_user_id: 1, status: 'waiting', active_match_id: null, all_ready: false,
+    players: [{user_id: 1, ready: true}, {user_id: 2, ready: false}],
     config: {counts: {village_groups: 8, hero_groups: 4, monster_groups: 3}, selection: {
       village: {fixed_randomizer_ids: ['TS-0088']}, hero: {fixed_randomizer_ids: []}, monster: {fixed_randomizer_ids: []},
       dungeon_features: {mode: 'manual'}, environment: {fixed_card_ids: ['TS-0192'], random_count: 0},
@@ -157,9 +173,15 @@ test('room summary uses shared environment rules and resolves selected names', (
 
 test('room permissions follow membership and host identity without a seat model', () => {
   const room = roomFixture();
-  assert.deepEqual(roomPresentation(room, 1), {isHost: true, isMember: true, ready: true, readyCount: 1});
-  assert.deepEqual(roomPresentation(room, 2), {isHost: false, isMember: true, ready: false, readyCount: 1});
-  assert.deepEqual(roomPresentation(room, 3), {isHost: false, isMember: false, ready: false, readyCount: 1});
+  assert.deepEqual(roomPresentation(room, 1), {isHost: true, isMember: true, ready: true, readyCount: 1, playing: false, canStart: false});
+  assert.deepEqual(roomPresentation(room, 2), {isHost: false, isMember: true, ready: false, readyCount: 1, playing: false, canStart: false});
+  assert.deepEqual(roomPresentation(room, 3), {isHost: false, isMember: false, ready: false, readyCount: 1, playing: false, canStart: false});
+  room.all_ready = true;
+  assert.equal(roomPresentation(room, 1).canStart, true);
+  assert.equal(roomPresentation(room, 2).canStart, false);
+  room.status = 'playing';
+  assert.equal(roomPresentation(room, 1).canStart, false);
+  assert.equal(roomPresentation(room, 1).playing, true);
 });
 
 test('realtime handshake and reconnect recovery trigger authoritative room reloads', async () => {
@@ -181,46 +203,51 @@ test('realtime handshake and reconnect recovery trigger authoritative room reloa
     socket.onopen(); assert.deepEqual(socket.sent[0], {type: 'auth', payload: {token: 'access'}});
     socket.onmessage({data: JSON.stringify({type: 'ack'})});
     socket.onmessage({data: JSON.stringify({type: 'room_changed'})});
-    assert.equal(reloads, 2); assert.deepEqual(statuses, ['connecting', 'online']);
+    socket.onmessage({data: JSON.stringify({type: 'match_changed'})});
+    socket.onmessage({data: JSON.stringify({type: 'profile_changed', payload: {user_id: 1}})});
+    assert.equal(reloads, 4); assert.deepEqual(statuses, ['connecting', 'online']);
   } finally {connection.close(); globalThis.WebSocket = previousSocket; globalThis.location = previousLocation;}
 });
 
 async function panelContext(request) {
-  const source = await readFile(new URL('../panel.js', import.meta.url), 'utf8');
   const elements = new Map();
-  const context = vm.createContext({URLSearchParams, location: {search: `?room=${'a'.repeat(32)}`},
-    document: {querySelector(selector) {
+  const previousDocument = globalThis.document;
+  globalThis.document = {querySelector(selector) {
       if (!elements.has(selector)) elements.set(selector, {hidden: true, disabled: false, textContent: ''});
       return elements.get(selector);
-    }}, structuredClone, apiStub: {request}, payload: {mode: 'classic', test: 'unsaved draft'}});
-  vm.runInContext(source.replace(/\nmain\(\);\s*$/, ''), context);
-  vm.runInContext(`roomEditor = {api: apiStub, room: {config_version: 1}, dirty: true};
-    enginePayload = () => payload; refresh = () => {};`, context);
-  return {context, elements};
+    }};
+  const page = createPageState('a'.repeat(32));
+  page.roomEditor = {api: {request}, room: {config_version: 1}, dirty: true};
+  const editor = createRoomEditor(page, {
+    enginePayload: () => ({mode: 'classic', test: 'unsaved draft'}), refresh: () => {},
+  });
+  return {page, elements, async save() {
+    try {await editor.saveRoomConfig();} finally {globalThis.document = previousDocument;}
+  }};
 }
 
 test('room editor preserves the unsaved draft when another page updated its configuration', async () => {
   const requests = [];
-  const {context, elements} = await panelContext(async (path, options) => {
-    requests.push({path, options}); return {config_version: 2, version: 7};
+  const {page, elements, save} = await panelContext(async (path, options) => {
+    requests.push({path, options}); return {status: 'waiting', config_version: 2, version: 7};
   });
-  await vm.runInContext('saveRoomConfig()', context);
+  await save();
   assert.equal(requests.length, 1);
   assert.match(elements.get('#room-editor-status').textContent, /其他页面更新/);
   assert.equal(elements.get('#reload-room').hidden, false);
-  assert.equal(vm.runInContext('roomEditor.dirty', context), true);
+  assert.equal(page.roomEditor.dirty, true);
 });
 
 test('room editor can save after a readiness update using the new room version', async () => {
   let submitted;
-  const {context, elements} = await panelContext(async (path, options) => {
-    if (!options) return {config_version: 1, version: 7};
+  const {page, elements, save} = await panelContext(async (path, options) => {
+    if (!options) return {status: 'waiting', config_version: 1, version: 7};
     submitted = JSON.parse(options.body); return {config_version: 2, version: 8, config: submitted.config};
   });
-  await vm.runInContext('saveRoomConfig()', context);
+  await save();
   assert.equal(submitted.expected_version, 7);
   assert.equal(submitted.config.test, 'unsaved draft');
-  assert.equal(vm.runInContext('roomEditor.dirty', context), false);
+  assert.equal(page.roomEditor.dirty, false);
   assert.match(elements.get('#room-editor-status').textContent, /已保存至房间/);
   assert.equal(elements.get('#save-room').disabled, false);
 });

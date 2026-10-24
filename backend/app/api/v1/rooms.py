@@ -16,7 +16,7 @@ service = RoomService()
 
 async def publish(request: Request, room: RoomView) -> RoomView:
     await request.app.state.realtime_manager.broadcast({"v": 1, "type": "room_changed",
-        "payload": {"room_id": room.id, "version": room.version}})
+        "payload": {"room_id": room.id, "version": room.version} if room.is_public else {}})
     return room
 
 
@@ -33,12 +33,12 @@ async def current(user: User = Depends(get_current_user), db: AsyncSession = Dep
 @router.post("", response_model=RoomView, status_code=201)
 async def create(payload: RoomCreate, request: Request,
                  user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    return await publish(request, await service.create(db, user.id, payload.name))
+    return await publish(request, await service.create(db, user.id, payload.name, is_public=payload.is_public))
 
 
 @router.get("/{room_id}", response_model=RoomView)
 async def room(room_id: str, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    return await service.repo.view(db, await service.waiting(db, room_id))
+    return await service.repo.view(db, await service.readable(db, room_id, user.id))
 
 
 @router.post("/{room_id}/join", response_model=RoomView)

@@ -1,5 +1,160 @@
 [
   {
+    "ability_id": "TS-0551-A01",
+    "hand": [
+      "TS-0003"
+    ],
+    "expected": {
+      "health_bonus": 3
+    },
+    "source_line": "战斗：手牌中每有 1 张物品，此怪物获得 +3 生命值。"
+  },
+  {
+    "ability_id": "TS-0552-A01",
+    "hand": [
+      "TS-0002"
+    ],
+    "expected": {
+      "health_bonus": 4
+    },
+    "source_line": "战斗：手牌中每有 1 张武器，此怪物获得 +4 生命值。"
+  },
+  {
+    "ability_id": "TS-0554-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "health_bonus": 4
+    },
+    "source_line": "战斗：手牌中每有 1 名英雄，此怪物获得 +4 生命值。"
+  },
+  {
+    "ability_id": "TS-0555-A01",
+    "hand": [
+      "TS-0003"
+    ],
+    "expected": {
+      "health_bonus": 2
+    },
+    "source_line": "战斗：每有 1 张手牌，此怪物获得 +2 生命值。"
+  },
+  {
+    "ability_id": "TS-0613-A02",
+    "hand": [
+      "TS-0714"
+    ],
+    "expected": {
+      "health_bonus": 2
+    },
+    "source_line": "战斗：手牌中每有 1 张疾病，蛛影妖姬获得 +2 生命值。"
+  },
+  {
+    "ability_id": "TS-0638-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "health_bonus": 1
+    },
+    "source_line": "战斗：手牌中每有 1 名民兵，此牌获得 +1 生命值。"
+  },
+  {
+    "ability_id": "TS-0639-A01",
+    "hand": [
+      "TS-0302"
+    ],
+    "expected": {
+      "health_bonus": 2
+    },
+    "source_line": "战斗：手牌中每有 1 名等级 1 的英雄，此牌获得 +2 生命值。"
+  },
+  {
+    "ability_id": "TS-0640-A01",
+    "hand": [
+      "TS-0303"
+    ],
+    "expected": {
+      "health_bonus": 3
+    },
+    "source_line": "战斗：手牌中每有 1 名等级 2 的英雄，此牌获得 +3 生命值。"
+  },
+  {
+    "ability_id": "TS-0642-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "expected": {
+      "health_bonus": 2
+    },
+    "source_line": "战斗：手牌中每有 1 名英雄，此牌获得 +2 生命值。"
+  },
+  {
+    "ability_id": "TS-0553-A01",
+    "hand": [
+      "TS-0003"
+    ],
+    "expected": {
+      "health_bonus": 2
+    },
+    "source_line": "战斗：此怪物获得等同于手牌中金币值总和的生命值。"
+  },
+  {
+    "ability_id": "TS-0614-A02",
+    "hand": [],
+    "expected": {
+      "health_bonus": 5
+    },
+    "source_line": "战斗：当前玩家每拥有 1 点经验值，此牌获得 +1 生命值。"
+  },
+  {
+    "ability_id": "TS-0615-A02",
+    "hand": [],
+    "expected": {
+      "health_bonus": 0
+    },
+    "source_line": "战斗：地下城中每有 1 名其他腐化德鲁伊，猛犸获得 +2 生命值。"
+  },
+  {
+    "ability_id": "TS-0673-A03",
+    "hand": [
+      "TS-0302"
+    ],
+    "expected": {
+      "health_bonus": 1
+    },
+    "source_line": "战斗：此牌生命值增加，数值等同于你手牌中所有英雄的等级总和。"
+  },
+  {
+    "ability_id": "TS-0611-A01",
+    "hand": [
+      "TS-0610"
+    ],
+    "expected": {
+      "health_bonus": 3
+    },
+    "source_line": "战斗：若手牌中或地下城大厅中有另一名腐化德鲁伊，德鲁伊君主获得 +3 生命值。"
+  },
+  {
+    "ability_id": "TS-0641-A01",
+    "hand": [
+      "TS-0304"
+    ],
+    "expected": {
+      "health_bonus": 4
+    },
+    "source_line": "战斗：若手牌中有至少 1 名等级 3 的英雄，则此牌获得 +4 生命值。"
+  },
+  {
+    "ability_id": "TS-0508-A02",
+    "hand": [],
+    "expected": {
+      "damage_divisor": 2
+    },
+    "attack": 18,
+    "source_line": "战斗：若当前玩家手牌中没有元素牌，则只受到一半伤害。"
+  },
+  {
     "ability_id": "TS-0459-A01",
     "hand": [
       "TS-0002"

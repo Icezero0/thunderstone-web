@@ -28,10 +28,38 @@ export function declareBattleTarget(tx: Transition, targetId: string) {
   rememberFronts(tx);
   if (target['wiki_生命值'] === '') throw new RuleError(`target ${target.card_id} has no recorded health`);
   Object.assign(tx.state.battle_context, {target_rank: rank, target_instance_id: targetId, hall_zone: hallZone});
+  if (!tx.combat(rank, target).can_attack) throw new RuleError("target's attack restrictions are not satisfied");
+  const needsCommitment = !tx.state.battle_context.negative_effects_committed
+    && tx.ruleset.abilities.some(ability => ability.kind === 'triggered'
+      && ability.event === 'BATTLE_TEAM_COMMITTED'
+      && tx.zone('hand').some(id => tx.card(id).card_id === ability.source_card_id));
+  if (needsCommitment) {
+    // Preparation remains reversible until this point. Mandatory diseases now
+    // resolve once, with normal resumable choices, before monster battle text.
+    tx.state.battle_context.negative_effects_committed = true;
+    tx.state.subphase = 'BATTLE_COMMIT';
+    tx.state.timing_window = 'BATTLE_TEAM_COMMITTED';
+    tx.event('battle_commitment_started', {player_id: tx.playerId, target_instance_id: targetId});
+    queueSteps(tx, [{op: 'event', event: 'BATTLE_TEAM_COMMITTED'},
+      {op: 'start_committed_battle', target_id: targetId}]);
+    return;
+  }
+  startCommittedBattle(tx, targetId);
+}
+
+/** Continue only after every mandatory commitment effect and choice resolved. */
+export function startCommittedBattle(tx: Transition, targetId: string) {
+  const [hallZone, rank] = targetLocation(tx, targetId), target = tx.card(targetId);
   reconcileEquipment(tx, true);
   const trace = tx.combat(rank, target);
   tx.health(target, rank, targetId);
-  if (!trace.can_attack) throw new RuleError("target's attack restrictions are not satisfied");
+  if (!trace.can_attack) {
+    if (!tx.state.battle_context.negative_effects_committed)
+      throw new RuleError("target's attack restrictions are not satisfied");
+    // A mandatory penalty can invalidate the already committed equipment.
+    // Complete this battle as a loss instead of stranding its final choice.
+    tx.state.battle_context.cannot_defeat = true;
+  }
   tx.event('battle_target_declared', {player_id: tx.playerId, target_instance_id: targetId, hall_zone: hallZone, rank});
   tx.state.subphase = 'BATTLE_EFFECTS'; tx.state.timing_window = 'BATTLE_BEFORE_OUTCOME';
   queueSteps(tx, [{op: 'release_battle_diseases', target_id: targetId, timing: 'before'},
@@ -88,6 +116,6 @@ export function battleDeparture(tx: Transition) {
   if (departed && rank !== 0) steps.push({op: 'refill_hall', hall_zone: hallZone,
     acquire_stone: won && rank === 1 && isMonster(target),
     defeated_instance_id: won && isMonster(target) ? targetId : null});
-  steps.push({op: 'finish_turn'});
+  steps.push({op: 'await_turn_end'});
   queueSteps(tx, steps);
 }

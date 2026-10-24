@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "cards_csv_sha256": "44c30e854594b2cf37e021d9f12426c5925ee124843fc6efa338133ff5c1039b",
+  "cards_csv_sha256": "946a4e6242efa52fe4eb0c109597bb5529bbeaec1e0b8e849cf30aa8bd3554b7",
   "default_count_field": "initial_copy_count",
   "randomizer_pools": {
     "hero": [

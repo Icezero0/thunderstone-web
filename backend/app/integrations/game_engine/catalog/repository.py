@@ -6,7 +6,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from backend.app.integrations.game_engine.paths import PROJECT_ROOT
+from backend.app.core.paths import PROJECT_ROOT
 
 
 @dataclass(frozen=True)
@@ -22,5 +22,5 @@ def load_catalog(root: Path = PROJECT_ROOT) -> CatalogSnapshot:
     setup = json.loads((root / "cards" / "setup_catalog.json").read_text(encoding="utf-8"))
     current_hash = hashlib.sha256(csv_path.read_bytes()).hexdigest()
     if setup["cards_csv_sha256"] != current_hash:
-        raise ValueError("setup_catalog.json is stale; run backend/scripts/build_setup_catalog.py")
+        raise ValueError("setup_catalog.json is stale; run backend/scripts/catalog/build_setup_catalog.py")
     return CatalogSnapshot(cards, setup)

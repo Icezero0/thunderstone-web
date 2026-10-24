@@ -1,0 +1,258 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {page, settle} from './support/player-deck-dom.mjs';
+import {deckTransitions} from '../.test-dist/match-deck-transitions.js';
+
+const source = await readFile(new URL('../.test-dist/player-deck-component.js', import.meta.url), 'utf8');
+const html = '<html><body><main id="first"></main><main id="second"></main><div id="first-overlays"></div><div id="second-overlays"></div></body></html>';
+const card = (id, cardId = 'TS-0001') => ({id, cardId, name: `Card ${id}`});
+const snapshot = () => ({hand: [card('b', 'TS-0002'), card('a')], draw: [card('d0'), card('d1')], discard: [card('old')]});
+const handCards = (ui, prefix) => ui.get(`${prefix}-hand-track`).children.filter(node => node.tagName === 'button' && !node.hidden);
+async function setup(options = {}) {
+  const ui = await page({html, source, ...options});
+  return {ui, Area: ui.evaluate('PlayerDeckPackage.PlayerDeckArea')};
+}
+
+function refillSequence() {
+  const initial = {hand: [card('h1'), card('h2')], draw: [card('d1'), card('d2')], discard: [card('x1'), card('x2')]};
+  const final = {hand: [...initial.draw, ...initial.discard, ...initial.hand], draw: [], discard: []};
+  const events = ['turn_hand_discarded', 'player_deck_shuffled'].map((kind, i) => ({sequence: i + 1, kind, player_id: 'alice'}));
+  return {initial, final, steps: deckTransitions(initial, final, events, 'alice')};
+}
+
+test('a complete refill plays discard, remaining draw, shuffle and remaining draw in order with no interactive gap', async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), busy = [];
+  const area = new Area(ui.get('first'), {idPrefix: 'one', onBusyChange: value => busy.push(value)});
+  const {initial, final, steps} = refillSequence(); area.setState(initial); await settle();
+  const pending = area.animateSequence(final, steps); await settle();
+  const layer = ui.get('one-card-motion-layer');
+  assert.equal(layer.children.length, 2); assert.equal(layer.children[0].className, 'card-flight');
+  assert.equal(ui.get('one-draw-count').textContent, '2');
+  await ui.advance(310); assert.equal(layer.children.length, 2); assert.equal(layer.children[0].className, 'card-flight');
+  assert.equal(ui.get('one-discard-count').textContent, '4');
+  await ui.advance(310); assert.equal(layer.children[0].className, 'shuffle-packet'); assert.equal(area.isBusy, true);
+  await ui.advance(650); assert.equal(layer.children.length, 4); assert.equal(layer.children[0].className, 'card-flight');
+  await ui.advance(430); await pending;
+  assert.equal(layer.children.length, 0); assert.equal(area.isBusy, false); assert.deepEqual(busy, [true, false]);
+  assert.equal(handCards(ui, 'one').length, 6); assert.equal(ui.get('one-draw-count').textContent, '0');
+  assert.equal(ui.get('one-discard-count').textContent, '0'); assert.equal(ui.timers.size, 0);
+  assert.ok(ui.all.filter(node => node.tagName === 'img').every(image => image.decodeCalls === 1 && image.srcWrites.length === 1)); area.dispose();
+});
+
+test('destruction lifts and enlarges the original decoded card, then dissolves it without discarding or drawing', async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const initial = snapshot(); area.setState(initial); await settle();
+  const victim = handCards(ui, 'one')[0], final = {...initial, hand: initial.hand.slice(1)};
+  const pending = area.destroyTo(final, ['b']); await settle();
+  const animation = ui.animations.find(animation => animation.element.className === 'card-destruction');
+  assert.ok(animation); assert.equal(animation.element.children[0], victim);
+  assert.ok(Number.parseFloat(animation.keyframes[1].width) > Number.parseFloat(animation.keyframes[0].width));
+  assert.equal(animation.keyframes.some(frame => frame.clipPath), false); assert.equal(area.isBusy, true);
+  await ui.advance(300);
+  const shards = ui.animations.filter(animation => animation.element.className === 'card-shard');
+  assert.equal(shards.length, 35); assert.ok(shards.every(animation => animation.element.style.backgroundImage.includes('TS-0002.png')));
+  assert.ok(new Set(shards.map(animation => animation.keyframes.at(-1).transform)).size > 20);
+  await ui.advance(1200); await pending;
+  assert.equal(victim.hidden, true); assert.equal(handCards(ui, 'one').length, 1); assert.equal(area.isBusy, false);
+  assert.equal(ui.get('one-draw-count').textContent, '2'); assert.equal(ui.get('one-discard-count').textContent, '1');
+  assert.equal(ui.get('one-card-motion-layer').children.length, 0); area.dispose();
+});
+
+for (const elapsed of [100, 400, 800, 1400]) test(`newer snapshots override a refill sequence at ${elapsed}ms and late completions cannot restore old state`, async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const {initial, final, steps} = refillSequence(); area.setState(initial); await settle();
+  const pending = area.animateSequence(final, steps); await settle(); await ui.advance(elapsed);
+  const callbacks = ui.animations.map(animation => animation.onfinish).filter(Boolean);
+  area.setState({hand: [card('latest')], draw: [], discard: []}); await settle();
+  callbacks.forEach(callback => callback()); await pending; await ui.advance(3000);
+  assert.deepEqual(Array.from(area.handOrder), ['latest']); assert.equal(area.isBusy, false);
+  assert.equal(ui.get('one-card-motion-layer').children.length, 0); assert.equal(ui.timers.size, 0); area.dispose();
+});
+
+for (const scenario of ['blur', 'hidden', 'dispose', 'reduced', 'failed-animation', 'browser']) test(`sequence settles safely on ${scenario}`, async () => {
+  const {ui, Area} = await setup({animationsEnabled: true, reducedMotion: scenario === 'reduced', animationFailure: scenario === 'failed-animation'});
+  const area = new Area(ui.get('first'), {idPrefix: 'one'}), {initial, final, steps} = refillSequence(); area.setState(initial); await settle();
+  if (scenario === 'browser') area.openPileBrowser('draw');
+  const pending = area.animateSequence(final, steps); await settle();
+  if (scenario === 'blur') ui.window.fire('blur');
+  if (scenario === 'hidden') {ui.document.hidden = true; ui.document.fire('visibilitychange');}
+  if (scenario === 'dispose') area.dispose();
+  await pending; await ui.advance(3000);
+  if (scenario !== 'dispose') {
+    assert.equal(area.handOrder.length, 6); assert.equal(area.isBusy, false);
+    assert.equal(ui.get('one-card-motion-layer').children.length, 0);
+    if (scenario === 'browser') {assert.equal(area.isBrowsing, true); assert.equal(ui.get('one-pile-browser-count').textContent, '0 张');}
+    area.dispose();
+  }
+  assert.equal(ui.timers.size, 0);
+});
+
+test('hand glow follows instances through sorting and snapshot moves independently of selection and image loading', async () => {
+  const {ui, Area} = await setup(), clicks = [];
+  const area = new Area(ui.get('first'), {idPrefix: 'one', onHandCardClick: id => {clicks.push(id); return true;}});
+  const initial = snapshot(); area.setState(initial); await settle(); area.setSelectedIds(['b']); area.setHighlightedIds(['a']);
+  const first = handCards(ui, 'one').find(card => card.dataset.instanceId === 'a');
+  first.fire('pointerenter'); first.fire('click'); assert.deepEqual(clicks, ['a']); assert.deepEqual(Array.from(area.selectedIds), ['b']);
+  area.setAutoSort(true); await ui.advance(200); assert.equal(handCards(ui, 'one')[0], first); assert.equal(first.dataset.glowing, 'true');
+  first.fire('pointerenter'); ui.key('Alt'); assert.equal(ui.get('one-inspect-overlay').hidden, false); ui.release();
+  assert.throws(() => area.setHighlightedIds(['d0']), /hand instances/);
+  assert.equal(first.dataset.glowing, 'true');
+  area.setState({...initial, hand: initial.hand.filter(card => card.id !== 'a'), discard: [...initial.discard, initial.hand[1]]});
+  assert.equal(first.dataset.glowing, 'false');
+  assert.equal(ui.all.filter(node => node.tagName === 'img').every(image => image.decodeCalls === 1 && image.srcWrites.length === 1), true);
+  area.dispose();
+});
+const browserCards = (ui, prefix = 'one') => ui.get(`${prefix}-pile-browser-grid`).children
+  .filter(node => node.className === 'pile-browser-entry' && !node.hidden).map(node => node.children[0]);
+
+for (const kind of ['draw', 'discard']) test(`an open ${kind} browser follows external snapshots without reopening or resetting scroll/focus`, async () => {
+  const {ui, Area} = await setup(), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const initial = {hand: [], draw: [card('d-high', 'TS-0003'), card('d-low'), card('d-same')],
+    discard: [card('bottom'), card('middle', 'TS-0002'), card('top', 'TS-0003')]};
+  area.setState(initial); await settle(); area.openPileBrowser(kind); await settle();
+  const grid = ui.get('one-pile-browser-grid'), modal = ui.get('one-pile-browser');
+  const initialCards = browserCards(ui), retained = initialCards[1];
+  retained.focus(); ui.key('Alt'); grid.scrollTop = 153;
+  assert.equal(ui.get('one-inspect-overlay').hidden, false);
+  const added = card('new', 'TS-0002'), updated = {...initial, [kind]: [...initial[kind].slice(0, 2), added]};
+  // Preserve the middle focused instance while replacing a different card, including equal catalog IDs.
+  if (kind === 'draw') updated.draw = [initial.draw[0], initial.draw[2], added];
+  area.setState(updated); await settle();
+  const expected = kind === 'draw' ? ['d-same', 'new', 'd-high'] : ['new', 'middle', 'bottom'];
+  assert.deepEqual(browserCards(ui).map(node => node.dataset.instanceId), expected);
+  assert.equal(area.isBrowsing, true); assert.equal(modal.hidden, false);
+  assert.equal(ui.get('one-pile-browser-count').textContent, '3 张'); assert.equal(grid.scrollTop, 153);
+  assert.equal(area.root.inert, true); assert.equal(ui.document.activeElement, retained);
+  assert.equal(ui.get('one-inspect-overlay').hidden, false);
+  assert.equal(retained.children[0].children[0].children[0].children[0].srcWrites.length, 1);
+  // A removed inspected card cannot linger in the list or enlarged image; empty and refilled states are live too.
+  const empty = {...updated, [kind]: []}; area.setState(empty); await settle();
+  assert.equal(browserCards(ui).length, 0); assert.equal(ui.get('one-pile-browser-empty').hidden, false);
+  assert.equal(ui.get('one-pile-browser-count').textContent, '0 张');
+  assert.equal(ui.get('one-inspect-overlay').hidden, true); assert.equal(ui.document.activeElement, ui.get('one-close-pile-browser'));
+  ui.release();
+  area.setState({...empty, [kind]: [added]}); await settle();
+  assert.equal(browserCards(ui).length, 1); assert.equal(ui.get('one-pile-browser-empty').hidden, true);
+  ui.key('Escape'); assert.equal(area.isBrowsing, false); assert.equal(area.root.inert, false);
+  assert.equal(ui.document.activeElement.dataset.instanceId, 'new');
+  assert.equal(ui.document.activeElement.getAttribute('title'), null);
+  area.dispose();
+});
+
+test('external draw/discard and shuffle events update an open browser immediately instead of hiding it for background animation', async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const initial = snapshot(); area.setState(initial); await settle(); area.openPileBrowser('draw');
+  const drawn = {...initial, hand: [...initial.hand, initial.draw[0]], draw: initial.draw.slice(1)};
+  await area.animateTo(drawn, {kind: 'draw', instanceIds: ['d0']});
+  assert.equal(area.isBrowsing, true); assert.equal(area.isBusy, false);
+  assert.deepEqual(browserCards(ui).map(node => node.dataset.instanceId), ['d1']);
+  const shuffled = {...drawn, draw: [...drawn.draw, ...drawn.discard], discard: []};
+  await area.shuffleTo(shuffled);
+  assert.equal(ui.get('one-pile-browser-count').textContent, '2 张'); assert.equal(area.isBrowsing, true);
+  ui.key('Escape'); area.openPileBrowser('discard');
+  const discarded = {...shuffled, hand: shuffled.hand.slice(1), discard: [shuffled.hand[0]]};
+  await area.animateTo(discarded, {kind: 'discard', instanceIds: [shuffled.hand[0].id]});
+  assert.deepEqual(browserCards(ui).map(node => node.dataset.instanceId), [shuffled.hand[0].id]);
+  assert.equal(area.isBrowsing, true); assert.equal(area.isBusy, false);
+  assert.equal(ui.get('one-card-motion-layer').children.length, 0);
+  area.setState(discarded, {closeBrowser: true}); assert.equal(area.isBrowsing, false);
+  area.dispose();
+});
+
+test('the standalone component owns its DOM, supports multiple scoped instances and accepts custom image sources', async () => {
+  const {ui, Area} = await setup();
+  const selections = [];
+  const first = new Area(ui.get('first'), {idPrefix: 'one', overlayRoot: ui.get('first-overlays'),
+    onSelectionChange: ids => selections.push(Array.from(ids)),
+    images: {front: id => `/custom/${id}.webp`, back: '/custom/common-back.webp'}});
+  const second = new Area(ui.get('second'), {overlayRoot: ui.get('second-overlays')});
+  first.setState(snapshot()); second.setState({hand: [card('b')], draw: [], discard: []}); await settle();
+  assert.notEqual(first.root.id, second.root.id);
+  const ids = ui.all.filter(node => node.isConnected && node.id).map(node => node.id);
+  assert.equal(new Set(ids).size, ids.length);
+  assert.equal(ui.get('one-draw-count').textContent, '2'); assert.equal(ui.get('one-discard-count').textContent, '1');
+  assert.equal(ui.get('one-front-image').src, '/custom/TS-0002.webp');
+  assert.equal(ui.get('one-back-image').src, '/custom/common-back.webp');
+  ui.get('one-first-card').fire('click');
+  assert.deepEqual(Array.from(first.selectedIds), ['b']); assert.deepEqual(Array.from(second.selectedIds), []);
+  assert.deepEqual(selections.at(-1), ['b']);
+  // No page selectors, demo deck, hand-size cap, HTTP or rule-engine calls are needed.
+  second.setState({hand: Array.from({length: 40}, (_, index) => card(`instance-${index}`)), draw: [], discard: []});
+  assert.equal(second.handOrder.length, 40); assert.equal(first.handOrder.length, 2); assert.deepEqual(ui.requests, []);
+  first.dispose(); second.dispose();
+});
+
+test('snapshots are copied, validated atomically and can refresh metadata without replacing loaded card images', async () => {
+  const {ui, Area} = await setup(), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const initial = snapshot(); area.setState(initial); await settle();
+  initial.hand[0].name = 'Host mutation'; initial.hand.reverse();
+  assert.deepEqual(Array.from(area.handOrder), ['b', 'a']);
+  assert.match(ui.get('one-first-card').getAttribute('aria-label'), /Card b/);
+  assert.throws(() => area.setState({hand: [card('same'), card('same')], draw: [], discard: []}), /unique/);
+  assert.throws(() => area.setState({hand: [card('b', 'TS-0999')], draw: [], discard: []}), /changed catalog identity/);
+  assert.deepEqual(Array.from(area.handOrder), ['b', 'a']); assert.equal(ui.get('one-draw-count').textContent, '2');
+  await assert.rejects(area.animateTo(snapshot(), {kind: 'discard', instanceIds: ['missing']}), /source and destination/);
+  assert.equal(area.isBusy, false);
+  const updated = snapshot(); updated.hand[0].name = 'Updated name'; area.setState(updated);
+  assert.match(ui.get('one-first-card').getAttribute('aria-label'), /Updated name/);
+  assert.equal(ui.get('one-front-image').decodeCalls, 1); assert.equal(ui.get('one-front-image').srcWrites.length, 1);
+  ui.get('one-first-card').fire('click'); area.setState({hand: [card('a')], draw: [], discard: [card('b', 'TS-0002')]});
+  assert.deepEqual(Array.from(area.selectedIds), []);
+  area.dispose();
+});
+
+test('manual order survives host refreshes, automatic sorting includes incoming cards, and the host can reset presentation order', async () => {
+  const {ui, Area} = await setup(), orders = [], auto = [];
+  const area = new Area(ui.get('first'), {idPrefix: 'one', onHandOrderChange: ids => orders.push(Array.from(ids)),
+    onAutoSortChange: value => auto.push(value)});
+  const initial = snapshot(); initial.hand.push(card('c', 'TS-0003')); area.setState(initial); await settle();
+  const first = ui.get('one-first-card'), last = handCards(ui, 'one').at(-1).getBoundingClientRect();
+  ui.down(first.id); ui.pointer('pointermove', last.left + 12); ui.pointer('pointerup', last.left + 12); await ui.advance(160);
+  assert.deepEqual(Array.from(area.handOrder), ['a', 'c', 'b']); assert.deepEqual(orders.at(-1), ['a', 'c', 'b']);
+  area.setState({...initial, hand: [...initial.hand, card('new', 'TS-0004')]});
+  assert.deepEqual(Array.from(area.handOrder), ['a', 'c', 'b', 'new']);
+  area.setState(initial, {resetHandOrder: true}); assert.deepEqual(Array.from(area.handOrder), ['b', 'a', 'c']);
+  area.setAutoSort(true); await ui.advance(160);
+  assert.deepEqual(Array.from(area.handOrder), ['a', 'b', 'c']); assert.deepEqual(auto, [true]);
+  area.setState({...initial, hand: [...initial.hand, card('new-low', 'TS-0001')]});
+  assert.deepEqual(Array.from(area.handOrder), ['a', 'new-low', 'b', 'c']);
+  area.setState({...initial, hand: [card('new-low', 'TS-0001'), ...initial.hand]});
+  assert.deepEqual(Array.from(area.handOrder), ['a', 'new-low', 'b', 'c']);
+  assert.deepEqual(initial.hand.map(item => item.id), ['b', 'a', 'c']);
+  area.dispose();
+});
+
+test('a newer snapshot interrupts animation and disposal removes overlays, handlers, timers and pending completions', async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), busy = [];
+  const area = new Area(ui.get('first'), {idPrefix: 'one', overlayRoot: ui.get('first-overlays'), onBusyChange: value => busy.push(value)});
+  const initial = snapshot(); area.setState(initial); await settle();
+  const drawn = {...initial, hand: [...initial.hand, initial.draw[0]], draw: initial.draw.slice(1)};
+  const pending = area.animateTo(drawn, {kind: 'draw', instanceIds: ['d0']}); await settle();
+  assert.equal(area.isBusy, true); assert.ok(ui.get('one-card-motion-layer').children.length);
+  const newer = {...drawn, hand: [drawn.hand[2], drawn.hand[0], drawn.hand[1]]};
+  area.setState(newer, {resetHandOrder: true}); await pending; await ui.advance(1000);
+  assert.equal(area.isBusy, false); assert.deepEqual(Array.from(area.handOrder), ['d0', 'b', 'a']);
+  assert.equal(ui.get('one-card-motion-layer').children.length, 0); assert.deepEqual(busy, [true, false]);
+  const discarded = {...newer, hand: newer.hand.slice(1), discard: [...newer.discard, newer.hand[0]]};
+  const second = area.animateTo(discarded, {kind: 'discard', instanceIds: ['d0']}); await settle();
+  area.dispose(); area.dispose(); await second; await ui.advance(1000);
+  assert.equal(ui.get('first').children.length, 0); assert.equal(ui.get('first-overlays').children.length, 0);
+  assert.equal(ui.timers.size, 0); assert.ok(ui.observers.every(observer => observer.disconnected));
+  assert.ok(ui.animations.every(animation => animation.playState === 'idle'));
+  assert.throws(() => area.setState(initial), /disposed/);
+  assert.equal(ui.key('Alt').defaultPrevented, false);
+});
+
+test('only the hovered or focused component owns Alt inspection when multiple deck areas exist', async () => {
+  const {ui, Area} = await setup();
+  const first = new Area(ui.get('first'), {idPrefix: 'one'}), second = new Area(ui.get('second'), {idPrefix: 'two'});
+  first.setState(snapshot()); second.setState(snapshot()); await settle();
+  const firstCard = ui.get('one-first-card'), secondCard = ui.get('two-first-card');
+  firstCard.focus(); secondCard.fire('pointerenter'); ui.key('Alt');
+  assert.equal(ui.get('one-inspect-overlay').hidden, true); assert.equal(ui.get('two-inspect-overlay').hidden, false);
+  assert.equal(firstCard.dataset.active, 'false'); assert.equal(secondCard.dataset.active, 'true');
+  secondCard.fire('pointerleave');
+  assert.equal(ui.get('one-inspect-overlay').hidden, false); assert.equal(ui.get('two-inspect-overlay').hidden, true);
+  ui.release(); first.dispose(); second.dispose();
+});

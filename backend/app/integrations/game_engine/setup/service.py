@@ -1,6 +1,6 @@
 """Load a catalog/effect snapshot and invoke shared TypeScript setup."""
 from pathlib import Path
-from backend.app.integrations.game_engine.paths import PROJECT_ROOT
+from backend.app.core.paths import PROJECT_ROOT
 from backend.app.integrations.game_engine.catalog.repository import CatalogSnapshot, load_catalog
 from backend.app.integrations.game_engine.catalog.service import build_panel_catalog
 from backend.app.integrations.game_engine.effects.compiler import load_ruleset

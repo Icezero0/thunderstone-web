@@ -161,65 +161,11 @@
     }
   },
   {
-    "id": "TS-0330-A02",
-    "source_card_id": "TS-0330",
-    "source_line": "地下城：你的其他已装备英雄获得攻击 +1。",
-    "op": "hero_aura",
-    "params": {
-      "exclude_source": true,
-      "equipped": true,
-      "attack": 1
-    }
-  },
-  {
-    "id": "TS-0331-A02",
-    "source_card_id": "TS-0331",
-    "source_line": "地下城：你的其他已装备英雄获得攻击 +2。",
-    "op": "hero_aura",
-    "params": {
-      "exclude_source": true,
-      "equipped": true,
-      "attack": 2
-    }
-  },
-  {
-    "id": "TS-0332-A02",
-    "source_card_id": "TS-0332",
-    "source_line": "地下城：你的其他已装备英雄获得攻击 +3。",
-    "op": "hero_aura",
-    "params": {
-      "exclude_source": true,
-      "equipped": true,
-      "attack": 3
-    }
-  },
-  {
     "id": "TS-0500-A01",
     "source_card_id": "TS-0500",
     "source_line": "全局：所有怪物必须被击败，才能离开地下城大厅。",
     "op": "hall_movement_lock",
     "params": {}
-  },
-  {
-    "id": "TS-0613-A02",
-    "source_card_id": "TS-0613",
-    "source_line": "战斗：手牌中每有 1 张疾病，蛛影妖姬获得 +2 生命值。",
-    "op": "target_health",
-    "params": {
-      "filter": {
-        "tag": "疾病"
-      },
-      "multiplier": 2
-    }
-  },
-  {
-    "id": "TS-0614-A02",
-    "source_card_id": "TS-0614",
-    "source_line": "战斗：当前玩家每拥有 1 点经验值，此牌获得 +1 生命值。",
-    "op": "target_health",
-    "params": {
-      "metric": "xp"
-    }
   },
   {
     "id": "TS-0615-A01",
@@ -228,18 +174,6 @@
     "op": "hall_target_restriction",
     "params": {
       "protected_tag": "腐化德鲁伊"
-    }
-  },
-  {
-    "id": "TS-0615-A02",
-    "source_card_id": "TS-0615",
-    "source_line": "战斗：地下城中每有 1 名其他腐化德鲁伊，猛犸获得 +2 生命值。",
-    "op": "target_health",
-    "params": {
-      "hall_filter": {
-        "tag": "腐化德鲁伊"
-      },
-      "multiplier": 2
     }
   },
   {
@@ -667,7 +601,7 @@
     "source_line": "装备此牌的英雄可以额外装备 1 张武器。",
     "op": "extra_equipment",
     "params": {
-      "capacity": 2
+      "extra_capacity": 1
     }
   },
   {
@@ -872,12 +806,8 @@
     "id": "TS-0336-A02",
     "source_card_id": "TS-0336",
     "source_line": "若手牌中没有魔法攻击，该英雄额外获得攻击 +1。",
-    "op": "hand_bonus",
+    "op": "no_magic_bonus",
     "params": {
-      "filter": {
-        "magic_min": 1
-      },
-      "absent": true,
       "attack": 1
     }
   },
@@ -885,12 +815,8 @@
     "id": "TS-0337-A02",
     "source_card_id": "TS-0337",
     "source_line": "若手牌中没有魔法攻击，该英雄额外获得攻击 +2。",
-    "op": "hand_bonus",
+    "op": "no_magic_bonus",
     "params": {
-      "filter": {
-        "magic_min": 1
-      },
-      "absent": true,
       "attack": 2
     }
   },
@@ -898,12 +824,8 @@
     "id": "TS-0338-A02",
     "source_card_id": "TS-0338",
     "source_line": "若手牌中没有魔法攻击，该英雄额外获得攻击 +3。",
-    "op": "hand_bonus",
+    "op": "no_magic_bonus",
     "params": {
-      "filter": {
-        "magic_min": 1
-      },
-      "absent": true,
       "attack": 3
     }
   },
@@ -1120,7 +1042,7 @@
     "source_line": "攻击会给予疾病的怪物时，额外获得魔法攻击 +3。",
     "op": "target_bonus",
     "params": {
-      "gives_disease": true,
+      "tag": "给予疾病",
       "magic_attack": 3
     }
   },
@@ -1130,7 +1052,7 @@
     "source_line": "攻击会给予疾病的怪物时，额外获得魔法攻击 +4。",
     "op": "target_bonus",
     "params": {
-      "gives_disease": true,
+      "tag": "给予疾病",
       "magic_attack": 4
     }
   },
@@ -1496,15 +1418,6 @@
     }
   },
   {
-    "id": "TS-0508-A02",
-    "source_card_id": "TS-0508",
-    "source_line": "战斗：若当前玩家手牌中没有元素牌，则只受到一半伤害。",
-    "op": "target_restriction",
-    "params": {
-      "half_no_element": true
-    }
-  },
-  {
     "id": "TS-0461-A01",
     "source_card_id": "TS-0461",
     "source_line": "玩家手牌的金币值小于 5 时，此牌生命值翻倍。",
@@ -1520,84 +1433,6 @@
     "op": "target_health",
     "params": {
       "gold_below_double": 1
-    }
-  },
-  {
-    "id": "TS-0551-A01",
-    "source_card_id": "TS-0551",
-    "source_line": "战斗：手牌中每有 1 张物品，此怪物获得 +3 生命值。",
-    "op": "target_health",
-    "params": {
-      "filter": {
-        "tag": "物品"
-      },
-      "multiplier": 3
-    }
-  },
-  {
-    "id": "TS-0552-A01",
-    "source_card_id": "TS-0552",
-    "source_line": "战斗：手牌中每有 1 张武器，此怪物获得 +4 生命值。",
-    "op": "target_health",
-    "params": {
-      "filter": {
-        "tag": "武器"
-      },
-      "multiplier": 4
-    }
-  },
-  {
-    "id": "TS-0554-A01",
-    "source_card_id": "TS-0554",
-    "source_line": "战斗：手牌中每有 1 名英雄，此怪物获得 +4 生命值。",
-    "op": "target_health",
-    "params": {
-      "filter": {
-        "tag": "英雄"
-      },
-      "multiplier": 4
-    }
-  },
-  {
-    "id": "TS-0638-A01",
-    "source_card_id": "TS-0638",
-    "source_line": "战斗：手牌中每有 1 名民兵，此牌获得 +1 生命值。",
-    "op": "target_health",
-    "params": {
-      "filter": {
-        "tag": "民兵"
-      },
-      "multiplier": 1
-    }
-  },
-  {
-    "id": "TS-0642-A01",
-    "source_card_id": "TS-0642",
-    "source_line": "战斗：手牌中每有 1 名英雄，此牌获得 +2 生命值。",
-    "op": "target_health",
-    "params": {
-      "filter": {
-        "tag": "英雄"
-      },
-      "multiplier": 2
-    }
-  },
-  {
-    "id": "TS-0553-A01",
-    "source_card_id": "TS-0553",
-    "source_line": "战斗：此怪物获得等同于手牌中金币值总和的生命值。",
-    "op": "target_health",
-    "params": {
-      "metric": "gold"
-    }
-  },
-  {
-    "id": "TS-0555-A01",
-    "source_card_id": "TS-0555",
-    "source_line": "战斗：每有 1 张手牌，此怪物获得 +2 生命值。",
-    "op": "target_health",
-    "params": {
-      "multiplier": 2
     }
   },
   {
@@ -1627,72 +1462,6 @@
         ]
       },
       "multiplier": 2
-    }
-  },
-  {
-    "id": "TS-0639-A01",
-    "source_card_id": "TS-0639",
-    "source_line": "战斗：手牌中每有 1 名等级 1 的英雄，此牌获得 +2 生命值。",
-    "op": "target_health",
-    "params": {
-      "filter": {
-        "tag": "英雄",
-        "level_min": 1,
-        "level_max": 1
-      },
-      "multiplier": 2
-    }
-  },
-  {
-    "id": "TS-0640-A01",
-    "source_card_id": "TS-0640",
-    "source_line": "战斗：手牌中每有 1 名等级 2 的英雄，此牌获得 +3 生命值。",
-    "op": "target_health",
-    "params": {
-      "filter": {
-        "tag": "英雄",
-        "level_min": 2,
-        "level_max": 2
-      },
-      "multiplier": 3
-    }
-  },
-  {
-    "id": "TS-0641-A01",
-    "source_card_id": "TS-0641",
-    "source_line": "战斗：若手牌中有至少 1 名等级 3 的英雄，则此牌获得 +4 生命值。",
-    "op": "target_health",
-    "params": {
-      "filter": {
-        "tag": "英雄",
-        "level_min": 3,
-        "level_max": 3
-      },
-      "multiplier": 4,
-      "minimum": 1,
-      "flat": true
-    }
-  },
-  {
-    "id": "TS-0673-A03",
-    "source_card_id": "TS-0673",
-    "source_line": "战斗：此牌生命值增加，数值等同于你手牌中所有英雄的等级总和。",
-    "op": "target_health",
-    "params": {
-      "filter": {
-        "tag": "英雄"
-      },
-      "metric": "level_sum"
-    }
-  },
-  {
-    "id": "TS-0611-A01",
-    "source_card_id": "TS-0611",
-    "source_line": "战斗：若手牌中或地下城大厅中有另一名腐化德鲁伊，德鲁伊君主获得 +3 生命值。",
-    "op": "target_health",
-    "params": {
-      "other_tag": "腐化德鲁伊",
-      "multiplier": 3
     }
   },
   {
@@ -1895,25 +1664,6 @@
     "params": {}
   },
   {
-    "id": "TS-0717-A01",
-    "source_card_id": "TS-0717",
-    "source_line": "所有英雄承受力量 -1。",
-    "op": "disease_strength",
-    "params": {
-      "amount": -1
-    }
-  },
-  {
-    "id": "TS-0718-A01",
-    "source_card_id": "TS-0718",
-    "source_line": "一名英雄承受力量 -2。",
-    "op": "disease_strength",
-    "params": {
-      "amount": -2,
-      "single": true
-    }
-  },
-  {
     "id": "TS-0660-A01",
     "source_card_id": "TS-0660",
     "source_line": "所有英雄承受力量 -1。",
@@ -2003,6 +1753,7 @@
     "params": {
       "same_family": true,
       "minimum_rank": 2,
+      "maximum_rank": 3,
       "attack": 3
     }
   },
@@ -2014,6 +1765,7 @@
     "params": {
       "same_family": true,
       "minimum_rank": 2,
+      "maximum_rank": 3,
       "attack": 4
     }
   },
@@ -2077,7 +1829,8 @@
     "source_line": "全局：所有英雄的购买价格额外增加 2 金币。",
     "op": "economy",
     "params": {
-      "hero_surcharge": 2
+      "hero_surcharge": 2,
+      "scope": "hall"
     }
   },
   {

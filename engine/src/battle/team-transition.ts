@@ -5,6 +5,7 @@ import {declareBattleTarget} from '../turn/dungeon.js';
 import {equipWeapon, equipmentPairs} from './equipment.js';
 import {projectBattleContext} from './preparation.js';
 import {battleDraftInput, createBattleDraft, previewBattleTeam, type BattleDraft} from './team.js';
+import {spellUseOptions, useSpell} from '../effects/spell-use.js';
 
 const contextFor = (tx: Transition) => projectBattleContext(tx.state,
   {cards: tx.cards, setup_index: tx.setupIndex}, tx.ruleset);
@@ -68,6 +69,10 @@ export function finalizeBattleTeam(tx: Transition, draft: BattleDraft, submitted
     used_card_tags: selected.used_card_tags});
   if (selected.disease_penalty_assignments === undefined) delete tx.state.battle_context.disease_penalty_assignments;
   else tx.state.battle_context.disease_penalty_assignments = selected.disease_penalty_assignments;
+  // Local selection becomes authoritative use only at submission. Merely
+  // owning a spell, or previewing an unchecked card, never consumes its use.
+  const unusedSpells = new Set(spellUseOptions(tx));
+  for (const instance of draft.support_instance_ids) if (unusedSpells.has(instance)) useSpell(tx, instance);
   tx.event('battle_team_submitted', {player_id: tx.playerId,
     hero_instance_ids: [...draft.hero_instance_ids], support_instance_ids: [...draft.support_instance_ids],
     equipment: structuredClone(draft.equipment), target_instance_id: draft.target_instance_id});

@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 class RoomCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
     name: str = Field(min_length=1, max_length=64)
+    is_public: StrictBool = True
 
     @field_validator("name", mode="before")
     @classmethod
@@ -41,11 +42,13 @@ class PlayerView(BaseModel):
     user_id: int
     display_name: str
     ready: bool
+    avatar_url: str | None = None
 
 
 class RoomSummary(BaseModel):
     id: str
     name: str
+    is_public: bool = True
     host_user_id: int
     host_name: str
     status: str
@@ -56,6 +59,7 @@ class RoomSummary(BaseModel):
 
 
 class RoomView(RoomSummary):
+    active_match_id: str | None = None
     players: list[PlayerView]
     config: dict[str, Any]
     all_ready: bool

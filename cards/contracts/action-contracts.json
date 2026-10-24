@@ -322,7 +322,9 @@
     "actions": [
       "dungeon"
     ],
-    "hand": [],
+    "hand": [
+      "TS-0304"
+    ],
     "xp": 0,
     "draw": [],
     "discard": [],
@@ -330,7 +332,10 @@
     "zone": "active_hand",
     "choices": [],
     "hall": [],
-    "equipment": null,
+    "equipment": [
+      "TS-0304",
+      "TS-0256"
+    ],
     "supplies": [],
     "expected": {
       "battle_modifiers": {
@@ -1865,7 +1870,9 @@
     "actions": [
       "dungeon"
     ],
-    "hand": [],
+    "hand": [
+      "TS-0001"
+    ],
     "xp": 0,
     "draw": [],
     "discard": [],
@@ -1873,7 +1880,10 @@
     "zone": "active_hand",
     "choices": [],
     "hall": [],
-    "equipment": null,
+    "equipment": [
+      "TS-0001",
+      "TS-0236"
+    ],
     "supplies": [],
     "expected": {
       "battle_modifiers": {
@@ -2626,7 +2636,9 @@
     "actions": [
       "dungeon"
     ],
-    "hand": [],
+    "hand": [
+      "TS-0304"
+    ],
     "xp": 0,
     "draw": [],
     "discard": [],
@@ -2638,7 +2650,10 @@
       "TS-0476",
       "TS-0476"
     ],
-    "equipment": null,
+    "equipment": [
+      "TS-0304",
+      "TS-0245"
+    ],
     "supplies": [],
     "expected": {
       "relocations": 1,
@@ -3808,7 +3823,9 @@
     "actions": [
       "dungeon"
     ],
-    "hand": [],
+    "hand": [
+      "TS-0304"
+    ],
     "xp": 0,
     "draw": [],
     "discard": [],
@@ -3823,7 +3840,10 @@
       "TS-0477",
       "TS-0478"
     ],
-    "equipment": null,
+    "equipment": [
+      "TS-0304",
+      "TS-0232"
+    ],
     "supplies": [],
     "expected": {
       "hall_order": [
@@ -3970,7 +3990,9 @@
     "actions": [
       "dungeon"
     ],
-    "hand": [],
+    "hand": [
+      "TS-0316"
+    ],
     "xp": 0,
     "draw": [],
     "discard": [],
@@ -3978,7 +4000,10 @@
     "zone": "active_hand",
     "choices": [],
     "hall": [],
-    "equipment": null,
+    "equipment": [
+      "TS-0316",
+      "TS-0246"
+    ],
     "supplies": [],
     "expected": {
       "listener": "BEFORE_HALL_REFILL"
@@ -4537,5 +4562,95 @@
       "copied_hero": "TS-0430"
     },
     "source_line": "地下城：一名民兵复制你手牌中另一名英雄的所有能力。"
+  },
+  {
+    "ability_id": "TS-0330-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0002"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": [
+      "TS-0001",
+      "TS-0002"
+    ],
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "attack": 1
+        }
+      }
+    },
+    "source_line": "地下城：你的其他已装备英雄获得攻击 +1。"
+  },
+  {
+    "ability_id": "TS-0331-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0002"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": [
+      "TS-0001",
+      "TS-0002"
+    ],
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "attack": 2
+        }
+      }
+    },
+    "source_line": "地下城：你的其他已装备英雄获得攻击 +2。"
+  },
+  {
+    "ability_id": "TS-0332-A02",
+    "actions": [
+      "dungeon"
+    ],
+    "hand": [
+      "TS-0001",
+      "TS-0002"
+    ],
+    "xp": 0,
+    "draw": [],
+    "discard": [],
+    "others": null,
+    "zone": "active_hand",
+    "choices": [],
+    "hall": [],
+    "equipment": [
+      "TS-0001",
+      "TS-0002"
+    ],
+    "supplies": [],
+    "expected": {
+      "modified": {
+        "TS-0001": {
+          "attack": 3
+        }
+      }
+    },
+    "source_line": "地下城：你的其他已装备英雄获得攻击 +3。"
   }
 ]

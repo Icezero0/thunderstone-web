@@ -51,7 +51,7 @@ active player's relevant hand/context.
 
 ## Semantics and verification
 
-The reviewed JSON artifacts under `cards/effects/` bind 446 abilities and 227
+The reviewed JSON artifacts under `cards/effects/` bind 467 abilities and 206
 continuous mechanics. The migration parity runner compares complete states,
 events, choices and legal commands against the archived Python implementation
 for 1,412 card contract tests. The ordinary Python-facing suite exercises the

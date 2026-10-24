@@ -1,6 +1,6 @@
 """Run existing command scenarios against both transition implementations.
 
-Usage: python -m backend.tests.migration.transition_parity_runner backend.tests.test_turn_engine ...
+Usage: python -m backend.tests.migration.transition_parity_runner backend.tests.engine.test_turn_engine ...
 The Python result remains the scenario's input so a mismatch identifies exactly
 the command at which the TypeScript port diverged.
 """
@@ -67,7 +67,7 @@ def legal_commands(state, root=None, *, snapshot=None, effects=None):
         kwargs["root"] = root
     expected = python_legal(state, **kwargs)
     actual = client.call("legal_commands", payload(state, snapshot, effects))
-    actual = [item for item in actual if item["type"] != "SubmitBattleTeam"]
+    actual = legacy_contract_result({"legal_commands": actual})["legal_commands"]
     mismatch = difference(expected, actual)
     if mismatch:
         raise AssertionError(f"legal_commands: {mismatch}")
@@ -91,8 +91,8 @@ if __name__ == "__main__":
         if hasattr(module, "legal_commands"):
             module.legal_commands = legal_commands
     # Scenario helpers import the entry points separately.
-    for name in ("backend.tests.action_cases", "backend.tests.battle_cases", "backend.tests.event_cases", "backend.tests.system_cases",
-                 "backend.tests.setup_effect_cases", "backend.tests.scenario_cases"):
+    for name in ("backend.tests.support.effects.action_cases", "backend.tests.support.effects.battle_cases", "backend.tests.support.effects.event_cases", "backend.tests.support.effects.system_cases",
+                 "backend.tests.support.effects.setup_effect_cases", "backend.tests.support.effects.scenario_cases"):
         module = importlib.import_module(name)
         if hasattr(module, "apply_command"):
             module.apply_command = apply_command

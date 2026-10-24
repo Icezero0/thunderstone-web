@@ -2,6 +2,8 @@ import {FIELDS, STATS, isHero, isMonster, isDisease, matches, monsterFamily, sta
 import {Calculation, equipmentPairs} from '../effects/context.js';
 import {printedGold} from '../effects/economy.js';
 import {teamSourceSelected} from './participation.js';
+import {effectiveWeight, equipmentCapacity, supportedEquipment, weaponBurden} from './equipment-values.js';
+export {effectiveWeight, equipmentCapacity} from './equipment-values.js';
 import {RuleError, type CalculationInput, type Card, type CombatTrace, type Mechanic,
   type MechanicParams, type Stats} from '../types.js';
 
@@ -33,39 +35,49 @@ function lightRequirement(tx: Calculation, rank: number, targetRules: Mechanic[]
   else if (tx.state.active_settings.includes('TS-0194')) result = 0;
   return result;
 }
-export function equipmentCapacity(input: CalculationInput, heroId: string): number {
-  const tx = new Calculation(input);
-  const carried = equipmentPairs(tx.context).filter(([hero]) => hero === heroId).map(([, weapon]) => weapon);
-  return Math.max(1, ...tx.handRules('extra_equipment').filter(([source]) => source === heroId || carried.includes(source))
-    .map(([, rule]) => rule.params.capacity ?? 1));
+export function canEquipWeapon(input: CalculationInput, heroId: string, weaponId: string): boolean {
+  return canEquipAtStrength(input, heroId, weaponId, combatValues(input, input.state.battle_context?.target_rank ?? 1).hero_strength[heroId]);
+}
+function canEquipAtStrength(input: CalculationInput, heroId: string, weaponId: string, strength: number): boolean {
+  const tx = new Calculation(input), pairs = equipmentPairs(tx.context);
+  if (heroId === weaponId || !tx.hand().includes(heroId) || !isHero(tx.card(heroId))
+    || !tags(tx.card(weaponId)).includes('武器') || pairs.some(([, weapon]) => weapon === weaponId)) return false;
+  if (weaponBurden(input, heroId, weaponId) > strength) return false;
+  const handZone = `player:${tx.playerId}:hand`;
+  const projected: CalculationInput = {...input, state: {...input.state,
+    zones: {...input.state.zones, [handZone]: [...tx.hand()]},
+    battle_context: {...tx.context, equipped_weapon_by_hero: {...tx.context.equipped_weapon_by_hero}}}};
+  const hand = projected.state.zones[handZone];
+  if (!hand.includes(weaponId)) hand.push(weaponId);
+  const context = projected.state.battle_context ??= {}, mapping = context.equipped_weapon_by_hero ??= {};
+  const carried = mapping[heroId]; mapping[heroId] = [...(Array.isArray(carried) ? carried : carried ? [carried] : []), weaponId];
+  if (mapping[heroId].length > equipmentCapacity(projected, heroId)) return false;
+  const wanted = [...pairs, [heroId, weaponId] as [string, string]], valid = combatValues(projected, context.target_rank ?? 1).equipped_pairs;
+  return wanted.every(([hero, weapon]) => valid.some(([h, w]) => h === hero && w === weapon));
 }
 
 /** Shared preparation-time equipment legality for local drafts and formal commands. */
 export function equipmentChoices(input: CalculationInput): {hero_instance_id: string; weapon_instance_id: string}[] {
-  const tx = new Calculation(input), hand = tx.hand(), pairs = equipmentPairs(tx.context), options = [];
-  const trace = combatValues(input, 1);
+  const tx = new Calculation(input), hand = tx.hand(), options = [];
+  const strength = combatValues(input, tx.context.target_rank ?? 1).hero_strength;
   for (const heroId of hand) {
     const hero = tx.card(heroId);
-    if (!isHero(hero) || pairs.filter(([id]) => id === heroId).length >= equipmentCapacity(input, heroId)) continue;
+    if (!isHero(hero)) continue;
     for (const weaponId of hand) {
-      const weapon = tx.card(weaponId);
-      if (weaponId === heroId || pairs.some(([, id]) => id === weaponId) || !tags(weapon).includes('武器')) continue;
-      const discount = tx.handRules('equipment_discount').filter(([source, rule]) =>
-        source === weaponId && tags(hero).includes(rule.params.hero_tag!)).reduce((sum, [, rule]) => sum + (rule.params.amount ?? 0), 0);
-      const weight = tx.context.zero_weapon_weight ? 0 : Number(weapon.wiki_重量 || 1e9);
-      if (weight <= trace.hero_strength[heroId] + discount) options.push({hero_instance_id: heroId, weapon_instance_id: weaponId});
+      if (canEquipAtStrength(input, heroId, weaponId, strength[heroId])) options.push({hero_instance_id: heroId, weapon_instance_id: weaponId});
     }
   }
   return options;
 }
 
-/** Exact port of the reviewed Python continuous calculation, without state writes. */
+/** Pure combat calculation, with effective strength resolved before equipment bonuses. */
 export function combatValues(input: CalculationInput, rank: number, target: Card | null = null): CombatTrace {
   const tx = new Calculation(input), context = tx.context, hand = [...tx.hand()];
+  const casts = (id: string): number => tags(tx.card(id)).includes('法术') ? Math.max(1, context.spell_cast_counts?.[id] ?? 1) : 1;
   const targetRules = tx.mechanics.filter(rule => target && rule.source_card_id === target.card_id);
   const heroes = hand.filter(item => isHero(tx.card(item)));
   const values: Record<string, Stats> = Object.fromEntries(hand.map(item =>
-    [item, Object.fromEntries(STATS.map(key => [key, stat(tx.card(item), key)])) as Stats]));
+    [item, Object.fromEntries(STATS.map(key => [key, stat(tx.card(item), key) * (key === 'strength' ? 1 : casts(item))])) as Stats]));
   for (const [item, copy] of Object.entries(tx.state.copied_heroes ?? {})) {
     if (!(item in values) || copy.full_card) continue;
     if (!copy.preserve_attack) values[item].attack = values[item].magic_attack = 0;
@@ -76,62 +88,90 @@ export function combatValues(input: CalculationInput, rank: number, target: Card
       for (const field of ['attack','magic_attack','light'] as const) values[item][field] += stat(copied, field);
     }
   }
-  const pairs = equipmentPairs(context).filter(([hero, weapon]) => hand.includes(hero) && hand.includes(weapon));
-  const equipper = new Map(pairs.map(([hero, weapon]) => [weapon, hero]));
+  let pairs = equipmentPairs(context).filter(([hero, weapon]) => hand.includes(hero) && hand.includes(weapon));
   const rules = tx.handRules().filter(([source]) => teamSourceSelected(tx, source)), hall = tx.hallRules();
   const strengthPenalties: CombatTrace['strength_penalties'] = [];
   for (const [item, changes] of Object.entries(context.card_modifiers ?? {})) if (values[item]) add(values[item], changes);
+  // Strength is a separate dependency stage: equipment thresholds must never
+  // depend on the order in which card mechanics happen to be serialized.
+  const baseStrength = Object.fromEntries(heroes.map(hero => [hero, values[hero].strength]));
   for (const [source, rule] of rules) {
     const p = rule.params;
     if (rule.op === 'disease_strength') {
       const chosen = context.strength_penalty_assignments?.[source];
       const targets = p.single ? (heroes.length ? [chosen && heroes.includes(chosen) ? chosen : heroes[0]] : []) : heroes;
       if (p.single) strengthPenalties.push({instance_id: source, hero_instance_id: targets[0] ?? null, amount: p.amount ?? 0});
-      for (const hero of targets) values[hero].strength += p.amount ?? 0;
-    } else if (rule.op === 'response') values[source].attack += p.attack ?? 0;
+      for (const hero of targets) baseStrength[hero] += p.amount ?? 0;
+    } else if (rule.op === 'hero_aura' && p.strength) {
+      for (const hero of heroes) if (matches(tx.card(hero), p.filter ?? {}) && (!p.exclude_source || hero !== source)
+        && (!p.equipped || pairs.some(([h]) => h === hero))) baseStrength[hero] += p.strength;
+    } else if (rule.op === 'hand_bonus' && p.strength && source in baseStrength) baseStrength[source] += p.strength * metric(tx, p, source);
+  }
+  for (const [, rule] of hall) if (rule.op === 'hall_aura') {
+    const p = rule.params, penalty = (p.strength ?? 0) - (p.strength_per_spell ? hand.filter(item => tags(tx.card(item)).includes('法术')).length : 0);
+    for (const hero of heroes) baseStrength[hero] += penalty;
+  }
+  for (const hero of heroes) baseStrength[hero] += context.hero_battle_modifiers?.strength ?? 0;
+  for (const rule of targetRules) if (rule.op === 'battle_aura')
+    for (const hero of heroes) baseStrength[hero] += rule.params.strength ?? 0;
+  const strengths = (current: [string, string][]) => {
+    const result = {...baseStrength};
+    for (const [source, rule] of rules) if (rule.op === 'equipment_bonus' && rule.params.strength) {
+      const pair = current.find(([hero, weapon]) => source === hero || source === weapon);
+      if (pair) result[pair[0]] += rule.params.strength;
+    }
+    return result;
+  };
+  // Dropping a strength-granting weapon can invalidate another weapon; converge
+  // by removing unsupported pairs without ever introducing a new pair.
+  while (true) {
+    const strength = strengths(pairs), supported = supportedEquipment(input, pairs, strength);
+    if (supported.length === pairs.length) {
+      for (const hero of heroes) values[hero].strength = strength[hero];
+      break;
+    }
+    pairs = supported;
+  }
+  const validPairs = pairs, equipper = new Map(pairs.map(([hero, weapon]) => [weapon, hero]));
+  const contribute = (id: string, p: Partial<Stats>, multiplier = 1) => {
+    for (const key of ['attack', 'magic_attack', 'light'] as const) values[id][key] += (p[key] ?? 0) * multiplier * casts(id);
+  };
+  for (const [source, rule] of rules) {
+    const p = rule.params;
+    if (rule.op === 'response') values[source].attack += p.attack ?? 0;
     else if (rule.op === 'hero_aura') {
       for (const hero of heroes) if (matches(tx.card(hero), p.filter ?? {}) && (!p.exclude_source || hero !== source)
-        && (!p.equipped || pairs.some(([h]) => h === hero))) add(values[hero], p);
+        && (!p.equipped || pairs.some(([h]) => h === hero))) contribute(hero, p);
     } else if (rule.op === 'card_aura') {
-      for (const item of hand) if (p.filters_any?.some(predicate => matches(tx.card(item), predicate))) add(values[item], p);
-    } else if (rule.op === 'hand_bonus') add(values[source], p, metric(tx, p, source));
+      for (const item of hand) if (p.filters_any?.some(predicate => matches(tx.card(item), predicate))) contribute(item, p);
+    } else if (rule.op === 'hand_bonus') contribute(source, p, metric(tx, p, source));
     else if (rule.op === 'draw_attack') {
       if (equipper.has(source)) values[source].attack += (p.amount ?? 0) * (context.equipment_draw_counts?.[source] ?? 0);
     } else if (rule.op === 'rank_bonus' && (p.minimum ?? 0) <= rank && rank <= (p.maximum ?? 100)) {
-      add(values[source], p, p.scale ? rank : 1);
+      contribute(source, p, p.scale ? rank : 1);
     } else if (rule.op === 'target_bonus' && target) {
-      if (rank >= (p.minimum_rank ?? 0) && (!p.tag || tags(target).includes(p.tag))
+      if (rank >= (p.minimum_rank ?? 0) && rank <= (p.maximum_rank ?? Infinity) && (!p.tag || tags(target).includes(p.tag))
         && (!p.same_family || hand.some(item => isMonster(tx.card(item))
-          && JSON.stringify(monsterFamily(tx.card(item))) === JSON.stringify(monsterFamily(target))))
-        && (!p.gives_disease || /获得\s*[0-9一两]?\s*张疾病/.test(target.effect_text))) add(values[source], p);
+          && JSON.stringify(monsterFamily(tx.card(item))) === JSON.stringify(monsterFamily(target))))) contribute(source, p);
     } else if (rule.op === 'equipment_bonus') {
       const relevant: [string, string][] = equipper.has(source) ? [[equipper.get(source)!, source]] : pairs.filter(([hero]) => hero === source);
       for (const [hero, weapon] of relevant) {
         if (p.hero_tag && !p.hero_tag.split('|').some(tag => tags(tx.card(hero)).includes(tag))
           || p.hero_card_id && tx.card(hero).card_id !== p.hero_card_id
           || p.weapon_tag && !tags(tx.card(weapon)).includes(p.weapon_tag)
-          || stat(tx.card(weapon), 'weight') > (p.weight_max ?? 100)
+          || effectiveWeight(input, tx.card(weapon)) > (p.weight_max ?? 100)
           || values[hero].strength < (p.strength_min ?? -100) || rank < (p.minimum_rank ?? 0)) continue;
         if (p.target_tags_any && (!target || !p.target_tags_any.some(tag => tags(target).includes(tag)))) continue;
-        add(values[source], p, p.level_scale ? stat(tx.card(hero), 'level') : 1);
-        if (equipper.has(source) && p.strength) {values[hero].strength += p.strength; values[source].strength -= p.strength;}
+        contribute(source, p, p.level_scale ? stat(tx.card(hero), 'level') : 1);
         break;
       }
     }
   }
   for (const [, rule] of hall) if (rule.op === 'hall_aura') {
     const p = rule.params;
-    let penalty = p.strength ?? 0;
-    if (p.strength_per_spell) penalty -= hand.filter(item => tags(tx.card(item)).includes('法术')).length;
-    for (const hero of heroes) values[hero].strength += penalty;
     if (p.disease_attack) for (const item of hand) if (isDisease(tx.card(item))) values[item].attack += p.disease_attack;
   }
-  for (const hero of heroes) add(values[hero], context.hero_battle_modifiers ?? {});
-  for (const rule of targetRules) if (rule.op === 'battle_aura')
-    for (const hero of heroes) values[hero].strength += rule.params.strength ?? 0;
-  const validPairs = pairs.filter(([hero, weapon]) => context.zero_weapon_weight || stat(tx.card(weapon), 'weight') <=
-    Math.max(0, values[hero].strength) + rules.reduce((sum, [source, rule]) => sum + (source === weapon
-      && rule.op === 'equipment_discount' && tags(tx.card(hero)).includes(rule.params.hero_tag ?? '') ? rule.params.amount ?? 0 : 0), 0));
+  for (const hero of heroes) contribute(hero, context.hero_battle_modifiers ?? {});
   const equipped = new Set(validPairs.map(([, weapon]) => weapon));
   for (const [, rule] of rules) if (rule.op === 'weapon_aura') for (const weapon of equipped) add(values[weapon], rule.params);
   const forbidden = new Set(context.excluded_participants ?? []);
@@ -186,6 +226,19 @@ export function combatValues(input: CalculationInput, rank: number, target: Card
     const component = components.find(row => row.instance_id === source);
     if (component) component.magic_attack += bonus;
   }
+  // The absence condition sees participating cards' calculated contribution,
+  // including dynamic spell bonuses and conversions, before target resistance.
+  if (magic <= 0) for (const [source, rule] of rules) if (rule.op === 'no_magic_bonus' && !forbidden.has(source) && !zeroAttack.has(source)) {
+    const amount = rule.params.attack ?? 0;
+    const converted = context.convert_all_magic || context.convert_equipped_magic && validPairs.flat().includes(source)
+      || context.convert_card_magic?.includes(source);
+    const field = converted ? 'magic_attack' : 'attack';
+    const component = components.find(row => row.instance_id === source);
+    if (component) component[field] += amount;
+    else components.push({instance_id: source, card_id: tx.card(source).card_id, attack: converted ? 0 : amount,
+      magic_attack: converted ? amount : 0, light: 0});
+    if (converted) magic += amount; else attack += amount;
+  }
   const lines = target?.effect_text.split(/\r?\n/) ?? [];
   if (lines.includes('免疫魔法攻击。')) {magic = 0; restrictions.push('immune_magic_attack');}
   if (lines.includes('只能使用魔法攻击。')) {attack = 0; restrictions.push('magic_attack_only');}
@@ -220,6 +273,10 @@ export function combatValues(input: CalculationInput, rank: number, target: Card
     if (p.half_no_element && !hand.some(item => tags(tx.card(item)).includes('元素'))) {
       const combined = Math.floor((attack + magic) / 2); magic = Math.floor(magic / 2); attack = combined - magic;
     }
+  }
+  if ((context.damage_divisor ?? 1) > 1) {
+    const divisor = context.damage_divisor!, combined = Math.floor((attack + magic) / divisor);
+    magic = Math.floor(magic / divisor); attack = combined - magic;
   }
   let darkness = rank ? Math.max(0, requirement - light) : 0;
   const irreducible = targetRules.some(rule => rule.op === 'light_requirement' && rule.params.irreducible);

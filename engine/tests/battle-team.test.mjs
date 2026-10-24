@@ -83,6 +83,39 @@ test('visible preparation excludes opponents, decks, RNG, continuation and priva
   assert.equal(result.context.state.players.bob, undefined);
 });
 
+test('nested preparation references cannot reveal hidden sources and preserve resolved global bonuses', () => {
+  const f = fixture(['h', 'w']);
+  Object.assign(f.state.battle_context, {
+    modifiers: {attack: 4, private: 'private-marker'},
+    modifier_sources: [{source_instance_id: 'secret', field: 'attack', amount: 4, private: 'private-marker'}],
+    card_modifiers: {h: {strength: 1, private: 'private-marker'}, secret: {attack: 99}},
+    monster_health_modifiers: {m: 1, secret: 99},
+    strength_penalty_assignments: {secret: 'h', h: 'secret'},
+    disease_penalty_assignments: {secret: 'attack'},
+    equipment_draw_counts: {w: 1, secret: 9}, spell_cast_counts: {secret: 9},
+    excluded_participants: ['m2'], convert_card_magic: ['secret'], disease_order: ['secret'],
+  });
+  f.state.copied_heroes = {h: {card_ids: ['h'], preserve_attack: true, source_instance_id: 'secret', private: 'private-marker'},
+    secret: {card_ids: ['x'], preserve_attack: false}};
+  const before = structuredClone(f);
+  const {context, draft} = prepare(f);
+  assert.equal(JSON.stringify(context).includes('secret'), false);
+  assert.equal(JSON.stringify(context).includes('private-marker'), false);
+  assert.equal(context.state.battle_context.modifiers.attack, 4);
+  assert.deepEqual(context.state.battle_context.modifier_sources, [{source_instance_id: null, field: 'attack', amount: 4}]);
+  assert.equal(server.previewBattleTeam(context, draft).calculation.attack, 5);
+  assert.equal(server.previewBattleTeam(context, draft).calculation.attack,
+    server.combatValues({state: f.state, cards: f.catalog.cards, mechanics: f.rules.mechanics}, 0).attack);
+  assert.deepEqual(browser.previewBattleTeam(context, draft), server.previewBattleTeam(context, draft));
+  assert.deepEqual(f, before);
+  f.state.battle_context.excluded_participants.push('secret');
+  const excluded = prepare(f);
+  assert.equal(JSON.stringify(excluded.context).includes('secret'), false);
+  assert.equal(excluded.context.state.battle_context.modifiers.attack, 0);
+  assert.equal(server.previewBattleTeam(excluded.context, excluded.draft).calculation.attack,
+    server.combatValues({state: f.state, cards: f.catalog.cards, mechanics: f.rules.mechanics}, 0).attack);
+});
+
 test('benching a mage avoids magic-triggered monster health while hand heroes remain queryable', () => {
   const f = fixture(['h', 'g', 'l']); f.catalog.cards.h['正文_基础攻击'] = '3';
   f.rules.abilities.push(trigger('double', 'm', 'BATTLE_BEFORE_OUTCOME', {

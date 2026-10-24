@@ -8,6 +8,7 @@ from backend.app.core.security import hash_password
 from backend.app.modules.users.models import User
 from backend.app.modules.users.repository import UserRepository
 from backend.app.modules.users.schemas import UserCreate, UserPatch
+from backend.app.modules.users.avatars import save_avatar, remove_avatar
 
 
 class UserService:
@@ -40,6 +41,21 @@ class UserService:
         if changes.get("password") is not None:
             user.hashed_password = hash_password(changes["password"])
             user.token_version += 1
+        await self.repo.save(db, user)
         await db.commit()
         await db.refresh(user)
+        return user
+
+    async def update_avatar(self, db: AsyncSession, user: User, file) -> User:
+        previous = user.avatar_key
+        key = await save_avatar(file)
+        try:
+            user.avatar_key = key
+            await self.repo.save(db, user)
+            await db.commit()
+        except Exception:
+            await db.rollback()
+            await remove_avatar(key)
+            raise
+        await remove_avatar(previous)
         return user

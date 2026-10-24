@@ -2,7 +2,7 @@
 
 现有规则已完成 [TypeScript 迁移](typescript-migration.md)。战斗数值、怪物生命、金币／价格、计分、[DSL 编译与纯计算](typescript-dsl.md)、[规则配置与 setup](typescript-setup.md)、回合和有状态效果处理器均由共享 TS 包执行。前端复用只读计算，正式状态由后端维护。
 
-本目录把 [总览](../game-engine-design.md) 展开为可直接指导 TypeScript 实现的规则与接口约定。正文中的“规则书要求”来自 [`TS4_rules_CN.pdf`](../../game_TTS/TS4_rules_CN.pdf) 的标准竞争对局；“设计约定”是网页版的实现选择；“待裁定”表示资料尚不足以写成确定行为。目前已实现[规则配置校验](../../engine/src/setup/validation.ts)、[确定性组局](../../engine/src/setup/builder.ts)、[疾病供应及回合转换](../../engine/src/turn/commands.ts)、[全量效果绑定与逐卡测试](ability-runtime-implementation.md)、特殊场景战斗、计分和[本地面板 API](../../backend/app/api/v1/setup.py)。520 张有效果的卡牌均已完整覆盖；联机层与正式客户端仍待开发。
+本目录把 [总览](../game-engine-design.md) 展开为可直接指导 TypeScript 实现的规则与接口约定。正文中的“规则书要求”来自 [`TS4_rules_CN.pdf`](../../game_TTS/TS4_rules_CN.pdf) 的标准竞争对局；“设计约定”是网页版的实现选择；“待裁定”表示资料尚不足以写成确定行为。目前已实现[规则配置校验](../../engine/src/setup/validation.ts)、[确定性组局](../../engine/src/setup/builder.ts)、[疾病供应及回合转换](../../engine/src/turn/commands.ts)、[全量效果绑定与逐卡测试](ability-runtime-implementation.md)、特殊场景战斗、计分和[本地面板 API](../../backend/devtools/api/setup.py)。520 张有效果的卡牌均已完整覆盖；联机层与正式客户端仍待开发。
 
 ## 文档树与阅读顺序
 
@@ -35,9 +35,11 @@ docs/
 | 7 | [联机与持久化](07-multiplayer.md) | 如何按顺序处理异地玩家的指令并保护隐藏信息？ |
 | 8 | [验证与实施](08-verification.md) | 哪些行为必须测试，什么条件下允许一张牌进入牌池？ |
 
-临时工具：[效果实验台](effect-lab.md)展示命令执行轨迹；[怪物能力审核](monster-audit.md)用于逐卡对照卡面符号与当前 DSL 的中文解释，并记录审核意见。
+临时工具：[效果实验台](effect-lab.md)展示命令执行轨迹。怪物审核页已完成用途并移除，正式结论与回归测试见[审核处理清单](monster-review-resolution.md)。
 
 [怪物审核处理清单](monster-review-resolution.md)记录 2026-10-22 已落实的符号判定、全部备注及相关规则修正。
+
+[卡牌效果实现审查（2026-10-23）](effect-implementation-review-2026-10-23.md)保留 13 组问题、10 项边界及用户审核意见；[审核修正记录（2026-10-24）](effect-review-resolution-2026-10-24.md)说明已落实的裁定、接口变化及回归结果。现有“全部覆盖”指效果绑定与逐卡用例覆盖，不代表穷尽所有卡牌组合。
 
 [战斗队伍接口](battle-team-api.md)说明英雄／法术／装备的本地选择、共享数值预览、`SubmitBattleTeam` 和后端适配契约。
 

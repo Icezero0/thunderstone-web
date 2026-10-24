@@ -14,6 +14,12 @@ class User(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     username: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    avatar_key: Mapped[str | None] = mapped_column(String(128), nullable=True)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     token_version: Mapped[int] = mapped_column(Integer, default=0, server_default="0", nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    @property
+    def avatar_url(self) -> str | None:
+        from backend.app.modules.users.presentation import avatar_url
+        return avatar_url(self.avatar_key)

@@ -7,7 +7,7 @@ import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 
-from backend.app.integrations.game_engine.paths import PROJECT_ROOT
+from backend.app.core.paths import PROJECT_ROOT
 from backend.tests.migration.reference.mechanics import Mechanic, compile_mechanics
 from backend.tests.migration.reference.mechanics import FILTER_KEYS, validate_filter
 

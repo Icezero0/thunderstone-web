@@ -10,20 +10,23 @@ import {resolveValue, resolveReorder, resolveSelection, resolvePurchase, resolve
   resolveReuse, resolveOrder} from '../effects/choice-transition.js';
 import {mustEnterDungeon} from '../effects/durations.js';
 import {queueSteps} from './workflow.js';
-import {buyCard, finishAbilities, finishBuying, purchasableCards, upgradeOptions,
+import {buyCard, finishAbilities, finishBuying, purchaseOptions, upgradeOptions,
   upgradeHero, restDestroy} from './village.js';
 import {attackTargets, declareBattleTarget} from './dungeon.js';
 import {equipmentOptions, equipWeapon, reconcileEquipment} from '../battle/equipment.js';
 import {submitBattleTeam} from '../battle/team-transition.js';
 import {battlePreparationResult} from '../battle/preparation.js';
+import {spellUseOptions, useSpell} from '../effects/spell-use.js';
 
-const SUBPHASES = new Set(['TURN_START', 'VILLAGE_ABILITIES', 'VILLAGE_BUY', 'VILLAGE_UPGRADE', 'REST',
-  'DUNGEON_PREPARE', 'ACTION_EXIT_EFFECTS', 'TURN_END_EFFECTS', 'GAME_END', 'BATTLE_EFFECTS', 'BATTLE_AFTER_EFFECTS']);
+const SUBPHASES = new Set(['TURN_START', 'VILLAGE_ABILITIES', 'VILLAGE_BUY', 'VILLAGE_UPGRADE', 'REST', 'ACTION_END',
+  'DUNGEON_PREPARE', 'BATTLE_COMMIT', 'ACTION_EXIT_EFFECTS', 'TURN_END_EFFECTS', 'GAME_END', 'BATTLE_EFFECTS', 'BATTLE_AFTER_EFFECTS']);
 const CHOICES = new Set(['effect_select', 'effect_order', 'effect_purchase', 'effect_value',
   'effect_reorder', 'effect_upgrade', 'disease_replacement', 'effect_reuse', 'effect_response']);
 export function validateTurnState(state: GameState, cards: GameCatalog['cards']) {
   if (!['PLAYING', 'SETTLING'].includes(state.phase)) throw new RuleError('game is not in a turn or settlement phase');
   if (!SUBPHASES.has(state.subphase)) throw new RuleError('unknown turn subphase');
+  if (state.turn_hand_public !== undefined && typeof state.turn_hand_public !== 'boolean')
+    throw new RuleError('invalid turn hand visibility');
   if (state.phase === 'SETTLING' && state.subphase !== 'GAME_END') throw new RuleError('settling game has no end subphase');
   const order = state.player_order;
   if (!Array.isArray(order) || !order.length || new Set(order).size !== order.length ||
@@ -107,22 +110,25 @@ function legal(tx: Transition): Record<string, any>[] {
       return [...(options.length ? [{type: 'ActivateAbility', options}] : []), {type: 'FinishAbilities'}];
     }
     case 'VILLAGE_BUY': {
-      const cards = purchasableCards(tx);
-      return [...(cards.length ? [{type: 'BuyCard', card_ids: cards}] : []), {type: 'FinishBuying'}];
+      const options = purchaseOptions(tx);
+      return [...(options.length ? [{type: 'BuyCard', card_ids: options.map(item => item.card_id), options}] : []),
+        {type: 'FinishBuying'}];
     }
     case 'VILLAGE_UPGRADE': {
       const options = upgradeOptions(tx);
       return [...(options.length ? [{type: 'UpgradeHero', options}] : []), {type: 'FinishUpgrading'}];
     }
-    case 'REST': return [...(tx.zone('hand').length ? [{type: 'RestDestroy', instance_ids: [...tx.zone('hand')]}] : []),
-      {type: 'FinishRest'}];
+    case 'REST': return [...(tx.zone('hand').length && tx.player.rest_destroyed_on_turn !== state.turn_number ? [{type: 'RestDestroy', instance_ids: [...tx.zone('hand')]}] : []),
+      {type: 'SkipRestDestroy'}];
+    case 'ACTION_END': return [{type: 'FinishTurn'}];
     case 'DUNGEON_PREPARE': {
-      const equipment = equipmentOptions(tx), abilities = available(tx), trace = tx.combat(1);
+      const equipment = equipmentOptions(tx), abilities = available(tx), trace = tx.combat(1), spells = spellUseOptions(tx);
       return [...(trace.strength_penalties.length ? [{type: 'AssignStrengthPenalty', penalties: trace.strength_penalties,
         hero_instance_ids: Object.keys(trace.hero_strength)}] : []),
         ...(trace.disease_penalties.length ? [{type: 'AssignDiseasePenalty',
           instance_ids: trace.disease_penalties.map(item => item.instance_id), attack_types: ['attack', 'magic_attack']}] : []),
         ...(abilities.length ? [{type: 'ActivateAbility', options: abilities}] : []),
+        ...(spells.length ? [{type: 'UseSpell', instance_ids: spells}] : []),
         ...(equipment.length ? [{type: 'EquipWeapon', options: equipment}] : []),
         {type: 'DeclareBattleTarget', instance_ids: attackTargets(tx)},
         {type: 'SubmitBattleTeam', target_instance_ids: attackTargets(tx), requires_draft: true}];
@@ -180,10 +186,12 @@ export function applyCommand(state: GameState, command: Record<string, any>, cat
     activate(tx, command.ability_id, command.source_instance_id);
   else if (phase === 'VILLAGE_BUY' && kind === 'FinishBuying') finishBuying(tx);
   else if (phase === 'VILLAGE_UPGRADE' && kind === 'UpgradeHero') upgradeHero(tx, command.source_instance_id, command.target_card_id);
-  else if (phase === 'VILLAGE_UPGRADE' && kind === 'FinishUpgrading') tx.finishTurn();
+  else if (phase === 'VILLAGE_UPGRADE' && kind === 'FinishUpgrading') tx.awaitTurnEnd();
   else if (phase === 'REST' && kind === 'RestDestroy') restDestroy(tx, command.instance_id);
-  else if (phase === 'REST' && kind === 'FinishRest') tx.finishTurn();
+  else if (phase === 'REST' && kind === 'SkipRestDestroy') tx.awaitTurnEnd();
+  else if (phase === 'ACTION_END' && kind === 'FinishTurn') tx.finishTurn();
   else if (phase === 'DUNGEON_PREPARE' && kind === 'EquipWeapon') equipWeapon(tx, command.hero_instance_id, command.weapon_instance_id);
+  else if (phase === 'DUNGEON_PREPARE' && kind === 'UseSpell') useSpell(tx, command.instance_id);
   else if (phase === 'DUNGEON_PREPARE' && kind === 'DeclareBattleTarget') declareBattleTarget(tx, command.target_instance_id);
   else if (phase === 'DUNGEON_PREPARE' && kind === 'SubmitBattleTeam') {
     if (command.expected_version !== state.game_version) throw new RuleError('battle submission requires the current expected_version');

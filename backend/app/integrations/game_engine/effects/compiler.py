@@ -4,7 +4,7 @@ import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from backend.app.integrations.game_engine.paths import PROJECT_ROOT
+from backend.app.core.paths import PROJECT_ROOT
 from backend.app.integrations.game_engine.effects.mechanics import Mechanic
 from backend.app.integrations.game_engine.shared.client import client, SharedRuleError
 

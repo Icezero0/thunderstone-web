@@ -7,6 +7,15 @@ from backend.app.modules.users.models import User
 
 
 class UserRepository:
+    async def profiles(self, db: AsyncSession, user_ids: list[int]) -> dict[int, User]:
+        return {user.id: user for user in (await db.scalars(select(User).where(User.id.in_(user_ids)))).all()}
+
+    async def save(self, db: AsyncSession, user: User) -> User:
+        db.add(user)
+        await db.flush()
+        await db.refresh(user)
+        return user
+
     async def get_by_id(self, db: AsyncSession, user_id: int) -> User | None:
         return await db.scalar(select(User).where(User.id == user_id))
 

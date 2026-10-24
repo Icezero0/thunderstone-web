@@ -3397,6 +3397,9 @@
                 "var": "chosen"
               }
             }
+          },
+          "else": {
+            "op": "show_hand"
           }
         }
       }
@@ -3437,6 +3440,9 @@
                 "var": "chosen"
               }
             }
+          },
+          "else": {
+            "op": "show_hand"
           }
         }
       }
@@ -3477,6 +3483,9 @@
                 "var": "chosen"
               }
             }
+          },
+          "else": {
+            "op": "show_hand"
           }
         }
       }
@@ -3530,14 +3539,28 @@
         "body": {
           "op": "if",
           "condition": {
-            "not": {
-              "exists": {
-                "zone": "subject_hand",
-                "tag": "法术"
-              }
+            "exists": {
+              "zone": "subject_hand",
+              "tag": "法术"
             }
           },
           "then": {
+            "op": "select",
+            "query": {
+              "zone": "subject_hand",
+              "tag": "法术"
+            },
+            "bind": "chosen",
+            "min": 1,
+            "max": 1,
+            "then": {
+              "op": "show",
+              "target": {
+                "var": "chosen"
+              }
+            }
+          },
+          "else": {
             "op": "if",
             "condition": {
               "exists": {
@@ -3659,6 +3682,9 @@
                 }
               ]
             }
+          },
+          "else": {
+            "op": "show_hand"
           }
         }
       }
@@ -5062,7 +5088,28 @@
         "village"
       ],
       "usage": "once_per_turn",
-      "conditions": [],
+      "conditions": [
+        {
+          "compare": {
+            "left": {
+              "add": [
+                {
+                  "count": {
+                    "zone": "active_draw"
+                  }
+                },
+                {
+                  "count": {
+                    "zone": "active_discard"
+                  }
+                }
+              ]
+            },
+            "op": "ge",
+            "right": 3
+          }
+        }
+      ],
       "body": {
         "op": "reveal",
         "count": 3,
@@ -5652,46 +5699,114 @@
         "op": "for_players",
         "scope": "others",
         "body": {
-          "op": "choose_value",
-          "kind": "enum",
-          "bind": "payment",
+          "op": "if",
+          "condition": {
+            "exists": {
+              "zone": "subject_hand",
+              "tag": "英雄"
+            }
+          },
           "then": {
             "op": "if",
             "condition": {
-              "choice_is": {
-                "var": "payment",
-                "option": "hero"
+              "compare": {
+                "left": {
+                  "count": {
+                    "zone": "subject_hand"
+                  }
+                },
+                "op": "ge",
+                "right": 2
               }
             },
             "then": {
-              "op": "if",
-              "condition": {
-                "exists": {
-                  "zone": "subject_hand",
-                  "tag": "英雄"
-                }
-              },
+              "op": "choose_value",
+              "kind": "enum",
+              "bind": "payment",
               "then": {
-                "op": "select",
-                "query": {
-                  "zone": "subject_hand",
-                  "tag": "英雄"
+                "op": "if",
+                "condition": {
+                  "choice_is": {
+                    "var": "payment",
+                    "option": "hero"
+                  }
                 },
-                "bind": "chosen",
-                "min": 1,
-                "max": 1,
                 "then": {
-                  "op": "discard",
-                  "target": {
-                    "var": "chosen"
+                  "op": "select",
+                  "query": {
+                    "zone": "subject_hand",
+                    "tag": "英雄"
+                  },
+                  "bind": "chosen",
+                  "min": 1,
+                  "max": 1,
+                  "then": {
+                    "op": "discard",
+                    "target": {
+                      "var": "chosen"
+                    }
+                  }
+                },
+                "else": {
+                  "op": "select",
+                  "query": {
+                    "zone": "subject_hand"
+                  },
+                  "bind": "chosen",
+                  "min": 2,
+                  "max": 2,
+                  "then": {
+                    "op": "for_each",
+                    "query": {
+                      "zone": "bound",
+                      "var": "chosen"
+                    },
+                    "bind": "victim",
+                    "body": {
+                      "op": "discard",
+                      "target": {
+                        "var": "victim"
+                      }
+                    }
                   }
                 }
               },
-              "else": {
-                "op": "show_hand"
-              }
+              "options": [
+                "hero",
+                "two_cards"
+              ]
             },
             "else": {
+              "op": "select",
+              "query": {
+                "zone": "subject_hand",
+                "tag": "英雄"
+              },
+              "bind": "chosen",
+              "min": 1,
+              "max": 1,
+              "then": {
+                "op": "discard",
+                "target": {
+                  "var": "chosen"
+                }
+              }
+            }
+          },
+          "else": {
+            "op": "if",
+            "condition": {
+              "compare": {
+                "left": {
+                  "count": {
+                    "zone": "subject_hand"
+                  }
+                },
+                "op": "ge",
+                "right": 2
+              }
+            },
+            "then": {
               "op": "select",
               "query": {
                 "zone": "subject_hand"
@@ -5712,14 +5827,9 @@
                     "var": "victim"
                   }
                 }
-              },
-              "allow_shortfall": true
+              }
             }
-          },
-          "options": [
-            "hero",
-            "two_cards"
-          ]
+          }
         }
       }
     },
@@ -5909,8 +6019,7 @@
               {
                 "op": "select",
                 "query": {
-                  "zone": "reveal_zone",
-                  "tag": "怪物"
+                  "zone": "reveal_zone"
                 },
                 "bind": "incoming",
                 "min": 0,
@@ -6914,16 +7023,7 @@
           "query": {
             "zone": "village_supply_top",
             "tag": "武器",
-            "compare_stat": {
-              "field": "weight",
-              "op": "le",
-              "value": {
-                "stat": {
-                  "var": "hero",
-                  "field": "strength"
-                }
-              }
-            }
+            "equippable_by_var": "hero"
           },
           "bind": "chosen",
           "min": 1,
@@ -7019,33 +7119,43 @@
               }
             },
             {
-              "op": "select",
+              "op": "remember",
               "query": {
                 "zone": "all_discard",
                 "exclude_var": "old"
               },
-              "bind": "chosen",
-              "min": 1,
-              "max": 1,
+              "bind": "contributed",
+              "owners_bind": "contributors",
               "then": {
-                "op": "sequence",
-                "children": [
-                  {
-                    "op": "move",
-                    "target": {
-                      "var": "chosen"
+                "op": "select",
+                "query": {
+                  "zone": "all_discard",
+                  "exclude_var": "old"
+                },
+                "bind": "chosen",
+                "min": 1,
+                "max": 1,
+                "then": {
+                  "op": "sequence",
+                  "children": [
+                    {
+                      "op": "move",
+                      "target": {
+                        "var": "chosen"
+                      },
+                      "destination": "hand",
+                      "recipient": "active"
                     },
-                    "destination": "hand",
-                    "recipient": "active"
-                  },
-                  {
-                    "op": "redistribute_discards",
-                    "query": {
-                      "zone": "all_discard",
-                      "exclude_var": "old"
+                    {
+                      "op": "redistribute_discards",
+                      "query": {
+                        "zone": "all_discard",
+                        "exclude_var": "old"
+                      },
+                      "players_var": "contributors"
                     }
-                  }
-                ]
+                  ]
+                }
               }
             },
             {
@@ -7311,16 +7421,7 @@
                 "zone": "all_discard",
                 "exclude_var": "before",
                 "tag": "武器",
-                "compare_stat": {
-                  "field": "weight",
-                  "op": "le",
-                  "value": {
-                    "stat": {
-                      "var": "source",
-                      "field": "strength"
-                    }
-                  }
-                }
+                "equippable_by_var": "source"
               },
               "bind": "taken",
               "min": 0,
@@ -7492,6 +7593,120 @@
             "preserve_attack": false,
             "full_card": false
           }
+        }
+      }
+    },
+    {
+      "id": "TS-0330-A02",
+      "source_card_id": "TS-0330",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄",
+            "equipped": true,
+            "exclude_source": true
+          }
+        }
+      ],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄",
+          "equipped": true,
+          "exclude_source": true
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "attack",
+          "amount": 1
+        }
+      }
+    },
+    {
+      "id": "TS-0331-A02",
+      "source_card_id": "TS-0331",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄",
+            "equipped": true,
+            "exclude_source": true
+          }
+        }
+      ],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄",
+          "equipped": true,
+          "exclude_source": true
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "attack",
+          "amount": 2
+        }
+      }
+    },
+    {
+      "id": "TS-0332-A02",
+      "source_card_id": "TS-0332",
+      "kind": "activated",
+      "source_zone": "active_hand",
+      "actions": [
+        "dungeon"
+      ],
+      "usage": "once_per_turn",
+      "conditions": [
+        {
+          "exists": {
+            "zone": "active_hand",
+            "tag": "英雄",
+            "equipped": true,
+            "exclude_source": true
+          }
+        }
+      ],
+      "body": {
+        "op": "for_each",
+        "query": {
+          "zone": "active_hand",
+          "tag": "英雄",
+          "equipped": true,
+          "exclude_source": true
+        },
+        "bind": "chosen",
+        "body": {
+          "op": "mod_card",
+          "target": {
+            "var": "chosen"
+          },
+          "stat": "attack",
+          "amount": 3
         }
       }
     }

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="雷霆之石游戏区域试验：地下城、村庄供应与玩家牌组。">
+    <title>游戏区域 · 雷霆之石</title>
+    <link rel="stylesheet" href="/src/shared/styles/global.css">
+    <link rel="stylesheet" href="/src/pages/game-probe/style.css">
+    <link rel="preload" as="image" href="/src/shared/components/player-deck-area/cursors/pointer.png">
+    <link rel="preload" as="image" href="/src/shared/components/player-deck-area/cursors/pressed.png">
+    <script type="module" src="/src/pages/game-probe/index.ts"></script>
+  </head>
+  <body class="probe-page">
+    <header id="probe-header" class="masthead">
+      <div class="probe-header">
+        <a class="brand" href="/play"><span class="brand-mark" aria-hidden="true">ϟ</span><span>雷霆之石</span></a>
+        <span class="probe-header-label">GAME PROBE</span>
+        <nav aria-label="页面导航"><a href="/play">返回大厅</a></nav>
+      </div>
+    </header>
+    <main id="probe-shell" class="probe-shell">
+      <div class="probe-heading">
+        <div><p class="eyebrow">02 / GAME AREAS</p><h1>游戏区域</h1></div>
+      </div>
+      <details id="probe-debug-controls" class="probe-debug panel">
+        <summary>演示与测试</summary>
+        <div class="probe-debug-content">
+          <div class="probe-tools" aria-label="手牌数量演示">
+            <label for="hand-count" title="调整张数会重置抽牌堆和弃牌堆">重设手牌</label>
+            <button id="fewer-cards" type="button" aria-label="减少一张手牌">−</button>
+            <input id="hand-count" type="range" min="0" max="30" step="1" value="6" aria-describedby="hand-count-label">
+            <button id="more-cards" type="button" aria-label="增加一张手牌">+</button>
+            <output id="hand-count-label" for="hand-count">6 张</output>
+          </div>
+          <div class="demo-toolbar" aria-label="抽弃牌演示操作">
+            <button id="draw-one" class="button primary" type="button">抽 1 张</button>
+            <div class="batch-draw">
+              <label for="draw-quantity" class="sr-only">批量抽牌张数</label>
+              <input id="draw-quantity" type="number" min="1" max="30" value="5" inputmode="numeric">
+              <button id="draw-many" class="button secondary" type="button">抽多张</button>
+            </div>
+            <button id="discard-selected" class="button secondary" type="button" disabled>弃选中</button>
+            <button id="discard-all" class="button secondary" type="button">全部弃牌</button>
+            <button id="shuffle-demo" class="button secondary" type="button" title="自动准备空抽牌堆场景，再播放洗回动画">演示洗回</button>
+            <button id="destroy-demo" class="button secondary" type="button">演示摧毁</button>
+            <button id="reset-demo" class="text-button" type="button">重置演示</button>
+            <button id="test-draw-sync" class="text-button" type="button">测试抽牌堆同步</button>
+            <button id="test-discard-sync" class="text-button" type="button">测试弃牌堆同步</button>
+            <button id="demo-treasures" class="text-button" type="button">演示获得宝藏</button>
+            <button id="demo-aside" class="text-button" type="button">演示旁置</button>
+            <p id="demo-status" role="status" aria-live="polite">点击手牌可选中，再点击“弃选中”。</p>
+          </div>
+          <div class="public-demo-controls" aria-label="地下城演示设置">
+            <label for="dungeon-demo-layout">场景</label>
+            <select id="dungeon-demo-layout"><option value="classic">普通地下城</option><option value="forest">荆棘森林 · 环境</option><option value="spire">飞龙尖塔 · 双地下城</option></select>
+            <label><input id="show-rank-zero" type="checkbox">阶层 0</label>
+            <label><input id="show-rank-four" type="checkbox">阶层 4</label>
+          </div>
+          <div class="public-demo-controls" aria-label="供应演示设置">
+            <label for="take-supply-id">供应</label><select id="take-supply-id"></select>
+            <button id="take-supply-top" class="button secondary" type="button">演示取顶牌</button>
+            <button id="reset-supplies" class="text-button" type="button">重置供应</button>
+          </div>
+          <div class="public-demo-controls" aria-label="响应区域演示">
+            <span>响应区</span>
+            <button id="demo-response-action" class="text-button" type="button">演示回合开始</button>
+            <button id="demo-response-rest" class="text-button" type="button">演示休整提示</button>
+            <button id="demo-response-phase" class="text-button" type="button">演示阶段提示</button>
+            <button id="demo-response-clear" class="text-button" type="button">清空响应区</button>
+          </div>
+          <div class="public-demo-controls" aria-label="玩家牌区演示">
+            <button id="test-player-reveal" class="text-button" type="button">测试手牌公开同步（2 秒）</button>
+            <button id="demo-player-activity" class="text-button" type="button">演示展示手牌气泡</button>
+            <button id="demo-player-destroy" class="text-button" type="button">演示摧毁气泡</button>
+          </div>
+        </div>
+      </details>
+      <section id="probe-table" class="probe-table game-cursor" aria-label="卡牌试验桌">
+        <div id="public-table-area"></div>
+        <div id="player-deck-area"></div>
+      </section>
+      <div class="probe-footnote"><p id="probe-shortcuts">拖动空白处平移 · 滚轮缩放 · 点击牌堆浏览 · 关闭自动理牌后可拖动手牌 · 按住 <kbd>Alt</kbd> 检视</p><p id="probe-notice" role="status" aria-live="polite"></p></div>
+    </main>
+    <div id="player-deck-overlays"></div>
+  </body>
+</html>

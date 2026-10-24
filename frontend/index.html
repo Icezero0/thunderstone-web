@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#172631"><title>雷霆之石 · 联机大厅</title>
-  <link rel="stylesheet" href="/global.css"><link rel="stylesheet" href="/play.css"><script type="module" src="/src/app.ts"></script>
+  <link rel="stylesheet" href="/src/shared/styles/global.css"><link rel="stylesheet" href="/src/pages/lobby/style.css"><script type="module" src="/src/pages/lobby/index.ts"></script>
 </head>
 <body>
   <header class="masthead"><div class="topbar"><a class="brand" href="/play"><span class="brand-mark" aria-hidden="true">ϟ</span><span><strong>雷霆之石</strong><small>THUNDERSTONE</small></span></a>
-    <nav aria-label="主导航"><a href="/play" aria-current="page">联机大厅</a><a href="/config">规则配置</a><a href="/monster-audit">怪物审核</a></nav>
-    <div id="account" class="account" hidden><span id="account-name"></span><button id="logout" class="text-button" type="button">退出</button></div>
-  </div><div class="hero-copy page-heading"><div><p class="eyebrow">集结你的冒险队伍</p><h1>下一场冒险，从这里开始。</h1></div><span id="connection" class="connection" data-status="offline" role="status">尚未登录</span></div></header>
+    <nav aria-label="主导航"><a href="/play" aria-current="page">联机大厅</a><a href="/config">规则配置</a></nav>
+    <div id="account" class="account" hidden><a class="account-profile" href="/profile" title="个人设置"><span id="account-avatar"></span><span id="account-name"></span></a><button id="logout" class="text-button" type="button">退出</button></div>
+  </div><div class="hero-copy page-heading"><div><p class="eyebrow">冒险者工会</p><h1>联机大厅</h1></div><span id="connection" class="connection" data-status="offline" role="status">尚未登录</span></div></header>
   <main class="shell">
     <p id="notice" class="notice" role="status" aria-live="polite" hidden></p>
     <section id="auth-view" class="auth-layout">
@@ -23,17 +23,17 @@
       </section>
     </section>
     <section id="lobby-view" class="lobby-layout" hidden>
-      <section class="card room-list"><div class="section-title"><div><p class="eyebrow">一起出发</p><h2>等待中的房间</h2><p id="room-count" class="muted"></p></div><button id="refresh" class="text-button" type="button">刷新列表</button></div><div id="rooms"></div></section>
-      <aside class="lobby-aside"><section class="card"><p class="eyebrow">组织一场冒险</p><h2>创建房间</h2><form id="create-form"><label>房间名称<input id="new-room-name" maxlength="64" required placeholder="例如：今晚的雷霆之石"></label><button id="create-room" class="button primary" type="submit">创建并进入</button></form></section>
-        <section class="card"><h2>朋友已经在等你？</h2><form id="join-form"><label>房间编号<input id="room-id" required pattern="[a-fA-F0-9]{32}" maxlength="32" placeholder="粘贴朋友分享的编号" autocomplete="off"></label><button id="join-code" class="button secondary" type="submit">通过编号加入</button></form></section>
+      <section class="card room-list"><div class="section-title"><div><p class="eyebrow">招募中的队伍</p><h2>公开房间</h2></div><button id="refresh" class="text-button refresh-rooms" type="button" aria-label="刷新列表" title="刷新列表"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 6.66M20 4v7h-7"/></svg></button></div><div id="rooms"></div></section>
+      <aside class="lobby-aside"><section class="card"><p class="eyebrow">组建队伍</p><h2>创建房间</h2><form id="create-form"><label>房间名称<input id="new-room-name" maxlength="64" required></label><label class="room-visibility ui-switch"><span class="ui-switch-control"><input id="new-room-public" class="ui-switch-input" type="checkbox" role="switch" checked><span class="ui-switch-visual" aria-hidden="true"></span></span><span class="ui-switch-label">公开房间</span></label><button id="create-room" class="button primary" type="submit">创建</button></form></section>
+        <section class="card"><h2>同伴已经在等你？</h2><form id="join-form"><label>房间编号<input id="room-id" required pattern="[a-fA-F0-9]{32}" maxlength="32" autocomplete="off"></label><button id="join-code" class="button secondary" type="submit">通过编号加入</button></form></section>
       </aside>
     </section>
     <section id="room-view" hidden>
-      <div class="room-heading"><div><p class="eyebrow">等待中的房间</p><h2 id="room-name"></h2><div class="room-code"><code id="room-code"></code><button id="copy-room" class="text-button" type="button">复制编号</button></div></div><button id="leave-room" class="button secondary" type="button">离开房间</button></div>
-      <div class="room-layout"><section class="card"><div class="section-title"><h3>玩家列表</h3><span id="readiness" class="label"></span></div><ul id="players" class="players"></ul><button id="ready" class="button primary ready-button" type="button">我准备好了</button><p class="muted small">玩家列表或规则配置改变后，所有玩家需要重新准备。</p></section>
+      <div class="room-heading"><div><p id="room-state" class="eyebrow">等待中的房间</p><h2 id="room-name"></h2><div class="room-code"><code id="room-code"></code><button id="copy-room" class="text-button" type="button">复制编号</button></div></div><button id="leave-room" class="button secondary" type="button">离开房间</button></div>
+      <div class="room-layout"><section class="card"><div class="section-title"><h3>玩家列表</h3><span id="readiness" class="label"></span></div><ul id="players" class="players"></ul><button id="ready" class="button primary ready-button" type="button">我准备好了</button><p id="ready-note" class="muted small">玩家列表或规则配置改变后，所有玩家需要重新准备。</p><div id="start-controls" class="start-controls" hidden><label for="first-player">先手玩家</label><select id="first-player"><option value="random">随机选择</option></select><button id="start-match" class="button primary" type="button">开始对局</button><p id="start-note" class="muted small">全员准备后即可开始。</p></div><a id="enter-match" class="button primary ready-button" href="/match" hidden>进入对局</a></section>
         <section class="card"><div class="section-title"><div><p class="eyebrow">经典模式</p><h3>本局配置</h3></div><a id="edit-config" class="button secondary" href="/config">编辑配置</a></div><div id="config-counts" class="config-counts"></div><div class="config-meta"><span>地下城特征 <strong id="feature-mode"></strong></span><span id="multipliers"></span></div><dl id="config-details" class="config-details"></dl></section>
       </div><div class="room-bottom"><p id="host-note" class="muted small"></p><button id="close-room" class="text-button danger" type="button">关闭房间</button></div>
     </section>
-  </main><footer>雷霆之石 · 与朋友相聚的牌桌</footer>
+  </main>
 </body>
 </html>

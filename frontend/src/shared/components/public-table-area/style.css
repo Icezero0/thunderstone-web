@@ -1,0 +1,28 @@
+.public-table-area {--player-list-background: rgb(0 0 0 / 10%); display: grid; grid-template-columns: minmax(0, 1fr) 166px; gap: 14px; min-width: 0; min-height: 0;}
+.public-table-area[data-has-players="false"] {grid-template-columns: minmax(0, 1fr);}
+.public-table-area .public-game-areas {min-height: 0; min-width: 0; overflow: hidden; display: grid; grid-template-rows: auto minmax(0, 1fr); border: 1px solid var(--header-line); border-radius: 10px;}
+.public-table-area .public-window-heading {display: flex; align-items: center; gap: 18px; padding: 0 12px; border-bottom: 1px solid var(--header-line); background: var(--header-background);}
+.public-table-area .public-area-tabs {display: flex; gap: 6px;}
+.public-table-area .public-area-tab {padding: 7px 20px 10px; border: 0; border-bottom: 2px solid transparent; border-radius: 5px 5px 0 0; background: transparent; color: var(--header-muted); font: 14px var(--font-heading);}
+.public-table-area .public-area-tab:hover {background: rgb(185 140 69 / 8%); color: var(--header-ink);}
+.public-table-area .public-area-tab[aria-selected="true"] {border-bottom-color: var(--header-gold); color: var(--header-gold); background: rgb(185 140 69 / 8%);}
+.public-table-area .public-area-tab:focus-visible {outline: 2px solid var(--header-gold); outline-offset: -3px;}
+.public-table-area .public-table-views {min-width: 0; min-height: 0; position: relative;}
+.public-table-area .public-table-views > .table-viewport {position: absolute; inset: 0;}
+.public-table-area .table-desktop {padding: 28px;}
+.public-table-area .desktop-area {width: max-content;}
+.public-table-area .table-desktop .dungeon-area {width: max-content;}
+.public-table-area .table-desktop .table-area {--card-width: var(--public-card-width, 112px); padding: 14px 16px 18px;}
+.public-table-area .table-desktop .dungeon-lanes {display: grid; grid-template-columns: 1fr; gap: 22px;}
+.public-table-area .table-desktop .dungeon-lane {flex: none; width: max-content;}
+.public-table-area .table-desktop .dungeon-track {overflow: visible;}
+.public-table-area .table-desktop .supply-grid {gap: 14px 18px;}
+.public-table-area .table-view-reset {position: absolute; right: 12px; bottom: 12px; z-index: 10; display: inline-grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid var(--header-line); border-radius: 7px; background: var(--header-background); color: var(--header-gold); box-shadow: 0 3px 12px rgb(0 0 0 / 28%);}
+.public-table-area .table-view-reset:hover {border-color: var(--header-gold); color: var(--header-ink);}
+.public-table-area .table-view-reset:focus-visible {outline: 2px solid var(--header-gold); outline-offset: 3px;}
+.public-table-area .table-view-reset svg {width: 19px; height: 19px;}
+@media (max-width: 640px) {
+  .public-table-area {grid-template-columns: minmax(0, 1fr) 92px; gap: 8px;}
+  .public-table-area .public-window-heading {padding: 0 6px; gap: 6px; flex-wrap: wrap;}
+  .public-table-area .public-area-tab {padding: 7px 9px; font-size: 12px;}
+}

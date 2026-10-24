@@ -12,7 +12,7 @@ from backend.tests.migration.reference.python_engine.effects.runtime import (act
 from backend.tests.migration.reference.python_engine.effects.choices import resolve_value, resolve_reorder
 from backend.tests.migration.reference.python_engine.effects.upgrade import resolve_upgrade
 from backend.tests.migration.reference.python_engine.effects.disease import resolve_replacement
-from backend.app.integrations.game_engine.paths import PROJECT_ROOT
+from backend.app.core.paths import PROJECT_ROOT
 from backend.app.integrations.game_engine.setup.constants import RULESET_VERSION
 from backend.tests.migration.reference.python_engine.turn.dungeon import (attack_targets, declare_battle_target,
                                  enter_dungeon, equip_weapon, equipment_options)

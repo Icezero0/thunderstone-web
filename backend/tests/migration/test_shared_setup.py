@@ -1,5 +1,6 @@
 """Full setup, random-stream and error parity with the frozen Python engine."""
 from copy import deepcopy
+from dataclasses import replace
 import unittest
 from unittest.mock import patch
 
@@ -13,13 +14,20 @@ from backend.app.integrations.game_engine.setup.state import validate_setup_stat
 from backend.tests.migration.reference.setup import service as reference, rules as old_rules
 from backend.tests.migration.reference.setup.builder import _Builder as OldBuilder
 from backend.tests.migration.reference.setup.random import SetupRng as OldRng
-from backend.tests.test_setup_engine import config, request
+from backend.tests.support.setup import config, request
 
 
 class SharedSetupTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.snapshot = load_catalog()
+        # TS-0081 now forms one ordered village-hero stack. The frozen Python
+        # oracle implements two separate piles; compare unchanged setup rules
+        # on a candidate pool excluding this revised group. Full-catalog cases
+        # are covered by test_turn_engine and engine/tests/hero-supplies.test.mjs.
+        index = deepcopy(cls.snapshot.setup_index)
+        index['randomizer_pools']['village'].remove('TS-0081')
+        cls.snapshot = replace(cls.snapshot, setup_index=index)
         cls.panel = build_panel_catalog(cls.snapshot.cards, cls.snapshot.setup_index)
         cls.current_rules = load_ruleset(cls.snapshot.cards)
 
@@ -45,7 +53,10 @@ class SharedSetupTests(unittest.TestCase):
             expected = self.reference_setup(frozen)
         unchanged = deepcopy(frozen)
         result = start_game(frozen, snapshot=self.snapshot)
-        self.assertEqual(result, expected)
+        # Whole-hand disclosure is a new rule; all legacy setup decisions stay identical.
+        self.assertTrue(result['state']['turn_hand_public'])
+        comparable = deepcopy(result); comparable['state'].pop('turn_hand_public')
+        self.assertEqual(comparable, expected)
         self.assertEqual(frozen, unchanged)
         return result
 

@@ -54,7 +54,7 @@ export function matches(card: Card, spec: CardFilter): boolean {
   return true;
 }
 export function monsterFamily(card: Card): string[] {
-  const own = tags(card).filter(tag => tag !== '怪物');
+  const own = tags(card).filter(tag => !['怪物', '给予疾病'].includes(tag));
   if (own.length === 2 && own[0] === '龙' && ['白龙','绿龙','蓝龙','红龙','黑龙'].includes(own[1])) return ['色彩龙','龙'];
   return [...new Set(own)].sort();
 }

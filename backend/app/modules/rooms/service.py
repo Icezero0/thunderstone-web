@@ -6,9 +6,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.core.exceptions import AppError, ConflictError
-from backend.app.integrations.game_engine.catalog.service import build_panel_catalog
-from backend.app.integrations.game_engine.rules.service import validate_rules_config
-from backend.app.integrations.game_engine.shared.client import SharedEngineUnavailable
+from backend.app.integrations.game_engine.api import (
+    SharedEngineUnavailable, build_panel_catalog, validate_rules_config,
+)
 from backend.app.modules.cards.repository import load_catalog_snapshot
 from backend.app.modules.rooms.models import Room, RoomPlayer
 from backend.app.modules.rooms.repository import RoomRepository
@@ -40,11 +40,11 @@ class RoomService:
         player = await self.repo.membership(db, user_id)
         return await self.repo.view(db, await self.repo.get(db, player.room_id)) if player else None
 
-    async def create(self, db: AsyncSession, user_id: int, name: str) -> RoomView:
+    async def create(self, db: AsyncSession, user_id: int, name: str, *, is_public: bool = True) -> RoomView:
         if await self.repo.membership(db, user_id):
             raise ConflictError("请先离开当前房间")
         try:
-            room = Room(name=name, host_user_id=user_id, config=default_config())
+            room = Room(name=name, host_user_id=user_id, config=default_config(), is_public=is_public)
             db.add(room)
             await db.flush()
             db.add(RoomPlayer(room_id=room.id, user_id=user_id))
@@ -56,8 +56,18 @@ class RoomService:
 
     async def waiting(self, db: AsyncSession, room_id: str) -> Room:
         room = await self.repo.get(db, room_id)
+        if room.status == "playing":
+            raise AppError("游戏已经开始，房间已锁定，请进入当前对局", code="room_playing", status_code=409)
         if room.status != "waiting":
             raise ConflictError("房间已关闭")
+        return room
+
+    async def readable(self, db: AsyncSession, room_id: str, user_id: int) -> Room:
+        room = await self.repo.get(db, room_id)
+        if room.status == "closed":
+            raise ConflictError("房间已关闭")
+        if room.status == "playing":
+            await self.member(db, room, user_id)
         return room
 
     async def member(self, db: AsyncSession, room: Room, user_id: int) -> RoomPlayer:

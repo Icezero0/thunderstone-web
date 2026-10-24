@@ -153,8 +153,10 @@ export function swapHall(tx: Transition, first: string, second: string): Record<
 }
 export function exchangeHall(tx: Transition, target: string, replacement: string): Record<string, any>[] {
   const hall = tx.location(target), origin = tx.location(replacement);
+  const incoming = tx.card(replacement);
+  const dungeonCard = isMonster(incoming) || isThunderstone(incoming) || ['陷阱', '宝藏'].includes(incoming.subcategory);
   if (!hall?.startsWith('hall:') || hall.endsWith(':rank0') || !origin || origin.endsWith(':rank0') ||
-      !isMonster(tx.card(target)) || !isMonster(tx.card(replacement)) || !canMoveMonster(tx, target) ||
+      !isMonster(tx.card(target)) || !dungeonCard || !canMoveMonster(tx, target) ||
       origin.startsWith('hall:') && !canMoveMonster(tx, replacement)) throw new RuleError('invalid monster exchange');
   rememberFronts(tx);
   const rank = tx.state.zones[hall].indexOf(target), owner = tx.state.instances[replacement].owner_player_id;

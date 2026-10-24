@@ -8,9 +8,16 @@
     "dev": "vite",
     "build": "vite build",
     "typecheck": "tsc -p tsconfig.json",
-    "test": "node tests/build.mjs && node --test tests/*.test.mjs tests/*.test.cjs"
+    "test": "node tests/build.mjs && node --test tests/*.test.mjs"
   },
-  "dependencies": {"@thunderstone/engine": "*"},
-  "devDependencies": {"vite": "^7.2.4"},
-  "engines": {"node": ">=22.12"}
+  "dependencies": {
+    "@thunderstone/engine": "*",
+    "vanilla-disintegrate": "^1.6.1"
+  },
+  "devDependencies": {
+    "vite": "^7.2.4"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
 }

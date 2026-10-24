@@ -1,0 +1,56 @@
+/* Shared visual shell for player, pile and hero browsing. Controllers own modal state. */
+:root {
+  --dialog-backdrop: rgb(16 26 32 / 78%);
+  --dialog-open-duration: 180ms;
+}
+.browse-dialog {
+  --dialog-width: 1100px;
+  --dialog-gutter: 24px;
+  position: fixed; inset: 0; z-index: 90; display: grid; place-items: safe center;
+  padding: var(--dialog-gutter); background: var(--dialog-backdrop);
+}
+.browse-dialog .browse-dialog-panel {
+  display: flex; flex-direction: column; width: min(var(--dialog-width), 100%);
+  max-height: calc(100dvh - var(--dialog-gutter) * 2); min-height: 0; padding: 0; overflow: hidden;
+  border: 1px solid var(--panel-border); border-radius: var(--radius-panel); background: var(--panel);
+  box-shadow: 0 22px 70px rgb(0 0 0 / 35%);
+}
+.browse-dialog .browse-dialog-heading {
+  display: flex; align-items: center; justify-content: space-between; flex: none; gap: 20px; padding: 18px 24px;
+  background: var(--header-background); color: var(--header-ink); border-bottom: 1px solid var(--header-line);
+}
+.browse-dialog .browse-dialog-heading-group {display: flex; align-items: center; gap: 12px; min-width: 0;}
+.browse-dialog .browse-dialog-heading h2 {margin: 0; font-size: 24px; overflow-wrap: anywhere;}
+.browse-dialog .browse-dialog-count {color: var(--header-muted); font-size: 12px; font-variant-numeric: tabular-nums;}
+.browse-dialog .browse-dialog-close.button.secondary {flex: none; background: transparent; border-color: var(--header-line); color: var(--header-ink);}
+.browse-dialog .browse-dialog-close.button.secondary:hover {background: var(--navy); border-color: var(--header-gold); color: var(--header-gold);}
+.browse-dialog .browse-dialog-body {min-height: 0; overflow: auto; overscroll-behavior: contain;}
+.browse-dialog .browse-dialog-grid {
+  --card-width: 144px; --card-radius: 9px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(134px, 1fr)); align-content: start;
+  gap: 14px 18px; padding: 16px 24px 24px;
+}
+.browse-dialog .browse-dialog-grid > article {display: flex; flex-direction: column; align-items: center; min-width: 0; padding: 16px 4px 0;}
+.browse-dialog .browse-dialog-grid > article > .physical-card {flex: none;}
+.browse-dialog .browse-dialog-empty {grid-column: 1 / -1; padding: 48px 0; margin: 0; text-align: center; color: var(--muted);}
+/* Display:none removes these animations; opening again replays them, snapshots do not. */
+.browse-dialog:not([hidden]) {animation: browse-dialog-backdrop-in var(--dialog-open-duration) ease-out;}
+.browse-dialog:not([hidden]) > .browse-dialog-panel {animation: browse-dialog-panel-in var(--dialog-open-duration) cubic-bezier(.22, 1, .36, 1);}
+@keyframes browse-dialog-backdrop-in {
+  from {background-color: transparent;}
+  to {background-color: var(--dialog-backdrop);}
+}
+@keyframes browse-dialog-panel-in {
+  from {opacity: 0; transform: translateY(14px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+/* No persistent transform or animation layer after entry, keeping card images sharp. */
+@media (max-width: 640px) {
+  .browse-dialog {--dialog-gutter: 12px;}
+  .browse-dialog .browse-dialog-heading {padding: 16px;}
+  .browse-dialog .browse-dialog-heading h2 {font-size: 22px;}
+  .browse-dialog .browse-dialog-grid {--card-width: 126px; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); padding: 12px 12px 20px; gap: 12px 10px;}
+}
+@media (prefers-reduced-motion: reduce) {
+  .browse-dialog:not([hidden]), .browse-dialog:not([hidden]) > .browse-dialog-panel {animation: none;}
+}

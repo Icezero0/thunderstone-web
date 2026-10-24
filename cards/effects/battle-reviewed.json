@@ -2,6 +2,422 @@
   "schema_version": "thunderstone.effects/1",
   "abilities": [
     {
+      "id": "TS-0551-A01",
+      "source_card_id": "TS-0551",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_monster_health",
+        "target": {
+          "var": "source"
+        },
+        "amount": {
+          "mul": [
+            3,
+            {
+              "count": {
+                "zone": "subject_hand",
+                "tag": "物品"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0552-A01",
+      "source_card_id": "TS-0552",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_monster_health",
+        "target": {
+          "var": "source"
+        },
+        "amount": {
+          "mul": [
+            4,
+            {
+              "count": {
+                "zone": "subject_hand",
+                "tag": "武器"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0554-A01",
+      "source_card_id": "TS-0554",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_monster_health",
+        "target": {
+          "var": "source"
+        },
+        "amount": {
+          "mul": [
+            4,
+            {
+              "count": {
+                "zone": "subject_hand",
+                "tag": "英雄"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0555-A01",
+      "source_card_id": "TS-0555",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_monster_health",
+        "target": {
+          "var": "source"
+        },
+        "amount": {
+          "mul": [
+            2,
+            {
+              "count": {
+                "zone": "subject_hand"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0613-A02",
+      "source_card_id": "TS-0613",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_monster_health",
+        "target": {
+          "var": "source"
+        },
+        "amount": {
+          "mul": [
+            2,
+            {
+              "count": {
+                "zone": "subject_hand",
+                "tag": "疾病"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0638-A01",
+      "source_card_id": "TS-0638",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_monster_health",
+        "target": {
+          "var": "source"
+        },
+        "amount": {
+          "mul": [
+            1,
+            {
+              "count": {
+                "zone": "subject_hand",
+                "tag": "民兵"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0639-A01",
+      "source_card_id": "TS-0639",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_monster_health",
+        "target": {
+          "var": "source"
+        },
+        "amount": {
+          "mul": [
+            2,
+            {
+              "count": {
+                "zone": "subject_hand",
+                "tag": "英雄",
+                "level_min": 1,
+                "level_max": 1
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0640-A01",
+      "source_card_id": "TS-0640",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_monster_health",
+        "target": {
+          "var": "source"
+        },
+        "amount": {
+          "mul": [
+            3,
+            {
+              "count": {
+                "zone": "subject_hand",
+                "tag": "英雄",
+                "level_min": 2,
+                "level_max": 2
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0642-A01",
+      "source_card_id": "TS-0642",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_monster_health",
+        "target": {
+          "var": "source"
+        },
+        "amount": {
+          "mul": [
+            2,
+            {
+              "count": {
+                "zone": "subject_hand",
+                "tag": "英雄"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0553-A01",
+      "source_card_id": "TS-0553",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_monster_health",
+        "target": {
+          "var": "source"
+        },
+        "amount": {
+          "sum": {
+            "query": {
+              "zone": "subject_hand"
+            },
+            "field": "gold"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0614-A02",
+      "source_card_id": "TS-0614",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_monster_health",
+        "target": {
+          "var": "source"
+        },
+        "amount": {
+          "resource": "xp"
+        }
+      }
+    },
+    {
+      "id": "TS-0615-A02",
+      "source_card_id": "TS-0615",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_monster_health",
+        "target": {
+          "var": "source"
+        },
+        "amount": {
+          "mul": [
+            2,
+            {
+              "count": {
+                "zone": "hall",
+                "tag": "腐化德鲁伊",
+                "exclude_source": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "TS-0673-A03",
+      "source_card_id": "TS-0673",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "mod_monster_health",
+        "target": {
+          "var": "source"
+        },
+        "amount": {
+          "sum": {
+            "query": {
+              "zone": "subject_hand",
+              "tag": "英雄"
+            },
+            "field": "level"
+          }
+        }
+      }
+    },
+    {
+      "id": "TS-0611-A01",
+      "source_card_id": "TS-0611",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "any": [
+            {
+              "exists": {
+                "zone": "subject_hand",
+                "tag": "腐化德鲁伊"
+              }
+            },
+            {
+              "exists": {
+                "zone": "hall",
+                "tag": "腐化德鲁伊",
+                "exclude_source": true
+              }
+            }
+          ]
+        },
+        "then": {
+          "op": "mod_monster_health",
+          "target": {
+            "var": "source"
+          },
+          "amount": 3
+        }
+      }
+    },
+    {
+      "id": "TS-0641-A01",
+      "source_card_id": "TS-0641",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "exists": {
+            "zone": "subject_hand",
+            "tag": "英雄",
+            "level_min": 3,
+            "level_max": 3
+          }
+        },
+        "then": {
+          "op": "mod_monster_health",
+          "target": {
+            "var": "source"
+          },
+          "amount": 4
+        }
+      }
+    },
+    {
+      "id": "TS-0508-A02",
+      "source_card_id": "TS-0508",
+      "kind": "triggered",
+      "source_zone": "battle_target",
+      "event": "BATTLE_BEFORE_OUTCOME",
+      "usage": "once_per_event",
+      "conditions": [],
+      "body": {
+        "op": "if",
+        "condition": {
+          "not": {
+            "exists": {
+              "zone": "subject_hand",
+              "tag": "元素"
+            }
+          }
+        },
+        "then": {
+          "op": "scale_damage",
+          "divisor": 2
+        }
+      }
+    },
+    {
       "id": "TS-0459-A01",
       "source_card_id": "TS-0459",
       "kind": "triggered",
@@ -2847,36 +3263,44 @@
       "usage": "once_per_event",
       "conditions": [],
       "body": {
-        "op": "sequence",
-        "children": [
-          {
-            "op": "for_each",
-            "query": {
-              "zone": "subject_hand",
-              "tags_none": [
-                "疾病"
-              ],
-              "unmarked": true,
-              "tag": "食物"
+        "op": "remember",
+        "query": {
+          "zone": "subject_hand",
+          "tags_none": [
+            "疾病"
+          ],
+          "unmarked": true,
+          "tag": "食物"
+        },
+        "bind": "new_food",
+        "then": {
+          "op": "sequence",
+          "children": [
+            {
+              "op": "for_each",
+              "query": {
+                "zone": "bound",
+                "var": "new_food"
+              },
+              "bind": "chosen",
+              "body": {
+                "op": "mark_destroy",
+                "target": {
+                  "var": "chosen"
+                }
+              }
             },
-            "bind": "chosen",
-            "body": {
-              "op": "mark_destroy",
-              "target": {
-                "var": "chosen"
-              }
-            }
-          },
-          {
-            "op": "gain_disease",
-            "count": {
+            {
+              "op": "gain_disease",
               "count": {
-                "zone": "subject_hand",
-                "tag": "食物"
+                "count": {
+                  "zone": "bound",
+                  "var": "new_food"
+                }
               }
             }
-          }
-        ]
+          ]
+        }
       }
     },
     {

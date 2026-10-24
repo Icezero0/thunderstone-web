@@ -1,0 +1,40 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172631"><title>雷霆之石 · 对局</title>
+  <link rel="stylesheet" href="/src/shared/styles/global.css"><link rel="stylesheet" href="/src/pages/match/style.css">
+  <script type="module" src="/src/pages/match/index.ts"></script>
+</head>
+<body class="match-page">
+  <header id="match-header" class="masthead">
+    <div class="masthead-inner"><a class="brand" href="/play?view=room"><span class="brand-mark" aria-hidden="true">ϟ</span><span><strong>雷霆之石</strong><small>THUNDERSTONE</small></span></a><div class="match-heading"><h1 id="match-title">正在载入牌桌</h1><p id="match-subtitle">正在恢复你的对局。</p></div><nav aria-label="主导航"><a href="/play?view=room">房间</a><a id="account-name" href="/profile" title="个人设置"></a><span id="connection" class="header-status" role="status">正在连接</span></nav></div>
+  </header>
+  <main class="match-shell">
+    <div class="page-toolbar"><p id="page-state" role="status">正在验证登录状态…</p><div id="turn-marker" hidden><span id="phase-label"></span><small id="match-id"></small></div><button id="refresh-match" class="text-button" type="button">刷新牌桌</button></div>
+    <p id="notice" class="notice" role="status" aria-live="polite" hidden></p>
+    <section id="empty-view" class="panel empty-view" hidden><span aria-hidden="true">ϟ</span><h2 id="empty-title">暂时没有进行中的对局</h2><p id="empty-description" class="muted">返回房间，准备好后由房主开始。</p><a class="button primary" href="/play?view=room">返回房间</a></section>
+    <div id="match-content" hidden>
+      <section id="setup-panel" class="panel setup-panel" aria-labelledby="setup-title" hidden>
+        <div class="section-heading"><span class="step">01</span><div><p class="eyebrow">飞龙尖塔</p><h2 id="setup-title">让两座地下城各具挑战。</h2></div></div>
+        <p id="setup-description" class="muted"></p>
+        <div class="setup-section-title"><h3>怪物组</h3><span id="allocation-progress" role="status"></span></div><div id="setup-monsters" class="allocation-grid"></div>
+        <div id="setup-features-section" hidden><div class="setup-section-title"><h3>地下城特征</h3><p class="muted small">选中的特征进入地下城 A，其余进入 B。</p></div><div id="setup-features" class="allocation-grid"></div></div>
+        <div id="allocation-summary" class="allocation-summary"></div><div class="setup-footer"><p id="setup-hint" class="muted"></p><button id="confirm-setup" class="button primary" type="button">确认分配，进入牌桌</button></div>
+      </section>
+      <div id="active-table" class="match-board game-cursor" hidden>
+        <div class="match-board-top">
+          <div id="match-public-area"></div>
+          <details id="match-operations" class="match-operations" hidden><summary>行动与战斗</summary><section id="turn-controls" aria-labelledby="turn-controls-title"><div class="section-heading"><h2 id="turn-controls-title">当前行动</h2></div><p id="turn-controls-note" class="muted small"></p><div id="turn-actions"></div><div id="battle-team-panel" hidden></div></section></details>
+        </div>
+        <div id="match-deck-area"></div>
+      </div>
+      <details id="match-information" class="match-information"><summary>疾病、控制区与对局记录</summary><div class="match-information-body"><section><h2>疾病供应</h2><p id="disease-description" class="muted small"></p><div id="disease-cards" class="card-grid compact-grid"></div></section><section><h2>公开控制区</h2><div id="public-control-cards" class="card-grid compact-grid"></div></section><section aria-labelledby="event-log-title"><h2 id="event-log-title">近期进程</h2><ol id="event-log" class="event-log" aria-live="polite" aria-relevant="additions text"></ol></section></div></details>
+      <div id="cancel-match-bar" class="cancel-match-bar" hidden><button id="cancel-match" class="text-button danger" type="button">取消本局，返回房间</button></div>
+    </div>
+  </main>
+  <div id="match-overlays"></div>
+  <dialog id="card-dialog" class="card-dialog" aria-labelledby="card-detail-name"><button id="close-card-dialog" class="dialog-close text-button" type="button" aria-label="关闭卡牌详情">关闭 ×</button><div id="card-detail"></div></dialog>
+</body>
+</html>
+

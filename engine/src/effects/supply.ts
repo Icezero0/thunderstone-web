@@ -1,6 +1,7 @@
 import type {Card} from '../types.js';
 import {RuleError} from '../types.js';
 import {isHero} from '../catalog/cards.js';
+import {heroGroup, orderedSupplyMembers, sameHeroSeries, supplyZone} from '../catalog/supplies.js';
 import type {Transition} from '../turn/transaction.js';
 
 export const settingRule = (tx: Transition, op: string) => tx.ruleset.mechanics.some(rule =>
@@ -9,7 +10,7 @@ export function matchingSupply(tx: Transition, card: Card, family = false): stri
   return Object.entries(tx.state.zones).find(([zone, pile]) =>
     (zone.startsWith('village_supply:') || zone.startsWith('hero_supply:')) && (pile as string[]).length &&
     (pile as string[]).some(item => tx.card(item).card_id === card.card_id ||
-      family && isHero(card) && tx.card(item).card_type === '英雄牌' && tx.card(item).subcategory === card.subcategory))?.[0];
+      family && sameHeroSeries(card, tx.card(item), tx.setupIndex.groups ?? [])))?.[0];
 }
 export function returnDestroyedToSupply(tx: Transition, item: string, source: string, reason: string): Record<string, any> | null {
   const card = tx.printedCard(item);
@@ -17,11 +18,14 @@ export function returnDestroyedToSupply(tx: Transition, item: string, source: st
   tx.state.instances[item].owner_player_id = null;
   let destination: string;
   if (tx.state.supply_rules.basic_card_ids.includes(card.card_id)) destination = 'basic_supply';
-  else destination = matchingSupply(tx, card, card.card_type === '英雄牌') ??
-    (card.card_type === '英雄牌' ? `hero_supply:${tx.state.instances[item].origin}` : `village_supply:${card.card_id}`);
+  else {
+    const group = heroGroup(card, tx.setupIndex.groups ?? []);
+    destination = matchingSupply(tx, card, isHero(card)) ?? (group ? supplyZone(group, tx.cards, card.card_id) :
+      (card.card_type === '英雄牌' ? `hero_supply:${tx.state.instances[item].origin}` : `village_supply:${card.card_id}`));
+  }
   tx.state.zones[destination] ??= [];
   tx.move(item, source, destination);
-  if (card.card_type === '英雄牌') tx.state.zones[destination].sort((a: string, b: string) =>
+  if (isHero(card)) tx.state.zones[destination].sort((a: string, b: string) =>
     Number(tx.card(a)['wiki_英雄等级'] || 0) - Number(tx.card(b)['wiki_英雄等级'] || 0));
   const details = {instance_id: item, card_id: card.card_id, source, destination};
   tx.event('destruction_returned_to_supply', {...details, reason});
@@ -40,10 +44,9 @@ export function replenishEmptySupplies(tx: Transition) {
     const group = available[tx.rng.randbelow(available.length)];
     used[kind].push(group.randomizer_id);
     delete tx.state.zones[zone];
-    const destination = kind === 'hero' ? `hero_supply:${group.randomizer_id}` : `village_supply:${group.members[0]}`;
+    const destination = supplyZone(group, tx.cards);
     tx.state.zones[destination] = [];
-    const members = [...group.members].sort((a: string, b: string) =>
-      Number(tx.cards[a]['wiki_英雄等级'] || 0) - Number(tx.cards[b]['wiki_英雄等级'] || 0) || a.localeCompare(b));
+    const members = orderedSupplyMembers(group, tx.cards);
     for (const cardId of members) for (let i = 0; i < Number(tx.cards[cardId].initial_copy_count) * tx.state.frozen_config.instance_multipliers[kind]; i++) {
       const item = tx.createOwned(cardId, destination, group.randomizer_id, tx.playerId, false);
       tx.state.instances[item].owner_player_id = null;

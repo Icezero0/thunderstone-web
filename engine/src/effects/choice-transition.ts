@@ -147,11 +147,9 @@ export function resolveReuse(tx: Transition, selected: string): boolean {
   validateReuseChoice({evaluation: tx.evaluation(), abilities: tx.ruleset.abilities,
     turn_number: tx.state.turn_number, ability_uses: tx.state.ability_uses}, choice, selected);
   const item = choice.reused_instance_id, stack = continuation(tx, choice);
-  const ability = tx.ruleset.abilities.find(item => item.id === selected)!;
-  tx.state.instances[item].flags.pending_turn_end_destruction = true;
-  tx.state.ability_uses[`${item}:${selected}`] = tx.state.turn_number;
-  tx.event('ability_activated', {ability_id: selected, source_instance_id: item, player_id: tx.playerId, reused: true});
-  stack.push(...abilityFrames(selected, item, ability.body, {_subject: tx.playerId}));
+  // Resume older saved ability choices as a complete recast, not a single line.
+  stack.push({node: {op: 'reuse_ability', target: {var: 'reused'}},
+    bindings: {...choice.bindings, reused: item}});
   tx.state.pending_choice = null; tx.state.resolution_frames = [];
   return runEffect(tx, choice.ability_id, choice.source_instance_id, stack);
 }

@@ -1,7 +1,8 @@
 import {RuleError, type CardFilter, type CombatTrace} from '../types.js';
 import {isHero, isMonster, isVillage, matches, monsterFamily, stat, tags} from '../catalog/cards.js';
-import {combatValues, equipmentCapacity, monsterHealth} from '../battle/combat.js';
+import {canEquipWeapon, combatValues, effectiveWeight, equipmentCapacity, monsterHealth} from '../battle/combat.js';
 import {Calculation, equipmentPairs} from './context.js';
+import {printedGold} from './economy.js';
 import {immuneToSource} from './immunity.js';
 import type {Bindings, Condition, EvaluationInput, Expression, Query} from './dsl.js';
 
@@ -42,6 +43,13 @@ export class EffectEvaluation extends Calculation {
     if (typeof value !== 'string') throw new RuleError(`unbound card target: ${name}`);
     return value;
   }
+  private effectiveStat(instance: string, field: string): number {
+    const card = this.card(instance);
+    if (field === 'weight') return effectiveWeight(this.input, card);
+    if (field === 'gold') return printedGold(this, card);
+    if (field === 'strength' && this.state.battle_context) return this.trace().hero_strength[instance] ?? stat(card, field);
+    return stat(card, field);
+  }
   query(spec: Query, bindings: Bindings = {}): string[] {
     const state = this.evaluationState, subject = string(bindings._subject) || this.playerId;
     const event = state.event_context ?? {}, zone = spec.zone;
@@ -50,6 +58,7 @@ export class EffectEvaluation extends Calculation {
     let candidates: string[];
     switch (zone) {
       case 'active_hand': candidates = [...this.zone('hand')]; break;
+      case 'active_draw': candidates = [...this.zone('draw')]; break;
       case 'active_hand_or_village_top': candidates = [...this.zone('hand'), ...supply('village_supply:')]; break;
       case 'active_control': candidates = [...this.zone('control')]; break;
       case 'subject_control': candidates = [...this.zone('control', subject)]; break;
@@ -95,7 +104,7 @@ export class EffectEvaluation extends Calculation {
       if (spec.compare_stat) {
         const comparison = spec.compare_stat;
         const actual = comparison.field === 'health' && state.battle_context
-          ? monsterHealth(this.input, card, 1, instance) : stat(card, comparison.field);
+          ? monsterHealth(this.input, card, 1, instance) : this.effectiveStat(instance, comparison.field);
         if (!compare(actual, comparison.op, this.expression(comparison.value, bindings))) return false;
       }
       if (own(spec, 'movable')) {
@@ -105,7 +114,10 @@ export class EffectEvaluation extends Calculation {
       if (spec.revealed_only && !place?.includes(':revealed_')) return false;
       if (own(spec, 'exclude_pile_var') && place === this.location(bindings[string(spec.exclude_pile_var)])) return false;
       if (own(spec, 'rank') && (!place?.startsWith('hall:') || (place.endsWith(':rank0') ? 0 : state.zones[place].indexOf(instance) + 1) !== spec.rank)) return false;
-      if (!matches(card, spec as CardFilter) || spec.exclude_source && instance === bindings.source) return false;
+      const staticSpec = {...spec}; delete staticSpec.weight_min; delete staticSpec.weight_max;
+      if (!matches(card, staticSpec as CardFilter) || spec.exclude_source && instance === bindings.source) return false;
+      const weight = effectiveWeight(this.input, card);
+      if (weight < Number(spec.weight_min ?? -Infinity) || weight > Number(spec.weight_max ?? Infinity)) return false;
       if (own(spec, 'strength_min') || own(spec, 'strength_max')) {
         const strength = state.battle_context ? this.trace().hero_strength[instance] ?? stat(card, 'strength') : stat(card, 'strength');
         if (strength < Number(spec.strength_min ?? -100) || strength > Number(spec.strength_max ?? 100)) return false;
@@ -118,6 +130,7 @@ export class EffectEvaluation extends Calculation {
       if (spec.unused && used.includes(instance) || own(spec, 'used') && used.includes(instance) !== spec.used) return false;
       if (own(spec, 'in_discard') && Boolean(place?.endsWith(':discard')) !== spec.in_discard) return false;
       if (spec.equipment_space && pairs.filter(([hero]) => hero === instance).length >= equipmentCapacity(this.input, instance)) return false;
+      if (spec.equippable_by_var && !canEquipWeapon(this.input, this.bound(bindings, String(spec.equippable_by_var)), instance)) return false;
       if (spec.same_family_as_event) {
         const source = string(event.source_instance_id);
         if (!own(state.instances, source) || JSON.stringify(monsterFamily(card)) !== JSON.stringify(monsterFamily(this.card(source)))) return false;
@@ -141,7 +154,7 @@ export class EffectEvaluation extends Calculation {
           const amounts = new Map(trace.components.map(row => [row.instance_id, row.attack + row.magic_attack]));
           return (amounts.get(instance) ?? 0) + trace.equipped_pairs.filter(([hero]) => hero === instance).reduce((sum, [, weapon]) => sum + (amounts.get(weapon) ?? 0), 0);
         }
-        return stat(this.card(instance), key);
+        return this.effectiveStat(instance, key);
       });
       const extreme = own(spec, 'max_by') ? Math.max(...values) : Math.min(...values);
       result = result.filter((_, index) => values[index] === extreme);
@@ -153,12 +166,11 @@ export class EffectEvaluation extends Calculation {
     if ('count' in value) return this.query(value.count, bindings).length;
     if ('sum' in value || 'maximum' in value) {
       const operand = 'sum' in value ? value.sum : value.maximum;
-      const values = this.query(operand.query, bindings).map(id => stat(this.card(id), operand.field));
+      const values = this.query(operand.query, bindings).map(id => this.effectiveStat(id, operand.field));
       return 'sum' in value ? values.reduce((a, b) => a + b, 0) : values.length ? Math.max(...values) : 0;
     }
     if ('stat' in value) {
-      const instance = this.bound(bindings, value.stat.var), card = this.card(instance);
-      return value.stat.field === 'strength' && this.state.battle_context ? this.trace().hero_strength[instance] ?? stat(card, 'strength') : stat(card, value.stat.field);
+      return this.effectiveStat(this.bound(bindings, value.stat.var), value.stat.field);
     }
     if ('resource' in value) {
       const player = this.evaluationState.players[string(bindings._subject) || this.playerId];

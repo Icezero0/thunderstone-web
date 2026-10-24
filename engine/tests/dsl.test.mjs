@@ -96,8 +96,8 @@ test('shared compiler accepts every reviewed operation in both browser and serve
   const source = freeze({schema_version: 'thunderstone.effects/1', abilities, mechanics});
   freeze(cards);
   const expected = server.compileRuleset(source, cards);
-  assert.equal(expected.abilities.length, 446);
-  assert.equal(expected.mechanics.length, 227);
+  assert.equal(expected.abilities.length, 467);
+  assert.equal(expected.mechanics.length, 206);
   assert.deepEqual(browser.compileRuleset(source, cards), expected);
 });
 test('monster semantic identity includes guardians and rank zero has no normal-rank neighbors', () => {

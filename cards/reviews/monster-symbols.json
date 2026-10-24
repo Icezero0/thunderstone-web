@@ -651,7 +651,7 @@
       "source_line": "战斗：若当前玩家手牌中没有元素牌，则只受到一半伤害。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "43a38415fd8739e575d90b3bb1beb7920729b392f53a99e2db58a36afccc484b",
+      "applied_fingerprint": "8d8b1fb58c6697319184cbfbd857ca3c428ddcd06a6823a3a3cd51371c19c3dc",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0509-A01": {
@@ -883,7 +883,7 @@
       "source_line": "战斗：回合结束抽牌后，展示你的手牌。弃掉所有英雄，然后抽牌直到你的手牌达到 6 张。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "f6665ea435db2dfb48be0582b8d63b7365f593a8793d63212fbc53b54c047a5a",
+      "applied_fingerprint": "0e85c3dffe9f88071cc1af7daebbb800b46ff547c39db96ba01171cf3677dca6",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0529-A01": {
@@ -1093,7 +1093,7 @@
       "source_line": "战斗：手牌中每有 1 张物品，此怪物获得 +3 生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "57dcd78697db7154e06344052061b63c6fa43b46f57c5a391f0b2fc30fc14803",
+      "applied_fingerprint": "ee304751bcbfeb200568dde11b1103432363049e3ca3040b53a1587331599975",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0551-A02": {
@@ -1107,7 +1107,7 @@
       "source_line": "战斗：手牌中每有 1 张武器，此怪物获得 +4 生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "4e03d603c458e5bc2e8cd6a010e5e9b5bbb140ff1c8ff3763f2500be4bb40e16",
+      "applied_fingerprint": "564d35d991414f510785993897c4036fc3db913884492bed201cc7bce35ccebd",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0552-A02": {
@@ -1121,7 +1121,7 @@
       "source_line": "战斗：此怪物获得等同于手牌中金币值总和的生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "56a7a7b063b62621482fbd16ff83fe32d3faa8aa6309d534f689e2eaa0b089cb",
+      "applied_fingerprint": "8f08e4d7a9db66ec69fa154a1062a2a478fa5d88fa78a102f97ac27c50c7fd07",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0553-A02": {
@@ -1135,7 +1135,7 @@
       "source_line": "战斗：手牌中每有 1 名英雄，此怪物获得 +4 生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "791758bb612d0acb9711a779c484d7094f1bf646b0e033cbc0deb42f51d8873e",
+      "applied_fingerprint": "d3ac897aaf67815b6d558debd54ba724a7099ee9f19ba195457aa214ae209277",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0554-A02": {
@@ -1149,7 +1149,7 @@
       "source_line": "战斗：每有 1 张手牌，此怪物获得 +2 生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "d16c9c6cd1b600b61de170df84eae042c4e780b7ae58a6bce23114805ad792c1",
+      "applied_fingerprint": "afe445cc6a37a09655c7a5f1edec4cc96cfad3ae925fdabe5f1ab813c8a788ef",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0555-A02": {
@@ -1486,7 +1486,7 @@
       "source_line": "战斗：摧毁所有食物物品。每摧毁 1 张食物，获得 1 张疾病。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "7988b1142d61cbbf06d44409342a946179bb2d12565cf6bea8b87029c4999508",
+      "applied_fingerprint": "1d0c5b3bd9b2c627eb105904955ce76605b176f57af030e9734dd3a0b1fc0631",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0587-A01": {
@@ -1715,7 +1715,7 @@
       "source_line": "战斗：若手牌中或地下城大厅中有另一名腐化德鲁伊，德鲁伊君主获得 +3 生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "e512053964fa96b162df8efe7c401dfa04e5f088a17386ceaa55b95c28033083",
+      "applied_fingerprint": "a79e2a149b524d3a40aace694b2306dbb121f88dceb7a2eda1ccbcfd02f21b4d",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0611-A02": {
@@ -1751,7 +1751,7 @@
       "source_line": "战斗：手牌中每有 1 张疾病，蛛影妖姬获得 +2 生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "b141d69f5fd2fc4f4d8dcc171597d48bdcf33f50a458e4acbd12261b0ca115a6",
+      "applied_fingerprint": "37eda33db10e5a3f4135711294c70e7366c8341e2a0636315d0076d3a70734de",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0613-A03": {
@@ -1772,7 +1772,7 @@
       "source_line": "战斗：当前玩家每拥有 1 点经验值，此牌获得 +1 生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "a31d8801fd1432793098fab123f51471e7b620eec7e9ed6698c54bbb0b215b64",
+      "applied_fingerprint": "bb1d8a3e68b697f11fe939e0026e86fc2733151709d8dd6a157bf903247828eb",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0614-A03": {
@@ -1793,7 +1793,7 @@
       "source_line": "战斗：地下城中每有 1 名其他腐化德鲁伊，猛犸获得 +2 生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "cda144e8584f225b3c90f4cedd2b22937cde1fc4bb38c9c7e66b42d214c18f16",
+      "applied_fingerprint": "4b411224b3b803d161db946737c6a747ad9d841da1d6f71f8f52ed1cef5de0f2",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0616-A01": {
@@ -2146,7 +2146,7 @@
       "source_line": "战斗：手牌中每有 1 名民兵，此牌获得 +1 生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "adbaa81eee644bfdc548ef1120f9b0593a5ad52035a7a4fe0f5e447b16716dad",
+      "applied_fingerprint": "ca2aede6cd2ad172c8455b25efb0b214c9b23d0af53f092e103ce1a9c9ff49cb",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0638-A02": {
@@ -2160,7 +2160,7 @@
       "source_line": "战斗：手牌中每有 1 名等级 1 的英雄，此牌获得 +2 生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "36185ce014eb54d762403b01115a7e267eead52163e003d90a79802400fe066f",
+      "applied_fingerprint": "d8b1d26a3145c49f259088b96afb4f1901e53cd3db76a138be8e7c83d5decda0",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0639-A02": {
@@ -2174,7 +2174,7 @@
       "source_line": "战斗：手牌中每有 1 名等级 2 的英雄，此牌获得 +3 生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "da4411f02e84e42f1f0729ef61ebf9c0b51eaabc1c5eb0a894e28f4aa8ae38eb",
+      "applied_fingerprint": "07940965d89129076f2e6af886f8c908a95e9df95a690deb4e4b85dd1188df41",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0640-A02": {
@@ -2188,7 +2188,7 @@
       "source_line": "战斗：若手牌中有至少 1 名等级 3 的英雄，则此牌获得 +4 生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "c5c2dd420e544ec8a3e4f22940786e9d923edb0e23c88373f26ae2ae5988a1a5",
+      "applied_fingerprint": "2306ce9d503bf1f1aa3a3d6eb798bf39d97b822906ad1d748d3f8ef7ed00cf4b",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0641-A02": {
@@ -2202,7 +2202,7 @@
       "source_line": "战斗：手牌中每有 1 名英雄，此牌获得 +2 生命值。",
       "symbol": "absent",
       "basis": "user_default_absent",
-      "applied_fingerprint": "155423fdedcc6eff7305283b99f4c7d206a99c9da22ca12b809afc5f39212565",
+      "applied_fingerprint": "ee9675cc6e2232d83c4c5c3a4d14c8e75b180965af8a885c8b1058e194f42806",
       "applied_at": "2026-10-22T08:12:46.153Z"
     },
     "TS-0642-A02": {

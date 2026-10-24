@@ -14,6 +14,7 @@ This integration supplies Python data loaders, compatibility types and JSON-line
 
 ```text
 backend/app/integrations/game_engine/
+├── api.py       public Python entry points
 ├── catalog/     CSV and setup-index loading; panel projection
 ├── rules/       configuration compatibility calls and metadata
 ├── setup/       setup adapter
@@ -21,15 +22,14 @@ backend/app/integrations/game_engine/
 ├── effects/     reviewed JSON loader and compiler adapter
 ├── disease/     infinite supply adapter
 ├── shared/      worker transport and request serialization
+├── battle.py    preparation and team submission adapter
 └── scoring.py   scoring adapter
 ```
 
-The Python entry points are `setup.start_game`, `turn.apply_command`,
-`turn.legal_commands`, `disease.take_disease` and `input_config`, all under
-`backend.app.integrations.game_engine`.
+Backend routes and services import from `backend.app.integrations.game_engine.api`: `start_game`, `apply_command`, `legal_commands`, `take_disease`, `battle_preparation`, `submit_battle_team`, `score_game`, catalog loading and configuration validation. Domain subpackages implement those adapters; `shared/` is the internal worker protocol. The obsolete `input_config.py` and `paths.py` compatibility facades have been removed; common repository paths come from `backend.app.core.paths`.
 The old Python interpreter is archived under
 [`backend/tests/migration/reference/python_engine`](../../../../backend/tests/migration/reference/python_engine/)
-for parity backend.tests. The backend loads a matching catalog snapshot from SQLite and
+for parity tests. The backend loads a matching catalog snapshot from SQLite and
 passes it to the engine; database access stays outside the rules package.
 
 ## Basic turn commands
@@ -42,7 +42,8 @@ passes it to the engine; database access stays outside the rules package.
 | `VILLAGE_ABILITIES` | `ActivateAbility` with `source_instance_id` and `ability_id`; `FinishAbilities` |
 | `VILLAGE_BUY` | `BuyCard` with `card_id`; `FinishBuying` |
 | `VILLAGE_UPGRADE` | `UpgradeHero` with `source_instance_id` and `target_card_id`; `FinishUpgrading` |
-| `REST` | `RestDestroy` with `instance_id`; `FinishRest` |
+| `REST` | `RestDestroy` with `instance_id`; `SkipRestDestroy`; either enters `ACTION_END` |
+| `ACTION_END` | `FinishTurn`; shared explicit confirmation for village, dungeon and rest |
 | `DUNGEON_PREPARE` | `ActivateAbility`; `EquipWeapon`; `SubmitBattleTeam` with a versioned draft (legacy `DeclareBattleTarget` remains accepted) |
 | Pending card choice | `ResolveChoice` with `instance_id` from the current candidates |
 | Pending simultaneous triggers | `ResolveEffectOrder` with each offered effect ID once |
@@ -56,15 +57,15 @@ passes it to the engine; database access stays outside the rules package.
 
 The turn transition emits start, action and end timing events even when no card ability is registered. Village gold comes from printed card values; one purchase is available by default. Basic cards have infinite supply. A militia can upgrade to an available level 1 hero; other heroes upgrade within their selected series, paying the XP cost printed on the source hero. Rest destroys at most one card, returning a disease instance to its infinite supply. Cleanup discards the remaining hand, draws six, shuffles the discard pile only when needed, and passes the turn in player order. A dungeon action resolves printed attack, magic attack, light, weapon weight, monster health and reward XP, then refills the hall. A thunderstone reaching rank 1 enters `SETTLING` before cleanup.
 
-The [reviewed JSON rulesets](../../../../cards/effects/) contain 446 executable abilities and 222 continuous mechanic bindings. All 520 effect cards have complete line coverage and per-card behavior backend.tests. Hall refill and turn timings use serializable workflow steps: a trap can interrupt an ability, request a player's choice, and resume the original ability. Source zones distinguish hand trophies, battle targets, hall globals, settings, attachments and controlled treasures. Reviewed rules include responses, replacements, borrowing/copying, disease attachments, extra turns, reserves, supply replenishment, dynamic scoring, Flying Spire and Banishing Ritual. See the [runtime implementation](../../../../docs/game-engine/ability-runtime-implementation.md) for contracts and confirmed rulings. Cooperative/solo variants and the multiplayer transport layer remain separate work.
+The [reviewed JSON rulesets](../../../../cards/effects/) contain 446 executable abilities and 227 continuous mechanic bindings. All 520 effect cards have complete line coverage and per-card behavior tests. Hall refill and turn timings use serializable workflow steps: a trap can interrupt an ability, request a player's choice, and resume the original ability. Source zones distinguish hand trophies, battle targets, hall globals, settings, attachments and controlled treasures. Reviewed rules include responses, replacements, borrowing/copying, disease attachments, extra turns, reserves, supply replenishment, dynamic scoring, Flying Spire and Banishing Ritual. See the [runtime implementation](../../../../docs/game-engine/ability-runtime-implementation.md) for contracts and confirmed rulings. Cooperative/solo variants and the multiplayer transport layer remain separate work.
 
-For a local JSON replay, save the `state` from `backend/scripts/run_setup.py` and a list of command objects, then run:
+For a local JSON replay, save the `state` from `backend/scripts/sandbox/run_setup.py` and a list of command objects, then run:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\run_turns.py --state setup-result.json --commands commands.json --output turn-result.json
+.\.venv\Scripts\python.exe backend\scripts\sandbox\run_turns.py --state setup-result.json --commands commands.json --output turn-result.json
 ```
 
-For example, `commands.json` can contain `[ {"type":"ChooseAction","player_id":"alice","action":"rest"}, {"type":"FinishRest","player_id":"alice"} ]` when Alice is the active player. `legal_commands(state)` describes the currently accepted types and candidate cards; the caller still checks the active player before presenting them.
+For example, `commands.json` can contain `[ {"type":"ChooseAction","player_id":"alice","action":"rest"}, {"type":"SkipRestDestroy","player_id":"alice"}, {"type":"FinishTurn","player_id":"alice"} ]` when Alice is the active player. `FinishUpgrading` and completed dungeon battles likewise stop at `ACTION_END`, retaining the hand until `FinishTurn`. `legal_commands(state)` describes the currently accepted types and candidate cards; the caller still checks the active player before presenting them.
 
 `battle.battle_preparation` returns visible frontend inputs; `battle.submit_battle_team`
 executes a formal team command. See [the battle team API](../../../../docs/game-engine/battle-team-api.md).

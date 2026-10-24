@@ -36,6 +36,7 @@ class UserCreate(BaseModel):
 
 
 class UserPatch(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     username: str | None = Field(default=None, max_length=64)
     password: str | None = None
 
@@ -56,3 +57,4 @@ class UserResponse(BaseModel):
     id: int
     email: EmailStr
     username: str | None
+    avatar_url: str | None = None

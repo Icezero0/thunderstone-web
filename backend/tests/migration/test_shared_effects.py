@@ -12,6 +12,44 @@ from backend.tests.migration.reference.python_engine.turn.operations import Tran
 from backend.tests.migration.reference import compiler as old_compiler, evaluation as reference
 
 
+def ability_source(ability):
+    item = asdict(ability)
+    item['conditions'] = list(item['conditions'])
+    if item['kind'] == 'activated':
+        item.pop('event')
+        item['actions'] = list(item['actions'])
+    else:
+        item.pop('actions')
+    return item
+
+
+def schema_extensions(value):
+    """Explicit additions after the Python reference was frozen, not a failure filter."""
+    result = set()
+    if isinstance(value, dict):
+        if value.get('event') == 'BATTLE_TEAM_COMMITTED':
+            result.add('event.BATTLE_TEAM_COMMITTED')
+        if value.get('zone') == 'active_draw':
+            result.add('query.active_draw')
+        if 'equippable_by_var' in value:
+            result.add('query.equippable_by_var')
+        op = value.get('op')
+        if op in ('discard_until', 'scale_damage', 'battle_aura', 'no_magic_bonus'):
+            result.add('op.' + op)
+        for operation, field in [('remember', 'owners_bind'), ('redistribute_discards', 'players_var')]:
+            if op == operation and field in value:
+                result.add(operation + '.' + field)
+        for operation, field in [('economy', 'scope'), ('extra_equipment', 'extra_capacity'), ('target_bonus', 'same_family')]:
+            if op == operation and field in value.get('params', {}):
+                result.add(operation + '.' + field)
+        for child in value.values():
+            result.update(schema_extensions(child))
+    elif isinstance(value, (list, tuple)):
+        for child in value:
+            result.update(schema_extensions(child))
+    return result
+
+
 class SharedEffectsTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -57,30 +95,49 @@ class SharedEffectsTests(unittest.TestCase):
         return tx, bindings
 
     def test_preexisting_dsl_schema_still_compiles_identically(self):
-        # New post-migration constructs are covered by current-engine tests;
-        # keep the historical compiler frozen and compare its original schema.
+        # Compare the explicit shared subset. Every new construct is separately
+        # required to compile in TS and fail in the immutable Python reference.
         raw = {'schema_version': self.rules.schema_version, 'abilities': [],
-               'mechanics': [asdict(m) for m in self.rules.mechanics
-                             if m.op != 'battle_aura' and 'scope' not in m.params]}
+               'mechanics': []}
+        extensions_seen = set()
         for ability in self.rules.abilities:
-            if ability.id in ('TS-0463-A01', 'TS-0216-A01'):
-                continue
-            item = asdict(ability)
-            item['conditions'] = list(item['conditions'])
-            if item['kind'] == 'activated':
-                item.pop('event')
-                item['actions'] = list(item['actions'])
+            item = ability_source(ability)
+            extensions = schema_extensions(item)
+            if extensions:
+                extensions_seen.update(extensions)
+                source = {'schema_version': self.rules.schema_version, 'abilities': [item]}
+                with self.subTest(ability=ability.id, extensions=extensions):
+                    self.assertEqual(compile_ruleset(source, self.cards).abilities, (ability,))
+                    with self.assertRaises(old_compiler.EffectCompileError):
+                        old_compiler.compile_ruleset(source, self.cards)
             else:
-                item.pop('actions')
-            raw['abilities'].append(item)
+                raw['abilities'].append(item)
+        for mechanic in self.rules.mechanics:
+            item = asdict(mechanic)
+            extensions = schema_extensions(item)
+            if extensions:
+                extensions_seen.update(extensions)
+                source = {'schema_version': self.rules.schema_version, 'abilities': [], 'mechanics': [item]}
+                with self.subTest(mechanic=mechanic.id, extensions=extensions):
+                    self.assertEqual(compile_ruleset(source, self.cards).mechanics, (mechanic,))
+                    with self.assertRaises(old_compiler.EffectCompileError):
+                        old_compiler.compile_ruleset(source, self.cards)
+            else:
+                raw['mechanics'].append(item)
         frozen = old_compiler.compile_ruleset(raw, self.cards)
         self.assertEqual(asdict(compile_ruleset(raw, self.cards)), asdict(frozen))
-        self.assertEqual(len(self.rules.abilities), 446)
-        self.assertEqual(len(self.rules.mechanics), 227)
+        self.assertGreater(len(raw['abilities']), 400)
+        self.assertGreater(len(raw['mechanics']), 180)
+        self.assertEqual(extensions_seen, {'event.BATTLE_TEAM_COMMITTED', 'query.active_draw',
+            'query.equippable_by_var', 'op.discard_until', 'op.scale_damage', 'op.battle_aura',
+            'op.no_magic_bonus', 'remember.owners_bind', 'redistribute_discards.players_var',
+            'economy.scope', 'extra_equipment.extra_capacity', 'target_bonus.same_family'})
 
     def test_each_used_operation_rejects_unknown_fields_and_missing_required_fields(self):
         seen = set()
         for ability in self.rules.abilities:
+            if schema_extensions(ability_source(ability)):
+                continue  # Individually validated above; new-field mutations below.
             def walk(node, path=()):
                 if not isinstance(node, dict):
                     return
@@ -98,13 +155,7 @@ class SharedEffectsTests(unittest.TestCase):
                 for part in path:
                     original = original[part]
                 for mutation in ('unknown_field', *original):
-                    raw = asdict(ability)
-                    raw['conditions'] = list(raw['conditions'])
-                    if raw['kind'] == 'activated':
-                        raw.pop('event')
-                        raw['actions'] = list(raw['actions'])
-                    else:
-                        raw.pop('actions')
+                    raw = ability_source(ability)
                     node = raw['body']
                     for part in path:
                         node = node[part]
@@ -136,6 +187,69 @@ class SharedEffectsTests(unittest.TestCase):
                     old_compiler.compile_ruleset(source, self.cards)
                 with self.assertRaises(EffectCompileError):
                     compile_ruleset(source, self.cards)
+
+    def test_current_schema_extensions_validate_bounds_and_bound_references(self):
+        base = {'id': 'TS-0001-A99', 'source_card_id': 'TS-0001', 'kind': 'activated',
+                'actions': ['dungeon'], 'source_zone': 'active_hand', 'usage': 'once_per_turn',
+                'conditions': [], 'body': {'op': 'gain_xp', 'amount': 1}}
+
+        def check(item, valid=True):
+            source = {'schema_version': 'thunderstone.effects/1', 'abilities': [item]}
+            if valid:
+                self.assertEqual(len(compile_ruleset(source, self.cards).abilities), 1)
+            else:
+                with self.assertRaises(EffectCompileError):
+                    compile_ruleset(source, self.cards)
+
+        def body(node):
+            return {**deepcopy(base), 'body': node}
+
+        new_nodes = [
+            {'op': 'scale_damage', 'divisor': 2},
+            {'op': 'discard_until', 'filter': {'tag': '英雄'}, 'bind': 'found',
+             'then': {'op': 'show', 'target': {'var': 'found'}}},
+        ]
+        for node in new_nodes:
+            with self.subTest(node=node['op']):
+                check(body(node))
+                check(body({**node, 'unexpected': True}), False)
+                for field in node:
+                    missing = deepcopy(node)
+                    del missing[field]
+                    check(body(missing), False)
+        for value in (1, 2, 100):
+            check(body({'op': 'scale_damage', 'divisor': value}))
+        for value in (0, 101, -1, 1.5, True, '2'):
+            with self.subTest(divisor=value):
+                check(body({'op': 'scale_damage', 'divisor': value}), False)
+        triggered = {**deepcopy(base), 'kind': 'triggered', 'usage': 'once_per_event', 'event': 'BATTLE_TEAM_COMMITTED'}
+        triggered.pop('actions')
+        check(triggered)
+        check({**triggered, 'event': 'BATTLE_TEAM_COMMITTED_UNKNOWN'}, False)
+        draw = {'op': 'remember', 'query': {'zone': 'active_draw'}, 'bind': 'cards',
+                'then': {'op': 'gain_xp', 'amount': {'count': {'zone': 'bound', 'var': 'cards'}}}}
+        check(body(draw))
+        check(body({**draw, 'query': {'zone': 'active_draw_unknown'}}), False)
+        equipped = {'op': 'select', 'query': {'zone': 'active_hand', 'tag': '英雄'}, 'bind': 'hero',
+                    'then': {'op': 'select', 'query': {'zone': 'active_hand', 'equippable_by_var': 'hero'},
+                             'bind': 'weapon', 'then': {'op': 'show', 'target': {'var': 'weapon'}}}}
+        check(body(equipped))
+        for value in ('unbound_hero', '', 1):
+            invalid = deepcopy(equipped)
+            invalid['then']['query']['equippable_by_var'] = value
+            check(body(invalid), False)
+        owners = {'op': 'remember', 'query': {'zone': 'all_hand'}, 'bind': 'cards', 'owners_bind': 'players',
+                  'then': {'op': 'redistribute_discards', 'query': {'zone': 'bound', 'var': 'cards'}, 'players_var': 'players'}}
+        check(body(owners))
+        for value in ('source', '_private', '', 1):
+            check(body({**owners, 'owners_bind': value}), False)
+        for value in ('unbound_players', '', 1):
+            invalid = deepcopy(owners)
+            invalid['then']['players_var'] = value
+            check(body(invalid), False)
+        missing = deepcopy(owners)
+        del missing['owners_bind']
+        check(body(missing), False)
 
     def test_every_query_zone_matches_reference_including_subject_and_eliminated_players(self):
         tx, bindings = self.fixture()

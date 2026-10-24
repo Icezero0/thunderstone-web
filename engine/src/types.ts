@@ -7,11 +7,11 @@ export interface MechanicParams extends Partial<Stats> {
   filter?: CardFilter; hall_filter?: CardFilter; filters_any?: CardFilter[];
   metric?: string; divisor?: number; minimum?: number; maximum?: number;
   absent?: boolean; flat?: boolean; exclude_source?: boolean; equipped?: boolean;
-  scale?: boolean; tag?: string; minimum_rank?: number; gives_disease?: boolean;
+  scale?: boolean; tag?: string; minimum_rank?: number; maximum_rank?: number;
   same_family?: boolean; hero_tag?: string; hero_card_id?: string; weapon_tag?: string;
   weight_max?: number; strength_min?: number; level_scale?: boolean; target_tags_any?: string[];
   strength_per_spell?: boolean; disease_attack?: number; rank0_only?: boolean;
-  double_darkness?: boolean; capacity?: number; amount?: number;
+  double_darkness?: boolean; capacity?: number; extra_capacity?: number; amount?: number;
   forbidden?: number[]; allowed?: number[]; exclude_tags?: string[]; equipped_only?: boolean;
   immune_spells?: boolean; immune_unarmed?: boolean; immune_weapon_tag?: string;
   ranks?: Record<string, number>; irreducible?: boolean; half_magic?: boolean;
@@ -44,6 +44,8 @@ export interface BattleContext {
   strength_penalty_assignments?: Record<string, string>;
   hero_battle_modifiers?: Partial<Stats>;
   equipment_draw_counts?: Record<string, number>;
+  spell_cast_counts?: Record<string, number>;
+  damage_divisor?: number;
   zero_weapon_weight?: boolean;
   excluded_participants?: string[];
   convert_all_magic?: boolean; convert_equipped_magic?: boolean; convert_card_magic?: string[];

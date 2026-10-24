@@ -6,8 +6,8 @@ import {EffectCompileError, allowed, boolean, has, integer, keys, list, nonempty
 export const EFFECTS_SCHEMA_VERSION = 'thunderstone.effects/1';
 export const MAX_EFFECT_DEPTH = 16, MAX_EFFECT_NODES = 128;
 const words = (value: string): string[] => value ? value.split(' ') : [];
-export const QUERY_ZONES = words('active_hand subject_hand active_discard subject_discard village_supply_top hero_supply_top hall bound event_source active_control event_supply_top active_hand_or_village_top defeated_monster other_hand other_discard subject_control other_control event_hero defeated_this_turn all_discard all_hand reveal_zone collection');
-export const ALLOWED_EVENTS = words('ACTION_EXITED TURN_WILL_END DUNGEON_ENTER BATTLE_BEFORE_OUTCOME BATTLE_AFTER_OUTCOME MONSTER_DEFEATED TURN_START VILLAGE_ENTER CARD_PURCHASED HERO_UPGRADED HALL_REVEALED BREACH TRAP_REVEALED HAND_REFILL_COMPLETE CARD_EQUIPPED BEFORE_HALL_REFILL');
+export const QUERY_ZONES = words('active_hand subject_hand active_draw active_discard subject_discard village_supply_top hero_supply_top hall bound event_source active_control event_supply_top active_hand_or_village_top defeated_monster other_hand other_discard subject_control other_control event_hero defeated_this_turn all_discard all_hand reveal_zone collection');
+export const ALLOWED_EVENTS = words('ACTION_EXITED TURN_WILL_END DUNGEON_ENTER BATTLE_TEAM_COMMITTED BATTLE_BEFORE_OUTCOME BATTLE_AFTER_OUTCOME MONSTER_DEFEATED TURN_START VILLAGE_ENTER CARD_PURCHASED HERO_UPGRADED HALL_REVEALED BREACH TRAP_REVEALED HAND_REFILL_COMPLETE CARD_EQUIPPED BEFORE_HALL_REFILL');
 const STATS = words('attack magic_attack light strength weight level gold vp health cost xp_reward');
 const COMPARISONS = words('eq ne lt le gt ge');
 const get = (object: ObjectValue, key: string, fallback: unknown): unknown => has(object, key) ? object[key] : fallback;
@@ -69,16 +69,16 @@ export function validateCondition(value: unknown, place = 'condition', depth = 0
 /** Exact allowed fields per operation. No dynamic code or global name lookup. */
 const NODE_FIELDS: Readonly<Record<string, readonly [string, string?]>> = {
   sequence: ['children'], if: ['condition then','else'], select: ['query bind then','min max allow_shortfall highest_by constraints'], for_each: ['query bind body'],
-  remember: ['query bind then'], choose_value: ['kind bind then','min max scope as_subject options'], reorder: ['query destination'], cost_gate: ['cost then'],
+  remember: ['query bind then','owners_bind'], choose_value: ['kind bind then','min max scope as_subject options'], reorder: ['query destination'], cost_gate: ['cost then'],
   for_players: ['scope body'], let: ['bind value then'], repeat: ['times limit body'], schedule: ['event body'], reveal: ['count bind then','until from_bottom zone'],
   discard_until: ['filter bind then'],
-  copy_hero: ['target other preserve_attack','full_card'], reuse_ability: ['target'], redistribute_discards: ['query'], borrow_card: ['target when return_destroyed','equipper'],
+  copy_hero: ['target other preserve_attack','full_card'], reuse_ability: ['target'], redistribute_discards: ['query','players_var'], borrow_card: ['target when return_destroyed','equipper'],
   equip_from_supply: ['target equipper'], attach_card: ['target anchor kind'], release_attachment: ['target','recipient destroy_anchor'], listen: ['event body','conditions once'],
   swap_hall: ['target other'], exchange_hall: ['target other'], shuffle_hall_top: ['target count'], mod_monster_health: ['target amount'], collect: ['collection query'], clear_collection: ['collection'],
   add_global_rule: ['kind until scope amount'], grant_extra_turn: [''], shuffle_destroyed_traps: [''], grant_basic_buy: [''], remove_listener: [''],
   destroy_matching_supply: ['target count','family from_bottom'], destroy_purchased_supply: [''], destroy_basic_supply: ['card_id count'], random_destroy: ['filter'],
   convert_card_magic: ['target'], grant_turn_buff: ['target buff'], destroy: ['target','as_owner'], discard: ['target','as_owner'], mark_destroy: ['target','when as_owner'], exclude_combat: ['target','as_owner'], show: ['target','as_owner'],
-  draw: ['count','bind then'], gain_xp: ['amount'], spend_xp: ['amount'], lose_xp: ['amount'], gain_disease: ['count'], mod_gold: ['amount'], grant_buy: ['amount'],
+  draw: ['count','bind then'], gain_xp: ['amount'], spend_xp: ['amount'], lose_xp: ['amount'], gain_disease: ['count'], mod_gold: ['amount'], grant_buy: ['amount'], scale_damage: ['divisor'],
   mod_attack: ['amount'], mod_magic_attack: ['amount'], mod_light: ['amount'], random_discard: ['count'], mod_next_hand: ['amount'], mod_next_gold: ['amount'], set_retreat_position: ['amount'],
   force_dungeon: [''], show_hand: [''], buy: ['filter destination','payment maximum_cost'], upgrade: ['destination','payment'], reveal_cycle: ['filter goal'],
   move: ['target destination','recipient'], relocate_hall: ['target destination','defeat'], destroy_supply: ['target count','from_bottom'], mod_card: ['target stat amount'], set_battle_flag: ['flag value'], gain_card: ['card_id','destination'],
@@ -100,6 +100,8 @@ function node(value: unknown, place: string, counter: {nodes: number}, depth = 0
   if (op === 'choose_value') keys(item, ['op','kind','bind','then'], words(choiceKind === 'number' ? 'min max' : choiceKind === 'player' ? 'scope as_subject' : choiceKind === 'enum' ? 'options' : ''), place);
   for (const key of ['target','other','anchor','equipper']) if (has(item, key)) target(item[key], place);
   if (has(item, 'bind')) binding(item.bind, place);
+  if (has(item, 'owners_bind')) binding(item.owners_bind, place);
+  if (has(item, 'players_var')) nonempty(item.players_var, place);
   if (has(item, 'query')) validateQuery(item.query, `${place}.query`);
   if (has(item, 'filter')) validateFilter(item.filter);
   if (has(item, 'card_id')) nonempty(item.card_id, place);
@@ -133,6 +135,7 @@ function node(value: unknown, place: string, counter: {nodes: number}, depth = 0
   if (op === 'for_players') allowed(item.scope, words('all others active'), place, 'unsupported player scope');
   if (op === 'let') validateExpression(item.value, place);
   if (op === 'repeat') integer(item.limit, place, 1, 100);
+  if (op === 'scale_damage') integer(item.divisor, place, 1, 100);
   if (op === 'schedule') allowed(item.event, words('TURN_WILL_END TURN_START HAND_REFILL_COMPLETE BATTLE_AFTER_OUTCOME BEFORE_HALL_REFILL'), place, 'unsupported scheduled event');
   if (op === 'listen') {
     allowed(item.event, ALLOWED_EVENTS, place, 'invalid listener');
@@ -179,7 +182,7 @@ function references(value: unknown, bound: ReadonlySet<string>, place: string): 
   if (Array.isArray(value)) value.forEach(child => references(child, bound, place));
   else if (value && typeof value === 'object') {
     const object = value as ObjectValue;
-    for (const key of words('var exclude_pile_var value exclude_var name_in_var same_name_as_var adjacent_to_var')) if (typeof object[key] === 'string' && !bound.has(object[key])) throw new EffectCompileError(`${place}: variable ${object[key]} is not bound`);
+    for (const key of words('var exclude_pile_var value exclude_var name_in_var same_name_as_var adjacent_to_var players_var equippable_by_var')) if (typeof object[key] === 'string' && !bound.has(object[key])) throw new EffectCompileError(`${place}: variable ${object[key]} is not bound`);
     Object.values(object).forEach(child => {if (typeof child === 'object') references(child, bound, place);});
   }
 }
@@ -189,7 +192,8 @@ function bindings(item: ObjectValue, bound: ReadonlySet<string>, cards: Record<s
   if (op === 'sequence') (item.children as ObjectValue[]).forEach((child, i) => bindings(child, bound, cards, `${place}.children[${i}]`));
   else if (['select','for_each','let','reveal','discard_until','choose_value','remember'].includes(op as string) || op === 'draw' && has(item, 'bind')) {
     const child = op === 'for_each' ? item.body : item.then;
-    bindings(child as ObjectValue, new Set([...bound, item.bind as string]), cards, `${place}.${op}`);
+    bindings(child as ObjectValue, new Set([...bound, item.bind as string,
+      ...(typeof item.owners_bind === 'string' ? [item.owners_bind] : [])]), cards, `${place}.${op}`);
   } else for (const key of ['then','else','body','cost']) if (has(item, key)) bindings(item[key] as ObjectValue, bound, cards, `${place}.${key}`);
   if (op === 'gain_card' && !has(cards, item.card_id as string)) throw new EffectCompileError(`${place}: gained card is not in the catalog`);
 }

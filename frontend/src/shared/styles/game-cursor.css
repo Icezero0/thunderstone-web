@@ -1,0 +1,10 @@
+/* Shared by public and player card regions. Artwork/license live in player-deck-area/cursors/. */
+.game-cursor {
+  --cursor-normal: url('../components/player-deck-area/cursors/pointer.png') 8 4, default;
+  --cursor-grabbing: url('../components/player-deck-area/cursors/pressed.png') 16 16, grabbing;
+  --table-cursor: var(--cursor-normal);
+}
+.game-cursor, .game-cursor * {cursor: var(--table-cursor) !important;}
+.game-cursor:has(.physical-card[data-dragging="true"]),
+.game-cursor:has(.table-viewport[data-panning="true"]),
+.game-cursor .table-viewport[data-panning="true"] .game-cursor {--table-cursor: var(--cursor-grabbing);}

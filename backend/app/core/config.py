@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int = Field(default=7, ge=1)
     ws_auth_timeout_seconds: int = Field(default=10, ge=1)
     cors_origins: list[str] = Field(default_factory=list)
+    avatar_dir: Path = Field(default_factory=lambda: DATA_ROOT / "avatars")
 
     model_config = SettingsConfigDict(
         env_file=PROJECT_ROOT / ".env",

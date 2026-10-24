@@ -5,7 +5,7 @@ import {advanceGain} from '../effects/disease-transition.js';
 import {returnBorrowed, diseaseGainSteps} from '../effects/ownership.js';
 import {expireRules, mustEnterDungeon} from '../effects/durations.js';
 import {enterVillage, finishAbilities} from './village.js';
-import {enterDungeon, resolveBattleOutcome, destroyBattleMarks, battleDeparture} from './dungeon.js';
+import {enterDungeon, startCommittedBattle, resolveBattleOutcome, destroyBattleMarks, battleDeparture} from './dungeon.js';
 import {refillStep} from './hall.js';
 import {resolveHeartOutcome} from './settlement.js';
 import type {Transition} from './transaction.js';
@@ -27,7 +27,9 @@ export function runSteps(tx: Transition) {
         case 'event': {
           const previous = tx.state.event_context;
           tx.state.event_context = step.context ?? {};
-          tx.state.workflow_steps.unshift({op: 'restore_event_context', value: previous ?? null});
+          tx.state.workflow_steps.unshift({op: 'restore_event_context', value: previous ?? null,
+            event: tx.state.resolving_event ?? null});
+          tx.state.resolving_event = step.event;
           tx.event('rule_timing', {event: step.event, context: step.context ?? {}});
           if (step.event === 'TURN_START') {
             expireRules(tx, 'owner_next_turn_start');
@@ -40,6 +42,8 @@ export function runSteps(tx: Transition) {
         case 'restore_event_context':
           if (step.value === null) delete tx.state.event_context;
           else tx.state.event_context = step.value;
+          if (step.event == null) delete tx.state.resolving_event;
+          else tx.state.resolving_event = step.event;
           break;
         case 'refill_hall': refillStep(tx, step); break;
         case 'dispose_revealed': {
@@ -57,7 +61,7 @@ export function runSteps(tx: Transition) {
           }
           break;
         }
-        case 'finish_turn': if (tx.state.phase === 'PLAYING') tx.finishTurn(); break;
+        case 'await_turn_end': tx.awaitTurnEnd(); break;
         case 'pass_turn': tx.passTurn(); break;
         case 'turn_will_end':
           tx.event('TURN_WILL_END', {player_id: tx.playerId});
@@ -65,6 +69,7 @@ export function runSteps(tx: Transition) {
           queueSteps(tx, [{op: 'event', event: 'TURN_WILL_END'}], true); break;
         case 'cleanup_turn': tx.cleanupTurn(); break;
         case 'resolve_battle_outcome': resolveBattleOutcome(tx); break;
+        case 'start_committed_battle': startCommittedBattle(tx, step.target_id); break;
         case 'battle_team_equipment': advanceBattleTeamEquipment(tx, step.pairs, step.draft, step.hand); break;
         case 'release_battle_diseases': queueSteps(tx, diseaseGainSteps(tx, step.target_id, step.timing), true); break;
         case 'destroy_battle_marks': destroyBattleMarks(tx); break;

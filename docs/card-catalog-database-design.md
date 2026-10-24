@@ -68,10 +68,10 @@ The database lives at `data/thunderstone.db` by default and is ignored by Git be
 The implemented import command, run from the repository root with the project venv, is:
 
 ```powershell
-.\.venv\Scripts\python.exe backend\scripts\import_cards_to_sqlite.py
+.\.venv\Scripts\python.exe backend\scripts\catalog\import_cards_to_sqlite.py
 ```
 
-It applies Alembic migrations before importing. After editing the CSV, rebuild `cards/setup_catalog.json`, then use `backend\scripts\import_cards_to_sqlite.py --replace` to replace the catalog revision. The command reports `imported`, `unchanged` or `replaced` and the imported card count and hash.
+It applies Alembic migrations before importing. After editing the CSV, rebuild `cards/setup_catalog.json`, then use `backend\scripts\catalog\import_cards_to_sqlite.py --replace` to replace the catalog revision. The command reports `imported`, `unchanged` or `replaced` and the imported card count and hash.
 
 ## Revision and rollback policy
 

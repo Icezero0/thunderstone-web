@@ -1,0 +1,13 @@
+/* Adapted from iCinema frontend/src/ui/base/BaseSwitch.vue. */
+.ui-switch {display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 400; color: var(--ink); cursor: pointer;}
+.ui-switch-control {position: relative; width: 42px; height: 24px; display: inline-flex; align-items: center; flex: 0 0 auto;}
+.ui-switch .ui-switch-input {position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; padding: 0; border: 0; margin: 0; opacity: 0; cursor: pointer;}
+.ui-switch-visual {width: 42px; height: 24px; border-radius: 999px; border: 1px solid var(--line); background: color-mix(in srgb, var(--panel) 72%, var(--paper)); box-shadow: inset 0 1px 2px rgb(15 23 42 / 8%); pointer-events: none; transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;}
+.ui-switch-visual::after {content: ''; position: absolute; top: 4px; left: 4px; width: 16px; height: 16px; border-radius: 999px; background: color-mix(in srgb, var(--muted) 68%, white); box-shadow: 0 2px 5px rgb(15 23 42 / 18%); transition: background-color 160ms ease, transform 180ms ease;}
+.ui-switch-input:checked + .ui-switch-visual {border-color: color-mix(in srgb, var(--primary) 52%, var(--line)); background: color-mix(in srgb, var(--primary) 24%, var(--panel)); box-shadow: inset 0 1px 2px rgb(15 23 42 / 8%), 0 0 0 3px color-mix(in srgb, var(--primary) 10%, transparent);}
+.ui-switch-input:checked + .ui-switch-visual::after {background: var(--primary); transform: translateX(18px);}
+.ui-switch-input:focus-visible + .ui-switch-visual {outline: 2px solid color-mix(in srgb, var(--primary) 54%, transparent); outline-offset: 2px;}
+.ui-switch .ui-switch-input:disabled {cursor: not-allowed;}
+.ui-switch-input:disabled + .ui-switch-visual {opacity: .62;}
+.ui-switch-label {overflow-wrap: anywhere;}
+@media (prefers-reduced-motion: reduce) {.ui-switch-visual, .ui-switch-visual::after {transition: none;}}

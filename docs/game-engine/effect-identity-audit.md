@@ -1,6 +1,6 @@
 # 效果身份判断审计
 
-本清单覆盖全部 446 条可执行能力、227 条持续规则，以及共用处理代码。英雄、怪物、疾病、雷霆之石、村庄身份已改为标签；下列其他身份保留现有实现，等待决定。
+本清单覆盖全部 467 条可执行能力、206 条持续规则，以及共用处理代码。英雄、怪物、疾病、雷霆之石、村庄身份已改为标签；2026-10-24 增加「给予疾病」能力标签，排除怪物族群匹配。下列其他身份保留现有实现，等待决定。
 
 ## 已转换的怪物判断
 
@@ -107,4 +107,4 @@
 
 全部宝藏牌均已具有独立“宝藏”标签。
 
-复查命令：`.\.venv\Scripts\python.exe -X utf8 backend/scripts/audit_effect_identity.py --output docs/game-engine/effect-identity-audit.md`。
+复查命令：`.\.venv\Scripts\python.exe -X utf8 backend/scripts/effects/audit_effect_identity.py --output docs/game-engine/effect-identity-audit.md`。

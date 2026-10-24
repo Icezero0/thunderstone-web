@@ -11,7 +11,7 @@ BATTLE_FIELDS = {
     "excluded_participants", "convert_all_magic", "convert_equipped_magic", "convert_card_magic",
     "modifiers", "modifier_sources", "disease_order", "disease_penalty_assignments",
     "cannot_defeat", "used_card_tags", "target_instance_id", "target_rank",
-    "health_modifier", "monster_health_modifiers",
+    "health_modifier", "monster_health_modifiers", "spell_cast_counts", "damage_divisor",
 }
 
 

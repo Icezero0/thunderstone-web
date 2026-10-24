@@ -3,23 +3,62 @@ import type {PreviewContext} from './preview.js';
 import {battleTeamOptions, createBattleDraft} from './team.js';
 import type {GameCatalog, GameRules, GameState} from '../turn/transaction.js';
 
-const FIELDS = ['battle_team', 'equipped_weapon_by_hero', 'card_modifiers', 'strength_penalty_assignments',
-  'hero_battle_modifiers', 'equipment_draw_counts', 'zero_weapon_weight', 'excluded_participants',
-  'convert_all_magic', 'convert_equipped_magic', 'convert_card_magic', 'modifiers', 'modifier_sources',
-  'disease_order', 'disease_penalty_assignments', 'cannot_defeat', 'used_card_tags', 'target_instance_id',
-  'target_rank', 'health_modifier', 'monster_health_modifiers'];
+const stats = (value: any) => Object.fromEntries(['attack', 'magic_attack', 'light', 'strength']
+  .filter(key => typeof value?.[key] === 'number').map(key => [key, value[key]]));
+
+/** Keep resolved numbers while removing references to cards outside the visible input. */
+function visibleContext(raw: Record<string, any>, ids: Set<string>): Record<string, any> {
+  const result: Record<string, any> = {};
+  const list = (value: any) => (Array.isArray(value) ? value : []).filter(id => ids.has(id));
+  for (const key of ['zero_weapon_weight', 'convert_all_magic', 'convert_equipped_magic', 'cannot_defeat'])
+    if (typeof raw[key] === 'boolean') result[key] = raw[key];
+  for (const key of ['target_rank', 'health_modifier', 'damage_divisor'])
+    if (typeof raw[key] === 'number') result[key] = raw[key];
+  for (const key of ['hero_battle_modifiers', 'modifiers']) if (raw[key]) result[key] = stats(raw[key]);
+  for (const key of ['excluded_participants', 'convert_card_magic', 'disease_order'])
+    if (raw[key]) result[key] = list(raw[key]);
+  if (raw.used_card_tags) result.used_card_tags = raw.used_card_tags.filter((tag: any) => typeof tag === 'string');
+  if (ids.has(raw.target_instance_id)) result.target_instance_id = raw.target_instance_id;
+  for (const key of ['equipment_draw_counts', 'spell_cast_counts', 'monster_health_modifiers']) if (raw[key])
+    result[key] = Object.fromEntries(Object.entries(raw[key]).filter(([id, value]) => ids.has(id) && typeof value === 'number'));
+  if (raw.card_modifiers) result.card_modifiers = Object.fromEntries(Object.entries(raw.card_modifiers)
+    .filter(([id]) => ids.has(id)).map(([id, value]) => [id, stats(value)]));
+  if (raw.strength_penalty_assignments) result.strength_penalty_assignments = Object.fromEntries(
+    Object.entries(raw.strength_penalty_assignments).filter(([id, target]) => ids.has(id) && ids.has(target as string)));
+  if (raw.disease_penalty_assignments) result.disease_penalty_assignments = Object.fromEntries(
+    Object.entries(raw.disease_penalty_assignments).filter(([id, type]) => ids.has(id) && ['attack', 'magic_attack'].includes(type as string)));
+  if (raw.equipped_weapon_by_hero) result.equipped_weapon_by_hero = Object.fromEntries(
+    Object.entries(raw.equipped_weapon_by_hero).filter(([id]) => ids.has(id))
+      .map(([id, weapons]) => [id, list(Array.isArray(weapons) ? weapons : [weapons])]));
+  if (raw.battle_team) result.battle_team = {hero_instance_ids: list(raw.battle_team.hero_instance_ids),
+    support_instance_ids: list(raw.battle_team.support_instance_ids)};
+  if (raw.modifier_sources) result.modifier_sources = raw.modifier_sources
+    .filter((item: any) => ['attack', 'magic_attack', 'light', 'strength'].includes(item.field) && typeof item.amount === 'number')
+    .map((item: any) => {
+      const visible = ids.has(item.source_instance_id);
+      // A departed source can already be excluded by a resolved effect. Fold
+      // that fixed subtraction into the aggregate before removing its identity.
+      if (!visible && item.source_instance_id !== null && raw.excluded_participants?.includes(item.source_instance_id)) {
+        result.modifiers ??= {};
+        result.modifiers[item.field] = (result.modifiers[item.field] ?? 0) - item.amount;
+      }
+      return {source_instance_id: visible ? item.source_instance_id : null, field: item.field, amount: item.amount};
+    });
+  return result;
+}
 
 /** Project visible inputs only: no RNG, draw piles, opponents, workflows or private flags. */
 export function projectBattleContext(state: GameState, catalog: GameCatalog, rules: GameRules): PreviewContext {
   const player = state.active_player_id, hand = `player:${player}:hand`;
   const zones = Object.fromEntries(Object.entries(state.zones).filter(([name]) => name === hand || name.startsWith('hall:')));
-  const ids = new Set(Object.values(zones).flat() as string[]);
+  const ids = new Set((Object.values(zones).flat() as string[]).filter(id => typeof id === 'string'));
   const instances = Object.fromEntries([...ids].map(id => [id, {card_id: state.instances[id].card_id}]));
-  const copied = Object.fromEntries(Object.entries(state.copied_heroes ?? {}).filter(([id]) => ids.has(id))) as any;
+  const copied = Object.fromEntries(Object.entries(state.copied_heroes ?? {}).filter(([id]) => ids.has(id))
+    .map(([id, item]: [string, any]) => [id, {card_ids: [...item.card_ids],
+      full_card: !!item.full_card, preserve_attack: !!item.preserve_attack}])) as any;
   const cardIds = new Set([...Object.values(instances).map(item => item.card_id), ...state.active_settings]);
   for (const copy of Object.values(copied) as any[]) for (const id of copy.card_ids) cardIds.add(id);
-  const context = Object.fromEntries(FIELDS.filter(key => state.battle_context?.[key] !== undefined)
-    .map(key => [key, state.battle_context[key]]));
+  const context = visibleContext(state.battle_context ?? {}, ids);
   const result: PreviewContext = {
     schema_version: 'thunderstone.preview/1', engine_version: ENGINE_VERSION,
     game_version: state.game_version, catalog_version: state.catalog_version,

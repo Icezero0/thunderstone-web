@@ -5,9 +5,9 @@ import json
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.integrations.game_engine.catalog.repository import CatalogSnapshot
+from backend.app.integrations.game_engine.api import CatalogSnapshot
 
-from backend.app.core.exceptions import AppError
+from backend.app.core.exceptions import AppError, NotFoundError
 from backend.app.modules.cards.mapping import BOOLEAN_FIELDS, CSV_TO_DB
 from backend.app.modules.cards.models import CardDefinition, CatalogMeta
 
@@ -42,3 +42,12 @@ async def load_catalog_snapshot(db: AsyncSession) -> CatalogSnapshot:
         raise CatalogUnavailableError("Imported catalog has an incorrect card count")
     return CatalogSnapshot({card.card_id: card_to_csv_row(card) for card in cards},
                            setup_index)
+
+
+async def load_card(db: AsyncSession, card_id: str) -> dict[str, str]:
+    if await db.get(CatalogMeta, 1) is None:
+        raise CatalogUnavailableError()
+    card = await db.get(CardDefinition, card_id)
+    if card is None:
+        raise NotFoundError("卡牌不存在")
+    return card_to_csv_row(card)

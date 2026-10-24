@@ -8,7 +8,8 @@ export const MECHANIC_PARAMETERS: Readonly<Record<string, readonly string[]>> = 
   rank_bonus: 'minimum maximum attack magic_attack light scale',
   equipment_bonus: 'hero_tag hero_card_id weapon_tag weight_max strength_min attack magic_attack light strength level_scale minimum_rank target_tags_any',
   hand_bonus: 'filter metric divisor minimum absent flat exclude_source attack magic_attack light strength',
-  target_bonus: 'tag gives_disease minimum_rank attack magic_attack light ignore_darkness same_family',
+  target_bonus: 'tag minimum_rank maximum_rank attack magic_attack light ignore_darkness same_family',
+  no_magic_bonus: 'attack',
   excess_light_magic: 'amount', card_aura: 'filters_any attack magic_attack light', ignore_darkness: 'minimum_rank tag', double_magic: '',
   hero_aura: 'filter exclude_source equipped attack magic_attack strength light', weapon_aura: 'attack magic_attack light', rank_restriction: 'forbidden allowed',
   battle_aura: 'light strength',
@@ -16,11 +17,11 @@ export const MECHANIC_PARAMETERS: Readonly<Record<string, readonly string[]>> = 
   target_health: 'filter metric multiplier minimum flat gold_below_double other_tag amount hall_filter',
   hall_target_restriction: 'protected_tag', hall_movement_lock: '',
   hall_aura: 'light strength health rank0_only disease_attack strength_per_spell double_darkness', light_requirement: 'ranks irreducible', immovable: '',
-  extra_equipment: 'capacity', equipment_discount: 'hero_tag amount', disease_strength: 'amount single',
+  extra_equipment: 'capacity extra_capacity', equipment_discount: 'hero_tag amount', disease_strength: 'amount single',
   economy: 'monster_gold_zero hero_discount hero_surcharge all_surcharge one_purchase scope', scoring: 'group maximum other_stones fewest_monsters_bonus',
 }).map(([key, value]) => [key, words(value)]));
 const BOOLEAN_FILTERS = words('gold_present cost_present vp_present equipped unused participating unmarked duplicate_names revealed_only movable in_hand in_selected_dungeon used equipment_space same_family_as_event in_discard');
-const STRING_FILTERS = words('tag card_id card_type subcategory name exclude_card_id exclude_card_type exclude_var name_in_var equipper_card_id same_name_as_var without_weapon_tag semantic_type adjacent_to_var');
+const STRING_FILTERS = words('tag card_id card_type subcategory name exclude_card_id exclude_card_type exclude_var name_in_var equipper_card_id same_name_as_var without_weapon_tag semantic_type adjacent_to_var equippable_by_var');
 const LIST_FILTERS = words('tags_any tags_none equipper_tags_any');
 const NUMBER_FILTERS = words('gold_min light_min level_min level_max magic_min strength_min strength_max weight_min weight_max gold_max vp_min vp_max rank magic_max');
 export const FILTER_KEYS = [...BOOLEAN_FILTERS, ...STRING_FILTERS, ...LIST_FILTERS, ...NUMBER_FILTERS];

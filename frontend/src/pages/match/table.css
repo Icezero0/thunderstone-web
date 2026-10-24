@@ -1,0 +1,46 @@
+.match-page {height: 100dvh; display: flex; flex-direction: column; overflow: hidden;}
+.match-page #match-header {flex: none; border-bottom-width: 2px;}
+.match-page .masthead-inner {max-width: none; padding: 10px 22px; gap: 24px;}
+.match-page .brand-mark {width: 32px; height: 32px; font-size: 25px;}
+.match-page .brand strong {font-size: 16px;}
+.match-page .brand small {font-size: 8px;}
+.match-page .match-heading {display: block; padding: 0; flex: 1; min-width: 0;}
+.match-page .match-heading h1 {font-size: 19px; margin: 0;}
+.match-page #match-subtitle {font-size: 11px; margin: 2px 0 0; color: var(--header-muted);}
+.match-page .match-shell {display: flex; flex-direction: column; flex: 1; min-height: 0; max-width: none; width: 100%; padding: 0 14px 10px;}
+.match-page .page-toolbar {flex: none; gap: 16px; padding: 7px 2px;}
+.match-page .page-toolbar #turn-marker {display: flex; align-items: center; gap: 10px; margin-left: auto; font-size: 12px;}
+.match-page #match-id {color: var(--muted); font-size: 10px;}
+.match-page #notice {margin: 0 0 8px; padding: 7px 12px; flex: none; font-size: 12px;}
+.match-page #match-content {display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 8px;}
+.match-board {--player-card-width: clamp(72px, 9vw, 130px); --player-card-radius: 9px; --player-deck-background: rgb(0 0 0 / 13%); --public-card-width: 112px; flex: 1; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 14px; padding: 16px; overflow: hidden; border: 1px solid var(--gold-ink); border-radius: 16px; isolation: isolate; background: radial-gradient(ellipse at 50% 35%, rgb(185 140 69 / 11%), transparent 55%), var(--header-background); box-shadow: inset 0 0 65px rgb(0 0 0 / 20%), 0 12px 30px rgb(20 30 34 / 12%);}
+.match-board-top {display: flex; gap: 14px; min-width: 0; min-height: 0;}
+#match-public-area {display: grid; flex: 1; min-width: 0; min-height: 0;}
+#match-deck-area {min-width: 0;}
+.match-operations {width: clamp(260px, 24vw, 340px); flex: none; min-height: 0; overflow: auto; overscroll-behavior: contain; background: var(--panel); border-radius: 10px; border: 1px solid var(--panel-border);}
+.match-operations:not([open]) {width: 40px; overflow: hidden;}
+.match-operations > summary {padding: 10px; font: 13px var(--font-heading); color: var(--ink); cursor: pointer;}
+.match-operations:not([open]) > summary {writing-mode: vertical-rl;}
+.match-operations #turn-controls {padding: 4px 14px 16px;}
+.match-operations h2 {font-size: 19px;}
+.match-operations h3 {font-size: 15px;}
+.match-operations .ability-list {grid-template-columns: 1fr;}
+.match-operations .button {font-size: 11px; padding: 7px 9px;}
+.match-operations .action-card-grid {grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;}
+.match-operations .battle-totals {grid-template-columns: repeat(3, 1fr); gap: 6px;}
+.match-operations .battle-totals dd {font-size: 19px;}
+.match-operations .battle-equipment {grid-template-columns: minmax(0, 1fr);}
+.match-operations .score-table {font-size: 11px;}
+.match-operations .score-table td, .match-operations .score-table th {padding: 8px 5px; overflow-wrap: anywhere;}
+.battle-participants {display: grid; gap: 6px;}
+.match-page .match-information {flex: none; font-size: 12px;}
+.match-information > summary {cursor: pointer; color: var(--muted); padding: 2px 4px;}
+.match-information[open] {max-height: 32dvh; overflow: auto;}
+.match-information-body {display: grid; grid-template-columns: 180px 220px 1fr; gap: 24px; padding: 12px; border: 1px solid var(--line); background: var(--panel); border-radius: 8px;}
+.match-information h2 {font-size: 17px;}
+.match-information .card-tile {max-width: 96px;}
+.match-page .cancel-match-bar {margin: 0; flex: none; padding: 0 4px; text-align: right;}
+.match-page .cancel-match-bar button {font-size: 11px;}
+.match-page #setup-panel {overflow: auto; min-height: 0;}
+@media (max-width: 900px) {.match-page .brand strong, .match-page .brand small {display: none;} .match-page .masthead-inner {padding: 8px 12px; gap: 12px;} .match-board {padding: 10px; gap: 10px;} .match-operations {width: 230px;} .match-page .header-status {display: none;}}
+@media (max-width: 640px) {.match-page .match-shell {padding: 0 6px 6px;} .match-page .page-toolbar p, .match-page #match-subtitle {display: none;} .match-page .page-toolbar #turn-marker {margin-left: 0;} .match-board {--player-card-width: 64px; --public-card-width: 90px; padding: 8px;} .match-board-top {position: relative;} .match-operations[open] {position: absolute; right: 0; top: 0; bottom: 0; z-index: 20; width: min(280px, 85%); box-shadow: 0 10px 30px rgb(0 0 0 / 35%);} .match-information-body {grid-template-columns: 1fr;} .match-page .match-heading h1 {font-size: 15px;}}

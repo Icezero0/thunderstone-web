@@ -1,6 +1,7 @@
 import {RuleError} from '../types.js';
 import {isDisease, isMonster} from '../catalog/cards.js';
 import type {Transition} from '../turn/transaction.js';
+import {gainSteps} from './gain.js';
 
 export function borrow(tx: Transition, item: string, when: string, returnDestroyed: boolean) {
   const original = tx.state.instances[item].owner_player_id;
@@ -34,6 +35,7 @@ export function attach(tx: Transition, item: string, anchor: string, kind: strin
     if (records.length) throw new RuleError('this attachment source is already occupied');
     destination = `player:${owner}:aside`;
     tx.state.instances[anchor].owner_player_id = owner;
+    if (kind === 'sapphire') tx.state.instances[anchor].flags.return_at_game_end = true;
     tx.move(anchor, tx.location(anchor)!, destination);
     tx.state.instances[item].owner_player_id = owner;
   }
@@ -41,31 +43,50 @@ export function attach(tx: Transition, item: string, anchor: string, kind: strin
   records.push({kind, instance_id: item, owner_player_id: owner});
   tx.event('card_attached', {instance_id: item, anchor_instance_id: anchor, attachment_kind: kind, player_id: owner});
 }
-export function release(tx: Transition, anchor: string, recipient = 'owner', destroyAnchor = true) {
+export function release(tx: Transition, anchor: string, recipient = 'owner', destroyAnchor = true): Record<string, any>[] {
   const records = (tx.state.attachments ??= {})[anchor] ?? [];
+  const steps: Record<string, any>[] = [];
   delete tx.state.attachments[anchor];
+  delete tx.state.instances[anchor].flags.return_at_game_end;
   for (const record of records) {
     const item = record.instance_id, player = recipient === 'owner' ? record.owner_player_id : tx.playerId;
+    const origin = tx.location(item), oldOwner = tx.state.instances[item].owner_player_id;
     tx.state.instances[item].owner_player_id = player;
     tx.move(item, tx.location(item)!, `player:${player}:discard`);
+    steps.push(...gainSteps(tx, item, origin, oldOwner, 'attachment_released'));
   }
   if (destroyAnchor) tx.destroyCard(anchor, 'attachment_released');
   else {
     const owner = tx.state.instances[anchor].owner_player_id;
-    tx.move(anchor, tx.location(anchor)!, `player:${owner}:discard`);
+    const origin = tx.location(anchor);
+    tx.move(anchor, origin!, `player:${owner}:discard`);
+    steps.push(...gainSteps(tx, anchor, origin, owner, 'attachment_released'));
   }
   tx.event('attachment_released', {anchor_instance_id: anchor, recipient, instance_ids: records.map((r: any) => r.instance_id)});
+  return steps;
+}
+/** Destruction removes the saved target reference, not the surviving treasure.
+ * An empty sapphire remains set aside and returns alone at game end. */
+export function detachDestroyed(tx: Transition, instanceId: string) {
+  for (const [anchor, records] of Object.entries(tx.state.attachments ?? {}) as [string, any[]][]) {
+    const removed = records.filter(record => record.instance_id === instanceId);
+    if (!removed.length) continue;
+    tx.state.attachments[anchor] = records.filter(record => record.instance_id !== instanceId);
+    if (removed.some(record => record.kind === 'sapphire') && tx.state.instances[anchor])
+      tx.state.instances[anchor].flags.return_at_game_end = true;
+    tx.event('destroyed_card_detached', {instance_id: instanceId, anchor_instance_id: anchor});
+  }
 }
 export function diseaseGainSteps(tx: Transition, anchor: string, timing: string): Record<string, any>[] {
   const records = (tx.state.attachments ??= {})[anchor] ?? [];
   const steps: Record<string, any>[] = [];
   for (const record of [...records]) if (record.kind === `disease_${timing}`) {
     const item = record.instance_id;
+    const origin = tx.location(item), oldOwner = tx.state.instances[item].owner_player_id;
     records.splice(records.indexOf(record), 1);
     tx.state.instances[item].owner_player_id = tx.playerId;
     tx.move(item, tx.location(item)!, `player:${tx.playerId}:discard`);
-    steps.push({op: 'resolve_disease_gain', gain: {instance_id: item, player_id: tx.playerId,
-      destination: 'discard', used_sources: []}});
+    steps.push(...gainSteps(tx, item, origin, oldOwner, 'disease_attachment'));
   }
   if (!records.length) {
     delete tx.state.attachments[anchor];
@@ -75,6 +96,7 @@ export function diseaseGainSteps(tx: Transition, anchor: string, timing: string)
 }
 export function restoreAtGameEnd(tx: Transition) {
   for (const [anchor, records] of Object.entries(tx.state.attachments ?? {}) as [string, any[]][]) {
-    if (records.some(record => record.kind === 'sapphire')) release(tx, anchor, 'owner', false);
+    if (records.some(record => record.kind === 'sapphire') || tx.state.instances[anchor]?.flags.return_at_game_end)
+      release(tx, anchor, 'owner', false);
   }
 }

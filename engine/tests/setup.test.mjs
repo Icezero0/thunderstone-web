@@ -4,6 +4,7 @@ import test from 'node:test';
 import * as server from '../dist/index.js';
 import * as browser from '../dist/browser/engine.js';
 import {sha256, utf8} from '../dist/random/sha256.js';
+import {cards as realCards, catalog as realCatalog} from './support/catalog.mjs';
 
 function fixture() {
   const card = (id, values = {}) => ({card_id: id, slot_kind: 'front', card_type: '村庄牌',
@@ -96,5 +97,28 @@ test('setup exposes typed configuration issues and isolated builder snapshots', 
     assert.equal(builder.zones['dungeon:main'].length, 4);
     assert.equal(saved.zones['dungeon:main'].length, 4);
     assert.equal(resumed.zones['hall:main'].length, 3);
+  }
+});
+
+test('village thieves are one level-ordered supply using CSV counts, village multipliers and Stormhold removal', () => {
+  for (const multiplier of [1, 2]) for (const stormhold of [false, true]) {
+    const input = fixture(), group = realCatalog.setup_index.groups.find(group => group.randomizer_id === 'TS-0081');
+    for (const id of ['TS-0081', 'TS-0300', 'TS-0301']) input.cards[id] = realCards[id];
+    input.index.groups[0] = group;
+    input.index.randomizer_pools.village = ['TS-0081']; input.panel.groups.village = [{id: 'TS-0081'}];
+    input.request.config.instance_multipliers.village = multiplier;
+    if (stormhold) {
+      input.cards['TS-0197'] = realCards['TS-0197']; input.index.other_pools.environment = ['TS-0197'];
+      input.panel.dungeon_cards.environment = [{id: 'TS-0197', name: realCards['TS-0197'].name}];
+      input.request.config.selection.environment.fixed_card_ids = ['TS-0197'];
+    }
+    const expected = server.startGame(input);
+    assert.deepEqual(browser.startGame(input), expected);
+    const state = expected.state, ids = state.zones['village_supply:TS-0081'].map(id => state.instances[id].card_id);
+    assert.deepEqual(Object.keys(state.zones).filter(zone => zone.startsWith('village_supply:')), ['village_supply:TS-0081']);
+    assert.deepEqual(ids, [...Array(5 * multiplier - (stormhold ? 2 : 0)).fill('TS-0301'), ...Array(3 * multiplier).fill('TS-0300')]);
+    assert.equal(state.zones.destroyed?.length ?? 0, stormhold ? 2 : 0);
+    assert.equal(input.cards['TS-0301'].initial_copy_count, '5'); assert.equal(input.cards['TS-0300'].initial_copy_count, '3');
+    server.validateSetupState(state, input.cards);
   }
 });

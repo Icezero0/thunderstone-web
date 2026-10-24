@@ -40,7 +40,7 @@ CardInstance
 GameState
   match_id, game_version, catalog_version, ruleset_version, frozen_config_id
   player_order, first_player_id, active_player_id, turn_number, round_number
-  phase, subphase, timing_window, chosen_action
+  phase, subphase, timing_window, chosen_action, turn_hand_public
   players: PlayerState[]
   zones: 各有序实例列表
   instances: instance_id -> CardInstance
@@ -72,6 +72,8 @@ GameState
 | `effect_collections` | 例如海德拉跨玩家展示后收集的候选；本次流程清理并在回合结束兜底清除 |
 | `monster_reserve:*` 区域 | 虫群／兽潮逐张取用的实体怪物；地下城中的标记牌进入大厅时替换为下一张 |
 | `used_supply_randomizers` | 风暴要塞补充供应时已使用的随机牌，防止重复选组 |
+| `players[player_id].rest_destroyed_on_turn` | 已使用休整摧毁的回合编号；同回合至多一次，摧毁后进入 `ACTION_END` 等待 `FinishTurn`，后续回合自动恢复可用性 |
+| `turn_hand_public` | 当前玩家的整手牌是否公开。开局首位玩家及每次回合交接时设为 `true`，回合末弃牌补牌开始前设为 `false`；补牌的获得替代即使暂停，新的手牌也保持隐藏。其他玩家的单牌公开仍按事件记录单独投影 |
 
 `end_condition` 保存终局事件、原因与发生时的状态版本。最终胜利点和赢家在**引擎的** `SETTLING` 阶段由终局快照求出，属于独立 `MatchResult`；不能在 `PLAYING` 中边修改牌区边保存半成品分数。房间何时重新开放由联机层决定。
 

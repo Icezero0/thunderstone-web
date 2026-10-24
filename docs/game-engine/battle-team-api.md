@@ -114,8 +114,21 @@ preparation. Request a fresh context and confirm the revised team. Already equip
 weapons do not trigger again on the next submission.
 
 Otherwise the engine records `battle_context.battle_team`, emits
-`battle_team_submitted`, declares the target and runs the usual battle workflow.
+`battle_team_submitted` and records the selected spells as used. Mandatory plague
+and fatigue effects then resolve at `BATTLE_TEAM_COMMITTED` before monster battle
+effects. Their choices suspend in `BATTLE_COMMIT`; clients must resolve them before
+any other action. Hero strength, total weapon weight and zero-strength destruction
+marks are reconciled after these effects. The engine then declares the target and
+runs the usual battle workflow.
 The selection lasts through this battle and is cleared with the turn context.
+
+During preparation, `{type: 'UseSpell', player_id, expected_version, instance_id}`
+explicitly records a spell's first use without automatically activating its optional
+abilities. `legal_commands` supplies `UseSpell.instance_ids`. Activating a spell
+ability also records use. Local preview alone never marks a spell as used; Bluefire
+Staff can recast a spell only after an authoritative use. Recasting repeats its
+printed/dynamic numerical contribution and applicable dungeon abilities, with normal
+interruptible choices. Unselected spells still contribute no battle numbers.
 
 Selection has these rules:
 
@@ -127,7 +140,8 @@ Selection has these rules:
   DSL `participating` filters use the team plus forced combat exclusions.
 - Explicit hand conditions still inspect the whole hand. For example, the
   `half_no_element` restriction sees a benched elemental hero. In-play hero limits
-  use the participating hero count.
+  use the participating hero count. The approved Magehunter exception checks
+  effective magic attack from participating cards, despite its unchanged hand wording.
 - Mandatory diseases and negative hand trophies still apply. A card effect that
   prohibits participation cannot be overridden by selecting that card.
 - Selecting passive spell/item support counts as use for category-based monster
@@ -144,7 +158,7 @@ legacy responses; the new selection behavior has independent browser/server test
 Python callers use:
 
 ```python
-from backend.app.integrations.game_engine.battle import (
+from backend.app.integrations.game_engine.api import (
     battle_preparation, submit_battle_team,
 )
 
@@ -166,6 +180,14 @@ uploaded state. A multiplayer room handler must load its server-owned state and
 derive the actor from room membership before calling the Python adapter; it sends
 only the visible preparation result and player-specific state/events to clients.
 
+The formal multiplayer implementation now follows this boundary through
+`POST /api/v1/matches/{id}/commands`. Its envelope carries `MatchView.version`
+and an idempotency `command_id`; its `SubmitBattleTeam` intent carries only the
+four editable selection fields in `draft`. The service injects the frozen rule
+revisions, authenticated player and current engine `game_version`. See the
+[match API](../match-lifecycle.md) for the transport contract. The legacy
+`DeclareBattleTarget` command is not exposed by this authenticated endpoint.
+
 Invalid JSON returns 400; invalid commands, actor/phase/revision conflicts or
 malformed selections return 422; an unavailable worker/build returns 503.
 
@@ -175,4 +197,4 @@ malformed selections return 422; an unavailable worker/build returns 503.
 Node/browser parity, hidden-zone projection, the benched-mage decision, spell-only
 combat, mandatory negative cards, hand versus participant scope, source abilities,
 equipment validation, version/actor rejection, and equipment-trigger interruption.
-`backend/tests/test_battle_team_api.py` checks Python and HTTP contracts and error paths.
+`backend/tests/api/test_battle_team_api.py` checks Python and HTTP contracts and error paths.

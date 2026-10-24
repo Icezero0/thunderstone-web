@@ -10,7 +10,7 @@ import shutil
 import subprocess
 from threading import RLock, Thread
 
-from backend.app.integrations.game_engine.paths import PROJECT_ROOT
+from backend.app.core.paths import PROJECT_ROOT
 
 
 class SharedEngineUnavailable(RuntimeError):

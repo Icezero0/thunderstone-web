@@ -43,6 +43,10 @@ function apply(tx: Transition, plan: ReturnType<typeof planDiseaseGain>) {
       tx.state.instances[gain.instance_id].owner_player_id = gain.player_id;
       const current = tx.location(gain.instance_id)!;
       if (current !== destination) tx.move(gain.instance_id, current, destination);
+      if (gain.destination === 'draw' && gain.draw_top) {
+        const pile = tx.state.zones[destination];
+        pile.splice(pile.indexOf(gain.instance_id), 1); pile.unshift(gain.instance_id);
+      }
       tx.event('disease_gain_completed', {player_id: gain.player_id, instance_id: gain.instance_id,
         replaced_by: [...gain.used_sources], destination});
       break;

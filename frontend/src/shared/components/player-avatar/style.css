@@ -1,0 +1,4 @@
+.player-avatar {display: grid; place-items: center; flex: 0 0 var(--avatar-size, 40px); width: var(--avatar-size, 40px); height: var(--avatar-size, 40px); border-radius: 50%; overflow: hidden; border: 1px solid var(--header-gold); color: var(--header-gold); background: var(--header-background);}
+.player-avatar img {width: 100%; height: 100%; object-fit: cover; grid-area: 1 / 1;}
+.player-avatar-fallback {width: 75%; height: 75%; grid-area: 1 / 1;}
+.player-avatar-fallback svg {display: block; width: 100%; height: 100%;}

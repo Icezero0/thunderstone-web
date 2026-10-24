@@ -11,7 +11,7 @@ export default defineConfig(({mode}) => {
   const apiOrigin = env.VITE_API_ORIGIN || 'http://127.0.0.1:8765';
   const proxy = Object.fromEntries([
     '/api/', '/cards/', '/engine/', '/health', '/effect-lab/cases',
-    '/effect-lab/coverage', '/monster-audit/data',
+    '/effect-lab/coverage',
   ].map(prefix => [prefix, {target: apiOrigin, changeOrigin: true}]));
   proxy['/ws'] = {target: apiOrigin, changeOrigin: true, ws: true};
   const pages = () => ({

@@ -28,6 +28,34 @@
     "source_line": "玩家进入地下城时，在任意战斗结束后销毁一张卡牌。"
   },
   {
+    "ability_id": "TS-0717-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "strength_penalty": -1
+    },
+    "source_line": "所有英雄承受力量 -1。"
+  },
+  {
+    "ability_id": "TS-0718-A01",
+    "hand": [
+      "TS-0001"
+    ],
+    "draw": [],
+    "supplies": [],
+    "active_only": false,
+    "scheduled": false,
+    "expected": {
+      "strength_penalty": -2
+    },
+    "source_line": "一名英雄承受力量 -2。"
+  },
+  {
     "ability_id": "TS-0484-A01",
     "hand": [],
     "draw": [],

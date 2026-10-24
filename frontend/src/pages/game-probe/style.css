@@ -1,0 +1,58 @@
+.probe-page {height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden;}
+.probe-header {display: flex; align-items: center; gap: 24px; padding: 13px 24px;}
+.probe-header .brand {text-decoration: none; font-size: 14px;}
+.probe-header .brand-mark {width: 32px; height: 32px; font-size: 24px;}
+.probe-header nav {margin-left: auto; font-size: 12px;}
+.probe-header nav a {color: var(--header-muted); text-decoration: none;}
+.probe-header nav a:hover {color: var(--header-gold);}
+.probe-header-label {padding-left: 24px; border-left: 1px solid var(--header-line); font-size: 10px; letter-spacing: .2em; color: var(--header-gold);}
+.probe-shell {flex: 1; min-height: 0; width: 100%; display: flex; flex-direction: column; gap: 12px; padding: 16px 24px 10px;}
+.probe-heading {display: flex; align-items: center; justify-content: space-between; gap: 24px;}
+.probe-heading .eyebrow {margin: 0 0 3px; color: var(--gold-ink); font-size: 9px;}
+.probe-heading h1 {margin: 0; font-size: 23px;}
+.probe-debug {flex: none; padding: 9px 14px;}
+.probe-debug > summary {width: fit-content; color: var(--gold-ink); font-size: 12px; cursor: pointer;}
+.probe-debug-content {display: grid; gap: 12px; padding-top: 12px; max-height: 190px; overflow: auto;}
+.probe-tools {display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted);}
+.probe-tools button {width: 29px; height: 29px; padding: 0; font-size: 18px; line-height: 1;}
+.probe-tools input {width: 115px;}
+.probe-tools output {min-width: 34px; color: var(--ink); font-variant-numeric: tabular-nums;}
+.demo-toolbar {display: flex; flex-wrap: wrap; align-items: center; gap: 8px;}
+.demo-toolbar .button {padding: 7px 11px;}
+.batch-draw {display: flex; align-items: stretch; gap: 5px;}
+.batch-draw input {width: 62px; padding: 5px 7px; font-size: 12px;}
+.demo-toolbar .text-button {margin-inline: 6px;}
+#demo-status {margin: 0 0 0 auto; color: var(--muted); font-size: 11px;}
+.probe-table {
+  --player-card-width: clamp(72px, 9.5vw, 144px); --player-card-radius: 9px; --player-deck-background: rgb(0 0 0 / 13%);
+  --public-card-width: 112px;
+  flex: 1; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto;
+  gap: 14px; padding: 18px; overflow: hidden;
+  border: 1px solid var(--gold-ink); border-radius: 16px; isolation: isolate;
+  background: radial-gradient(ellipse at 50% 35%, rgb(185 140 69 / 11%), transparent 55%), var(--header-background);
+  box-shadow: inset 0 0 65px rgb(0 0 0 / 20%), 0 12px 30px rgb(20 30 34 / 12%);
+}
+#public-table-area {display: grid; min-width: 0; min-height: 0;}
+.public-demo-controls {display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; color: var(--muted); font-size: 11px;}
+.public-demo-controls label {display: inline-flex; align-items: center; gap: 5px;}
+.public-demo-controls select {padding: 5px 8px; font-size: 11px;}
+.public-demo-controls .button {padding: 6px 10px;}
+.probe-footnote {display: flex; justify-content: space-between; gap: 18px; color: var(--muted); font-size: 11px;}
+.probe-footnote p {margin: 0;}
+kbd {font: 10px var(--font-body); display: inline-block; padding: 1px 4px; border-radius: 3px; border: 1px solid var(--control-border); background: var(--panel);}
+#probe-notice {color: var(--red); text-align: right;}
+@media (max-width: 640px) {
+  .probe-header {padding: 12px 14px; gap: 12px;}
+  .probe-header-label {padding-left: 12px; font-size: 9px; letter-spacing: .1em;}
+  .probe-shell {padding: 12px 10px 8px; gap: 10px;}
+  .probe-heading {align-items: end; gap: 12px;}
+  .probe-heading h1 {font-size: 19px;}
+  .probe-tools {gap: 5px; flex-wrap: wrap; justify-content: end;}
+  .probe-tools input {width: 70px;}
+  .probe-table {--player-card-width: clamp(56px, 13vw, 80px); --player-card-radius: 6px; padding: 10px; gap: 10px;}
+  .demo-toolbar {gap: 6px;}
+  .demo-toolbar .button {padding: 6px 8px; font-size: 11px;}
+  #demo-status {flex-basis: 100%; margin-left: 0; font-size: 10px;}
+  .probe-footnote {display: block; font-size: 10px;}
+  #probe-notice {text-align: left;}
+}

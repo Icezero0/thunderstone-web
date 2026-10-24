@@ -1,7 +1,8 @@
 /** Preserve the existing tools' URLs and query strings on Vite's multi-page server. */
 export const pageFiles = {
   '/': 'index.html', '/play': 'index.html', '/config': 'config.html',
-  '/effect-lab': 'effect-lab.html', '/monster-audit': 'monster-audit.html',
+  '/effect-lab': 'effect-lab.html', '/match': 'match.html', '/game-probe': 'game-probe.html',
+  '/profile': 'profile.html',
 };
 
 export function rewritePageUrl(url = '/') {

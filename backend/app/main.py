@@ -6,19 +6,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from backend.app.api.v1.setup import router as setup_router
-from backend.app.api.v1.battle import router as battle_router
+from backend.app.api.router import router as api_router
 from backend.app.api.resources import router as resources_router
 from backend.app.api.frontend import router as frontend_router
-from backend.app.api.v1.auth import router as auth_router
-from backend.app.api.v1.users import router as users_router
-from backend.app.api.v1.rooms import router as rooms_router
 from backend.app.core.config import get_settings
 from backend.app.core.paths import PROJECT_ROOT
 from backend.app.core.exceptions import register_exception_handlers
 from backend.app.core.startup import initialize_runtime
 from backend.app.realtime.manager import RealtimeManager
 from backend.app.realtime.ws_router import router as ws_router
+from backend.devtools.api.router import create_devtools_router
 
 
 @asynccontextmanager
@@ -38,12 +35,8 @@ def create_app() -> FastAPI:
     if settings.cors_origins:
         app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins,
                            allow_methods=["*"], allow_headers=["*"])
-    app.include_router(setup_router, prefix=settings.api_v1_prefix)
-    app.include_router(battle_router, prefix=settings.api_v1_prefix)
-    app.include_router(auth_router, prefix=settings.api_v1_prefix)
-    app.include_router(users_router, prefix=settings.api_v1_prefix)
-    app.include_router(rooms_router, prefix=settings.api_v1_prefix)
-    app.include_router(setup_router, prefix="/api", include_in_schema=False)
+    app.include_router(api_router, prefix=settings.api_v1_prefix)
+    app.include_router(create_devtools_router(settings.api_v1_prefix))
     app.include_router(resources_router)
     app.include_router(frontend_router)
     app.include_router(ws_router)

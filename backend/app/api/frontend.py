@@ -1,4 +1,4 @@
-"""Serve the built frontend at stable URLs, including the existing audit origin."""
+"""Serve the built frontend at stable page URLs."""
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
@@ -9,7 +9,8 @@ router = APIRouter()
 FRONTEND_DIST = PROJECT_ROOT / "frontend/dist"
 PAGE_FILES = {
     "/": "index.html", "/play": "index.html", "/config": "config.html",
-    "/effect-lab": "effect-lab.html", "/monster-audit": "monster-audit.html",
+    "/effect-lab": "effect-lab.html", "/match": "match.html", "/game-probe": "game-probe.html",
+    "/profile": "profile.html",
 }
 
 

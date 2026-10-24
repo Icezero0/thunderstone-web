@@ -3,7 +3,8 @@ import type {Ability, EffectNode, EvaluationInput} from './dsl.js';
 import {RuleError} from '../types.js';
 import {teamSourceSelected} from '../battle/participation.js';
 import {combatValues} from '../battle/combat.js';
-import {isHero} from '../catalog/cards.js';
+import {isHero, tags} from '../catalog/cards.js';
+import {equipmentPairs} from './context.js';
 
 export interface ActivationInput {
   evaluation: EvaluationInput;
@@ -68,6 +69,9 @@ export function availableActivations(input: ActivationInput): {ability_id: strin
     if (ability.kind !== 'activated' || !ability.actions.includes(action)) continue;
     if (dungeonLocked && targetsDungeonDeck(ability.body)) continue;
     for (const source of sourceInstances(evaluation, ability)) {
+      if (action === 'dungeon' && tags(evaluation.card(source)).includes('武器') &&
+          ability.id !== 'TS-0257-A02' && !equipmentPairs(evaluation.state.battle_context ?? {})
+            .some(([, weapon]) => weapon === source)) continue;
       if (!ability.conditions.every(condition => evaluation.condition(condition,
         {source, _subject: evaluation.playerId}))) continue;
       if (ability.usage === 'once_per_turn' &&
@@ -78,6 +82,14 @@ export function availableActivations(input: ActivationInput): {ability_id: strin
   return options;
 }
 
+/** Recasting selects a real used spell, including spells with only printed/dynamic values. */
+export function canReuseSpell(input: ActivationInput, instanceId: string): boolean {
+  const evaluation = new EffectEvaluation(input.evaluation), state = evaluation.evaluationState;
+  return state.chosen_action === 'dungeon' &&
+    (state.zones[`player:${evaluation.playerId}:hand`] ?? []).includes(instanceId) &&
+    (state.used_cards ?? []).includes(instanceId) && tags(evaluation.card(instanceId)).includes('法术');
+}
+
 /** A used hand card may offer its own dungeon abilities again at a destruction cost. */
 export function reusableAbilityIds(input: ActivationInput, instanceId: string): string[] {
   const evaluation = new EffectEvaluation(input.evaluation);
@@ -85,8 +97,10 @@ export function reusableAbilityIds(input: ActivationInput, instanceId: string): 
   if (!(state.zones[`player:${evaluation.playerId}:hand`] ?? []).includes(instanceId) ||
       !(state.used_cards ?? []).includes(instanceId)) return [];
   const cardId = evaluation.card(instanceId).card_id;
+  const dungeonLocked = evaluation.hallRules('dungeon_deck_lock').length > 0;
   return input.abilities.filter(ability => ability.kind === 'activated' &&
     ability.source_card_id === cardId && ability.actions.includes('dungeon') &&
+    (!dungeonLocked || !targetsDungeonDeck(ability.body)) &&
     ability.conditions.every(condition => evaluation.condition(condition,
       {source: instanceId, _subject: evaluation.playerId})))
     .map(ability => ability.id);

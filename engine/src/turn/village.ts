@@ -1,7 +1,8 @@
 import {RuleError} from '../types.js';
 import {Calculation} from '../effects/context.js';
 import {economyRules, printedGold, purchasePrice} from '../effects/economy.js';
-import {stat} from '../catalog/cards.js';
+import {isHero, stat, tags} from '../catalog/cards.js';
+import {isSupplyZone, sameHeroSeries} from '../catalog/supplies.js';
 import {queueSteps} from './workflow.js';
 import type {Transition} from './transaction.js';
 
@@ -31,6 +32,10 @@ export function purchasableCards(tx: Transition): string[] {
     available.add(tx.state.instances[pile[0]].card_id);
   return [...available].sort().filter(id => (tx.player.purchases_remaining > 0 || id === 'TS-0001') &&
     price(tx, id) <= tx.player.temporary_gold);
+}
+/** Quote the same effective prices charged by buyCard, including current effects. */
+export function purchaseOptions(tx: Transition): {card_id: string; price: number}[] {
+  return purchasableCards(tx).map(card_id => ({card_id, price: price(tx, card_id)}));
 }
 export function buyCard(tx: Transition, cardId: string) {
   if (!purchasableCards(tx).includes(cardId)) throw new RuleError(`card is not purchasable now: ${cardId}`);
@@ -66,15 +71,17 @@ export function upgradeOptions(tx: Transition): Record<string, any>[] {
   for (const sourceId of tx.zone('hand')) {
     const source = tx.card(sourceId);
     if (tx.state.instances[sourceId].flags.upgraded_on_turn === tx.state.turn_number) continue;
-    const militia = source.card_id === 'TS-0001';
-    if (!militia && source.card_type !== '英雄牌') continue;
-    const cost = source.upgrade_xp_cost === '' ? -1 : Number(source.upgrade_xp_cost);
-    if (cost < 0 || tx.player.xp < cost) continue;
-    const level = stat(source, 'level');
-    for (const [zone, pile] of Object.entries(tx.state.zones) as [string, string[]][]) if (zone.startsWith('hero_supply:'))
+    if (!isHero(source)) continue;
+    const militia = tags(source).includes('民兵') && stat(source, 'level') === 0;
+    const rawCost = source.upgrade_xp_cost;
+    const cost = rawCost === undefined || rawCost.trim() === '' ? -1 : Number(rawCost);
+    if (!Number.isSafeInteger(cost) || cost < 0 || tx.player.xp < cost) continue;
+    const targetLevel = militia ? 1 : stat(source, 'level') + 1;
+    for (const [zone, pile] of Object.entries(tx.state.zones) as [string, string[]][]) if (isSupplyZone(zone))
       for (const item of pile) {
         const target = tx.card(item);
-        if (stat(target, 'level') !== level + 1 || !militia && target.subcategory !== source.subcategory) continue;
+        if (!isHero(target) || stat(target, 'level') !== targetLevel ||
+            !militia && !sameHeroSeries(source, target, tx.setupIndex.groups ?? [])) continue;
         const option = {source_instance_id: sourceId, target_card_id: target.card_id, xp_cost: cost};
         if (!options.some(row => row.source_instance_id === sourceId && row.target_card_id === target.card_id)) options.push(option);
       }
@@ -86,7 +93,7 @@ export function performHeroUpgrade(tx: Transition, sourceId: string, targetCardI
   const option = upgradeOptions(tx).find(row => row.source_instance_id === sourceId && row.target_card_id === targetCardId);
   if (!option) throw new RuleError('invalid hero upgrade or insufficient XP/supply');
   const sourceCardId = tx.card(sourceId).card_id;
-  const targetZone = Object.entries(tx.state.zones).find(([zone, pile]) => zone.startsWith('hero_supply:') &&
+  const targetZone = Object.entries(tx.state.zones).find(([zone, pile]) => isSupplyZone(zone) &&
     (pile as string[]).some(id => tx.state.instances[id].card_id === targetCardId))![0];
   const targetId = tx.state.zones[targetZone].find((id: string) => tx.state.instances[id].card_id === targetCardId);
   tx.destroyCard(sourceId, 'hero_upgrade');
@@ -103,8 +110,10 @@ export function upgradeHero(tx: Transition, sourceId: string, targetCardId: stri
   queueSteps(tx, performHeroUpgrade(tx, sourceId, targetCardId));
 }
 export function restDestroy(tx: Transition, instanceId: string) {
+  if (tx.player.rest_destroyed_on_turn === tx.state.turn_number) throw new RuleError('rest destruction has already been used this turn');
   if (!tx.zone('hand').includes(instanceId)) throw new RuleError('rest can only destroy a card in the current hand');
+  tx.player.rest_destroyed_on_turn = tx.state.turn_number;
   const card = tx.card(instanceId), destination = tx.destroyCard(instanceId, 'rest').destination;
   tx.event('rest_card_destroyed', {player_id: tx.playerId, instance_id: instanceId, card_id: card.card_id, destination});
-  tx.finishTurn();
+  tx.awaitTurnEnd();
 }

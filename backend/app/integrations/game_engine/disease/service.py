@@ -4,7 +4,7 @@ from backend.app.integrations.game_engine.setup.random import RNG_VERSION, Setup
 from backend.app.integrations.game_engine.setup.exceptions import SetupError
 from backend.app.integrations.game_engine.shared.client import SharedRuleError, client
 from backend.app.integrations.game_engine.shared.transition import transition_payload
-from backend.app.integrations.game_engine.paths import PROJECT_ROOT
+from backend.app.core.paths import PROJECT_ROOT
 
 
 def sample_disease(supply: dict, rng: SetupRng) -> tuple[str, int, int, list[dict]]:

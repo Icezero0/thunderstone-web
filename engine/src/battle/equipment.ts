@@ -27,7 +27,7 @@ export function reconcileEquipment(tx: Transition, duringBattle = false) {
     for (const [hero, weapon] of dropped) tx.event('weapon_dropped', {hero_instance_id: hero,
       weapon_instance_id: weapon, reason: 'insufficient_strength_or_missing_card'});
   }
-  if (duringBattle) for (const [hero, strength] of Object.entries(trace.hero_strength)) {
+  if (duringBattle || context.negative_effects_committed) for (const [hero, strength] of Object.entries(trace.hero_strength)) {
     const flags = tx.state.instances[hero].flags;
     if (strength === 0 && !flags.pending_turn_end_destruction) {
       flags.pending_turn_end_destruction = true;

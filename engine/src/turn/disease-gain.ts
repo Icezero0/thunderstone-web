@@ -3,7 +3,8 @@ import {RuleError} from '../types.js';
 export interface DiseaseGain {
   instance_id: string;
   player_id: string;
-  destination: 'hand'|'discard';
+  destination: 'hand'|'draw'|'discard';
+  draw_top?: boolean;
   used_sources: string[];
   ability_id?: string|null;
 }

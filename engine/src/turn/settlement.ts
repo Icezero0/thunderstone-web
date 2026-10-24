@@ -7,6 +7,7 @@ export function settleGame(tx: Transition, reason: string, details: Record<strin
   Object.assign(tx.state, {phase: 'SETTLING', subphase: 'GAME_END', timing_window: 'GAME_END',
     pending_choice: null, resolution_frames: [], workflow_steps: []});
   delete tx.state.effect_resume;
+  delete tx.state.resolving_event;
   tx.state.end_condition = {reason, ...details, turn_number: tx.state.turn_number};
   tx.event('game_end_triggered', tx.state.end_condition);
   returnBorrowed(tx, 'after_battle'); returnBorrowed(tx, 'turn_end');

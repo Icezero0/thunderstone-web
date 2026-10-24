@@ -1,0 +1,77 @@
+.player-deck-area {--card-width: var(--player-card-width, clamp(72px, 9.5vw, 144px)); --card-radius: var(--player-card-radius, 9px);display: grid; grid-template-columns: var(--card-width) minmax(0, 1fr) var(--card-width); gap: clamp(18px, 2.8vw, 46px); padding: 16px 16px 20px; border: 1px solid var(--header-line); border-radius: 10px; background: var(--player-deck-background, var(--header-background));}
+:where(.player-deck-area, .player-deck-overlays) .hand-area, :where(.player-deck-area, .player-deck-overlays) .pile-area {min-width: 0;}
+:where(.player-deck-area, .player-deck-overlays) .zone-heading {display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 24px; color: var(--header-muted);}
+:where(.player-deck-area, .player-deck-overlays) .zone-heading h2 {margin: 0; font: 13px var(--font-body); letter-spacing: .12em; color: var(--header-ink);}
+:where(.player-deck-area, .player-deck-overlays) .zone-heading > span {font-size: 10px; opacity: .6;}
+:where(.player-deck-area, .player-deck-overlays) .pile-area .zone-heading {flex-wrap: wrap; gap: 4px;}
+:where(.player-deck-area, .player-deck-overlays) .zone-heading > .pile-count {opacity: 1; font-variant-numeric: tabular-nums;}
+:where(.player-deck-area, .player-deck-overlays) .hand-area .zone-heading {align-items: center; flex-wrap: wrap; gap: 10px;}
+.player-card-tabs {display: flex; align-items: center; flex-wrap: wrap; gap: 3px; max-width: 100%;}
+.player-card-tab {padding: 5px 9px 7px; border: 0; border-bottom: 2px solid transparent; border-radius: 4px 4px 0 0; background: transparent; color: var(--header-muted); font: 13px var(--font-body); white-space: nowrap;}
+.player-card-tab:hover {background: rgb(185 140 69 / 8%); color: var(--header-ink);}
+.player-card-tab[aria-selected="true"] {color: var(--header-gold); border-bottom-color: var(--header-gold); background: rgb(185 140 69 / 8%);}
+.player-card-tab:focus-visible {outline: 2px solid var(--header-gold); outline-offset: -2px;}
+.player-card-tab:disabled {opacity: .5;}
+.player-response {display: flex; flex: 1 1 150px; min-width: 0; min-height: 26px; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 5px; padding: 2px 10px; border-inline: 1px solid var(--header-line);}
+.player-turn-indicator {display: inline-grid; place-items: center; flex: none; width: 26px; height: 26px; margin-right: 3px; border: 1px solid var(--header-line); border-radius: 50%; color: var(--header-gold); background: rgb(185 140 69 / 10%);}
+.player-turn-indicator svg {width: 17px; height: 17px;}
+.player-response-progress {flex: 0 1 auto; color: var(--header-ink); font-size: 11px; line-height: 1.5; overflow-wrap: anywhere;}
+.player-response-prompt {flex: 1; text-align: center; color: var(--header-muted); font-size: 10px; overflow-wrap: anywhere;}
+.player-response-choice {padding: 4px 7px; border: 1px solid var(--header-line); border-radius: 5px; background: transparent; color: var(--header-ink); font: 11px var(--font-body); white-space: nowrap;}
+.player-response-choice:hover, .player-response-choice[aria-pressed="true"] {border-color: var(--header-gold); background: rgb(185 140 69 / 12%); color: var(--header-gold);}
+.player-response-choice[data-tone="gold"] {--response-tone: var(--game-action-gold);}
+.player-response-choice[data-tone="violet"] {--response-tone: var(--game-action-violet);}
+.player-response-choice[data-tone="blue"] {--response-tone: var(--game-action-blue);}
+.player-response-choice[data-tone="red"] {--response-tone: var(--game-action-red);}
+.player-response-choice[data-tone] {color: var(--response-tone); border-color: color-mix(in srgb, var(--response-tone) 48%, transparent); background: color-mix(in srgb, var(--response-tone) 12%, transparent);}
+.player-response-choice[data-tone]:hover, .player-response-choice[data-tone][aria-pressed="true"] {border-color: var(--response-tone); background: color-mix(in srgb, var(--response-tone) 22%, transparent);}
+.player-response-choice:focus-visible {outline: 2px solid var(--header-gold); outline-offset: 2px;}
+.player-response-choice:disabled {opacity: .45;}
+.player-deck-area .hand-auto-sort {margin-left: auto;}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort {position: relative; display: inline-flex; align-items: center; gap: 7px; color: var(--header-muted); font-size: 11px; white-space: nowrap;}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort input {position: absolute; width: 1px; height: 1px; opacity: 0;}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort-track {position: relative; width: 28px; height: 16px; flex: none; border: 1px solid var(--header-line); border-radius: 9px; background: var(--navy); transition: background 140ms ease, border-color 140ms ease;}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort-track::after {content: ''; position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-radius: 50%; background: var(--header-muted); transition: left 140ms ease, background 140ms ease;}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort input:checked + .hand-auto-sort-track {background: var(--primary); border-color: var(--header-gold);}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort input:checked + .hand-auto-sort-track::after {left: 14px; background: var(--header-ink);}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort input:focus-visible + .hand-auto-sort-track {outline: 2px solid var(--header-gold); outline-offset: 3px;}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort:has(input:disabled) {opacity: .5;}
+:where(.player-deck-area, .player-deck-overlays) .hand-track, :where(.player-deck-area, .player-deck-overlays) .pile-slot {position: relative; height: calc(var(--card-width) * 1.3968254);}
+:where(.player-deck-area, .player-deck-overlays) .hand-track {isolation: isolate;}
+:where(.player-deck-area, .player-deck-overlays) .hand-track > .physical-card {position: absolute; top: 0;}
+:where(.player-deck-area, .player-deck-overlays) .hand-track[data-reordering="true"] > .physical-card, :where(.player-deck-area, .player-deck-overlays) .hand-drop-slot {transition: left 160ms ease-out;}
+:where(.player-deck-area, .player-deck-overlays) .hand-track > .physical-card[data-dragging="true"] {transition: none;}
+:where(.player-deck-area, .player-deck-overlays) .hand-drop-slot {position: absolute; top: 0; height: 100%; border: 1px dashed var(--header-gold); border-radius: var(--card-radius); background: rgb(185 140 69 / 13%); pointer-events: none;}
+:where(.player-deck-area, .player-deck-overlays) .empty-hand {position: absolute; inset: 0; display: grid; place-content: center; margin: 0; border: 1px dashed var(--header-line); border-radius: var(--card-radius); color: var(--header-muted); font-size: 12px;}
+:where(.player-deck-area, .player-deck-overlays) .hand-track .physical-card {touch-action: none;}
+:where(.player-deck-area, .player-deck-overlays) .physical-card[data-selected="true"] .card-lift {top: -18px; left: -3px; width: calc(100% + 6px);}
+:where(.player-deck-area, .player-deck-overlays) .physical-card[data-selected="true"] .card-face {border-color: var(--header-gold);}
+:where(.player-deck-area, .player-deck-overlays) .physical-card[data-selected="true"] .card-lift::after {content: '✓'; position: absolute; bottom: 7px; left: 7px; z-index: 1; width: 18px; height: 18px; display: grid; place-content: center; border-radius: 50%; background: var(--primary); color: var(--header-ink); font-size: 11px; pointer-events: none;}
+/* Keep the complete card inside the hand while dragging, without scaling its illustration. */
+:where(.player-deck-area, .player-deck-overlays) .hand-track .physical-card[data-dragging="true"] .card-lift,
+:where(.player-deck-area, .player-deck-overlays) .hand-track .physical-card[data-dropping="true"] .card-lift {top: 0; left: 0; width: 100%; transition: none;}
+:where(.player-deck-area, .player-deck-overlays) .physical-card[data-dragging="true"] .card-body {box-shadow: 0 14px 26px rgb(0 0 0 / 55%);}
+:where(.player-deck-area, .player-deck-overlays) .card-motion-layer {position: fixed; inset: 0; z-index: 70; pointer-events: none;}
+:where(.player-deck-area, .player-deck-overlays) .card-flight {position: absolute; pointer-events: none;}
+:where(.player-deck-area, .player-deck-overlays) .card-flight > .physical-card {position: absolute; pointer-events: none;}
+:where(.player-deck-area, .player-deck-overlays) .card-flight .card-lift {top: 0; left: 0; width: 100%; height: 100%; transition: none;}
+:where(.player-deck-area, .player-deck-overlays) .card-destruction {position: absolute; pointer-events: none;}
+:where(.player-deck-area, .player-deck-overlays) .card-destruction > .physical-card {position: absolute; pointer-events: none;}
+:where(.player-deck-area, .player-deck-overlays) .card-destruction .card-lift {top: 0; left: 0; width: 100%; height: 100%; transition: none;}
+:where(.player-deck-area, .player-deck-overlays) .card-shard-field, :where(.player-deck-area, .player-deck-overlays) .card-shard {position: absolute; inset: 0; pointer-events: none; border-radius: var(--card-radius, 9px);}
+:where(.player-deck-area, .player-deck-overlays) .card-shard {background-size: 100% 100%; background-repeat: no-repeat;}
+:where(.player-deck-area, .player-deck-overlays) .shuffle-packet {position: absolute; pointer-events: none;}
+:where(.player-deck-area, .player-deck-overlays) .shuffle-sheet {position: absolute; inset: 0;}
+:where(.player-deck-area, .player-deck-overlays) .shuffle-sheet > .physical-card {position: absolute; pointer-events: none;}
+:where(.player-deck-area, .player-deck-overlays) .shuffle-sheet .card-lift {top: 0; left: 0; width: 100%; height: 100%; transition: none;}
+:where(.player-deck-area, .player-deck-overlays) .player-deck-notice {grid-column: 1 / -1; margin: 0; color: var(--red); font-size: 11px;}
+:where(.player-deck-area, .player-deck-overlays) .player-deck-notice:empty {display: none;}
+@media (max-width: 640px) {
+  .player-deck-area {--card-width: var(--player-card-width, clamp(56px, 13vw, 80px)); --card-radius: var(--player-card-radius, 6px); padding: 12px 8px 15px; gap: 12px;}
+  :where(.player-deck-area, .player-deck-overlays) .zone-heading {margin-bottom: 20px;}
+  :where(.player-deck-area, .player-deck-overlays) .zone-heading h2 {font-size: 11px;}
+  :where(.player-deck-area, .player-deck-overlays) .zone-heading > span:not(.pile-count) {display: none;}
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(.player-deck-area, .player-deck-overlays) .hand-track[data-reordering="true"] > .physical-card, :where(.player-deck-area, .player-deck-overlays) .hand-drop-slot, :where(.player-deck-area, .player-deck-overlays) .hand-auto-sort-track, :where(.player-deck-area, .player-deck-overlays) .hand-auto-sort-track::after {transition-duration: 0.01ms;}
+}

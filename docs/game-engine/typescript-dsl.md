@@ -114,8 +114,8 @@ to `TurnError`, and setup failures to `SetupError`. The DSL executes in TypeScri
 ## Verification
 
 - The original DSL schema retains differential compilation checks against the
-  frozen Python compiler. Current Node/browser builds compile all 446 abilities
-  and 227 mechanics, including the post-migration `discard_until`, `battle_aura`
+  frozen Python compiler. Current Node/browser builds compile all 467 abilities
+  and 206 mechanics, including the post-migration `discard_until`, `battle_aura`
   and scoped economy rules verified directly in the shared engine.
 - Browser and Node builds compile the same full reviewed set and evaluate frozen
   snapshots identically.

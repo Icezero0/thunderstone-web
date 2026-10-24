@@ -5,7 +5,7 @@ import {evaluateCost} from './costs.js';
 import {planCardModifier, planMonsterHealthModifier} from './modifiers.js';
 import {applyResourceEffect, type ResourceOp} from './resources.js';
 import {grantTurnBuff} from '../turn/buffs.js';
-import {attach, release} from './ownership.js';
+import {attach} from './ownership.js';
 import {destroyMatching, destroyPurchased} from './supply.js';
 import {shuffleDestroyedTraps} from '../turn/hall.js';
 import {dungeonZone} from './choice-transition.js';
@@ -104,21 +104,7 @@ export function atom(tx: Transition, node: any, initialBindings: Record<string, 
       tx.state.registered_triggers = tx.state.registered_triggers.filter((item: any) =>
         item.ability_id !== abilityId || item.source_instance_id !== bindings.source);
       return;
-    case 'redistribute_discards': {
-      const remaining = query(tx, node.query, bindings);
-      tx.rng.shuffle(remaining);
-      const assignments = [];
-      for (const other of tx.state.player_order) {
-        if (tx.state.players[other].eliminated || other === tx.playerId || !remaining.length) continue;
-        const item = remaining.shift()!;
-        tx.state.instances[item].owner_player_id = other;
-        tx.move(item, tx.location(item)!, `player:${other}:hand`);
-        assignments.push({player_id: other, instance_id: item});
-      }
-      tx.event('cards_randomly_distributed', {assignments, ability_id: abilityId}); return;
-    }
     case 'attach_card': attach(tx, bound(bindings, node.target), bound(bindings, node.anchor), node.kind, subject); return;
-    case 'release_attachment': release(tx, bound(bindings, node.target), node.recipient ?? 'owner', node.destroy_anchor ?? true); return;
     case 'grant_basic_buy': tx.player.extra_basic_purchases = (tx.player.extra_basic_purchases ?? 0) + 1; return;
     case 'grant_extra_turn':
       tx.player.extra_turns = (tx.player.extra_turns ?? 0) + 1;
@@ -199,7 +185,8 @@ export function atom(tx: Transition, node: any, initialBindings: Record<string, 
     case 'random_discard': {
       const count = expr(tx, node.count, bindings);
       if (!(0 <= count && count <= 100)) throw new RuleError('invalid random discard count');
-      for (let i = 0; i < Math.min(count, tx.zone('hand', subject).length); i++) {
+      const actual = Math.min(count, tx.zone('hand', subject).length);
+      for (let i = 0; i < actual; i++) {
         const hand = tx.zone('hand', subject), item = hand[tx.rng.randbelow(hand.length)];
         tx.move(item, `player:${subject}:hand`, `player:${subject}:discard`);
       }
@@ -214,28 +201,20 @@ export function atom(tx: Transition, node: any, initialBindings: Record<string, 
     case 'set_battle_flag':
       if (!tx.state.battle_context) throw new RuleError('battle flag needs dungeon preparation');
       tx.state.battle_context[node.flag] = node.value; return;
+    case 'scale_damage': {
+      const context = tx.state.battle_context, divisor = node.divisor;
+      if (!context || !Number.isSafeInteger(divisor) || divisor < 1 || divisor > 100)
+        throw new RuleError('invalid battle damage divisor');
+      const combined = (context.damage_divisor ?? 1) * divisor;
+      if (!Number.isSafeInteger(combined)) throw new RuleError('battle damage divisor exceeds numeric bounds');
+      context.damage_divisor = combined;
+      tx.event('effect_damage_scaled', {ability_id: abilityId, divisor, combined_divisor: combined});
+      return;
+    }
     case 'set_retreat_position': {
       const position = expr(tx, node.amount, bindings);
       if (!tx.state.battle_context || !(1 <= position && position <= 100)) throw new RuleError('invalid monster retreat position');
       tx.state.battle_context.retreat_position = position; return;
-    }
-    case 'gain_card': {
-      const cardId = node.card_id;
-      if (!tx.cards[cardId]) throw new RuleError(`unknown gained card: ${cardId}`);
-      const destination = `player:${subject}:${node.destination ?? 'discard'}`;
-      let instance: string;
-      if (tx.state.supply_rules.basic_card_ids.includes(cardId))
-        instance = tx.createOwned(cardId, destination, 'ability_gain', subject);
-      else {
-        const supply = Object.entries(tx.state.zones).find(([zone, pile]) => (zone.startsWith('village_supply:') || zone.startsWith('hero_supply:')) &&
-          (pile as string[]).length && tx.state.instances[(pile as string[])[0]].card_id === cardId)?.[0];
-        if (!supply) throw new RuleError(`no available supply for ${cardId}`);
-        instance = tx.state.zones[supply][0];
-        tx.state.instances[instance].owner_player_id = subject;
-        tx.move(instance, supply, destination);
-      }
-      tx.event('effect_card_gained', {ability_id: abilityId, instance_id: instance,
-        card_id: cardId, destination}); return;
     }
     default: throw new RuleError(`unhandled atom: ${op}`);
   }

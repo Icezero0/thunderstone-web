@@ -1,6 +1,6 @@
 """Backend entry points for visible battle preparation and authoritative submission."""
 
-from backend.app.integrations.game_engine.paths import PROJECT_ROOT
+from backend.app.core.paths import PROJECT_ROOT
 from backend.app.integrations.game_engine.shared.transition import transition_call
 from backend.app.integrations.game_engine.turn import TurnError, apply_command
 

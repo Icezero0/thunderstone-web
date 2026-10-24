@@ -1,0 +1,29 @@
+.player-list-area {position: relative; z-index: 20; min-width: 0; min-height: 0; padding: 16px 10px; border: 1px solid var(--header-line); border-radius: 10px; background: var(--player-list-background, var(--header-background)); color: var(--header-ink);}
+.player-list-area h2 {margin: 0 0 14px 4px; color: var(--header-muted); font: 12px var(--font-body); letter-spacing: .12em;}
+.player-list-area ul {display: flex; flex-direction: column; gap: 8px; padding: 0; margin: 0; list-style: none;}
+.player-list-area .public-player {position: relative; min-width: 0; border: 1px solid transparent; border-radius: 9px;}
+.player-activity-bubble {position: absolute; right: calc(100% + 14px); top: 50%; translate: 0 -50%; width: max-content; max-width: min(320px, 55vw); padding: 12px 16px; border: 1px solid var(--gold); border-radius: 10px; background: var(--panel); color: var(--ink); box-shadow: var(--shadow); font: 13px/1.6 var(--font-body); overflow-wrap: anywhere; transform-origin: right center; pointer-events: none;}
+.player-activity-bubble::before, .player-activity-bubble::after {content: ''; position: absolute; left: 100%; top: calc(50% - 7px); border: 7px solid transparent; border-left-color: var(--gold);}
+.player-activity-bubble::after {margin-left: -1px; border-left-color: var(--panel);}
+.player-list-area .public-player-button {display: flex; align-items: center; gap: 9px; width: 100%; min-width: 0; padding: 10px 8px; border: 0; border-radius: 8px; background: transparent; color: var(--header-ink); text-align: left;}
+.player-list-area .public-player-button:not(:disabled):hover {background: rgb(185 140 69 / 10%);}
+.player-list-area .public-player-button:disabled {opacity: 1;}
+.player-list-area .public-player-button:focus-visible {outline: 2px solid var(--header-gold); outline-offset: 1px;}
+.player-list-area .public-player[aria-current="true"] {background: rgb(185 140 69 / 9%); border-color: var(--header-line);}
+.player-list-area .player-name {display: block; font-size: 12px; overflow-wrap: anywhere;}
+.player-list-area .player-name small {margin-left: 3px; font-size: 10px; color: var(--header-muted);}
+.player-list-area .player-turn {display: block; margin-top: 4px; font-size: 10px; color: var(--header-gold);}
+.player-list-overlays .player-browser-tabs {display: flex; gap: 5px; padding: 10px 24px 0; border-bottom: 1px solid var(--line);}
+.player-list-overlays .player-browser-tab {display: flex; align-items: center; gap: 9px; padding: 8px 14px 10px; border: 0; border-radius: 5px 5px 0 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); font: 14px var(--font-heading);}
+.player-list-overlays .player-browser-tab:hover {background: var(--gold-soft); color: var(--gold-ink);}
+.player-list-overlays .player-browser-tab[aria-selected="true"] {border-bottom-color: var(--gold); background: var(--surface-selected); color: var(--gold-ink);}
+.player-list-overlays .player-browser-zone-count {font: 11px var(--font-body); font-variant-numeric: tabular-nums;}
+.player-list-overlays .player-browser-notice {padding: 0 24px; color: var(--red); font-size: 11px;}
+.player-list-overlays .player-browser-notice:empty {display: none;}
+@media (max-width: 640px) {
+  .player-list-area {padding: 12px 5px;}
+  .player-list-area .public-player-button {gap: 5px; padding: 8px 4px; flex-direction: column; text-align: center;}
+  .player-list-area .player-avatar {--avatar-size: 32px;}
+  .player-list-overlays .player-browser-tabs {padding: 8px 12px 0;}
+  .player-list-overlays .player-browser-tab {padding: 8px 9px; gap: 6px; font-size: 13px;}
+}
