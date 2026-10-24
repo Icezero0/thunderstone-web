@@ -2,6 +2,7 @@
 export interface PlayerDeckCard {readonly id: string; readonly cardId: string; readonly name: string;}
 export interface PlayerAuxiliaryCard extends PlayerDeckCard {readonly faceUp?: boolean;}
 export type PlayerCardTab = 'hand' | 'treasures' | 'aside';
+export interface PlayerResources {readonly xp: number; readonly gold?: number; readonly goldIncomePreview?: number;}
 
 /** Presentation data supplied by the host. Draw top is first; discard top is last. */
 export interface PlayerDeckState {
@@ -31,9 +32,14 @@ export interface PlayerResponse {
 }
 
 export interface DeckTransition {kind: 'draw' | 'discard'; instanceIds: readonly string[];}
+/** Captured screen-space bounds, including public desktop pan/zoom. */
+export interface CardFlightOrigin {readonly left: number; readonly top: number; readonly width: number; readonly height: number;}
 /** Intermediate snapshots are supplied by the host; animations never decide game outcomes. */
 export type DeckAnimationStep = {state: PlayerDeckState} & (
-  {kind: 'draw' | 'discard' | 'destroy'; instanceIds: readonly string[]} | {kind: 'shuffle'});
+  {kind: 'draw' | 'discard' | 'destroy'; instanceIds: readonly string[]}
+  | {kind: 'upgrade'; sourceInstanceId: string; targetInstanceId: string}
+  | {kind: 'gain'; instanceIds: readonly string[]; origins: Readonly<Record<string, CardFlightOrigin>>}
+  | {kind: 'shuffle'});
 
 export interface PlayerDeckOptions {
   /** Keep overlays outside any parent that becomes inert when browsing. Defaults to document.body. */

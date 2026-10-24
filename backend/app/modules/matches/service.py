@@ -138,8 +138,8 @@ class MatchService:
         options = {}
         state = match.state or {}
         actor = (state.get("pending_choice") or {}).get("player_id", state.get("active_player_id"))
-        if match.status == "active" and member["player_id"] == actor:
-            options = await asyncio.to_thread(calculate_options, state, actor,
+        if match.status == "active" and member["player_id"] in {actor, state.get("active_player_id")}:
+            options = await asyncio.to_thread(calculate_options, state, member["player_id"],
                 CatalogSnapshot(**match.catalog_snapshot), self.revision(match))
         profiles = await UserRepository().profiles(db, [p["user_id"] for p in match.frozen_players])
         return build_match_view(match, user_id, profiles=profiles, **options)

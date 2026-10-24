@@ -6,7 +6,7 @@ import re
 from backend.app.core.paths import PROJECT_ROOT
 from backend.app.integrations.game_engine.battle import battle_preparation
 from backend.app.integrations.game_engine.effects.compiler import load_ruleset
-from backend.app.integrations.game_engine.turn import legal_commands
+from backend.app.integrations.game_engine.shared.transition import transition_call
 
 
 def command_options(state: dict, player_id: str, *, snapshot, root: Path = PROJECT_ROOT) -> dict:
@@ -23,5 +23,6 @@ def command_options(state: dict, player_id: str, *, snapshot, root: Path = PROJE
     preparation = None
     if state.get("subphase") == "DUNGEON_PREPARE" and state.get("pending_choice") is None:
         preparation = battle_preparation(state, player_id, snapshot=snapshot, effects=rules)
-    return {"legal_commands": legal_commands(state, root=root, snapshot=snapshot, effects=rules),
+    options = transition_call("turn_options", state, root=root, snapshot=snapshot, effects=rules, player_id=player_id)
+    return {**options,
             "battle_preparation": preparation, "abilities": labels}

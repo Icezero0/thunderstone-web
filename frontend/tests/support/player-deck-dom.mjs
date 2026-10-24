@@ -88,6 +88,10 @@ export async function page({html = probeHtml, source = probeSource, pendingImage
       for (let node = this; node; node = node.parentElement) node.fire('focusin', {target: this});
     }
     matches() {return !!this.keyboardFocus;}
+    querySelectorAll(selectors) {
+      const visit = root => root.children.flatMap(child => [child, ...visit(child)]);
+      return visit(this).filter(node => selectors.split(',').some(selector => node.closest(selector.trim()) === node));
+    }
     closest(selectors) {
       if (this.editable) return this;
       for (let node = this; node; node = node.parentElement) for (const selector of selectors.split(',').map(value => value.trim())) {

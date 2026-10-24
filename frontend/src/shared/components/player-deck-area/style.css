@@ -27,14 +27,21 @@
 .player-response-choice[data-tone]:hover, .player-response-choice[data-tone][aria-pressed="true"] {border-color: var(--response-tone); background: color-mix(in srgb, var(--response-tone) 22%, transparent);}
 .player-response-choice:focus-visible {outline: 2px solid var(--header-gold); outline-offset: 2px;}
 .player-response-choice:disabled {opacity: .45;}
+.player-resources {display: flex; flex: none; align-items: center; gap: 12px; padding-inline: 2px; font-variant-numeric: tabular-nums;}
+.player-resource {display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; color: var(--header-ink); font: 13px var(--font-body);}
+.player-resource-gold {color: var(--header-gold);}
+.player-resource-gold svg {width: 21px; height: 21px; flex: none;}
+.player-resource-value {font-weight: 600;}
+.player-resource-amount {display: inline-flex; align-items: baseline; gap: 2px;}
+.player-resource-forecast {font-size: 11px; font-weight: 400; color: var(--header-muted);}
+.player-resource-label {font-size: 10px; color: var(--header-muted); letter-spacing: .04em;}
 .player-deck-area .hand-auto-sort {margin-left: auto;}
-:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort {position: relative; display: inline-flex; align-items: center; gap: 7px; color: var(--header-muted); font-size: 11px; white-space: nowrap;}
-:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort input {position: absolute; width: 1px; height: 1px; opacity: 0;}
-:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort-track {position: relative; width: 28px; height: 16px; flex: none; border: 1px solid var(--header-line); border-radius: 9px; background: var(--navy); transition: background 140ms ease, border-color 140ms ease;}
-:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort-track::after {content: ''; position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-radius: 50%; background: var(--header-muted); transition: left 140ms ease, background 140ms ease;}
-:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort input:checked + .hand-auto-sort-track {background: var(--primary); border-color: var(--header-gold);}
-:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort input:checked + .hand-auto-sort-track::after {left: 14px; background: var(--header-ink);}
-:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort input:focus-visible + .hand-auto-sort-track {outline: 2px solid var(--header-gold); outline-offset: 3px;}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort {position: relative; display: inline-grid; flex: none; width: 30px; height: 30px;}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort input {position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0;}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort-icon {display: grid; place-items: center; border-radius: 6px; color: var(--header-muted); pointer-events: none; transition: color 140ms ease;}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort-icon svg {width: 22px; height: 22px;}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort input:checked + .hand-auto-sort-icon {color: var(--header-gold);}
+:where(.player-deck-area, .player-deck-overlays) .hand-auto-sort input:focus-visible + .hand-auto-sort-icon {outline: 2px solid var(--header-gold); outline-offset: 3px;}
 :where(.player-deck-area, .player-deck-overlays) .hand-auto-sort:has(input:disabled) {opacity: .5;}
 :where(.player-deck-area, .player-deck-overlays) .hand-track, :where(.player-deck-area, .player-deck-overlays) .pile-slot {position: relative; height: calc(var(--card-width) * 1.3968254);}
 :where(.player-deck-area, .player-deck-overlays) .hand-track {isolation: isolate;}

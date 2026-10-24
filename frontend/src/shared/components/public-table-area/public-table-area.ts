@@ -27,7 +27,7 @@ export class PublicTableArea {
       onHallCardClick: options.onHallCardClick};
     this.dungeon = new DungeonArea(this.view.hosts.dungeon, {...areaOptions, idPrefix: this.view.id('dungeon-cards')});
     this.village = new VillageArea(this.view.hosts.village, {...areaOptions, idPrefix: this.view.id('village-cards'),
-      onTakeTop: options.onTakeTop, takeLabel: options.takeLabel});
+      onTakeTop: options.onTakeTop, takeLabel: options.takeLabel, onSupplyClick: options.onSupplyClick});
     this.players = new PlayerList(this.root, {...areaOptions, elementId: this.view.id,
       onBeforeOpen: () => {this.finish(); this.village.closeSupply(false);}});
     this.viewports = {} as Record<PublicTableTab, TableViewport>;
@@ -62,6 +62,12 @@ export class PublicTableArea {
   resetView(): void {this.assertAlive(); this.viewports[this.active].reset(); this.clearHover(this.active);}
   refresh(): void {this.assertAlive(); this.viewports[this.active].refresh();}
   openSupply(pileId: string): void {this.setTab('village'); this.village.openSupply(pileId);}
+  setPurchaseOptions(options: readonly {cardId: string; price: number}[]): void {
+    this.assertAlive(); this.village.setPurchaseOptions(options);
+  }
+  supplyCardRect(cardId: string): DOMRect | null {
+    this.assertAlive(); return this.active === 'village' ? this.village.topCardRect(cardId) : null;
+  }
   openPlayer(playerId: string, zone: PlayerBrowseZone = 'hand'): void {
     this.assertAlive(); this.players.openPlayer(playerId, zone);
   }

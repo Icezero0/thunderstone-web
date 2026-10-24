@@ -32,6 +32,14 @@ The old Python interpreter is archived under
 for parity tests. The backend loads a matching catalog snapshot from SQLite and
 passes it to the engine; database access stays outside the rules package.
 
+`command_options(state, player_id, snapshot=...)` calls the worker's read-only
+`turn_options` once to return legal commands and `gold_income_preview`, then adds
+the existing ability labels and optional battle preparation. The shared engine
+calculates the forecast using the same routine as gold production. The match
+projection exposes only the active player's forecast, even while someone else
+is the pending effect recipient. No preview request advances state or consumes
+a gold adjustment.
+
 ## Basic turn commands
 
 `apply_command(state, command, snapshot=...)` returns a new `state`, private ordered `events`, and `legal_commands`. It does not mutate its input. The caller supplies `player_id`, `type`, and optionally `expected_version` for stale-command rejection. Each accepted command increments `game_version` once. The engine verifies the catalog revision and state invariants before and after the transition.

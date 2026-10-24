@@ -57,10 +57,19 @@ class FullTurnParity(TestCase):
                                    "abilities": [asdict(item) for item in cls.rules.abilities],
                                    "mechanics": [asdict(item) for item in cls.rules.mechanics]}}
 
-    def compare_command(self, state, kind, **fields):
+    def compare_command(self, state, kind, *, legacy_followups=(), **fields):
         command = {"type": kind, "player_id": state["pending_choice"]["player_id"] if state["pending_choice"] else state["active_player_id"],
                    "expected_version": state["game_version"], **fields}
         expected = python_command(state, command, snapshot=self.catalog, effects=self.rules)
+        # The frozen reference requires explicit commands for empty village
+        # stages. Complete those stages there without changing its source; the
+        # current engine must perform the equivalent transitions atomically.
+        for followup in legacy_followups:
+            continued = python_command(expected["state"], {"type": followup,
+                "player_id": expected["state"]["active_player_id"],
+                "expected_version": expected["state"]["game_version"]}, snapshot=self.catalog, effects=self.rules)
+            expected = {**continued, "events": expected["events"] + continued["events"]}
+        expected["state"]["game_version"] -= len(legacy_followups)
         # The frozen reference predates the explicit end-turn confirmation.
         # Compare equivalent completed actions, while current-engine tests cover
         # the new persisted ACTION_END boundary independently.
@@ -80,9 +89,9 @@ class FullTurnParity(TestCase):
         state = start_game(request(seed="turn-village"))["state"]
         for kind, fields in [("ChooseAction", {"action": "village"}),
                              ("BuyCard", {"card_id": "TS-0001"}),
-                             ("FinishBuying", {}), ("FinishUpgrading", {}),
                              ("ChooseAction", {"action": "rest"}), ("FinishRest", {})]:
-            state = self.compare_command(state, kind, **fields)
+            state = self.compare_command(state, kind,
+                legacy_followups=("FinishBuying", "FinishUpgrading") if kind == "BuyCard" else (), **fields)
         state = start_game(request(seed="turn-dungeon"))["state"]
         state = self.compare_command(state, "ChooseAction", action="dungeon")
         target = state["zones"]["hall:main"][0]

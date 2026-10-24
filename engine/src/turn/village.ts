@@ -6,7 +6,6 @@ import {isSupplyZone, sameHeroSeries} from '../catalog/supplies.js';
 import {queueSteps} from './workflow.js';
 import type {Transition} from './transaction.js';
 
-const gold = (tx: Transition, id: string) => printedGold(new Calculation(tx.evaluation()), tx.card(id));
 const price = (tx: Transition, cardId: string) => purchasePrice(tx.evaluation(), tx.cards[cardId]);
 const purchaseAllowed = (tx: Transition) => !economyRules(new Calculation(tx.evaluation()))
   .some(rule => rule.params.one_purchase && (tx.state.turn_purchases?.[tx.playerId] ?? 0) > 0);
@@ -19,10 +18,25 @@ export function enterVillage(tx: Transition) {
 export function finishAbilities(tx: Transition) {
   tx.event('village_abilities_finished', {player_id: tx.playerId});
   tx.state.subphase = tx.state.timing_window = 'VILLAGE_BUY';
-  const sources = tx.zone('hand').map(id => ({instance_id: id, gold: gold(tx, id)})).filter(item => item.gold);
-  tx.player.temporary_gold = Math.max(0, tx.player.temporary_gold + sources.reduce((sum, item) => sum + item.gold, 0) + (tx.player.turn_gold_adjustment ?? 0));
+  const {sources, total} = villageGoldProduction(tx);
+  tx.player.temporary_gold = total;
   delete tx.player.turn_gold_adjustment;
   tx.event('village_gold_counted', {player_id: tx.playerId, sources, total: tx.player.temporary_gold});
+}
+/** The immediate production result, without activating abilities, drawing or consuming adjustments. */
+function villageGoldProduction(tx: Transition) {
+  const input = tx.evaluation();
+  const calculation = new Calculation({...input, state: {...tx.state, chosen_action: 'village',
+    subphase: 'VILLAGE_BUY', timing_window: 'VILLAGE_BUY'}});
+  const sources = tx.zone('hand').map(id => ({instance_id: id, gold: printedGold(calculation, tx.card(id))})).filter(item => item.gold);
+  const total = Math.max(0, tx.player.temporary_gold + sources.reduce((sum, item) => sum + item.gold, 0)
+    + (tx.player.turn_gold_adjustment ?? 0));
+  return {sources, total};
+}
+export function goldIncomePreview(tx: Transition, playerId: string): number | null {
+  if (tx.state.phase !== 'PLAYING' || playerId !== tx.playerId
+    || !['TURN_START', 'VILLAGE_ABILITIES'].includes(tx.state.subphase)) return null;
+  return villageGoldProduction(tx).total - tx.player.temporary_gold;
 }
 export function purchasableCards(tx: Transition): string[] {
   if (!(tx.player.purchases_remaining > 0 || tx.player.extra_basic_purchases) || !purchaseAllowed(tx)) return [];
@@ -65,6 +79,13 @@ export function buyCard(tx: Transition, cardId: string) {
 export function finishBuying(tx: Transition) {
   tx.state.subphase = tx.state.timing_window = 'VILLAGE_UPGRADE';
   tx.event('village_upgrade_started', {player_id: tx.playerId});
+}
+/** Run only after effects and continuations settle; never consume a pending choice or end the turn. */
+export function advanceVillageStages(tx: Transition): void {
+  if (tx.state.phase !== 'PLAYING' || tx.state.pending_choice !== null || tx.state.workflow_steps?.length) return;
+  if (tx.state.subphase === 'VILLAGE_BUY' && (tx.state.turn_purchases?.[tx.playerId] ?? 0) > 0
+    && !purchasableCards(tx).length) finishBuying(tx);
+  if (tx.state.subphase === 'VILLAGE_UPGRADE' && !upgradeOptions(tx).length) tx.awaitTurnEnd();
 }
 export function upgradeOptions(tx: Transition): Record<string, any>[] {
   const options: Record<string, any>[] = [];

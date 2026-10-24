@@ -2,7 +2,7 @@ import type {PhysicalCard} from '../game-card/index.js';
 
 export interface Flight {
   card: PhysicalCard;
-  from: DOMRect;
+  from: Pick<DOMRect, 'left' | 'top' | 'width' | 'height'>;
   to: DOMRect;
   destination: HTMLElement;
   reveal: boolean;

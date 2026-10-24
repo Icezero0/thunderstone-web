@@ -52,3 +52,41 @@ test('unreconstructible missed transitions fall back to a snapshot instead of fa
   assert.deepEqual(deckTransitions(state(['a'], ['d']), state(['unknown'], []), [...cleanup, shuffle], 'alice'), []);
   assert.deepEqual(deckTransitions(state([], ['still-in-deck'], ['x']), state(['x'], ['still-in-deck']), [shuffle], 'alice'), []);
 });
+
+test('a committed purchase gains the new discard instance from the quoted public source without moving the hand', () => {
+  const old = state(['h'], ['d'], ['old']), final = state(['h'], ['d'], ['old', 'bought']);
+  const bought = {...event('card_bought'), card_id: 'TS-0001'}, origin = {left: 250, top: 160, width: 156, height: 218};
+  const before = structuredClone([old, final, origin]);
+  const steps = deckTransitions(old, final, [bought], 'alice', {'TS-0001': origin});
+  assert.deepEqual(steps.map(step => step.kind), ['gain']); assert.deepEqual(steps[0].instanceIds, ['bought']);
+  assert.deepEqual(steps[0].origins.bought, origin); assert.deepEqual(steps[0].state, final);
+  assert.deepEqual([old, final, origin], before); origin.left = 99; assert.equal(steps[0].origins.bought.left, 250);
+});
+
+test('unidentified, hidden or duplicate gains snap safely instead of assigning a purchase to the wrong instance', () => {
+  const old = state(['h'], []), final = state(['h'], [], ['bought']);
+  const bought = {...event('card_bought'), card_id: 'TS-0001'}, origins = {'TS-0001': {left: 50, top: 60, width: 144, height: 200}};
+  assert.deepEqual(deckTransitions(old, final, [bought], 'alice'), []);
+  assert.deepEqual(deckTransitions(old, final, [{...bought, player_id: 'bob'}], 'alice', origins), []);
+  assert.deepEqual(deckTransitions(old, final, [], 'alice', origins), []);
+  assert.deepEqual(deckTransitions(old, state(['h'], [], ['bought', 'bonus']), [bought], 'alice', origins), []);
+});
+
+test('an upgrade replaces destruction with an evolution of the exact removed and gained instances', () => {
+  const source = {...card('old'), cardId: 'TS-0354'}, target = {...card('new'), cardId: 'TS-0355'};
+  const old = {...state(['keep'], [], ['discard']), hand: [source, card('keep')]};
+  const final = {...old, hand: [card('keep')], discard: [...old.discard, target]};
+  const events = [{...event('card_destroyed'), card_id: source.cardId}, {...event('hero_upgraded'), source_card_id: source.cardId, target_card_id: target.cardId}];
+  const before = structuredClone([old, final]); const plan = deckTransitions(old, final, events, 'alice');
+  assert.deepEqual(plan.map(step => step.kind), ['upgrade']); assert.equal(plan[0].sourceInstanceId, 'old');
+  assert.equal(plan[0].targetInstanceId, 'new'); assert.deepEqual(plan[0].state, final); assert.deepEqual([old, final], before);
+  assert.deepEqual(deckTransitions(old, final, [{...events[1], player_id: 'bob'}], 'alice'), []);
+});
+
+test('ambiguous upgrade removals and non-discard destinations snap rather than evolving a guessed card', () => {
+  const source = {...card('old'), cardId: 'TS-0354'}, target = {...card('new'), cardId: 'TS-0355'};
+  const old = {hand: [source], draw: [], discard: []}, upgraded = {...event('hero_upgraded'), source_card_id: source.cardId, target_card_id: target.cardId};
+  assert.deepEqual(deckTransitions(old, {hand: [target], draw: [], discard: []}, [upgraded], 'alice'), []);
+  assert.deepEqual(deckTransitions({...old, hand: [source, {...source, id: 'same'}]}, {hand: [], draw: [], discard: [target]}, [upgraded], 'alice'), []);
+  assert.deepEqual(deckTransitions(old, {hand: [], draw: [], discard: [target, {...target, id: 'same-target'}]}, [upgraded], 'alice'), []);
+});

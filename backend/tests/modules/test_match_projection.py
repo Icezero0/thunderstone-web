@@ -136,8 +136,23 @@ class MatchInteractionProjectionTests(unittest.TestCase):
         view = build_match_view(match, 1, legal_commands=[{"type": "BuyCard", "card_ids": ["TS-0011"],
                                                          "options": [{"card_id": "TS-0011", "price": 7}]}])
         self.assertEqual(view["legal_commands"][0]["options"], [{"card_id": "TS-0011", "price": 7}])
-        self.assertEqual(view["viewer_resources"], {"xp": 3, "temporary_gold": 9, "purchases_remaining": 2, "extra_basic_purchases": 1})
+        self.assertEqual(view["viewer_resources"], {"xp": 3, "temporary_gold": 9, "purchases_remaining": 2, "extra_basic_purchases": 1,
+                                                  "gold_income_preview": None})
         self.assertNotIn("1234", json.dumps(view))
+
+    def test_gold_income_preview_is_owned_by_the_turn_player_even_when_another_player_must_respond(self):
+        match = sample_match()
+        match.state["pending_choice"] = {"kind": "effect_value", "player_id": "bob"}
+        own = build_match_view(match, 1, gold_income_preview=7)
+        self.assertEqual(own["actor_player_id"], "bob")
+        self.assertEqual(own["viewer_resources"]["gold_income_preview"], 7)
+        self.assertEqual(own["legal_commands"], [])
+        other = build_match_view(match, 2, gold_income_preview=7)
+        self.assertIsNone(other["viewer_resources"]["gold_income_preview"])
+        unavailable = build_match_view(match, 1, gold_income_preview=7, unavailable_reason="unavailable")
+        self.assertIsNone(unavailable["viewer_resources"]["gold_income_preview"])
+        match.status = "finished"
+        self.assertIsNone(build_match_view(match, 1, gold_income_preview=7)["viewer_resources"]["gold_income_preview"])
 
     def test_event_and_result_summaries_never_expose_raw_scoring_cards_or_randomness(self):
         match = sample_match()

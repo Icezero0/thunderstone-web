@@ -109,6 +109,47 @@ test('active match renders public piles and own cards; details use actual card d
   ui.get('close-card-dialog').dispatch('click'); assert.equal(ui.get('card-dialog').open, false); ui.cleanup();
 });
 
+test('gold always appears, follows authoritative spending on the own turn and resets to zero between turns while XP remains visible', async () => {
+  const view = fixture(), ui = await page({view});
+  assert.equal(ui.get('match-deck-gold-resource').hidden, false); assert.equal(ui.get('match-deck-xp-value').textContent, '2');
+  const village = structuredClone(view); village.version++; village.turn.chosen_action = 'village'; village.turn.subphase = 'VILLAGE_ABILITIES';
+  village.legal_commands = [{type: 'FinishAbilities'}]; village.viewer_resources.temporary_gold = 0;
+  ui.setView(village); await ui.click('refresh-match');
+  assert.equal(ui.get('match-deck-gold-resource').hidden, false); assert.equal(ui.get('match-deck-gold-value').textContent, '0');
+  const produced = structuredClone(village); produced.version++; produced.turn.subphase = 'VILLAGE_BUY'; produced.viewer_resources.temporary_gold = 6;
+  ui.setView(produced); await ui.click('refresh-match'); assert.equal(ui.get('match-deck-gold-value').textContent, '6');
+  const spent = structuredClone(produced); spent.version++; spent.turn.subphase = 'VILLAGE_UPGRADE';
+  spent.viewer_resources.temporary_gold = 1; spent.viewer_resources.xp = 0;
+  ui.setView(spent); await ui.click('refresh-match');
+  assert.equal(ui.get('match-deck-gold-value').textContent, '1'); assert.equal(ui.get('match-deck-xp-value').textContent, '0');
+  const other = structuredClone(spent); other.version++; other.turn.active_player_id = 'bob'; other.actor_player_id = 'bob'; other.legal_commands = [];
+  other.viewer_resources.xp = 4; other.players[1].xp = 99;
+  ui.setView(other); await ui.click('refresh-match');
+  assert.equal(ui.get('match-deck-gold-resource').hidden, false); assert.equal(ui.get('match-deck-gold-value').textContent, '0');
+  assert.equal(ui.get('match-deck-xp-value').textContent, '4'); ui.cleanup();
+});
+
+test('gold forecasts follow authoritative state before production, then disappear for production and other actions or turns', async () => {
+  const view = fixture(); view.viewer_resources.temporary_gold = 0; view.viewer_resources.gold_income_preview = 10;
+  const ui = await page({view}); assert.equal(ui.get('match-deck-gold-resource').textContent, '0(+10)');
+  const abilities = structuredClone(view); abilities.version++; abilities.turn.chosen_action = 'village';
+  abilities.turn.subphase = 'VILLAGE_ABILITIES'; abilities.legal_commands = [{type: 'FinishAbilities'}];
+  abilities.viewer_resources.temporary_gold = 2; abilities.viewer_resources.gold_income_preview = 7;
+  ui.setView(abilities); await ui.click('refresh-match'); assert.equal(ui.get('match-deck-gold-resource').textContent, '2(+7)');
+  const waiting = structuredClone(abilities); waiting.version++; waiting.actor_player_id = 'bob'; waiting.legal_commands = [];
+  waiting.pending_choice = {kind: 'effect_value', player_id: 'bob', can_resolve: false};
+  ui.setView(waiting); await ui.click('refresh-match'); assert.equal(ui.get('match-deck-gold-resource').textContent, '2(+7)');
+  let version = waiting.version;
+  for (const [phase, action] of [['VILLAGE_BUY', 'village'], ['VILLAGE_UPGRADE', 'village'], ['DUNGEON_PREPARE', 'dungeon'], ['REST', 'rest'], ['ACTION_END', 'village']]) {
+    const next = structuredClone(abilities); next.version = ++version; next.turn.subphase = phase; next.turn.chosen_action = action;
+    // Even an outdated forecast cannot survive a phase change at the presentation boundary.
+    next.viewer_resources.temporary_gold = 9; ui.setView(next); await ui.click('refresh-match');
+    assert.equal(ui.get('match-deck-gold-resource').textContent, '9'); assert.equal(ui.get('match-deck-gold-income-preview').hidden, true);
+  }
+  const other = structuredClone(view); other.version = ++version; other.turn.active_player_id = 'bob'; other.actor_player_id = 'bob'; other.legal_commands = [];
+  ui.setView(other); await ui.click('refresh-match'); assert.equal(ui.get('match-deck-gold-resource').textContent, '0'); ui.cleanup();
+});
+
 test('flying spire host selects two groups, submits once and shows the resulting board', async () => {
   const ui = await page({view: fixture('setup_pending'), post: async () => fixture()});
   const checkbox = i => ui.get('setup-monsters').children[i].children.at(-1).children[0];
@@ -370,6 +411,259 @@ function restView(candidates = ['CI-1', 'CI-2']) {
 const posts = ui => ui.requests.filter(request => request.url.endsWith('/commands'));
 const glowing = ui => handCards(ui).filter(card => card.dataset.glowing === 'true').map(card => card.dataset.instanceId);
 
+function villageView(phase, commands) {
+  const view = fixture(); Object.assign(view.turn, {chosen_action: 'village', subphase: phase});
+  view.legal_commands = commands; return view;
+}
+const responseButtons = ui => ui.get('match-deck-player-response').children.filter(node => node.tagName === 'button');
+const supplyCard = (ui, zone) => descendants(ui.get(`match-public-village-cards-pile-${zone}`))
+  .find(node => node.className === 'physical-card' && !node.hidden);
+
+test('village stages expose exactly their action and skip buttons, including disabled actions with no legal options', async () => {
+  for (const [phase, commands, labels] of [
+    ['VILLAGE_ABILITIES', [{type: 'FinishAbilities'}], ['跳过']],
+    ['VILLAGE_BUY', [{type: 'FinishBuying'}], ['购买卡牌', '跳过']],
+    ['VILLAGE_UPGRADE', [{type: 'FinishUpgrading'}], ['升级英雄', '跳过']],
+  ]) {
+    const ui = await page({view: villageView(phase, commands)});
+    assert.deepEqual(responseButtons(ui).map(node => node.textContent), labels);
+    if (phase !== 'VILLAGE_ABILITIES') assert.equal(responseButtons(ui)[0].disabled, true);
+    assert.equal(responseButtons(ui).at(-1).disabled, false); ui.cleanup();
+  }
+});
+
+test('village effect cards glow immediately and list distinct legal abilities for the exact hand instance', async () => {
+  const abilities = ['TS-0001-A01', 'TS-0001-A02'];
+  const view = villageView('VILLAGE_ABILITIES', [{type: 'ActivateAbility', options: abilities.map(ability_id => ({ability_id, source_instance_id: 'CI-1'}))}, {type: 'FinishAbilities'}]);
+  view.abilities = Object.fromEntries(abilities.map((id, index) => [id, {source_card_id: 'TS-0001', source_line: `村庄：效果 ${index + 1}。`}]));
+  const next = structuredClone(view); next.version++; next.legal_commands = [{type: 'FinishAbilities'}];
+  const ui = await page({view, post: () => next});
+  assert.deepEqual(glowing(ui), ['CI-1']);
+  handCards(ui)[1].fire('click'); assert.equal(ui.get('match-card-actions').hidden, true);
+  handCards(ui)[0].fire('click'); assert.equal(ui.get('match-card-actions').hidden, false);
+  assert.equal(ui.get('match-content').inert, true);
+  const options = descendants(ui.get('match-card-actions')).filter(node => node.dataset.command === 'ActivateAbility');
+  assert.deepEqual(options.map(node => node.textContent), ['村庄：效果 1。', '村庄：效果 2。']);
+  options[1].fire('click'); options[1].fire('click'); await settle();
+  assert.deepEqual(posts(ui).map(request => request.body.command), [{type: 'ActivateAbility', source_instance_id: 'CI-1', ability_id: abilities[1]}]);
+  assert.equal(ui.get('match-card-actions').hidden, true); assert.equal(ui.get('match-content').inert, false);
+  assert.deepEqual(glowing(ui), []); ui.cleanup();
+});
+
+test('stale card ability buttons cannot execute after a newer projection closes the panel', async () => {
+  const view = villageView('VILLAGE_ABILITIES', [{type: 'ActivateAbility', options: [{ability_id: 'TS-0001-A01', source_instance_id: 'CI-1'}]}, {type: 'FinishAbilities'}]);
+  const ui = await page({view}); handCards(ui)[0].fire('click');
+  const old = descendants(ui.get('match-card-actions')).find(node => node.dataset.command === 'ActivateAbility');
+  const next = structuredClone(view); next.version++;
+  ui.setView(next); await ui.click('refresh-match');
+  assert.equal(ui.get('match-card-actions').hidden, true); old.fire('click');
+  assert.equal(posts(ui).length, 0); ui.cleanup();
+});
+
+test('card action dialogs share keyboard focus trapping, escape dismissal and background restoration', async () => {
+  const view = villageView('VILLAGE_ABILITIES', [{type: 'ActivateAbility', options: ['A01', 'A02'].map(suffix => ({source_instance_id: 'CI-1', ability_id: `TS-0001-${suffix}`}))}, {type: 'FinishAbilities'}]);
+  const ui = await page({view}), card = handCards(ui)[0]; card.focus(); card.fire('click');
+  const close = ui.get('match-card-actions-close'), options = descendants(ui.get('match-card-actions')).filter(node => node.dataset.command);
+  assert.ok(ui.document.activeElement === close);
+  ui.window.fire('keydown', {key: 'Tab', shiftKey: true}); assert.ok(ui.document.activeElement === options.at(-1));
+  ui.window.fire('keydown', {key: 'Tab'}); assert.ok(ui.document.activeElement === close);
+  ui.window.fire('keydown', {key: 'Escape'});
+  assert.equal(ui.get('match-card-actions').hidden, true); assert.equal(ui.get('match-content').inert, false);
+  assert.ok(ui.document.activeElement === card); assert.equal(posts(ui).length, 0); ui.cleanup();
+});
+
+test('a village effect choice opens a response dialog and can be reopened from the response bar after dismissal', async () => {
+  const view = villageView('VILLAGE_ABILITIES', [{type: 'ActivateAbility', options: [{ability_id: 'TS-0001-A01', source_instance_id: 'CI-1'}]}, {type: 'FinishAbilities'}]);
+  const pending = structuredClone(view); pending.version++; pending.pending_choice = {kind: 'effect_value', player_id: 'alice', can_resolve: true};
+  pending.legal_commands = [{type: 'ResolveValueChoice', options: [0, 1]}];
+  const done = structuredClone(view); done.version += 2;
+  const ui = await page({view, post: (_url, body) => body.command.type === 'ActivateAbility' ? pending : done});
+  handCards(ui)[0].fire('click'); descendants(ui.get('match-card-actions')).find(node => node.dataset.command === 'ActivateAbility').fire('click'); await settle();
+  assert.equal(ui.get('match-card-actions').hidden, true); assert.equal(ui.get('match-effect-response').hidden, false);
+  assert.deepEqual(responseButtons(ui).map(node => node.textContent), ['处理效果']);
+  ui.get('match-effect-response-close').fire('click'); assert.equal(ui.get('match-content').inert, false);
+  await ui.click('match-deck-response-effect:respond'); assert.equal(ui.get('match-effect-response').hidden, false);
+  commandButtons(ui, 'ResolveValueChoice')[0].fire('click'); await settle();
+  assert.deepEqual(posts(ui).at(-1).body.command, {type: 'ResolveValueChoice', value: 0});
+  assert.equal(ui.get('match-effect-response').hidden, true); assert.equal(ui.get('match-content').inert, false); ui.cleanup();
+});
+
+test('purchase targeting uses quoted prices rather than printed costs and buys only a legal current top', async () => {
+  const view = villageView('VILLAGE_BUY', [{type: 'BuyCard', card_ids: ['TS-0001', 'TS-0002'], options: [
+    {card_id: 'TS-0001', price: 0}, {card_id: 'TS-0002', price: 3}]}, {type: 'FinishBuying'}]);
+  view.viewer_resources.temporary_gold = 3;
+  view.cards['TS-0001'].stats.价格 = '99'; view.cards['TS-0300'].stats.价格 = '0';
+  const next = structuredClone(view); next.version++; next.viewer_resources.temporary_gold = 0;
+  next.turn.subphase = 'ACTION_END'; next.legal_commands = [{type: 'FinishTurn'}];
+  const ui = await page({view, post: () => next});
+  assert.equal(supplyCard(ui, 'basic_supply:test').dataset.glowing, 'false');
+  await ui.click('match-deck-response-village:buy');
+  assert.equal(ui.get('match-public-village-tab').getAttribute('aria-selected'), 'true');
+  assert.equal(supplyCard(ui, 'basic_supply:test').dataset.glowing, 'true');
+  assert.equal(supplyCard(ui, 'village_supply:test').dataset.glowing, 'true');
+  assert.equal(supplyCard(ui, 'village_supply:test').dataset.purchasePrice, '3');
+  assert.equal(supplyCard(ui, 'hero_supply:test').dataset.glowing, 'false');
+  supplyCard(ui, 'hero_supply:test').fire('click'); assert.equal(posts(ui).length, 0);
+  assert.equal(ui.get('match-public-village-cards-browser').hidden, true);
+  supplyCard(ui, 'village_supply:test').fire('click'); await settle();
+  assert.deepEqual(posts(ui).map(request => request.body.command), [{type: 'BuyCard', card_id: 'TS-0002'}]);
+  assert.equal(ui.get('match-deck-gold-value').textContent, '0');
+  assert.equal(ui.get('match-deck-response-village:buy').isConnected, false);
+  assert.equal(ui.get('match-deck-response-FinishTurn').disabled, false);
+  assert.equal(supplyCard(ui, 'basic_supply:test').dataset.glowing, 'false'); ui.cleanup();
+});
+
+test('extra purchases stay in purchase targeting and refresh the legal cards after every spend', async () => {
+  const view = villageView('VILLAGE_BUY', [{type: 'BuyCard', card_ids: ['TS-0001', 'TS-0002'], options: [
+    {card_id: 'TS-0001', price: 2}, {card_id: 'TS-0002', price: 4}]}, {type: 'FinishBuying'}]);
+  view.viewer_resources.temporary_gold = 6; view.viewer_resources.purchases_remaining = 2;
+  const second = structuredClone(view); second.version++; second.viewer_resources.temporary_gold = 2;
+  second.viewer_resources.purchases_remaining = 1; second.legal_commands[0] = {type: 'BuyCard', card_ids: ['TS-0001'], options: [{card_id: 'TS-0001', price: 2}]};
+  const done = structuredClone(second); done.version++; done.viewer_resources.temporary_gold = 0;
+  done.viewer_resources.purchases_remaining = 0; done.turn.subphase = 'ACTION_END'; done.legal_commands = [{type: 'FinishTurn'}];
+  const ui = await page({view, post: (_url, body) => body.command.card_id === 'TS-0002' ? second : done});
+  await ui.click('match-deck-response-village:buy'); supplyCard(ui, 'village_supply:test').fire('click'); await settle();
+  assert.equal(supplyCard(ui, 'village_supply:test').dataset.glowing, 'false');
+  assert.equal(supplyCard(ui, 'basic_supply:test').dataset.glowing, 'true');
+  supplyCard(ui, 'basic_supply:test').fire('click'); await settle();
+  assert.deepEqual(posts(ui).map(request => request.body.command.card_id), ['TS-0002', 'TS-0001']);
+  assert.match(ui.get('match-deck-response-progress').textContent, /6\/6 结束回合/);
+  assert.equal(ui.get('match-deck-response-FinishBuying').isConnected, false); ui.cleanup();
+});
+
+for (const kind of ['hero', 'basic']) test(`purchasing from ${kind} flies the old visible top into discard before exposing manual turn end`, async () => {
+  const cardId = kind === 'hero' ? 'TS-0300' : 'TS-0001', zone = `${kind}_supply:test`;
+  const view = villageView('VILLAGE_BUY', [{type: 'BuyCard', card_ids: [cardId], options: [{card_id: cardId, price: 3}]}, {type: 'FinishBuying'}]);
+  const next = structuredClone(view); next.version++; next.turn.subphase = 'ACTION_END'; next.viewer_resources.temporary_gold = 0;
+  next.legal_commands = [{type: 'FinishTurn'}]; next.discard = [{instance_id: 'CI-bought', card_id: cardId}];
+  next.event_log = [{sequence: 1, kind: 'card_bought', player_id: 'alice', card_id: cardId, price: 3}];
+  if (kind === 'hero') {
+    const pile = next.supplies.find(pile => pile.zone_id === zone);
+    pile.cards[0].count = 0; pile.top_card_id = 'TS-0301'; pile.remaining = 4;
+  }
+  const ui = await page({view, animationsEnabled: true, post: () => next});
+  await ui.click('match-deck-response-village:buy'); const source = supplyCard(ui, zone);
+  const lift = source.children[0]; lift.getBoundingClientRect = () => ({left: 123, top: 208, width: 160, height: 224, right: 283, bottom: 432});
+  source.fire('click'); await settle();
+  const flights = ui.animations.filter(animation => animation.element.className === 'card-flight');
+  assert.equal(flights.length, 1); assert.equal(flights[0].element.style.left, '123px');
+  assert.equal(flights[0].element.style.top, '208px'); assert.equal(flights[0].element.children[0].dataset.cardId, cardId);
+  assert.equal(ui.get('match-deck-response-FinishTurn').disabled, true); assert.equal(ui.get('match-deck-discard-count').textContent, '0');
+  if (kind === 'hero') assert.equal(supplyCard(ui, zone).dataset.cardId, 'TS-0301');
+  else assert.equal(ui.get(`match-public-village-cards-pile-${zone}`).children[0].children[1].textContent, '∞');
+  ui.setView(next); await ui.click('refresh-match');
+  assert.equal(ui.animations.filter(animation => animation.element.className === 'card-flight').length, 1, 'same version cannot replay a purchase');
+  await ui.advance(300); assert.equal(ui.get('match-deck-discard-count').textContent, '1');
+  assert.equal(ui.get('match-deck-response-FinishTurn').disabled, false);
+  assert.deepEqual(responseButtons(ui).map(node => node.textContent), ['结束回合']);
+  assert.equal(posts(ui).length, 1, 'automatic stages never require extra browser commands'); ui.cleanup();
+});
+
+test('automatic entry into upgrade does not replace the opponent purchase announcement', () => {
+  const previous = villageView('VILLAGE_BUY', []); previous.viewer_player_id = 'bob';
+  const next = structuredClone(previous); next.version++; next.turn.subphase = 'VILLAGE_UPGRADE';
+  const events = [{sequence: 1, kind: 'card_bought', player_id: 'alice', card_id: 'TS-0300'},
+    {sequence: 2, kind: 'village_upgrade_started', player_id: 'alice'}];
+  assert.deepEqual(playerActivity(next, previous, events), {playerId: 'alice', text: '购买了 卡牌2'});
+  next.turn.subphase = 'ACTION_END';
+  assert.deepEqual(playerActivity(next, previous, events), {playerId: 'alice', text: '购买了 卡牌2'});
+});
+
+test('purchase requests lock repeated clicks and recover the same targeting and command ID after a network failure', async () => {
+  const view = villageView('VILLAGE_BUY', [{type: 'BuyCard', card_ids: ['TS-0002'], options: [{card_id: 'TS-0002', price: 3}]}, {type: 'FinishBuying'}]);
+  let calls = 0;
+  const ui = await page({view, post: () => {if (++calls === 1) throw new TypeError('offline'); return {...view, version: 2};}});
+  await ui.click('match-deck-response-village:buy'); const card = supplyCard(ui, 'village_supply:test');
+  card.fire('click'); card.fire('click'); await settle();
+  assert.equal(posts(ui).length, 1); assert.equal(card.dataset.glowing, 'true');
+  card.fire('click'); await settle();
+  assert.equal(posts(ui).length, 2); assert.equal(posts(ui)[0].body.command_id, posts(ui)[1].body.command_id); ui.cleanup();
+});
+
+test('upgrade highlights only eligible hand heroes and submits a sole legal upgrade directly, including exact XP', async () => {
+  const view = villageView('VILLAGE_UPGRADE', [{type: 'UpgradeHero', options: [{source_instance_id: 'CI-1', target_card_id: 'TS-0300', xp_cost: 2}]}, {type: 'FinishUpgrading'}]);
+  const next = structuredClone(view); next.version++; next.viewer_resources.xp = 0;
+  next.hand = next.hand.filter(card => card.instance_id !== 'CI-1'); next.turn.subphase = 'ACTION_END'; next.legal_commands = [{type: 'FinishTurn'}];
+  const ui = await page({view, post: () => next});
+  assert.deepEqual(glowing(ui), []); await ui.click('match-deck-response-village:upgrade'); assert.deepEqual(glowing(ui), ['CI-1']);
+  handCards(ui)[1].fire('click'); assert.equal(posts(ui).length, 0);
+  handCards(ui)[0].fire('click'); await settle();
+  assert.deepEqual(posts(ui)[0].body.command, {type: 'UpgradeHero', source_instance_id: 'CI-1', target_card_id: 'TS-0300'});
+  assert.equal(ui.get('match-deck-xp-value').textContent, '0'); assert.equal(ui.get('match-deck-response-village:upgrade').isConnected, false);
+  assert.equal(ui.get('match-deck-response-FinishTurn').disabled, false); ui.cleanup();
+});
+
+test('a committed hero upgrade evolves instead of playing its destruction event, and refresh does not replay it', async () => {
+  const view = villageView('VILLAGE_UPGRADE', [{type: 'UpgradeHero', options: [{source_instance_id: 'CI-1', target_card_id: 'TS-0300', xp_cost: 3}]}, {type: 'FinishUpgrading'}]);
+  view.viewer_resources.xp = 3;
+  const next = structuredClone(view); next.version++; next.viewer_resources.xp = 0;
+  next.turn.subphase = 'ACTION_END'; next.legal_commands = [{type: 'FinishTurn'}];
+  next.hand = next.hand.filter(card => card.instance_id !== 'CI-1'); next.discard = [{instance_id: 'CI-evolved', card_id: 'TS-0300'}];
+  next.event_log = [{sequence: 1, kind: 'card_destroyed', player_id: 'alice', card_id: 'TS-0001'},
+    {sequence: 2, kind: 'hero_upgraded', player_id: 'alice', source_card_id: 'TS-0001', target_card_id: 'TS-0300', xp_cost: 3}];
+  const ui = await page({view, animationsEnabled: true, post: () => next});
+  await ui.click('match-deck-response-village:upgrade'); handCards(ui)[0].fire('click'); await settle();
+  assert.equal(ui.get('match-deck-card-motion-layer').children[0].className, 'card-upgrade');
+  assert.equal(ui.animations.some(animation => animation.element.className === 'card-destruction'), false);
+  assert.equal(ui.get('match-deck-response-FinishTurn').disabled, true);
+  ui.setView(next); await ui.click('refresh-match');
+  assert.equal(ui.animations.filter(animation => animation.element.className === 'card-upgrade').length, 1);
+  await ui.advance(1700);
+  assert.equal(ui.get('match-deck-discard-count').textContent, '1'); assert.equal(ui.get('match-deck-response-FinishTurn').disabled, false);
+  assert.equal(ui.get('match-deck-xp-value').textContent, '0'); assert.equal(ui.get('match-deck-card-motion-layer').children.length, 0);
+  assert.equal(posts(ui).length, 1); ui.cleanup();
+});
+
+test('militia with several upgrade paths asks for the exact target, and a stale upgrade menu cannot send', async () => {
+  const view = villageView('VILLAGE_UPGRADE', [{type: 'UpgradeHero', options: ['TS-0300', 'TS-0301'].map(target_card_id => ({source_instance_id: 'CI-1', target_card_id, xp_cost: 2}))}, {type: 'FinishUpgrading'}]);
+  const ui = await page({view}); await ui.click('match-deck-response-village:upgrade'); handCards(ui)[0].fire('click');
+  await settle();
+  const options = descendants(ui.get('match-card-actions')).filter(node => node.dataset.command === 'UpgradeHero');
+  assert.equal(options.length, 2); assert.match(options[1].textContent, /卡牌3.*2 XP/); assert.equal(posts(ui).length, 0);
+  const preview = descendants(ui.get('match-card-actions')).find(node => node.className === 'physical-card');
+  preview.fire('pointerenter'); ui.key('Alt'); assert.equal(ui.get('match-upgrade-inspect').hidden, false); ui.release();
+  const next = structuredClone(view); next.version++; next.legal_commands = [{type: 'FinishUpgrading'}];
+  ui.setView(next); await ui.click('refresh-match'); options[1].fire('click'); assert.equal(posts(ui).length, 0); ui.cleanup();
+  const chosen = await page({view, post: () => ({...next, version: 3})});
+  await chosen.click('match-deck-response-village:upgrade'); handCards(chosen)[0].fire('click');
+  descendants(chosen.get('match-card-actions')).filter(node => node.dataset.command === 'UpgradeHero')[1].fire('click'); await settle();
+  assert.equal(posts(chosen)[0].body.command.target_card_id, 'TS-0301'); chosen.cleanup();
+});
+
+test('waiting or unavailable village views expose no targeting or effect menu', async () => {
+  for (const updates of [{actor_player_id: 'bob'}, {unavailable_reason: '规则版本已变化'}]) {
+    const view = Object.assign(villageView('VILLAGE_ABILITIES', [{type: 'ActivateAbility', options: [{source_instance_id: 'CI-1', ability_id: 'TS-0001-A01'}]}, {type: 'FinishAbilities'}]), updates);
+    const ui = await page({view}); assert.deepEqual(glowing(ui), []); handCards(ui)[0].fire('click');
+    assert.equal(ui.get('match-card-actions').hidden, true); assert.equal(responseButtons(ui).length, 0); assert.equal(posts(ui).length, 0); ui.cleanup();
+  }
+});
+
+test('dungeon completion uses the locally selected battle team and target without a separate declaration button', async () => {
+  const {view, f} = battleView(); Object.assign(view.turn, {chosen_action: 'dungeon', subphase: 'DUNGEON_PREPARE'});
+  const next = structuredClone(view); next.version++; next.turn.subphase = 'ACTION_END'; next.battle_preparation = null; next.legal_commands = [{type: 'FinishTurn'}];
+  const ui = await page({view, post: () => next});
+  assert.deepEqual(responseButtons(ui).map(node => node.textContent), ['完成']);
+  await ui.click('match-deck-response-SubmitBattleTeam'); assert.equal(posts(ui).length, 0); assert.match(ui.get('notice').textContent, /先选择/);
+  ui.get('match-public-dungeon-cards-main-rank-1').children[1].children[0].fire('click');
+  handCards(ui).find(card => card.dataset.instanceId === f.hand[2]).fire('click');
+  await ui.click('match-deck-response-SubmitBattleTeam');
+  assert.equal(posts(ui)[0].body.command.type, 'SubmitBattleTeam'); assert.equal(posts(ui)[0].body.command.draft.target_instance_id, f.hall[0]);
+  assert.deepEqual(posts(ui)[0].body.command.draft.support_instance_ids, []);
+  assert.deepEqual(responseButtons(ui).map(node => node.textContent), ['结束回合']); ui.cleanup();
+});
+
+test('a hero with dungeon abilities can still opt out of combat through its card action panel', async () => {
+  const {view, f} = battleView(); Object.assign(view.turn, {chosen_action: 'dungeon', subphase: 'DUNGEON_PREPARE'});
+  view.legal_commands.push({type: 'ActivateAbility', options: [{source_instance_id: f.hand[0], ability_id: 'TS-0001-A01'}]});
+  view.abilities['TS-0001-A01'] = {source_card_id: 'TS-0001', source_line: '地下城：抽 1 张牌。'};
+  const ui = await page({view}), hero = handCards(ui).find(card => card.dataset.instanceId === f.hand[0]);
+  assert.equal(hero.dataset.glowing, 'true'); assert.equal(hero.dataset.selected, 'true'); hero.fire('click');
+  const toggle = descendants(ui.get('match-card-actions')).find(node => node.dataset.participation === f.hand[0]);
+  assert.equal(toggle.textContent, '取消参战'); toggle.fire('click');
+  assert.equal(hero.dataset.selected, 'false'); assert.equal(handCards(ui).length, 3);
+  assert.equal(posts(ui).length, 0); ui.cleanup();
+});
+
 test('action and numbered stage labels use the server action, phase and paused event', () => {
   const cases = [
     ['village', 'VILLAGE_ABILITIES', 'VILLAGE_ENTER', 1, '展示手牌'],
@@ -569,7 +863,7 @@ test('opponent turn reveal and rest destruction replace the row bubble without r
   const view = graphicalView(); view.actor_player_id = 'bob'; view.turn.active_player_id = 'bob'; view.legal_commands = [];
   view.cards['TS-0001'].name = '民兵'; view.players[1].is_active = true; view.players[0].is_active = false;
   const ui = await page({view}), bubble = ui.get('match-public-player-activity');
-  assert.equal(bubble.textContent, '展示了手牌'); assert.equal(bubble.parentElement.dataset.playerId, 'bob');
+  assert.equal(bubble.textContent, '展示了手牌'); assert.equal(bubble.dataset.playerId, 'bob');
   const entered = structuredClone(view); entered.version++; entered.turn.subphase = 'REST'; entered.turn.chosen_action = 'rest';
   entered.event_log = [{sequence: 1, kind: 'ACTION_ENTERED', player_id: 'bob', action: 'rest'}];
   ui.setView(entered); await ui.click('refresh-match'); assert.equal(bubble.textContent, '展示了手牌');

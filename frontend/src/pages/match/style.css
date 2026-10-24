@@ -1,4 +1,5 @@
 @import './table.css';
+@import './interaction.css';
 .masthead-inner nav {display: flex; align-items: center; gap: 22px; font-size: 12px;}
 .masthead-inner nav a {color: var(--header-ink); text-decoration: none;}
 .masthead-inner nav a:hover {color: var(--header-gold);}

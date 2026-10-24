@@ -79,7 +79,7 @@ test('drawing while viewing treasures updates the hidden hand without flying car
 test('the response region is between tabs and sorting; choices follow copied host data and stale, disabled or inert controls cannot respond', async () => {
   const answers = [], {ui, area} = await setup({onResponse: (...answer) => answers.push(answer)});
   const header = ui.get('one-hand-zone-heading');
-  assert.deepEqual(header.children.map(node => node.id), ['one-card-tabs', 'one-player-response', 'one-auto-sort-label']);
+  assert.deepEqual(header.children.map(node => node.id), ['one-card-tabs', 'one-player-response', 'one-resources', 'one-auto-sort-label']);
   assert.equal(ui.get('one-player-response').hidden, false); assert.equal(ui.get('one-player-response').children.length, 0);
   const request = {id: 'turn', prompt: '行动', choices: [{id: 'village', label: '村庄'}, {id: 'dungeon', label: '地下城', disabled: true}]};
   area.setResponse(request); request.choices[0].label = 'Caller mutation';

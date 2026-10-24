@@ -81,11 +81,13 @@ test('the host controls modal backgrounds and opening coordination without coupl
 test('activity bubbles attach to player rows, replace text and expire without replaying on snapshots', async () => {
   const {ui, list, players} = await setup(); list.showActivity('bob', '展示了手牌');
   const bubble = ui.get('first-player-activity');
-  assert.equal(bubble.parentElement, rows(list)[1]); assert.equal(bubble.textContent, '展示了手牌');
+  assert.ok(bubble.parentElement === list.root); assert.equal(bubble.dataset.playerId, 'bob'); assert.equal(bubble.textContent, '展示了手牌');
   assert.equal(bubble.getAttribute('role'), 'status');
-  await ui.advance(3000); list.setPlayers([...players].reverse()); assert.equal(bubble.parentElement, rows(list)[0]);
+  await ui.advance(3000); list.setPlayers([...players].reverse()); assert.ok(bubble.parentElement === list.root);
   list.showActivity('bob', '摧毁了 <民兵>');
-  assert.equal(bubble.textContent, '摧毁了 <民兵>'); assert.equal(bubble.children.length, 0);
+  assert.equal(bubble.textContent, '摧毁了 <民兵>'); assert.equal(bubble.children.length, 2);
+  assert.equal(bubble.children[0].children.length, 0, 'message remains plain text');
+  assert.equal(bubble.children[1].tagName, 'svg'); assert.equal(bubble.children[1].getAttribute('aria-hidden'), 'true');
   await ui.advance(2000); assert.equal(bubble.isConnected, true);
   await ui.advance(2500); assert.equal(bubble.isConnected, false);
   list.setPlayers(players); assert.equal(bubble.isConnected, false);
@@ -102,4 +104,20 @@ test('activity bubbles clean up on hidden pages and disposal; probe examples onl
   await probe.click('demo-player-activity'); assert.equal(probe.get('public-probe-player-activity').textContent, '展示了手牌');
   await probe.click('demo-player-destroy'); assert.equal(probe.get('public-probe-player-activity').textContent, '摧毁了 民兵');
   assert.deepEqual(probe.cards().map(card => card.dataset.instanceId), before); probe.window.fire('pagehide', {persisted: false});
+});
+
+test('scrolling the player list moves the external bubble and hides it when its row is clipped', async () => {
+  const {ui, list} = await setup(), scroller = ui.get('first-players-list'), row = rows(list)[1];
+  let top = 95, height = 72;
+  const rect = (left, top, width, height) => ({left, top, width, height, right: left + width, bottom: top + height});
+  list.root.getBoundingClientRect = () => rect(600, 50, 160, 180);
+  scroller.getBoundingClientRect = () => rect(610, 90, 140, 120);
+  row.getBoundingClientRect = () => rect(610, top, 140, height);
+  list.showActivity('bob', '展示了手牌'); const bubble = ui.get('first-player-activity');
+  assert.equal(scroller.contains(bubble), false); assert.equal(bubble.style.left, '-4px');
+  assert.equal(bubble.style.top, '81px'); assert.equal(bubble.hidden, false);
+  top = 230; scroller.fire('scroll'); assert.equal(bubble.hidden, true);
+  top = 170; scroller.fire('scroll'); assert.equal(bubble.hidden, false); assert.equal(bubble.style.top, '140px');
+  top = 90; height = 40; ui.observers.at(-1).callback(); assert.equal(bubble.style.top, '60px');
+  list.dispose(); scroller.fire('scroll'); assert.equal(bubble.isConnected, false);
 });

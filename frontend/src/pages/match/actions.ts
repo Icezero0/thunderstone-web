@@ -2,6 +2,7 @@ import type {GameCommand, LegalCommand, MatchView} from '../../shared/api/types.
 import {$, el} from './dom.js';
 import {abilityText, choiceCountValid, instanceCardId, instanceName, moveChoice, optionRows, valueLabel} from './commands.js';
 import {BattleEditor} from './battle-editor.js';
+import {InteractionPanel} from './interaction-panel.js';
 
 const responseLabels: Record<string, string> = {destroy: '摧毁新获得的疾病', redirect: '将疾病交给另一玩家',
   prevent_destroy: '防止摧毁', ignore_trap: '免疫本次陷阱', ignore_battle: '免疫战斗效果', redirect_trap: '转移陷阱效果', redirect_opponent: '转移对手效果'};
@@ -15,17 +16,39 @@ export class MatchActions {
   private selected: string[] = [];
   private order: string[] = [];
   private battle: BattleEditor;
+  private readonly responsePanel: InteractionPanel;
+  private responseKey = '';
+  private readonly controlsParent: HTMLElement;
   constructor(private send: (command: GameCommand) => void,
     private cardTile: (view: MatchView, id: string, caption?: string) => HTMLElement,
-    report: (message: string) => void, selection: (ids: readonly string[]) => void) {this.battle = new BattleEditor(send, report, selection);}
+    report: (message: string) => void, selection: (ids: readonly string[]) => void,
+    private beforePanel: () => void) {
+    this.battle = new BattleEditor(send, report, selection);
+    this.controlsParent = $('#turn-controls').parentElement!;
+    this.responsePanel = new InteractionPanel('match-effect-response', () => this.controlsParent.append($('#turn-controls')));
+  }
   selectHand(ids: readonly string[]): void {this.battle.selectHand(ids);}
   selectTarget(id: string): void {this.battle.selectTarget(id);}
+  completeBattle(): void {this.battle.submit();}
+  openResponse(): void {
+    if (!this.canRespond) return;
+    this.beforePanel(); this.responsePanel.show('处理卡牌效果', $('#turn-controls'));
+  }
+  private get canRespond(): boolean {
+    const view = this.view;
+    return !!view?.pending_choice && view.status === 'active' && !view.unavailable_reason
+      && view.actor_player_id === view.viewer_player_id && view.legal_commands.some(command => command.type.startsWith('Resolve'));
+  }
+  finish(): void {this.responsePanel.close(false);}
+  dispose(): void {this.responsePanel.dispose();}
 
   receive(view: MatchView, busy: boolean): void {
     this.view = view; this.busy = busy;
     const key = `${view.id}:${view.version}:${view.pending_choice?.kind ?? ''}`;
     if (key !== this.key) {this.key = key; this.selected = []; this.order = [];}
     this.render(); this.battle.receive(view, busy);
+    if (!this.canRespond) {this.responsePanel.close(false); this.responseKey = '';}
+    else if (this.responseKey !== key) {this.responseKey = key; this.openResponse();}
   }
   private button(text: string, command: GameCommand, secondary = false): HTMLButtonElement {
     const button = el('button', secondary ? 'button secondary' : 'button primary', text);

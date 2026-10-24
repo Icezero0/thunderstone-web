@@ -1,10 +1,11 @@
-.player-list-area {position: relative; z-index: 20; min-width: 0; min-height: 0; padding: 16px 10px; border: 1px solid var(--header-line); border-radius: 10px; background: var(--player-list-background, var(--header-background)); color: var(--header-ink);}
+.player-list-area {position: relative; z-index: 20; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 16px 10px; border: 1px solid var(--header-line); border-radius: 10px; background: var(--player-list-background, var(--header-background)); color: var(--header-ink);}
 .player-list-area h2 {margin: 0 0 14px 4px; color: var(--header-muted); font: 12px var(--font-body); letter-spacing: .12em;}
-.player-list-area ul {display: flex; flex-direction: column; gap: 8px; padding: 0; margin: 0; list-style: none;}
-.player-list-area .public-player {position: relative; min-width: 0; border: 1px solid transparent; border-radius: 9px;}
-.player-activity-bubble {position: absolute; right: calc(100% + 14px); top: 50%; translate: 0 -50%; width: max-content; max-width: min(320px, 55vw); padding: 12px 16px; border: 1px solid var(--gold); border-radius: 10px; background: var(--panel); color: var(--ink); box-shadow: var(--shadow); font: 13px/1.6 var(--font-body); overflow-wrap: anywhere; transform-origin: right center; pointer-events: none;}
-.player-activity-bubble::before, .player-activity-bubble::after {content: ''; position: absolute; left: 100%; top: calc(50% - 7px); border: 7px solid transparent; border-left-color: var(--gold);}
-.player-activity-bubble::after {margin-left: -1px; border-left-color: var(--panel);}
+.player-list-area .player-list-scroll {display: flex; flex: 1; flex-direction: column; min-height: 0; overflow: auto; scrollbar-width: none; overscroll-behavior: contain; gap: 8px; padding: 0; margin: 0; list-style: none;}
+.player-list-area .player-list-scroll::-webkit-scrollbar {display: none; width: 0; height: 0;}
+.player-list-area .public-player {position: relative; flex: none; min-width: 0; border: 1px solid transparent; border-radius: 9px;}
+/* Minimal floating surface, inspired by Radix Themes and Floating UI rounded arrows. */
+.player-activity-bubble {position: absolute; translate: -100% -50%; width: max-content; max-width: min(320px, 55vw); padding: 11px 16px; border: 0; border-radius: 12px; background: var(--panel); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 10%), 0 7px 20px rgb(0 0 0 / 18%); font: 13px/1.65 var(--font-body); overflow-wrap: anywhere; transform-origin: right center; pointer-events: none;}
+.player-activity-arrow {position: absolute; left: calc(100% - 1px); top: 50%; translate: 0 -50%; width: 9px; height: 16px; fill: var(--panel); overflow: visible;}
 .player-list-area .public-player-button {display: flex; align-items: center; gap: 9px; width: 100%; min-width: 0; padding: 10px 8px; border: 0; border-radius: 8px; background: transparent; color: var(--header-ink); text-align: left;}
 .player-list-area .public-player-button:not(:disabled):hover {background: rgb(185 140 69 / 10%);}
 .player-list-area .public-player-button:disabled {opacity: 1;}

@@ -29,6 +29,14 @@ returns `{state, events, legal_commands}` without changing the input. A pending
 choice stores a serializable continuation. `legalCommands` reads state without
 advancing it. `takeDisease` uses the same transaction and replacement workflow.
 
+`turnOptions(state, playerId, catalog, ruleset)` returns the same legal commands
+with `gold_income_preview`: the immediate additional gold production would yield
+for the active player in `TURN_START` or `VILLAGE_ABILITIES`, otherwise `null`.
+It shares the actual production calculation, includes current hand, economy rules
+and pending gold adjustments, and excludes gold already earned. It consumes no
+abilities, adjustments, RNG or events. The backend projects only this number to
+the owning player; it sends no extra private calculation state to the browser.
+
 The backend owns and persists the full match state, orders commands, and sends
 player-specific views. Python entry points in `backend/app/integrations/game_engine/` load catalog and
 reviewed effect snapshots and call the stateless JSON-lines worker. Archived

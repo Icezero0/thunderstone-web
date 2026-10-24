@@ -212,6 +212,10 @@ class MatchCommandTests(unittest.TestCase):
         own_choices = view["legal_commands"][0]["instance_ids"]
         view = self.play(a, view, "ResolveChoice", instance_ids=[next(i for i in own_choices if i != source)])
         self.assertEqual(view["actor_player_id"], f"u-{b['id']}")
+        waiting = self.latest(a, view)
+        self.assertEqual(waiting["legal_commands"], [])
+        self.assertEqual(waiting["command_instances"], {})
+        self.assertIsNone(waiting["viewer_resources"]["gold_income_preview"])
         saved = self.f.stored_match(view["id"])
         self.assertEqual(self.f.play(a, view, {"type": "ResolveChoice", "instance_ids": []}).status_code, 403)
         other = self.latest(b, view)

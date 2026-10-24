@@ -21,6 +21,29 @@ function refillSequence() {
   return {initial, final, steps: deckTransitions(initial, final, events, 'alice')};
 }
 
+test('host-supplied gold and XP counters update independently of cards and validate before changing the display', async () => {
+  const {ui, Area} = await setup(), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  area.setState(snapshot()); assert.equal(ui.get('one-resources').hidden, true);
+  area.setResources({gold: 0, xp: 0});
+  assert.equal(ui.get('one-resources').hidden, false); assert.equal(ui.get('one-gold-resource').hidden, false);
+  assert.equal(ui.get('one-gold-value').textContent, '0'); assert.equal(ui.get('one-xp-value').textContent, '0');
+  assert.equal(ui.get('one-gold-resource').children[0].tagName, 'svg');
+  area.setResources({gold: 7, xp: 3}); assert.equal(ui.get('one-gold-value').textContent, '7');
+  area.setResources({gold: 0, goldIncomePreview: 10, xp: 3});
+  assert.equal(ui.get('one-gold-resource').textContent, '0(+10)');
+  assert.equal(ui.get('one-gold-income-preview').hidden, false);
+  area.setResources({gold: 4, goldIncomePreview: -2, xp: 3}); assert.equal(ui.get('one-gold-resource').textContent, '4(-2)');
+  assert.match(ui.get('one-gold-resource').getAttribute('aria-label'), /预计生产减少 2/);
+  assert.throws(() => area.setResources({gold: 2, goldIncomePreview: 0.5, xp: 3}), /integer/);
+  assert.equal(ui.get('one-gold-resource').textContent, '4(-2)');
+  area.setResources({gold: 7, goldIncomePreview: 0, xp: 3}); assert.equal(ui.get('one-gold-resource').textContent, '7(+0)');
+  area.setResources({gold: 7, xp: 3}); assert.equal(ui.get('one-gold-income-preview').hidden, true);
+  assert.equal(ui.get('one-xp-resource').getAttribute('aria-label'), '经验值 3');
+  assert.throws(() => area.setResources({xp: -1}), /nonnegative/); assert.equal(ui.get('one-xp-value').textContent, '3');
+  area.setResources({xp: 2}); assert.equal(ui.get('one-gold-resource').hidden, true); assert.equal(ui.get('one-xp-value').textContent, '2');
+  area.setResources(null); assert.equal(ui.get('one-resources').hidden, true); area.dispose();
+});
+
 test('a complete refill plays discard, remaining draw, shuffle and remaining draw in order with no interactive gap', async () => {
   const {ui, Area} = await setup({animationsEnabled: true}), busy = [];
   const area = new Area(ui.get('first'), {idPrefix: 'one', onBusyChange: value => busy.push(value)});
@@ -38,6 +61,144 @@ test('a complete refill plays discard, remaining draw, shuffle and remaining dra
   assert.equal(handCards(ui, 'one').length, 6); assert.equal(ui.get('one-draw-count').textContent, '0');
   assert.equal(ui.get('one-discard-count').textContent, '0'); assert.equal(ui.timers.size, 0);
   assert.ok(ui.all.filter(node => node.tagName === 'img').every(image => image.decodeCalls === 1 && image.srcWrites.length === 1)); area.dispose();
+});
+
+function purchaseSequence() {
+  const initial = snapshot(), purchased = card('bought', 'TS-0354'), final = {...initial, discard: [...initial.discard, purchased]};
+  const origin = {left: 180, top: 140, width: 168, height: 168 * 704 / 504};
+  return {initial, final, origin, steps: [{kind: 'gain', instanceIds: [purchased.id], origins: {[purchased.id]: origin}, state: final}]};
+}
+
+test('a purchase flies face up from its captured supply bounds into discard, retaining decoded images and busy state', async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const {initial, final, origin, steps} = purchaseSequence(); area.setState(initial); await settle();
+  const pending = area.animateSequence(final, steps); await settle();
+  const flight = ui.get('one-card-motion-layer').children[0], animation = ui.animations.find(item => item.element === flight);
+  assert.equal(flight.className, 'card-flight'); assert.equal(flight.style.left, '180px');
+  assert.equal(flight.style.top, '140px'); assert.equal(flight.style.width, `${origin.width}px`);
+  assert.equal(flight.children[0].dataset.cardId, 'TS-0354'); assert.equal(flight.children[0].dataset.face, 'front');
+  assert.equal(ui.get('one-discard-count').textContent, '1'); assert.equal(area.isBusy, true);
+  assert.equal(animation.keyframes.at(-1).width, '144px');
+  await ui.advance(300); await pending;
+  assert.equal(ui.get('one-card-motion-layer').children.length, 0); assert.equal(area.isBusy, false);
+  assert.equal(ui.get('one-discard-count').textContent, '2'); assert.deepEqual(Array.from(area.handOrder), ['b', 'a']);
+  assert.ok(ui.all.filter(node => node.tagName === 'img').every(image => image.srcWrites.length === 1 && image.decodeCalls === 1)); area.dispose();
+});
+
+for (const scenario of ['blur', 'new-state', 'dispose', 'reduced', 'failed-animation', 'browser'])
+  test(`purchase flight settles safely on ${scenario}`, async () => {
+    const {ui, Area} = await setup({animationsEnabled: true, reducedMotion: scenario === 'reduced', animationFailure: scenario === 'failed-animation'});
+    const area = new Area(ui.get('first'), {idPrefix: 'one'}), {initial, final, steps} = purchaseSequence(); area.setState(initial); await settle();
+    if (scenario === 'browser') area.openPileBrowser('discard');
+    const pending = area.animateSequence(final, steps); await settle();
+    const callbacks = ui.animations.map(animation => animation.onfinish).filter(Boolean);
+    if (scenario === 'blur') ui.window.fire('blur');
+    if (scenario === 'new-state') area.setState({...initial, discard: []});
+    if (scenario === 'dispose') area.dispose();
+    if (scenario === 'reduced' || scenario === 'failed-animation' || scenario === 'browser') await ui.advance(300);
+    await pending; callbacks.forEach(callback => callback()); await ui.advance(1000);
+    if (scenario !== 'dispose') {
+      assert.equal(area.isBusy, false); assert.equal(ui.get('one-discard-count').textContent, scenario === 'new-state' ? '0' : '2');
+      assert.equal(ui.get('one-card-motion-layer').children.length, 0);
+      if (scenario === 'browser') assert.equal(browserCards(ui).length, 2);
+      area.dispose();
+    }
+    assert.equal(ui.timers.size, 0);
+  });
+
+function upgradeSequence() {
+  const source = card('hero-old', 'TS-0354'), target = card('hero-new', 'TS-0355');
+  const initial = {hand: [source, card('keep')], draw: [], discard: [card('old-discard')]};
+  const final = {...initial, hand: [card('keep')], discard: [...initial.discard, target]};
+  return {initial, final, steps: [{kind: 'upgrade', sourceInstanceId: source.id, targetInstanceId: target.id, state: final}]};
+}
+
+test('upgrading brings the original hero to center, evolves into its decoded replacement and flies to discard', async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), busy = [];
+  const area = new Area(ui.get('first'), {idPrefix: 'one', onBusyChange: value => busy.push(value)});
+  const {initial, final, steps} = upgradeSequence(); area.setState(initial); await settle();
+  const source = handCards(ui, 'one')[0]; area.setSelectedIds(['hero-old']);
+  const pending = area.animateSequence(final, steps); await settle();
+  const layer = ui.get('one-card-motion-layer'), stage = layer.children[0];
+  assert.equal(stage.className, 'card-upgrade'); assert.equal(stage.dataset.stage, 'arrival'); assert.equal(stage.inert, true);
+  assert.ok(stage.children[0] === source); assert.equal(source.dataset.cardId, 'TS-0354'); assert.equal(source.dataset.selected, 'false');
+  const replacement = stage.children[1]; assert.equal(replacement.dataset.cardId, 'TS-0355'); assert.equal(replacement.style.opacity, '0');
+  assert.equal(ui.get('one-discard-count').textContent, '1'); assert.equal(area.isBusy, true);
+  await ui.advance(320); assert.equal(stage.dataset.stage, 'evolution');
+  const energy = stage.children.find(node => node.className === 'upgrade-energy');
+  assert.ok(energy); assert.ok(energy.children.length >= 40 && energy.children.length <= 64, 'particle budget stays bounded');
+  assert.ok(Number.parseFloat(stage.style.width) > 144); assert.equal(source.dataset.cardId, 'TS-0354');
+  assert.equal(ui.animations.some(animation => animation.element.className === 'card-destruction'), false);
+  await ui.advance(1000); assert.equal(stage.dataset.stage, 'departure'); assert.equal(energy.isConnected, false);
+  assert.equal(source.style.opacity, '0'); assert.equal(replacement.style.opacity, '1');
+  await ui.advance(300); await pending;
+  assert.equal(layer.children.length, 0); assert.equal(area.isBusy, false); assert.deepEqual(busy, [true, false]);
+  assert.equal(ui.get('one-discard-count').textContent, '2'); assert.equal(source.hidden, true);
+  const top = ui.get('one-discard-pile').children.find(node => node.className === 'physical-card' && !node.hidden);
+  assert.ok(top === replacement); assert.equal(top.dataset.cardId, 'TS-0355'); assert.deepEqual(Array.from(area.handOrder), ['keep']);
+  assert.ok(ui.all.filter(node => node.tagName === 'img').every(image => image.decodeCalls === 1 && image.srcWrites.length === 1));
+  assert.equal(ui.timers.size, 0); area.dispose();
+});
+
+for (const elapsed of [120, 600, 1400]) test(`new snapshots interrupt upgrade at ${elapsed}ms without resurrecting either hero`, async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const {initial, final, steps} = upgradeSequence(); area.setState(initial); await settle();
+  const pending = area.animateSequence(final, steps); await settle(); await ui.advance(elapsed);
+  const callbacks = ui.animations.map(animation => animation.onfinish).filter(Boolean);
+  area.setState({hand: [card('latest')], draw: [], discard: []});
+  callbacks.forEach(callback => callback()); await pending; await ui.advance(3000);
+  assert.deepEqual(Array.from(area.handOrder), ['latest']); assert.equal(ui.get('one-discard-count').textContent, '0');
+  assert.equal(ui.get('one-card-motion-layer').children.length, 0); assert.equal(ui.timers.size, 0); area.dispose();
+});
+
+for (const scenario of ['blur', 'hidden', 'resize', 'dispose', 'reduced', 'failed-animation', 'browser'])
+  test(`upgrade settles to its committed result on ${scenario}`, async () => {
+    const {ui, Area} = await setup({animationsEnabled: true, reducedMotion: scenario === 'reduced', animationFailure: scenario === 'failed-animation'});
+    const area = new Area(ui.get('first'), {idPrefix: 'one'}), {initial, final, steps} = upgradeSequence(); area.setState(initial); await settle();
+    if (scenario === 'browser') area.openPileBrowser('discard');
+    const pending = area.animateSequence(final, steps); await settle();
+    if (scenario === 'blur') ui.window.fire('blur');
+    if (scenario === 'hidden') {ui.document.hidden = true; ui.document.fire('visibilitychange');}
+    if (scenario === 'resize') ui.window.fire('resize');
+    if (scenario === 'dispose') area.dispose();
+    await pending; await ui.advance(2500);
+    if (scenario !== 'dispose') {
+      assert.equal(area.isBusy, false); assert.equal(ui.get('one-discard-count').textContent, '2');
+      assert.equal(ui.get('one-card-motion-layer').children.length, 0);
+      if (scenario === 'browser') assert.equal(browserCards(ui).length, 2);
+      area.dispose();
+    }
+    assert.equal(ui.timers.size, 0);
+  });
+
+test('upgrade waits for both replacement front images to decode before showing a transition', async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const {initial, final, steps} = upgradeSequence(); area.setState(initial); await settle();
+  const decode = ui.Element.prototype.decode, ready = [];
+  ui.Element.prototype.decode = function() {return this.src === '/cards/TS-0355.png' ? new Promise(resolve => ready.push(resolve)) : decode.call(this);};
+  const pending = area.animateSequence(final, steps); await settle();
+  assert.equal(ready.length, 2); assert.equal(ui.get('one-card-motion-layer').children.length, 0); assert.equal(area.isBusy, true);
+  ready[0](); await settle(); assert.equal(ui.get('one-card-motion-layer').children.length, 0);
+  ready[1](); await settle(); assert.equal(ui.get('one-card-motion-layer').children[0].dataset.stage, 'arrival');
+  await ui.advance(1700); await pending; ui.Element.prototype.decode = decode; area.dispose();
+});
+
+test('an upgrade renderer failure after arrival still releases the effect and commits the new hero', async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const {initial, final, steps} = upgradeSequence(); area.setState(initial); await settle();
+  const pending = area.animateSequence(final, steps); await settle();
+  const animate = ui.Element.prototype.animate; ui.Element.prototype.animate = () => {throw new Error('Renderer unavailable');};
+  await ui.advance(320); await pending; ui.Element.prototype.animate = animate;
+  assert.equal(ui.get('one-discard-count').textContent, '2'); assert.equal(area.isBusy, false);
+  assert.equal(ui.get('one-card-motion-layer').children.length, 0); area.dispose();
+});
+
+test('the probe upgrade demo uses the same animation and commits only its local demonstration state', async () => {
+  const ui = await page({animationsEnabled: true}); await ui.click('upgrade-demo');
+  assert.equal(ui.get('card-motion-layer').children[0].className, 'card-upgrade');
+  await ui.advance(1700); assert.match(ui.get('demo-status').textContent, /升级为/);
+  assert.equal(ui.get('discard-count').textContent, '9'); assert.equal(ui.cards().length, 5);
+  assert.equal(ui.get('card-motion-layer').children.length, 0); ui.window.fire('pagehide', {persisted: false});
 });
 
 test('destruction lifts and enlarges the original decoded card, then dissolves it without discarding or drawing', async () => {

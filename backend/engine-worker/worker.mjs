@@ -3,7 +3,7 @@ import {createInterface} from 'node:readline';
 import {combatValues, monsterHealth, equipmentCapacity, previewBattle, scoreGame, Calculation, printedGold, purchasePrice, stat, ENGINE_VERSION,
   compileRuleset, EffectEvaluation, availableActivations, reusableAbilityIds, validateReuseChoice, planEventDispatch, resolveEventOrder, validateEffectSelection, validateEffectPurchase, evaluateCost, planCardModifier, planMonsterHealthModifier, validateQuery, validateExpression, validateCondition,
   RandomStream, exactInteger, wireInteger, startGame, SetupBuilder, validateRulesConfig, effectiveCopyCount, effectiveGroupCounts, validateSetupState,
-  drawCards, sampleDisease, applyResourceEffect, advanceTurn, applyCommand, legalCommands, takeDisease, battlePreparation,
+  drawCards, sampleDisease, applyResourceEffect, advanceTurn, applyCommand, legalCommands, turnOptions, takeDisease, battlePreparation,
   validateTurnBuffs, grantTurnBuff, destructionReplacement, expireTurnBuffs, planDiseaseGain}
   from '../../engine/dist/index.js';
 
@@ -57,6 +57,7 @@ const operations = {
   plan_disease_gain: p => planDiseaseGain(p),
   apply_command: p => applyCommand(p.state, p.command, p.catalog, p.ruleset, p.trace_effects ?? false),
   legal_commands: p => legalCommands(p.state, p.catalog, p.ruleset),
+  turn_options: p => turnOptions(p.state, p.player_id, p.catalog, p.ruleset),
   battle_preparation: p => battlePreparation(p.state, p.player_id, p.catalog, p.ruleset),
   take_disease: p => takeDisease(p.state, p.player_id, p.destination ?? 'discard', p.catalog, p.ruleset),
   setup_step: p => {

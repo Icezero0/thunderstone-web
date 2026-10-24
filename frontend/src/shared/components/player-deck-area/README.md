@@ -32,6 +32,11 @@ const view: PlayerDeckState = {
   discard: [],
 };
 deck.setState(view);
+deck.setResources({gold: 0, xp: 0}); // 手牌标题栏：叠币图标＋数字、XP＋数字。
+// 生产前可追加由引擎提供的预估，显示 0(+10)；省略该字段隐藏括号。
+deck.setResources({gold: 0, goldIncomePreview: 10, xp: 0});
+// 非村庄时仅显示经验值；传 null 则隐藏整个资源栏。
+// deck.setResources({xp: 3});
 // 仅在调用方需要玩家响应时设置；初始响应区为空白。
 deck.setResponse({id: 'turn-action', prompt: '回合开始：请选择行动', choices: [
   {id: 'village', label: '村庄'}, {id: 'dungeon', label: '地下城'}, {id: 'rest', label: '休整'},
@@ -80,7 +85,7 @@ deck.dispose();
 | `animateTo(snapshot, {kind, instanceIds})` | 播放 `draw`／`discard` 移动；移动实例必须在前后快照对应的来源和目标区域中。最终状态在开始时确定。 |
 | `shuffleTo(snapshot)` | 用当前弃牌堆的至多 6 张视图播放洗回动画，再显示调用方给出的最终快照；不计算随机次序。 |
 | `destroyTo(snapshot, ids)` | 将指定手牌移至视窗中央、放大后逐渐化为原图色彩的尘埃；这些实例须离开玩家拥有的区域，实际摧毁由宿主先完成。 |
-| `animateSequence(final, steps)` | 顺序播放 `discard`、`draw`、`shuffle`、`destroy` 步骤；每步包含宿主给出的区域快照和移动实例 ID，洗回步骤仅需快照。整个队列持续忙碌，中断直接显示 `final`。 |
+| `animateSequence(final, steps)` | 顺序播放 `discard`、`draw`、`shuffle`、`destroy`、`gain`、`upgrade` 步骤；每步包含宿主提供的区域快照及相应实例 ID。整个队列持续忙碌，中断直接显示 `final`。 |
 | `setSelectedIds(ids)` | 同步宿主决定的手牌参战／选中标记；须为当前手牌中不重复的实例 ID，不触发用户选择回调。 |
 | `setHighlightedIds(ids)` | 给指定手牌实例添加周围光晕；与选中独立，移出手牌自动取消，不自行决定卡牌是否合法。 |
 | `closeBrowser()` | 关闭牌堆浏览并结束当前手势／动画，供退出对局等生命周期处理使用。 |
@@ -99,6 +104,10 @@ deck.dispose();
 摧毁表现分为约 300ms 的移入中央和约 980ms 的粒子消散。`card-dissolve.ts` 适配 [Vanilla Disintegrate](https://github.com/uvarov-frontend/vanilla-disintegrate) 的底层粒子入口，将现有卡图绘制为有圆角的临时 Canvas，再由 WebGL2 按原图颜色拆成颗粒；不截图整个 DOM，也不请求新卡图。分辨率上限为 2 倍 CSS 像素，并限定纹理与渲染面积。完成或取消时释放纹理、临时画布与渲染节点；库自行复用少量 WebGL 上下文。许可保存在 `public/licenses/vanilla-disintegrate.txt`。WebGL 不可用时，`card-shards.ts` 用共享图片背景构成 35 块边缘相接的不规则纸片，错开时序散开；这条路径不依赖 Canvas 或 WebGL。
 
 新的 `setState`／`animateTo` 可以中断旧展示，迟到的图片解码和动画完成回调不会覆盖新数据。缩放、失焦、页面隐藏或离开也会结束当前展示；系统减少动态效果设置生效时直接显示结果。
+
+`animateSequence()` 也支持外部来源的 `{kind: 'gain', instanceIds, origins, state}` 步骤：`origins` 按新实例 ID 提供 `left`、`top`、`width`、`height`，均为屏幕 CSS 像素；卡牌必须是先前各牌区都不存在、现在进入弃牌堆的新实例。组件复用飞牌动画，保持正面朝上，到达时增加弃牌显示数量；不操作供应、金币或规则。正式页面通过 `PublicTableArea.supplyCardRect(cardId)` 在供应更新前捕获顶牌坐标，结合公开购买事件构建步骤。减少动态效果、浏览中断、新快照和卸载遵守与抽弃牌相同的收敛规则。
+
+升级使用 `{kind: 'upgrade', sourceInstanceId, targetInstanceId, state}`：原实例必须从手牌移出，新实例此前不存在并进入弃牌堆。约 320ms 将原卡移到屏幕中央并放大，1000ms 播放旋转光环、汇聚粒子、亮光和新卡显现，再以 300ms 飞入弃牌堆。两张卡分别使用各自固定的已解码图片，保持实例和卡牌定义身份不变；不复用摧毁动画。`upgrade-motion.ts` 管理时间轴及中断，`upgrade-energy.ts` 生成有数量上限的临时特效，使用浏览器原生 [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API)，无需新增依赖。新快照、失焦、隐藏、调整窗口或卸载会清理动画；减少动态效果、浏览状态或渲染失败时直接显示权威结果。
 
 浏览视窗打开时，`animateTo`／`shuffleTo` 收到的外部更新直接同步最终状态，不在弹窗背后播放动画。已移走的牌立即退出浏览和检视；若被移走的牌正有键盘焦点，焦点回到关闭按钮。关闭后聚焦当前牌堆顶牌或空牌位。视窗只保留标题、张数及卡图，不显示操作／排序提示，牌堆顶牌也没有悬停提示。
 
@@ -142,9 +151,11 @@ Alt 检视使用独立的 [game-card 通用模块](../game-card/README.md)。其
 - `view.ts`：组件自己的 DOM、无障碍关联和弹窗挂载。
 - `card-tabs.ts`：动态 Tab、键盘导航和空区域回退。
 - `response-area.ts`：受调用方控制的响应提示、按钮和禁用状态；`PlayerResponse.progress` 提供行动名、阶段名、步骤及总数，显示于回合标记右侧。组件不推断阶段和规则。
+- `resources.ts`：受调用方控制的金币与 XP 计数，位于响应区和自动理牌之间。`setResources({xp, gold?, goldIncomePreview?})` 的现值接受非负整数，可选预估增量接受有符号整数并要求同时提供 `gold`。预估显示为较小的括号，如 `0(+10)`、`4(-2)`；省略预估则隐藏括号，省略 `gold` 隐藏金币，`null` 隐藏整个资源栏。仅显示调用方提供的权威值，不从手牌或卡文估算；叠币图标使用 [Lucide Coins](https://lucide.dev/icons/coins)，复用现有 ISC 授权，无新依赖。
 - `types.ts` / `model.ts`：数据契约、验证、复制及稳定排序。
 - `hand-area.ts` / `hand-layout.ts`：手牌布局、尺寸监听和有界拖拽。
 - `pile-browser.ts`：浏览副本与焦点管理；牌堆侧边和顶牌复用 `../game-card/card-stack.ts`。
 - `../game-card/`：固定图片、悬停、Alt 检视和程序翻面，由所有游戏区域复用。
 - `card-motion.ts` / `shuffle-motion.ts`：只移动既有视图的视觉动画。
+- `upgrade-motion.ts` / `upgrade-energy.ts` / `upgrade-motion.css`：旧英雄到新英雄的进化时间轴、粒子与光环，仅处理展示。
 - `style.css`：组件范围内的样式；共用光标状态已移至 `shared/styles/game-cursor.css`，由 `game-card/` 入口加载，`.game-cursor` 可用于外层游戏区域。

@@ -10,6 +10,20 @@ export class BattleEditor {
   private busy = false;
   constructor(private send: (command: GameCommand) => void, private report: (message: string) => void,
     private selection: (ids: readonly string[]) => void) {}
+  submit(): void {
+    if (this.busy || !this.view?.battle_preparation || !this.draft
+      || !this.view.legal_commands.some(command => command.type === 'SubmitBattleTeam')) return;
+    if (!this.draft.target_instance_id) {this.report('请先选择地下城大厅中的战斗目标。'); return;}
+    try {
+      const preview = previewBattleTeam(this.view.battle_preparation.context, this.draft);
+      if (!preview.calculation.can_attack) {this.report('当前战斗队伍无法攻击，请调整队伍或目标。'); return;}
+      this.report('');
+      this.send({type: 'SubmitBattleTeam', draft: {
+        target_instance_id: this.draft.target_instance_id, hero_instance_ids: [...this.draft.hero_instance_ids],
+        support_instance_ids: [...this.draft.support_instance_ids], equipment: structuredClone(this.draft.equipment),
+      }});
+    } catch (error) {this.report(error instanceof Error ? error.message : '当前队伍无法提交。');}
+  }
   selectTarget(id: string): void {
     if (this.view?.battle_preparation?.options.target_instance_ids.includes(id)) this.update({type: 'set_target', target_instance_id: id});
   }
@@ -102,10 +116,7 @@ export class BattleEditor {
         el('p', 'muted small', '这是战斗效果结算前的预估；怪物战斗词条、疾病确认、装备触发和待选效果可能改变结果。'));
       const submit = el('button', 'button primary', '提交战斗队伍'); submit.type = 'button'; submit.dataset.command = 'SubmitBattleTeam';
       submit.disabled = this.busy || !draft.target_instance_id || !trace.can_attack;
-      submit.addEventListener('click', () => this.send({type: 'SubmitBattleTeam', draft: {
-        target_instance_id: draft.target_instance_id, hero_instance_ids: [...draft.hero_instance_ids],
-        support_instance_ids: [...draft.support_instance_ids], equipment: structuredClone(draft.equipment),
-      }})); panel.append(submit);
+      submit.addEventListener('click', () => this.submit()); panel.append(submit);
     } catch (error) {panel.append(el('p', 'notice error', error instanceof Error ? error.message : '预览暂不可用，请刷新。'));}
   }
 }

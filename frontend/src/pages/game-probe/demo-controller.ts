@@ -42,6 +42,11 @@ export class DemoController {
     });
     this.responseDemo = new ResponseDemoController(this.area, () => this.blocked || this.area.isBrowsing, text => {this.status.textContent = text;});
     this.publicAreas = new PublicAreaDemo(selection => this.receiveSupply(selection));
+    const resources = () => {
+      const value = (id: string) => {const amount = Number($<HTMLInputElement>(id).value); return Number.isSafeInteger(amount) && amount >= 0 ? amount : 0;};
+      this.area.setResources({gold: value('demo-gold'), xp: value('demo-xp')});
+    };
+    this.bind($('demo-gold'), 'input', resources); this.bind($('demo-xp'), 'input', resources); resources();
     this.bind(this.input, 'input', () => this.setCount(Number(this.input.value)));
     this.bind($('fewer-cards'), 'click', () => this.setCount(this.state.hand.length - 1));
     this.bind($('more-cards'), 'click', () => this.setCount(this.state.hand.length + 1));
@@ -58,6 +63,7 @@ export class DemoController {
     });
     this.bind($('shuffle-demo'), 'click', () => {void this.showShuffle();});
     this.bind($('destroy-demo'), 'click', () => {void this.showDestruction();});
+    this.bind($('upgrade-demo'), 'click', () => {void this.showUpgrade();});
     this.bind($('reset-demo'), 'click', () => {this.finish(); this.reset(6); this.publicAreas.resetSupplies();});
     this.bind($('test-draw-sync'), 'click', () => this.testPileSync('draw'));
     this.bind($('test-discard-sync'), 'click', () => this.testPileSync('discard'));
@@ -109,6 +115,7 @@ export class DemoController {
     $<HTMLButtonElement>('discard-all').disabled = this.blocked || count === 0;
     $<HTMLButtonElement>('shuffle-demo').disabled = this.blocked || !this.state.draw.length && !this.state.discard.length;
     $<HTMLButtonElement>('destroy-demo').disabled = this.blocked || count === 0;
+    $<HTMLButtonElement>('upgrade-demo').disabled = this.blocked || !this.state.hand.some(card => ['TS-0336', 'TS-0337'].includes(card.cardId));
     $<HTMLButtonElement>('test-draw-sync').disabled = this.blocked;
     $<HTMLButtonElement>('test-discard-sync').disabled = this.blocked;
     const treasures = $<HTMLButtonElement>('demo-treasures'), aside = $<HTMLButtonElement>('demo-aside');
@@ -159,6 +166,24 @@ export class DemoController {
     this.state = {...before, hand: before.hand.filter(card => card.id !== victim.id)};
     this.result = `已演示摧毁${victim.name}。`; this.status.textContent = '正在演示卡面化为尘埃…';
     try {await this.area.destroyTo(this.state, [victim.id]);}
+    finally {
+      if (generation === this.revision && !this.disposed) {
+        this.pending = false; this.status.textContent = this.result; this.updateControls();
+      }
+    }
+  }
+  private async showUpgrade(): Promise<void> {
+    if (this.blocked || this.area.isBrowsing) return;
+    const before = this.displayedState(), eligible = before.hand.filter(card => ['TS-0336', 'TS-0337'].includes(card.cardId));
+    const source = eligible.find(card => this.area.selectedIds.includes(card.id)) ?? eligible[0];
+    if (!source) return;
+    this.cancelSyncTest(); this.area.setActiveTab('hand');
+    const generation = ++this.revision; this.pending = true;
+    const target = {id: `upgrade-demo-${++this.supplyInstance}`, cardId: source.cardId === 'TS-0336' ? 'TS-0337' : 'TS-0338',
+      name: source.cardId === 'TS-0336' ? '猎法者烈焰' : '猎法者凶刃'};
+    this.state = {...before, hand: before.hand.filter(card => card.id !== source.id), discard: [...before.discard, target]};
+    this.result = `已演示${source.name}升级为${target.name}。`; this.status.textContent = '正在演示英雄进化…';
+    try {await this.area.animateSequence(this.state, [{kind: 'upgrade', sourceInstanceId: source.id, targetInstanceId: target.id, state: this.state}]);}
     finally {
       if (generation === this.revision && !this.disposed) {
         this.pending = false; this.status.textContent = this.result; this.updateControls();

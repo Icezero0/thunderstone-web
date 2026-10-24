@@ -6,10 +6,12 @@ import {CardStack as PileArea} from '../game-card/index.js';
 import {PileBrowser} from './pile-browser.js';
 import {ShuffleMotion} from './shuffle-motion.js';
 import {DestroyMotion} from './destroy-motion.js';
+import {UpgradeMotion} from './upgrade-motion.js';
 import {createPlayerDeckView, type PlayerDeckElements} from './view.js';
 import {PlayerCardTabs} from './card-tabs.js';
 import {PlayerResponseArea} from './response-area.js';
-import type {CardImageSource, DeckAnimationStep, DeckTransition, PlayerCardTab, PlayerDeckCard, PlayerDeckOptions, PlayerDeckState, PlayerResponse} from './types.js';
+import {PlayerResourceDisplay} from './resources.js';
+import type {CardImageSource, DeckAnimationStep, DeckTransition, PlayerCardTab, PlayerDeckCard, PlayerDeckOptions, PlayerDeckState, PlayerResponse, PlayerResources} from './types.js';
 
 /** Player-owned card presentation. The host supplies every gameplay state change. */
 export class PlayerDeckArea {
@@ -25,12 +27,14 @@ export class PlayerDeckArea {
   private readonly auxiliary: Record<'treasures' | 'aside', HandArea>;
   private readonly tabs: PlayerCardTabs;
   private readonly response: PlayerResponseArea;
+  private readonly resources: PlayerResourceDisplay;
   private readonly draw: PileArea;
   private readonly discard: PileArea;
   private readonly browser: PileBrowser;
   private readonly motion: CardMotion;
   private readonly shuffle: ShuffleMotion;
   private readonly destruction: DestroyMotion;
+  private readonly upgrade: UpgradeMotion;
   private sequenceFinal: PlayerDeckState | null = null;
   private sequenceRevision = 0;
   private autoArrange = false;
@@ -42,12 +46,14 @@ export class PlayerDeckArea {
 
   constructor(host: HTMLElement, private readonly options: PlayerDeckOptions = {}) {
     this.view = createPlayerDeckView(host, options);
+    this.resources = new PlayerResourceDisplay(this.view.resources, this.view.id);
     this.images = {front: options.images?.front ?? defaultCardImages.front, back: options.images?.back ?? defaultCardImages.back};
     this.interactions = new CardInteractions(this.view.inspectOverlay, this.view.inspectContent, this.view.notice);
     this.browser = new PileBrowser(this.interactions, this.view.browser,
       options.background ?? [this.view.root], this.images, this.view.id);
     this.motion = new CardMotion(this.view.motion); this.shuffle = new ShuffleMotion(this.view.motion, this.view.cache);
     this.destruction = new DestroyMotion(this.view.motion, this.view.cache);
+    this.upgrade = new UpgradeMotion(this.view.motion, this.view.cache);
     this.draw = new PileArea(this.view.drawSlot, this.view.drawCount, false, {name: '抽牌堆'});
     this.discard = new PileArea(this.view.discardSlot, this.view.discardCount, true, {name: '弃牌堆'});
     this.bind(this.draw.empty, 'click', () => this.browse('draw', this.draw.empty));
@@ -87,6 +93,7 @@ export class PlayerDeckArea {
   get selectedIds(): readonly string[] {return this.state.hand.filter(card => this.selected.has(card.id)).map(card => card.id);}
   get activeTab(): PlayerCardTab {return this.tabs.active;}
   setActiveTab(tab: PlayerCardTab): boolean {this.assertActive(); return this.tabs.select(tab);}
+  setResources(resources: PlayerResources | null): void {this.assertActive(); this.resources.set(resources);}
   setResponse(response: PlayerResponse | null): void {
     this.assertActive();
     const wasFocused = document.activeElement instanceof HTMLElement && this.view.response.contains(document.activeElement);
@@ -344,11 +351,64 @@ export class PlayerDeckArea {
     } finally {if (generation === this.revision && !this.disposed) this.completeMovement();}
   }
 
+  /** Fly a newly owned card from a captured external source into the discard pile. */
+  private async gainStep(step: Extract<DeckAnimationStep, {kind: 'gain'}>): Promise<void> {
+    const copied = this.copyState(step.state), ids = [...step.instanceIds], previous = this.state;
+    const owned = new Set(allDeckCards(previous).map(card => card.id));
+    if (!ids.length || new Set(ids).size !== ids.length || ids.some(id => owned.has(id)
+      || !copied.discard.some(card => card.id === id))) throw new Error('Gained instances must be new cards entering the discard pile.');
+    for (const id of ids) {
+      const rect = step.origins[id];
+      if (!rect || ![rect.left, rect.top, rect.width, rect.height].every(Number.isFinite) || rect.width <= 0 || rect.height <= 0)
+        throw new Error('Gained cards require positive, finite origin bounds.');
+    }
+    this.finishMovement(); const generation = ++this.revision;
+    this.state = this.orderState(copied); this.moving = true; this.selected.clear();
+    this.interactions.setSuspended(true); this.updateControls(); this.emitSelection();
+    const cards = ids.map(id => this.getCard(copied.discard.find(card => card.id === id)!));
+    await Promise.all(cards.map(card => card.prepared));
+    if (generation !== this.revision || this.disposed) return;
+    try {
+      this.render();
+      if (this.canAnimate(cards)) {
+        this.discard.showTop(previous.discard.length ? this.getCard(previous.discard.at(-1)!) : null);
+        this.discard.setCount(previous.discard.length);
+        await this.motion.play(cards.map((card, index) => ({card, from: step.origins[ids[index]],
+          to: this.discard.slot.getBoundingClientRect(), destination: this.discard.slot, reveal: false,
+          departed: () => {}, landed: () => {this.discard.showTop(card); this.discard.setCount(previous.discard.length + index + 1);},
+        })), []);
+      }
+    } finally {if (generation === this.revision && !this.disposed) this.completeMovement();}
+  }
+
+  private async upgradeStep(step: Extract<DeckAnimationStep, {kind: 'upgrade'}>): Promise<void> {
+    const copied = this.copyState(step.state), previous = this.state;
+    const source = previous.hand.find(card => card.id === step.sourceInstanceId);
+    const target = copied.discard.find(card => card.id === step.targetInstanceId);
+    if (!source || !target || allDeckCards(copied).some(card => card.id === source.id)
+      || allDeckCards(previous).some(card => card.id === target.id)) throw new Error('Upgrades must replace a hand instance with a new discard instance.');
+    this.finishMovement(); const generation = ++this.revision;
+    const oldCard = this.getCard(source), newCard = this.getCard(target), from = oldCard.elements.surface.getBoundingClientRect();
+    this.state = this.orderState(copied); this.moving = true; this.selected.clear(); this.highlighted.clear();
+    this.interactions.setSuspended(true); this.updateControls(); this.emitSelection();
+    await Promise.all([oldCard.prepared, newCard.prepared]);
+    if (generation !== this.revision || this.disposed) return;
+    try {
+      this.render();
+      if (this.canAnimate([oldCard, newCard])) {
+        this.discard.showTop(previous.discard.length ? this.getCard(previous.discard.at(-1)!) : null);
+        this.discard.setCount(previous.discard.length);
+        await this.upgrade.play(oldCard, newCard, from, this.discard.slot.getBoundingClientRect());
+      }
+    } finally {if (generation === this.revision && !this.disposed) this.completeMovement();}
+  }
+
   /** One committed result, several visual steps. Interruptions snap directly to that final result. */
   async animateSequence(state: PlayerDeckState, steps: readonly DeckAnimationStep[]): Promise<void> {
     this.assertActive(); const final = this.copyState(state);
     const copied = steps.map(step => ({...step, state: this.copyState(step.state),
-      ...(step.kind !== 'shuffle' ? {instanceIds: [...step.instanceIds]} : {})})) as DeckAnimationStep[];
+      ...(step.kind === 'gain' ? {origins: Object.fromEntries(Object.entries(step.origins).map(([id, rect]) => [id, {...rect}]))} : {}),
+      ...('instanceIds' in step ? {instanceIds: [...step.instanceIds]} : {})})) as DeckAnimationStep[];
     this.finish();
     if (!copied.length || this.browser.isOpen || this.activeTab !== 'hand' || document.hidden ||
       window.matchMedia('(prefers-reduced-motion: reduce)').matches || typeof this.view.motion.animate !== 'function') {
@@ -360,6 +420,8 @@ export class PlayerDeckArea {
       for (const step of copied) {
         if (generation !== this.sequenceRevision || this.disposed) return;
         if (step.kind === 'shuffle') await this.shuffleStep(step.state);
+        else if (step.kind === 'gain') await this.gainStep(step);
+        else if (step.kind === 'upgrade') await this.upgradeStep(step);
         else if (step.kind === 'destroy') await this.destroyStep(step.state, step.instanceIds);
         else await this.moveTo(step.state, {kind: step.kind, instanceIds: step.instanceIds});
       }
@@ -387,7 +449,7 @@ export class PlayerDeckArea {
   private finishMovement(): void {
     this.hand.finish(); this.auxiliary.treasures.finish(); this.auxiliary.aside.finish();
     if (!this.moving) return;
-    ++this.revision; this.motion.finish(); this.shuffle.finish(); this.destruction.finish(); this.completeMovement();
+    ++this.revision; this.motion.finish(); this.shuffle.finish(); this.destruction.finish(); this.upgrade.finish(); this.completeMovement();
   }
   private visibility = (): void => {if (document.hidden) this.finish();};
   dispose(): void {

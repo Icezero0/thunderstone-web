@@ -19,6 +19,7 @@ from backend.app.modules.matches.table_projection import public_hand_instances, 
 
 def build_match_view(match: Any, viewer_user_id: int, *, legal_commands: list | None = None,
                      battle_preparation: dict | None = None, abilities: list | None = None,
+                     gold_income_preview: int | None = None,
                      unavailable_reason: str | None = None, profiles: dict | None = None) -> dict:
     """Expose board, unordered inventories, shown hand cards and the viewer's own cards."""
     members = match.frozen_players
@@ -176,8 +177,10 @@ def build_match_view(match: Any, viewer_user_id: int, *, legal_commands: list | 
         "actor_player_id": actor, "legal_commands": commands, "pending_choice": pending,
         "command_instances": command_instances, "abilities": ability_descriptions,
         "battle_preparation": preparation, "unavailable_reason": unavailable_reason,
-        "viewer_resources": {key: resources.get(key, 0) for key in
-                             ("xp", "temporary_gold", "purchases_remaining", "extra_basic_purchases")},
+        "viewer_resources": {**{key: resources.get(key, 0) for key in
+                              ("xp", "temporary_gold", "purchases_remaining", "extra_basic_purchases")},
+                             "gold_income_preview": gold_income_preview if match.status == "active"
+                             and state.get("active_player_id") == player_id and unavailable_reason is None else None},
         "event_log": logs, "result": result_view(state),
         "hand": card_instances(zones.get(f"player:{player_id}:hand", [])),
         "draw": inventory(zones.get(f"player:{player_id}:draw", []), player_id, "draw"),

@@ -8,7 +8,7 @@ export interface BrowserElements {
 export interface PlayerDeckElements {
   root: HTMLElement; handTrack: HTMLElement; handEmpty: HTMLElement; autoSort: HTMLInputElement;
   tabs: Record<PlayerCardTab, HTMLButtonElement>; panels: Record<PlayerCardTab, HTMLElement>;
-  auxiliaryEmpty: Record<'treasures' | 'aside', HTMLElement>; response: HTMLElement;
+  auxiliaryEmpty: Record<'treasures' | 'aside', HTMLElement>; response: HTMLElement; resources: HTMLElement;
   drawSlot: HTMLElement; drawCount: HTMLElement; discardSlot: HTMLElement; discardCount: HTMLElement;
   cache: HTMLElement; motion: HTMLElement; browser: BrowserElements;
   inspectOverlay: HTMLElement; inspectContent: HTMLElement; notice: HTMLElement; descriptionId: string;
@@ -53,12 +53,25 @@ export function createPlayerDeckView(host: HTMLElement, options: PlayerDeckOptio
   }
   const response = node('div', 'player-response', 'player-response', handHeading);
   response.setAttribute('role', 'group'); response.setAttribute('aria-label', '操作响应区'); response.dataset.empty = 'true';
+  const resources = node('div', 'resources', 'player-resources', handHeading); resources.hidden = true;
   const label = node('label', 'auto-sort-label', 'hand-auto-sort', handHeading);
-  label.title = '开启后持续按卡牌 ID 排序；关闭后可以拖动手牌调整顺序';
-  node('span', 'auto-sort-caption', '', label, '自动理牌');
+  label.title = '自动理牌：金色表示开启，灰色表示关闭；开启时按卡牌 ID 排序，关闭后可拖动调整顺序';
+  node('span', 'auto-sort-caption', 'sr-only', label, '自动理牌');
   const autoSort = node('input', 'auto-sort-hand', '', label); autoSort.type = 'checkbox';
   autoSort.setAttribute('role', 'switch');
-  node('span', 'auto-sort-track', 'hand-auto-sort-track', label).setAttribute('aria-hidden', 'true');
+  const icon = node('span', 'auto-sort-track', 'hand-auto-sort-icon', label); icon.setAttribute('aria-hidden', 'true');
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  for (const [key, value] of Object.entries({viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor',
+    'stroke-width': '1.6', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', focusable: 'false'})) svg.setAttribute(key, value);
+  // Circular reorder arrows surround a two-card stack.
+  for (const d of ['M3.3 8A9 9 0 0 1 19 5.6L21 8', 'M21 3.5V8h-4.5',
+    'M20.7 16A9 9 0 0 1 5 18.4L3 16', 'M3 20.5V16h4.5',
+    'M9.5 6.5H15a1 1 0 0 1 1 1V15']) {
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); path.setAttribute('d', d); svg.append(path);
+  }
+  const card = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  for (const [key, value] of Object.entries({x: '7.5', y: '8', width: '7', height: '9.5', rx: '1'})) card.setAttribute(key, value);
+  svg.append(card); icon.append(svg);
   const handTrack = node('div', 'hand-track', 'hand-track', handArea);
   handTrack.setAttribute('role', 'tabpanel'); handTrack.setAttribute('aria-labelledby', id('hand-heading'));
   const handEmpty = node('p', 'empty-hand', 'empty-hand', handTrack, '暂无手牌');
@@ -93,7 +106,7 @@ export function createPlayerDeckView(host: HTMLElement, options: PlayerDeckOptio
     {overlay: id('inspect-overlay'), content: id('inspect-content')});
   const cache = node('div', 'card-cache', '', overlays); cache.hidden = true;
   const motion = node('div', 'card-motion-layer', 'card-motion-layer', overlays); motion.setAttribute('aria-hidden', 'true');
-  return {root, handTrack, handEmpty, autoSort, tabs, panels, auxiliaryEmpty, response, drawSlot: draw.slot, drawCount: draw.count,
+  return {root, handTrack, handEmpty, autoSort, tabs, panels, auxiliaryEmpty, response, resources, drawSlot: draw.slot, drawCount: draw.count,
     discardSlot: discard.slot, discardCount: discard.count, cache, motion,
     browser: {overlay, grid, close, title, count, empty}, inspectOverlay, inspectContent,
     notice, descriptionId, id, dispose: () => {root.remove(); overlays.remove();}};

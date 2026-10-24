@@ -36,6 +36,7 @@
 .public-demo-controls {display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; color: var(--muted); font-size: 11px;}
 .public-demo-controls label {display: inline-flex; align-items: center; gap: 5px;}
 .public-demo-controls select {padding: 5px 8px; font-size: 11px;}
+.public-demo-controls input[type="number"] {width: 64px; padding: 5px 8px; font-size: 11px;}
 .public-demo-controls .button {padding: 6px 10px;}
 .probe-footnote {display: flex; justify-content: space-between; gap: 18px; color: var(--muted); font-size: 11px;}
 .probe-footnote p {margin: 0;}

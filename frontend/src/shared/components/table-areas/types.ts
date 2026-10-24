@@ -36,6 +36,8 @@ export interface SupplySelection {
   readonly level?: number; readonly infinite: boolean;
 }
 export interface VillageOptions extends TableAreaOptions {
+  /** Return true to consume a top-card click instead of opening its hero preview. */
+  onSupplyClick?: (selection: SupplySelection) => boolean | void;
   /** Host decides costs, creates instances and supplies the resulting snapshot. */
   onTakeTop?: (selection: SupplySelection) => void;
   takeLabel?: string;

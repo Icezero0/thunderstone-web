@@ -156,6 +156,30 @@ test('environment, both dungeon decks and every hall rank pan without declaring 
   area.dispose();
 });
 
+test('host purchase hints affect current tops only and supply dragging never requests a purchase', async () => {
+  const clicked = [], {ui, area} = await setup({onSupplyClick: item => {clicked.push(item); return true;}});
+  size(ui, area); area.setTab('village');
+  area.setPurchaseOptions([{cardId: 'TS-0354', price: 2}, {cardId: 'TS-0355', price: 1}]);
+  const card = top(ui.get('first-village-cards-amazon-slot'));
+  assert.equal(card.dataset.glowing, 'true'); assert.equal(card.dataset.purchasePrice, '2');
+  assert.equal(ui.all.some(node => node.className === 'supply-purchase-price' && node.isConnected), false);
+  const viewport = ui.get('first-village-panel');
+  viewport.fire('pointerdown', {target: card, buttons: 1, clientX: 200, clientY: 200});
+  ui.window.fire('pointermove', {buttons: 1, clientX: 100, clientY: 90}); ui.window.fire('pointerup');
+  const event = viewport.fire('click', {target: card}); if (!event.propagationStopped) card.fire('click');
+  assert.equal(clicked.length, 0);
+  viewport.fire('pointerdown', {target: card, buttons: 1}); ui.window.fire('pointerup');
+  const click = viewport.fire('click', {target: card}); if (!click.propagationStopped) card.fire('click');
+  assert.equal(clicked.length, 1); assert.equal(clicked[0].cardId, 'TS-0354'); assert.equal(area.isBrowsing, false);
+  const state = snapshot(); state.village.piles[0].cards[0].count = 0; area.setState(state);
+  const promoted = top(ui.get('first-village-cards-amazon-slot'));
+  assert.equal(promoted.dataset.cardId, 'TS-0355'); assert.equal(promoted.dataset.purchasePrice, '1');
+  card.fire('click'); assert.equal(clicked.length, 1, 'an obsolete top must not buy the newly exposed card');
+  assert.equal(promoted.dataset.glowing, 'true'); area.setPurchaseOptions([]);
+  assert.equal(promoted.dataset.glowing, 'false'); assert.equal(promoted.getAttribute('aria-describedby'), null);
+  area.dispose(); card.fire('click'); assert.equal(clicked.length, 1);
+});
+
 test('a live hero browser follows snapshots without reopening, keeps cached images and emits only the current supply top', async () => {
   let state = snapshot(), area; const taken = [];
   const setupResult = await setup({onTakeTop: selection => {

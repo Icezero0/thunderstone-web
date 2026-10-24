@@ -21,7 +21,10 @@ export function playerActivity(view: MatchView, previous: MatchView | null,
     switch (event.kind) {
       case 'rest_card_destroyed': text = `摧毁了 ${name(event.card_id)}`; break;
       case 'village_gold_counted': text = `生产了 ${event.total} 金币`; break;
-      case 'village_upgrade_started': text = '开始升级英雄'; break;
+      case 'village_upgrade_started':
+        if (view.turn.subphase !== 'ACTION_END' && !events.some(item => item.player_id === actor && ['card_bought', 'hero_upgraded'].includes(item.kind)))
+          text = '开始升级英雄';
+        break;
       case 'card_bought': text = `购买了 ${name(event.card_id)}`; break;
       case 'hero_upgraded': text = `将 ${name(event.source_card_id)} 升级为 ${name(event.target_card_id)}`; break;
       case 'battle_resolved': text = event.outcome === 'win' ? '战斗胜利' : '战斗失败'; break;

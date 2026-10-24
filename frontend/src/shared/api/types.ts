@@ -63,7 +63,8 @@ export interface MatchView {
   battle_preparation: null | {context: PreviewContext; draft: BattleDraft;
     options: {hero_instance_ids: string[]; support_instance_ids: string[]; weapon_instance_ids: string[];
       mandatory_instance_ids: string[]; target_instance_ids: string[]}};
-  viewer_resources: {xp: number; temporary_gold: number; purchases_remaining: number; extra_basic_purchases: number};
+  viewer_resources: {xp: number; temporary_gold: number; purchases_remaining: number; extra_basic_purchases: number;
+    gold_income_preview?: number | null};
   event_log: Array<{sequence: number; kind: string; [key: string]: unknown}>;
   unavailable_reason?: string | null;
   result: null | {players: Record<string, {victory_points: number; thunderstones: number; eliminated: boolean}>;

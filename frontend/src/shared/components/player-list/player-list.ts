@@ -20,7 +20,7 @@ export class PlayerList {
   constructor(host: HTMLElement, private options: PlayerListOptions = {}) {
     this.view = createPlayerListView(host, options); this.root = this.view.root;
     this.rows = new PlayerRows(this.view.list, id => {if (!this.blocked()) this.openPlayer(id);}, this.view.id('player-browser'));
-    this.activity = new PlayerActivityBubble(this.view.id('player-activity'), id => this.rows.anchor(id));
+    this.activity = new PlayerActivityBubble(this.view.id('player-activity'), this.root, this.view.list, id => this.rows.anchor(id));
     this.browser = new PlayerBrowser(this.view.overlays, options.background ?? [this.root], options.images,
       this.view.id, id => this.rows.trigger(id));
   }

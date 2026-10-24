@@ -7,8 +7,9 @@ import {MatchTable} from './table.js';
 export class MatchPage {
   private readonly table: MatchTable;
   constructor(private inspect: (id: string) => void, private select: (kind: 'groupA' | 'featureA', id: string, checked: boolean) => void,
-    send: (command: GameCommand) => void, hand: (ids: readonly string[]) => void, target: (id: string) => void) {
-    this.table = new MatchTable(send, hand, target);
+    send: (command: GameCommand) => void, hand: (ids: readonly string[]) => void, target: (id: string) => void,
+    completeBattle: () => void, respond: () => void) {
+    this.table = new MatchTable(send, hand, target, completeBattle, respond);
   }
   controls(view: MatchView, busy: boolean): void {this.table.controls(view, busy);}
   setSelected(ids: readonly string[]): void {this.table.setSelected(ids);}

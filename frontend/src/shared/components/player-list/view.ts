@@ -8,7 +8,7 @@ export function createPlayerListView(host: HTMLElement, options: PlayerListOptio
   const root = node('aside', 'player-list-area public-player-list game-cursor', undefined, id('players')); root.hidden = true;
   const title = node('h2', '', '玩家', id('players-heading'));
   root.setAttribute('aria-labelledby', title.id);
-  const list = node('ul'); root.append(title, list); host.append(root);
+  const list = node('ul', 'player-list-scroll', undefined, id('players-list')); root.append(title, list); host.append(root);
   const overlays = node('div', 'player-list-overlays', undefined, id('player-overlays'));
   (options.overlayRoot ?? document.body).append(overlays);
   return {root, list, overlays, id, dispose: () => {root.remove(); overlays.remove();}};

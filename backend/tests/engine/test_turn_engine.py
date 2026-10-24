@@ -9,7 +9,6 @@ from backend.app.integrations.game_engine.catalog.repository import load_catalog
 from backend.app.integrations.game_engine.disease import take_disease
 from backend.app.integrations.game_engine.setup import start_game
 from backend.app.integrations.game_engine.turn import TurnError, apply_command, legal_commands
-from backend.tests.migration.reference.python_engine.turn.state import validate_turn_state
 from backend.tests.support.setup import config, request
 
 
@@ -39,11 +38,10 @@ class TurnEngineTests(unittest.TestCase):
         self.assertEqual(bought["state"]["players"][player]["purchases_remaining"], 0)
         self.assertEqual(bought["state"]["instances"][bought["events"][0]["instance_id"]][
             "owner_player_id"], player)
-        after_buy = run(bought["state"], "FinishBuying")["state"]
-        ready = run(after_buy, "FinishUpgrading")["state"]
+        ready = bought["state"]
         self.assertEqual(ready["turn_number"], 1)
         self.assertEqual(ready["subphase"], "ACTION_END")
-        self.assertEqual(ready["zones"][f"player:{player}:hand"], after_buy["zones"][f"player:{player}:hand"])
+        self.assertEqual(ready["zones"][f"player:{player}:hand"], entered["state"]["zones"][f"player:{player}:hand"])
         ended = run(ready, "FinishTurn")
         next_state = ended["state"]
         self.assertEqual(next_state["turn_number"], 2)
@@ -51,7 +49,7 @@ class TurnEngineTests(unittest.TestCase):
         self.assertEqual(len(next_state["zones"][f"player:{player}:hand"]), 6)
         self.assertEqual(next_state["players"][player]["temporary_gold"], 0)
         self.assertEqual(next_state["players"][player]["purchases_remaining"], 1)
-        self.assertEqual(next_state["game_version"], original["game_version"] + 5)
+        self.assertEqual(next_state["game_version"], original["game_version"] + 3)
         self.assertEqual([event["sequence"] for event in ended["events"]],
                          list(range(ended["events"][0]["sequence"],
                                     ended["events"][-1]["sequence"] + 1)))
@@ -63,7 +61,7 @@ class TurnEngineTests(unittest.TestCase):
         self.assertEqual(finished["turn_number"], 3)
         self.assertEqual(finished["round_number"], 2)
         self.assertEqual(len(finished["zones"][f"player:{next_player}:hand"]), 6)
-        validate_turn_state(finished, self.cards)
+        legal_commands(finished)  # Runs the current TypeScript state validator.
 
     def test_militia_upgrade_pays_source_cost_and_destroys_source(self) -> None:
         state = start_game(request(seed="turn-upgrade"))["state"]
@@ -88,7 +86,7 @@ class TurnEngineTests(unittest.TestCase):
         with self.assertRaises(TurnError):
             run(updated, "UpgradeHero", source_instance_id=militia,
                 target_card_id=selected["target_card_id"])
-        validate_turn_state(updated, self.cards)
+        self.assertEqual([item["type"] for item in legal_commands(updated)], ["FinishTurn"])
 
     def test_both_militias_upgrade_into_the_shared_village_hero_supply(self) -> None:
         rules = config()
@@ -121,7 +119,7 @@ class TurnEngineTests(unittest.TestCase):
                 self.assertIn(source, updated["zones"]["destroyed"])
                 self.assertEqual([updated["instances"][item]["card_id"] for item in updated["zones"][supply]],
                                  ["TS-0301"] * 4 + ["TS-0300"] * 3)
-                validate_turn_state(updated, self.cards)
+                self.assertEqual([item["type"] for item in legal_commands(updated)], ["FinishTurn"])
 
     def test_rest_disease_returns_to_infinite_supply(self) -> None:
         state = start_game(request(seed="turn-disease"))["state"]
@@ -138,7 +136,7 @@ class TurnEngineTests(unittest.TestCase):
         self.assertEqual(next(event["destination"] for event in result["events"]
                               if event["kind"] == "rest_card_destroyed"),
                          "disease_supply")
-        validate_turn_state(finished, self.cards)
+        legal_commands(finished)
 
     def test_dungeon_battle_and_equipment_complete_a_turn(self) -> None:
         state = start_game(request(seed="turn-dungeon"))["state"]
@@ -170,7 +168,7 @@ class TurnEngineTests(unittest.TestCase):
         self.assertEqual(result["state"]["subphase"], "ACTION_END")
         finished = run(result["state"], "FinishTurn")["state"]
         self.assertEqual(finished["turn_number"], 2)
-        validate_turn_state(finished, self.cards)
+        legal_commands(finished)
 
     def test_thunderstone_reaching_rank_one_stops_turn_before_cleanup(self) -> None:
         initial = start_game(request(seed="turn-dungeon"))["state"]
@@ -232,4 +230,4 @@ class TurnEngineTests(unittest.TestCase):
         state, events = four_turns()
         self.assertEqual((state, events), four_turns())
         self.assertTrue(any(event["kind"] == "player_deck_shuffled" for event in events))
-        validate_turn_state(state, self.cards)
+        legal_commands(state)

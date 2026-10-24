@@ -44,6 +44,10 @@ class MatchPlaythroughTests(unittest.TestCase):
                 self.assertEqual(view["version"], expected_version)
                 options = {item["type"]: item for item in view["legal_commands"]}
                 phase = view["turn"]["subphase"]
+                if phase == "TURN_START":
+                    self.assertIsInstance(view["viewer_resources"]["gold_income_preview"], int)
+                elif phase not in {"VILLAGE_ABILITIES"}:
+                    self.assertIsNone(view["viewer_resources"]["gold_income_preview"])
                 seen.add(phase)
                 if "ChooseAction" in options:
                     action = {1: "village", 2: "rest"}.get(view["turn"]["number"], "dungeon")
@@ -82,6 +86,7 @@ class MatchPlaythroughTests(unittest.TestCase):
                 other = fixture.successful(fixture.client.get(f"/api/v1/matches/{match_id}",
                     headers=observer["headers"]))
                 self.assertEqual(other["legal_commands"], [])
+                self.assertIsNone(other["viewer_resources"]["gold_income_preview"])
                 self.assertIsNone(other["battle_preparation"])
                 previous_hand = [item["instance_id"] for item in view["hand"]]
                 view = fixture.successful(fixture.client.post(f"/api/v1/matches/{match_id}/commands",
@@ -90,13 +95,20 @@ class MatchPlaythroughTests(unittest.TestCase):
                 expected_version += 1
                 self.assertEqual(view["version"], expected_version)
                 commands_sent.append(command["type"])
+                if command["type"] == "BuyCard":
+                    # No bonus purchase and no XP: both empty stages advance,
+                    # but turn cleanup still requires the player's confirmation.
+                    self.assertEqual(view["turn"]["subphase"], "ACTION_END")
+                    self.assertEqual([item["type"] for item in view["legal_commands"]], ["FinishTurn"])
                 if command == {"type": "ChooseAction", "action": "dungeon"}:
                     self.assertEqual([item["instance_id"] for item in view["hand"]], previous_hand)
             else:
                 self.fail("The real command path did not reach natural settlement")
 
             self.assertEqual(view["status"], "finished")
-            self.assertTrue({"TURN_START", "VILLAGE_BUY", "VILLAGE_UPGRADE", "REST", "DUNGEON_PREPARE"} <= seen)
+            self.assertTrue({"TURN_START", "VILLAGE_BUY", "ACTION_END", "REST", "DUNGEON_PREPARE"} <= seen)
+            self.assertNotIn("FinishBuying", commands_sent)
+            self.assertNotIn("FinishUpgrading", commands_sent)
             self.assertIn("BuyCard", commands_sent)
             self.assertIn("SubmitBattleTeam", commands_sent)
             self.assertIsNotNone(view["result"])

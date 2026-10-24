@@ -62,6 +62,10 @@ players.dispose();
 
 默认独立背景为全局深色标题栏配色；`--player-list-background` 可由所在牌桌覆盖。窄屏保留竖排列表，把各项头像和名称上下排列。卡图与牌背可通过 `images.front(cardId)`／`images.back` 覆盖，Alt 检视与其他卡牌区域共用当前检视对象。
 
+标题固定，玩家条目在剩余高度内滚动，滚动条隐藏，条目不压缩或溢出容器。气泡挂在滚动列表外层，依据玩家行位置更新；列表滚动和尺寸变化时重新定位，目标行完全移出可见范围时暂时隐藏，回到可见范围且消息尚未过期时重新显示。卸载及消息清除时释放定位监听器和尺寸观察器。
+
+气泡参考 [Radix Themes 的浮层](https://www.radix-ui.com/themes/docs/components/tooltip)和 [Floating UI 的圆角箭头](https://floating-ui.com/docs/floatingarrow)：单一暖白底色、轻阴影、圆角与圆润 SVG 尾角，没有顶条、金色侧线或分区装饰。配色和字体引用项目变量；只借鉴视觉设计，沿用已有定位和生命周期，无需安装组件库。消息始终以纯文本显示，尾角不参与读屏，保留向左展开动画及减少动态效果支持。
+
 ## 职责与接入边界
 
 - `player-list.ts`：公开 API、生命周期与调用方协调。

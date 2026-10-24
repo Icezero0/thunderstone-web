@@ -1,11 +1,11 @@
-import {CardStack} from '../game-card/index.js';
+import {CardStack, type PhysicalCard} from '../game-card/index.js';
 import {AreaCards} from './card-views.js';
 import {copyVillageState, isHeroSupply, supplyCount, supplyTop} from './model.js';
 import {SupplyBrowser} from './supply-browser.js';
 import {node, reconcile} from '../../dom/elements.js';
 import type {SupplyPile, VillageOptions, VillageState} from './types.js';
 
-interface PileView {root: HTMLElement; title: HTMLElement; slot: HTMLElement; stack: CardStack;}
+interface PileView {root: HTMLElement; title: HTMLElement; slot: HTMLElement; stack: CardStack; card?: PhysicalCard | null;}
 let sequence = 0;
 
 export class VillageArea {
@@ -19,9 +19,10 @@ export class VillageArea {
   private state: VillageState = {piles: []};
   private readonly prefix: string;
   private disposed = false;
+  private highlighted = new Map<string, number>();
   get isBrowsing(): boolean {return this.browser.pileId !== null;}
 
-  constructor(host: HTMLElement, options: VillageOptions = {}) {
+  constructor(host: HTMLElement, private options: VillageOptions = {}) {
     this.prefix = options.idPrefix ?? `village-area-${++sequence}`;
     this.root = node('section', 'table-area village-area game-cursor', undefined, this.prefix);
     this.root.setAttribute('aria-label', '村庄供应'); host.append(this.root);
@@ -68,17 +69,26 @@ export class VillageArea {
     view.root.dataset.topCardId = top?.cardId ?? ''; view.root.dataset.topLevel = top?.level !== undefined ? String(top.level) : '';
     const card = top ? this.cards.card(`top-${pile.id}-${top.cardId}`, {id: `${pile.id}-${top.cardId}`, ...top}) : null;
     card?.elements.button.setAttribute('data-pan-start', '');
-    if (isHeroSupply(pile)) {
-      this.bind(view.stack.empty, pile.id);
-      if (card) this.bind(card.elements.button, pile.id);
-    }
+    this.bind(view.stack.empty, pile.id);
+    if (card) this.bind(card.elements.button, pile.id);
+    view.card = card;
     view.stack.setBrowsable(isHeroSupply(pile));
     view.stack.showTop(card); view.stack.setCount(supplyCount(pile), 16);
+    this.highlight(pile, view);
     return view.root;
   }
   private bind(button: HTMLElement, pileId: string): void {
     if (this.bound.has(button)) return;
-    this.bound.add(button); const clicked = () => this.openSupply(pileId);
+    this.bound.add(button); const clicked = () => {
+      for (let element: HTMLElement | null = this.root; element; element = element.parentElement) if (element.hidden || element.inert) return;
+      if (this.disposed) return;
+      const pile = this.state.piles.find(item => item.id === pileId), top = pile && supplyTop(pile);
+      const entry = this.entries.get(pileId);
+      if (button !== (top ? entry?.card?.elements.button : entry?.stack.empty)) return;
+      if (pile && top && this.options.onSupplyClick?.({pileId, cardId: top.cardId, name: top.name,
+        level: top.level, infinite: pile.kind === 'basic'})) return;
+      this.openSupply(pileId);
+    };
     button.addEventListener('click', clicked); this.cleanup.push(() => button.removeEventListener('click', clicked));
   }
   private trigger(pile: SupplyPile): HTMLElement {
@@ -91,6 +101,27 @@ export class VillageArea {
     if (pile && isHeroSupply(pile)) this.browser.open(pile, this.trigger(pile));
   }
   closeSupply(restoreFocus = true): void {this.browser.close(restoreFocus);}
+  /** Capture before replacing a depleted pile's top. Never expose hidden supply order. */
+  topCardRect(cardId: string): DOMRect | null {
+    if (this.disposed) return null;
+    for (let element: HTMLElement | null = this.root; element; element = element.parentElement) if (element.hidden || element.inert) return null;
+    const pile = this.state.piles.find(pile => supplyTop(pile)?.cardId === cardId);
+    const rect = pile && this.entries.get(pile.id)?.card?.elements.surface.getBoundingClientRect();
+    return rect && rect.width > 0 && rect.height > 0 ? rect : null;
+  }
+  /** Host-supplied legal top-card prices. No price or affordability rules live here. */
+  setPurchaseOptions(options: readonly {cardId: string; price: number}[]): void {
+    this.highlighted = new Map(options.map(item => [item.cardId, item.price]));
+    for (const pile of this.state.piles) {const view = this.entries.get(pile.id); if (view) this.highlight(pile, view);}
+  }
+  private highlight(pile: SupplyPile, view: PileView): void {
+    const top = supplyTop(pile), price = top && this.highlighted.get(top.cardId);
+    view.card?.setGlow(price !== undefined);
+    view.root.dataset.purchasePrice = price === undefined ? '' : String(price);
+    if (view.card) {
+      view.card.elements.button.dataset.purchasePrice = price === undefined ? '' : String(price);
+    }
+  }
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true; this.browser.dispose(); this.cards.dispose(); this.cleanup.forEach(cleanup => cleanup());

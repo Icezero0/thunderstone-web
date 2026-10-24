@@ -1,15 +1,26 @@
 import type {MatchView} from '../../shared/api/types.js';
-import type {DeckAnimationStep, PlayerDeckState} from '../../shared/components/player-deck-area/index.js';
+import type {CardFlightOrigin, DeckAnimationStep, PlayerDeckState} from '../../shared/components/player-deck-area/index.js';
 
 /** Reconstruct presentation stages from known inventories and committed outcomes, never hidden deck order. */
 export function deckTransitions(previous: PlayerDeckState, final: PlayerDeckState,
-  events: MatchView['event_log'], viewer: string): DeckAnimationStep[] {
+  events: MatchView['event_log'], viewer: string, origins: Readonly<Record<string, CardFlightOrigin>> = {}): DeckAnimationStep[] {
   const own = events.filter(event => event.player_id === viewer);
   const steps: DeckAnimationStep[] = []; let current = previous;
   const add = (step: DeckAnimationStep) => {steps.push(step); current = step.state;};
   const finalOwned = new Set([...final.hand, ...final.draw, ...final.discard, ...final.treasures ?? [], ...final.aside ?? []].map(card => card.id));
+  const previousOwned = new Set([...previous.hand, ...previous.draw, ...previous.discard,
+    ...previous.treasures ?? [], ...previous.aside ?? []].map(card => card.id));
+  const upgradeSources = new Set<string>(), upgradeTargets = new Set<string>();
+  for (const event of own.filter(event => event.kind === 'hero_upgraded')) {
+    const sources = previous.hand.filter(card => card.cardId === event.source_card_id && !finalOwned.has(card.id) && !upgradeSources.has(card.id));
+    const targets = final.discard.filter(card => card.cardId === event.target_card_id && !previousOwned.has(card.id) && !upgradeTargets.has(card.id));
+    if (sources.length !== 1 || targets.length !== 1) return []; // No guessed upgrade identities.
+    const source = sources[0], target = targets[0]; upgradeSources.add(source.id); upgradeTargets.add(target.id);
+    add({kind: 'upgrade', sourceInstanceId: source.id, targetInstanceId: target.id,
+      state: {...current, hand: current.hand.filter(card => card.id !== source.id), discard: [...current.discard, target]}});
+  }
   const destruction = own.filter(event => event.kind === 'card_destroyed' || event.kind === 'rest_card_destroyed');
-  const destroyed = previous.hand.filter(card => !finalOwned.has(card.id) && destruction.some(event => event.card_id === card.cardId));
+  const destroyed = previous.hand.filter(card => !finalOwned.has(card.id) && !upgradeSources.has(card.id) && destruction.some(event => event.card_id === card.cardId));
   for (const cardId of new Set(destroyed.map(card => card.cardId))) {
     const explicit = destruction.filter(event => event.kind === 'card_destroyed' && event.card_id === cardId);
     const count = explicit.length || destruction.filter(event => event.kind === 'rest_card_destroyed' && event.card_id === cardId).length;
@@ -17,6 +28,18 @@ export function deckTransitions(previous: PlayerDeckState, final: PlayerDeckStat
   }
   if (destroyed.length) add({kind: 'destroy', instanceIds: destroyed.map(card => card.id),
     state: {...current, hand: current.hand.filter(card => !destroyed.some(victim => victim.id === card.id))}});
+
+  const bought = own.filter(event => event.kind === 'card_bought');
+  const purchases = final.discard.filter(card => !previousOwned.has(card.id) && !upgradeTargets.has(card.id) && bought.some(event => event.card_id === card.cardId));
+  if (purchases.length) {
+    // Do not guess which of several identical gains was the paid purchase.
+    for (const cardId of new Set(purchases.map(card => card.cardId)))
+      if (purchases.filter(card => card.cardId === cardId).length !== bought.filter(event => event.card_id === cardId).length) return [];
+    if (purchases.some(card => !origins[card.cardId])) return [];
+    add({kind: 'gain', instanceIds: purchases.map(card => card.id),
+      origins: Object.fromEntries(purchases.map(card => [card.id, {...origins[card.cardId]}])),
+      state: {...current, discard: [...current.discard, ...purchases]}});
+  }
 
   const cleanup = own.some(event => event.kind === 'turn_hand_discarded');
   const discarded = cleanup ? [...current.hand] : final.discard.filter(card => current.hand.some(old => old.id === card.id));

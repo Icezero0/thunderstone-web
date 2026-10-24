@@ -21,8 +21,10 @@ const page = new MatchPage(id => {if (view?.cards[id]) page.detail(view.cards[id
   selection[kind] = selection[kind].filter(value => value !== id);
   if (checked) selection[kind].push(id);
   page.renderSetup(view, selection, busy);
-}, command => {void sendCommand(command);}, ids => actions.selectHand(ids), id => actions.selectTarget(id));
-const actions = new MatchActions(command => {void sendCommand(command);}, (view, id, caption) => page.tile(view, id, caption), message => notice(message, !!message), ids => page.setSelected(ids));
+}, command => {void sendCommand(command);}, ids => actions.selectHand(ids), id => actions.selectTarget(id),
+  () => actions.completeBattle(), () => actions.openResponse());
+const actions = new MatchActions(command => {void sendCommand(command);}, (view, id, caption) => page.tile(view, id, caption),
+  message => notice(message, !!message), ids => page.setSelected(ids), () => page.closeBrowsers());
 
 function notice(text = '', error = false): void {
   const node = $('#notice'); node.textContent = text; node.hidden = !text; node.classList.toggle('error', error);
@@ -36,7 +38,7 @@ function errorMessage(error: unknown): string {
   return '连接失败。请检查网络，然后点击“刷新牌桌”。';
 }
 function login(): void {
-  page.closeBrowsers();
+  page.closeBrowsers(); actions.finish();
   sequence++; view = null; user = null; connection?.close();
   $('#match-content').hidden = true; $<HTMLDialogElement>('#card-dialog').close();
   location.replace(matchLoginLink(matchId));
@@ -81,7 +83,7 @@ async function refresh(): Promise<void> {
   if (request !== sequence || !user) return;
   if (current) {accept(current); notice();}
   else {
-    page.closeBrowsers();
+    page.closeBrowsers(); actions.finish();
     view = null; $('#match-content').hidden = true; $('#empty-view').hidden = false;
     $('#match-title').textContent = '冒险尚未开始'; $('#match-subtitle').textContent = '先回到房间，与伙伴一起准备。';
     $('#page-state').textContent = '没有进行中的对局。';
@@ -93,7 +95,7 @@ async function safeRefresh(): Promise<void> {
     console.error('Failed to refresh match', error);
     if (error instanceof ApiError && error.status === 401) {login(); return;}
     if (error instanceof ApiError && [403, 404].includes(error.status)) {
-      page.closeBrowsers();
+      page.closeBrowsers(); actions.finish();
       view = null; $('#match-content').hidden = true; $('#empty-view').hidden = false;
       $<HTMLDialogElement>('#card-dialog').close();
       $('#empty-title').textContent = '这场对局暂不可访问'; $('#empty-description').textContent = '返回房间，确认当前参与的对局。';
@@ -149,7 +151,10 @@ $('#close-card-dialog').addEventListener('click', () => $<HTMLDialogElement>('#c
 $('#card-dialog').addEventListener('click', event => {if (event.target === event.currentTarget) $<HTMLDialogElement>('#card-dialog').close();});
 api.onExpired = login;
 document.addEventListener('visibilitychange', () => {if (!document.hidden && user) void safeRefresh();});
-window.addEventListener('pagehide', event => {connection?.close(); page.finish(); if (!event.persisted) page.dispose();});
+window.addEventListener('pagehide', event => {
+  connection?.close(); page.finish(); actions.finish();
+  if (!event.persisted) {actions.dispose(); page.dispose();}
+});
 window.addEventListener('pageshow', event => {if (event.persisted && user) {connect(); void safeRefresh();}});
 
 async function start(): Promise<void> {

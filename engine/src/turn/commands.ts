@@ -10,7 +10,7 @@ import {resolveValue, resolveReorder, resolveSelection, resolvePurchase, resolve
   resolveReuse, resolveOrder} from '../effects/choice-transition.js';
 import {mustEnterDungeon} from '../effects/durations.js';
 import {queueSteps} from './workflow.js';
-import {buyCard, finishAbilities, finishBuying, purchaseOptions, upgradeOptions,
+import {advanceVillageStages, buyCard, finishAbilities, finishBuying, goldIncomePreview, purchaseOptions, upgradeOptions,
   upgradeHero, restDestroy} from './village.js';
 import {attackTargets, declareBattleTarget} from './dungeon.js';
 import {equipmentOptions, equipWeapon, reconcileEquipment} from '../battle/equipment.js';
@@ -140,6 +140,12 @@ export function legalCommands(state: GameState, catalog: GameCatalog, rules: Gam
   checkVersions(state, catalog, rules); validateTurnState(state, catalog.cards);
   return legal(new Transition(state, catalog, rules));
 }
+/** Read-only per-player options; the worker returns them together in one request. */
+export function turnOptions(state: GameState, playerId: string, catalog: GameCatalog, rules: GameRules) {
+  checkVersions(state, catalog, rules); validateTurnState(state, catalog.cards);
+  const tx = new Transition(state, catalog, rules);
+  return {legal_commands: legal(tx), gold_income_preview: goldIncomePreview(tx, playerId)};
+}
 /** Server entry point: validates authority before returning only visible preview data. */
 export function battlePreparation(state: GameState, playerId: string, catalog: GameCatalog, rules: GameRules) {
   checkVersions(state, catalog, rules); validateTurnState(state, catalog.cards);
@@ -218,6 +224,7 @@ export function applyCommand(state: GameState, command: Record<string, any>, cat
     tx.event('strength_penalty_assigned', {instance_id: command.instance_id, hero_instance_id: command.hero_instance_id});
   } else throw new RuleError(`${kind} is not allowed during ${phase}`);
   if (tx.state.battle_context) reconcileEquipment(tx);
+  advanceVillageStages(tx);
   const result = tx.finish();
   validateTurnState(result.state, catalog.cards);
   return {...result, legal_commands: legal(tx)};
