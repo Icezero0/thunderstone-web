@@ -121,7 +121,7 @@ export class PhysicalCard {
     button.dataset.flipping = String(this.flip.isAnimating);
     button.dataset.imagesReady = String(this.ready);
     button.setAttribute('aria-busy', String(!this.ready && !this.failed));
-    button.setAttribute('aria-label', `${this.faceUp ? this.name + '，正面' : '背面'}朝上的卡牌；按住空格检视`);
+    button.setAttribute('aria-label', `${this.faceUp ? this.name + '，正面' : '背面'}朝上的卡牌；按住 E 检视`);
     front.hidden = !this.faceUp; back.hidden = this.faceUp;
     front.setAttribute('aria-hidden', String(!this.faceUp));
     back.setAttribute('aria-hidden', String(this.faceUp));
@@ -132,7 +132,7 @@ export class PhysicalCard {
   }
 }
 
-/** Game-wide card interactions: any region can register cards with one Space inspection owner. */
+/** Game-wide card interactions: any region can register cards with one E inspection owner. */
 export class CardInteractions {
   private static hoverOwner: CardInteractions | null = null;
   private static focusOwner: CardInteractions | null = null;
@@ -243,7 +243,7 @@ export class CardInteractions {
     return !!control && !control.classList.contains('physical-card');
   }
   private isInspectionKey(event: KeyboardEvent): boolean {
-    return event.code === 'Space' || event.key === ' ' || event.key === 'Spacebar';
+    return event.code === 'KeyE' || event.key.toLowerCase() === 'e';
   }
   private consume(event: KeyboardEvent): void {event.preventDefault(); event.stopPropagation();}
   private keydown = (event: KeyboardEvent): void => {
@@ -272,7 +272,7 @@ export class CardInteractions {
   };
   private reset = (): void => {this.resetState();};
   private resetState(keepHeld = false): void {
-    // Reset presentation on blur/suspension, but retain ownership of this Space release.
+    // Reset presentation on blur/suspension, but retain ownership of this E release.
     // A new keydown clears it if a window switch prevented keyup from reaching us.
     if (!keepHeld) this.inspectionHeld = false;
     this.hovered = this.focused = null;

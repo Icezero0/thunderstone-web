@@ -38,20 +38,20 @@ test('dungeon normalization retains ranks 1–3, orders extra ranks, copies inpu
   assert.throws(() => copyDungeonState({...state, dungeons: [{...state.dungeons[0], hall: [{rank: 1, card: null}, {rank: 1, card: null}]}]}), /unique/);
 });
 
-test('a dungeon displays only a back for its hidden deck, while public hall cards support Space at original size', async () => {
+test('a dungeon displays only a back for its hidden deck, while public hall cards support E at original size', async () => {
   const {ui, api} = await setup(), area = new api.DungeonArea(ui.get('dungeon'), {idPrefix: 'dungeon', overlayRoot: ui.get('overlays')});
   area.setState(createDungeonDemo(defaultDungeon)); await settle();
   const deck = topCard(ui.get('dungeon-deck-main-slot'));
   assert.equal(ui.get('dungeon-deck-main-slot').parentElement.children[0].children[0].textContent, '地下城');
   assert.equal(deck.dataset.face, 'back'); assert.equal(deck.getAttribute('aria-haspopup'), null);
   assert.equal(deck.getAttribute('title'), null);
-  deck.fire('pointerenter'); ui.key(' ');
+  deck.fire('pointerenter'); ui.key('e');
   const inspection = ui.get('dungeon-inspect-content').children.find(node => !node.hidden);
   assert.ok(inspection); assert.equal(inspection.children[0].src, '/cards/TS-BACK-001.jpg');
   assert.equal(inspection.children[0].hidden, true); assert.equal(inspection.children[1].hidden, false);
   ui.release(); deck.fire('pointerleave');
   const rank = ui.get('dungeon-main-rank-1'), monster = rank.children[1].children[0];
-  monster.fire('pointerenter'); ui.key(' ');
+  monster.fire('pointerenter'); ui.key('e');
   assert.equal(ui.get('dungeon-inspect-content').dataset.face, 'front');
   assert.equal(ui.get('dungeon-inspect').hidden, false);
   assert.deepEqual(Array.from(ui.get('dungeon-lane-main').children[0].children[1].children).map(cell => cell.dataset.rank), ['3', '2', '1']);
@@ -105,7 +105,7 @@ test('the hero browser previews all levels, but its action always takes the curr
   assert.deepEqual(levels.map(entry => entry.children[1].textContent), ['亚马逊弓箭手', '亚马逊女猎手', '亚马逊女王']);
   assert.deepEqual(levels.map(entry => entry.dataset.current), ['true', 'false', 'false']);
   assert.equal(levels[0].children[0].children[1].textContent, '当前顶牌');
-  const preview = browserCards(ui)[2]; preview.fire('pointerenter'); ui.key(' ');
+  const preview = browserCards(ui)[2]; preview.fire('pointerenter'); ui.key('e');
   assert.equal(ui.get('village-inspect').hidden, false); assert.match(ui.get('village-browser-take').textContent, /弓箭手/);
   ui.get('village-browser-take').fire('click'); await settle();
   assert.equal(taken[0].level, 1); assert.equal(taken[0].cardId, 'TS-0354');
@@ -124,7 +124,7 @@ test('the hero browser previews all levels, but its action always takes the curr
   area.dispose(); assert.equal(ui.key('Escape').defaultPrevented, false);
 });
 
-test('non-hero supplies ignore clicks but retain hover and Space; infinite basics keep their thickness after external takes', async () => {
+test('non-hero supplies ignore clicks but retain hover and E; infinite basics keep their thickness after external takes', async () => {
   const {ui, api} = await setup(); let state = createVillageDemo();
   const area = new api.VillageArea(ui.get('village'), {idPrefix: 'village', onTakeTop: () => {throw new Error('Non-hero clicks cannot take cards');}});
   area.setState(state); await settle();
@@ -136,7 +136,7 @@ test('non-hero supplies ignore clicks but retain hover and Space; infinite basic
     assert.equal(card.getAttribute('aria-haspopup'), null);
     card.fire('click'); area.openSupply(pile.id); assert.equal(area.isBrowsing, false);
     card.fire('pointerenter'); assert.equal(card.dataset.active, 'true');
-    ui.key(' '); assert.equal(ui.get('village-inspect').hidden, false);
+    ui.key('e'); assert.equal(ui.get('village-inspect').hidden, false);
     ui.release(); card.fire('pointerleave');
   }
   const before = topCard(basic);
@@ -175,7 +175,7 @@ test('village heroes form one pile with five level-1 cards above three level-2 c
   assert.deepEqual(levels.map(entry => entry.children[0].children[0].textContent), ['1 级', '2 级']);
   assert.deepEqual(levels.map(entry => entry.dataset.current), ['true', 'false']);
   assert.deepEqual(levels.map(entry => entry.children[3].textContent), ['剩余 5 张', '剩余 3 张']);
-  browserCards(ui)[1].fire('pointerenter'); ui.key(' ');
+  browserCards(ui)[1].fire('pointerenter'); ui.key('e');
   assert.equal(ui.get('village-inspect').hidden, false);
   for (let index = 0; index < 5; index++) {
     assert.match(ui.get('village-browser-take').textContent, /村庄扒手/);
@@ -273,9 +273,9 @@ test('supply modal traps focus, dismisses on backdrop and hides unrelated dungeo
   const deck = new api.PlayerDeckArea(ui.get('deck'), {...options, idPrefix: 'deck'});
   dungeon.setState(createDungeonDemo(defaultDungeon)); village.setState(createVillageDemo());
   deck.setState({hand: [{id: 'h', cardId: 'TS-0001', name: '民兵'}], draw: [], discard: []}); await settle();
-  const monster = ui.get('dungeon-main-rank-1').children[1].children[0]; monster.fire('pointerenter'); ui.key(' ');
+  const monster = ui.get('dungeon-main-rank-1').children[1].children[0]; monster.fire('pointerenter'); ui.key('e');
   assert.equal(ui.get('dungeon-inspect').hidden, false);
-  village.openSupply('amazon'); ui.key(' '); assert.equal(ui.get('dungeon-inspect').hidden, true);
+  village.openSupply('amazon'); ui.key('e'); assert.equal(ui.get('dungeon-inspect').hidden, true);
   ui.get('deck-first-card').fire('pointerenter', {altKey: true}); assert.equal(ui.get('deck-inspect-overlay').hidden, true);
   assert.equal(ui.key('Tab', {shiftKey: true}).defaultPrevented, true);
   assert.equal(ui.document.activeElement, browserCards(ui).at(-1));
@@ -309,7 +309,7 @@ test('public tabs switch separate desktops, retain inventory and images and leav
   assert.equal(ui.get('village-tab').tabIndex, -1);
   await check(ui, 'show-rank-zero', true);
   const monster = ui.get('dungeon-probe-main-rank-1').children[1].children[0];
-  monster.fire('pointerenter'); ui.key(' '); assert.equal(ui.get('dungeon-probe-inspect').hidden, false);
+  monster.fire('pointerenter'); ui.key('e'); assert.equal(ui.get('dungeon-probe-inspect').hidden, false);
   await ui.click('village-tab');
   assert.equal(ui.get('dungeon-probe-inspect').hidden, true); assert.equal(ui.get('dungeon-panel').hidden, true);
   assert.equal(ui.get('village-panel').hidden, false); assert.equal(ui.get('village-tab').getAttribute('aria-selected'), 'true');
@@ -357,7 +357,7 @@ test('village supplies form hero, village and basic rows, with a name followed b
   area.dispose();
 });
 
-test('a separate environment container has a heading, hides completely without a card and supports live updates and Space', async () => {
+test('a separate environment container has a heading, hides completely without a card and supports live updates and E', async () => {
   const {ui, api} = await setup(), area = new api.DungeonArea(ui.get('dungeon'), {idPrefix: 'dungeon'});
   area.setState(createDungeonDemo(defaultDungeon)); await settle();
   const slot = ui.get('dungeon-environment-slot');
@@ -375,7 +375,7 @@ test('a separate environment container has a heading, hides completely without a
   assert.equal(board.children[0].children.length, 2);
   assert.equal(ui.all.filter(node => node.className === 'table-area dungeon-environment' && node.isConnected).length, 1);
   state.environment.name = 'Caller mutation'; assert.doesNotMatch(environment.getAttribute('aria-label'), /Caller mutation/);
-  environment.fire('pointerenter'); ui.key(' '); assert.equal(ui.get('dungeon-inspect').hidden, false);
+  environment.fire('pointerenter'); ui.key('e'); assert.equal(ui.get('dungeon-inspect').hidden, false);
   assert.throws(() => area.setState({...state, environment: {...state.environment, id: state.dungeons[0].hall[0].card.id}}), /unique/);
   assert.equal(slot.children[0], environment); // Invalid updates do not alter the displayed environment.
   area.setState(createDungeonDemo({...defaultDungeon, forest: true})); await settle();

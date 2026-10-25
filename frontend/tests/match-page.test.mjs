@@ -228,7 +228,7 @@ test('active match renders public piles and own cards; details use actual card d
   assert.equal(handCards(ui).length, 2); assert.equal(ui.get('match-public-players').children[1].children.length, 2);
   assert.ok(ui.get('match-public-village-cards-pile-hero_supply:test')); assert.ok(ui.get('match-public-village-cards-pile-basic_supply:test'));
   assert.match(ui.get('match-title').textContent, /阿莉丝/);
-  assert.match(ui.get('page-state').textContent, /\u7a7a\u683c/);
+  assert.match(ui.get('page-state').textContent, /\bE\b/);
   assert.equal(ui.document.getElementById('disease-description'), null);
   assert.equal(ui.document.getElementById('match-information'), null);
   assert.equal(ui.get('history-panel').hidden, false); assert.equal(ui.get('history-undo').disabled, true); ui.cleanup();
@@ -816,7 +816,7 @@ test('Veris participation adds and removes continuous weapon status without a ga
   handCard(ui, source).fire('click');
   assert.equal(markers().hidden, false); assert.match(markers().children[0].getAttribute('aria-label'), /维里斯侍从：光照 \+1/);
   assert.match(combatText(ui), /光照 1/);
-  handCard(ui, weapon).fire('pointerenter'); ui.key(' ');
+  handCard(ui, weapon).fire('pointerenter'); ui.key('e');
   assert.ok(ui.all.some(node => node.className === 'inspect-status-panel' && !node.hidden && /维里斯侍从光照 \+1/.test(node.textContent))); ui.release();
   handCard(ui, source).fire('click'); assert.equal(markers().hidden, true); assert.match(combatText(ui), /光照 0/);
   handCard(ui, source).fire('click'); assert.equal(markers().hidden, false);
@@ -1311,7 +1311,7 @@ test('militia with several upgrade paths asks for the exact target, and a stale 
   await settle();
   assert.equal(ui.get('match-card-actions').hidden, true);
   const preview = options[0];
-  preview.fire('pointerenter'); ui.key(' '); assert.equal(ui.get('match-public-village-cards-inspect').hidden, false); ui.release();
+  preview.fire('pointerenter'); ui.key('e'); assert.equal(ui.get('match-public-village-cards-inspect').hidden, false); ui.release();
   const next = structuredClone(view); next.version++; next.legal_commands = [{type: 'FinishUpgrading'}];
   ui.setView(next); await ui.click('refresh-match'); options[1].fire('click'); assert.equal(posts(ui).length, 0); ui.cleanup();
   const chosen = await page({view, post: () => ({...next, version: 3})});
@@ -1773,7 +1773,7 @@ test('a pending disease stays at center, highlights only legal players and can b
   assert.deepEqual(responseButtons(ui).map(button => button.textContent), ['跳过']);
   assert.equal(ui.get('match-deck-discard-count').textContent, '0');
   const center = ui.all.find(node => node.className === 'public-card-spotlight' && !node.hidden); assert.ok(center);
-  center.children[0].fire('pointerenter'); ui.key(' ');
+  center.children[0].fire('pointerenter'); ui.key('e');
   assert.ok(ui.all.some(node => node.className.split(' ').includes('game-card-inspection') && !node.hidden)); ui.release();
   await ui.click('refresh-match'); assert.equal(diseaseBirths(ui).length, 1);
   playerRow(ui, 'alice').children[0].fire('click'); assert.equal(posts(ui).length, 0);
@@ -2107,7 +2107,7 @@ test('rest first offers destruction or skipping, then glows only legal cards and
   await ui.click('match-deck-response-rest:destroy'); assert.deepEqual(glowing(ui), ['CI-2']);
   assert.match(ui.get('match-deck-player-response').textContent, /选择一张手牌摧毁/);
   const [ineligible, eligible] = handCards(ui); ineligible.fire('click'); assert.equal(posts(ui).length, 1);
-  eligible.fire('pointerenter'); ui.key(' '); assert.equal(ui.get('match-deck-inspect-overlay').hidden, false); ui.release();
+  eligible.fire('pointerenter'); ui.key('e'); assert.equal(ui.get('match-deck-inspect-overlay').hidden, false); ui.release();
   eligible.fire('click'); eligible.fire('click'); await settle();
   assert.deepEqual(posts(ui).map(request => request.body.command), [
     {type: 'ChooseAction', action: 'rest'}, {type: 'RestDestroy', instance_id: 'CI-2'},
@@ -2294,12 +2294,12 @@ test('open player browser refreshes reveals and names, then closes when the matc
   ui.cleanup();
 });
 
-test('draw and discard browsers retain probe sorting, Space inspection and external snapshot updates', async () => {
+test('draw and discard browsers retain probe sorting, E inspection and external snapshot updates', async () => {
   const view = graphicalView(), ui = await page({view});
   ui.get('match-deck-draw-pile').children.find(node => node.dataset.instanceId).fire('click'); await settle();
   const cards = () => descendants(ui.get('match-deck-pile-browser-grid')).filter(node => node.className === 'physical-card' && !node.hidden);
   assert.deepEqual(cards().map(card => card.dataset.cardId), ['TS-0001', 'TS-0301']);
-  cards()[0].fire('pointerenter'); ui.key(' '); assert.equal(ui.get('match-deck-inspect-overlay').hidden, false); ui.release();
+  cards()[0].fire('pointerenter'); ui.key('e'); assert.equal(ui.get('match-deck-inspect-overlay').hidden, false); ui.release();
   const next = structuredClone(view); next.version++; next.draw.pop();
   ui.setView(next); await ui.click('refresh-match');
   assert.equal(ui.get('match-deck-pile-browser').hidden, false); assert.deepEqual(cards().map(card => card.dataset.cardId), ['TS-0301']);

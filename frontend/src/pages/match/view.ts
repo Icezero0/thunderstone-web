@@ -46,7 +46,7 @@ export class MatchPage {
     $('#match-title').textContent = heading.title; $('#match-subtitle').textContent = heading.detail;
     $('#turn-marker').hidden = false; $('#phase-label').textContent = phaseLabel(view.turn?.subphase);
     $('#match-id').textContent = `对局 ${view.id.slice(0, 8)}`;
-    $('#page-state').textContent = view.status === 'setup_pending' ? '分配确认后将生成初始牌组与地下城大厅。' : '鼠标悬停卡牌时，按住空格检视大图。';
+    $('#page-state').textContent = view.status === 'setup_pending' ? '分配确认后将生成初始牌组与地下城大厅。' : '鼠标悬停卡牌时，按住 E 检视大图。';
     $('#setup-panel').hidden = view.status !== 'setup_pending'; $('#active-table').hidden = !['active', 'finished'].includes(view.status);
     if (view.status === 'setup_pending') {this.table.finish(); this.table.closeBrowsers(); this.renderSetup(view, selection, busy);}
     else this.table.receive(view);

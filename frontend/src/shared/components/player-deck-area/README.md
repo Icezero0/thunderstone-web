@@ -1,6 +1,6 @@
 # PlayerDeckArea
 
-原生 TypeScript 玩家牌组组件，负责两侧抽牌堆／弃牌堆、中间手牌／宝藏／旁置 Tab、操作响应区、牌堆浏览、空格 原图检视和展示动画。样式随入口模块加载，颜色和字体复用 `shared/styles/global.css`。`game-probe` 是它的演示调用方。
+原生 TypeScript 玩家牌组组件，负责两侧抽牌堆／弃牌堆、中间手牌／宝藏／旁置 Tab、操作响应区、牌堆浏览、E 原图检视和展示动画。样式随入口模块加载，颜色和字体复用 `shared/styles/global.css`。`game-probe` 是它的演示调用方。
 
 牌堆浏览采用全局 [browse-dialog.css](../../styles/browse-dialog.css) 的共用弹窗样式与打开动画，与玩家牌区及英雄等级弹窗一致；组件只管理卡牌内容与弹窗交互。
 
@@ -66,11 +66,11 @@ deck.dispose();
 | `PlayerDeckState.treasures` | 可选的宝藏实例数组；有牌时显示手牌之后的“宝藏”Tab，省略或清空时隐藏。 |
 | `PlayerDeckState.aside` | 可选的旁置实例数组；有牌时显示“旁置”Tab，排列在宝藏之后。 |
 | `PlayerDeckState.revealed` | 可选的临时翻开实例数组；有牌时显示“翻开”Tab。宿主只传入观看者获准查看的牌，支持原位高亮和选卡。 |
-| `PlayerAuxiliaryCard.faceUp` | 宝藏／旁置牌的朝向，默认 `true`。`false` 时桌面及 空格 检视均只显示牌背。 |
+| `PlayerAuxiliaryCard.faceUp` | 宝藏／旁置牌的朝向，默认 `true`。`false` 时桌面及 E 检视均只显示牌背。 |
 
 组件复制输入数据，不修改调用方数组或卡牌对象；六个区域之间实例 ID 重复、缺失或改换卡牌身份会被拒绝。自动理牌只作用于手牌，按 `cardId` 升序，同编号的已有实例保留相对顺序。手牌数量没有 probe 的 30 张限制。历史恢复可能在不同分支复用实例编号，此时宿主须调用 `resetState` 清理旧卡面缓存，不能按普通快照更新处理。
 
-初始仅显示“手牌”Tab。新出现的宝藏／旁置不会自动抢占当前视图；当前 Tab 对应的牌全部移走时回到手牌，并处理被隐藏的键盘焦点。切换保留手牌顺序与选中状态，收起旧区域的检视，不重建卡图。Tab 支持左右方向键、Home／End；抽牌堆和弃牌堆始终在两侧。宝藏和旁置使用同样的独立／重叠布局和 空格 检视，当前仅手牌支持选择及手动排序。
+初始仅显示“手牌”Tab。新出现的宝藏／旁置不会自动抢占当前视图；当前 Tab 对应的牌全部移走时回到手牌，并处理被隐藏的键盘焦点。切换保留手牌顺序与选中状态，收起旧区域的检视，不重建卡图。Tab 支持左右方向键、Home／End；抽牌堆和弃牌堆始终在两侧。宝藏和旁置使用同样的独立／重叠布局和 E 检视，当前仅手牌支持选择及手动排序。
 
 选中、手动排序、自动理牌开关和动画进度属于本地展示状态。组件不导入游戏引擎、页面模块或网络客户端，也不自行抽牌、弃牌、洗牌、生成实例或判断规则。实际对局数据由服务端维护，正式页面通过 `pages/match/table-state.ts` 传入允许展示的投影；probe 传入本地演示数据。
 
@@ -141,7 +141,7 @@ deck.setResponse({id: 'rest-choice', prompt: '休整：可选择 1 张手牌摧�
 
 `game-probe` 的外部测试面板提供“演示回合开始／休整提示／阶段提示／清空响应区”。行动选择完成后清空或切换到休整提示；休整示例随手牌选择更新按钮，只确认显示，不摧毁卡牌、不推进真实回合，也不调用引擎。
 
-空格 检视使用独立的 [game-card 通用模块](../game-card/README.md)。其他游戏区域可注册自己的卡牌，与玩家牌组共享同一套检视行为及所属协调。
+E 检视使用独立的 [game-card 通用模块](../game-card/README.md)。其他游戏区域可注册自己的卡牌，与玩家牌组共享同一套检视行为及所属协调。
 
 ### 事件与资源选项
 
@@ -166,7 +166,7 @@ deck.setResponse({id: 'rest-choice', prompt: '休整：可选择 1 张手牌摧�
 - `types.ts` / `model.ts`：数据契约、验证、复制及稳定排序。
 - `hand-area.ts` / `hand-layout.ts`：手牌布局、尺寸监听和有界拖拽。
 - `pile-browser.ts`：浏览副本与焦点管理；牌堆侧边和顶牌复用 `../game-card/card-stack.ts`。
-- `../game-card/`：固定图片、悬停、空格 检视、程序翻面及状态标记，由所有游戏区域复用。`PlayerDeckCard.statuses` 传给 `PhysicalCard.setStatuses()`；每项含 `kind`（`buff`／`debuff`／`destroy`）、`source_name`、`description` 与可选 `source_card_id`。仅有对应状态时显示右上角图标，悬浮说明使用纯文本，牌背隐藏。组件不判断或产生游戏状态。
+- `../game-card/`：固定图片、悬停、E 检视、程序翻面及状态标记，由所有游戏区域复用。`PlayerDeckCard.statuses` 传给 `PhysicalCard.setStatuses()`；每项含 `kind`（`buff`／`debuff`／`destroy`）、`source_name`、`description` 与可选 `source_card_id`。仅有对应状态时显示右上角图标，悬浮说明使用纯文本，牌背隐藏。组件不判断或产生游戏状态。
 - `card-motion.ts` / `shuffle-motion.ts`：只移动既有视图的视觉动画。
 - `equipment-motion.ts`：装备与卸下的 FLIP 位置及尺寸过渡，连带手牌让位；中断、失焦、卸载时取消动画并保留最终布局，尊重减少动态效果偏好。
 - `upgrade-motion.ts` / `upgrade-energy.ts` / `upgrade-motion.css`：旧英雄到新英雄的进化时间轴、粒子与光环，仅处理展示。

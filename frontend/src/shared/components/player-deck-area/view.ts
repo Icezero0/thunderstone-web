@@ -85,7 +85,7 @@ export function createPlayerDeckView(host: HTMLElement, options: PlayerDeckOptio
   const discard = pile('discard', '弃牌堆');
   const descriptionId = options.descriptionId ?? id('card-shortcuts');
   if (!options.descriptionId) {
-    node('p', 'card-shortcuts', 'sr-only', root, '点击手牌选中；关闭自动理牌后可拖动排序；点击牌堆浏览；按住空格检视原图。');
+    node('p', 'card-shortcuts', 'sr-only', root, '点击手牌选中；关闭自动理牌后可拖动排序；点击牌堆浏览；按住 E 检视原图。');
   }
   const notice = options.notice ?? node('p', 'card-notice', 'player-deck-notice', root);
   notice.setAttribute('role', 'status'); notice.setAttribute('aria-live', 'polite');

@@ -205,7 +205,7 @@ export async function page({html = probeHtml, source = probeSource, pendingImage
     inspecting() {return get('inspect-content').children.filter(node => !node.hidden);},
     enter(id = 'probe-card', extra = {}) {return get(id).fire('pointerenter', extra);},
     key(key, fields = {}) {return window.fire('keydown', {key, ...fields});},
-    release() {return window.fire('keyup', {key: ' ', code: 'Space'});},
+    release() {return window.fire('keyup', {key: 'e', code: 'KeyE'});},
     async count(value) {get('hand-count').value = String(value); get('hand-count').fire('input'); await settle();},
     async click(id) {get(id).fire('click'); await settle();},
     async autoSort(checked) {get('auto-sort-hand').checked = checked; get('auto-sort-hand').fire('change'); await settle();},
