@@ -74,3 +74,8 @@ def rulebook(request: Request) -> Response:
 @router.get("/asset-cache-sw.js", include_in_schema=False)
 def asset_cache_worker(request: Request) -> Response:
     return public_file(request, PROJECT_ROOT / "frontend/dist/asset-cache-sw.js", "text/javascript")
+
+
+@router.api_route("/favicon.ico", methods=["GET", "HEAD"], include_in_schema=False)
+def favicon(request: Request) -> Response:
+    return public_file(request, PROJECT_ROOT / "frontend/dist/favicon.ico", "image/x-icon")

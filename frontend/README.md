@@ -5,6 +5,7 @@
 ```text
 frontend/
   index.html / auth.html / config.html / match.html / profile.html
+  public/favicon.ico               首页圆框闪电标志的多尺寸网站图标，所有正式页面共用
   public/rulebooks/TS4_rules_CN.pdf  首页规则书入口使用的中文 PDF，随构建发布
   src/
     app/session.ts          浏览器会话与 API 客户端实例
