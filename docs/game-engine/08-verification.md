@@ -88,4 +88,4 @@
 
 当前没有阻止经典卡牌覆盖完成的待裁定项。后续需要确定合作、单人等非标准模式的产品范围与完整规则来源；新组合若发现规则冲突，应记录出处、询问裁定并加入固定回归场景。
 
-完成门禁：`backend/scripts/effects/audit_effects.py --require-complete` 与 `backend/tests/effects/test_card_effects.py`。新增未绑定卡牌会直接失败，不会仅显示为跳过测试。可视化通过 `/effect-lab` 查看，说明见[实验台文档](effect-lab.md)。
+完成门禁：`backend/scripts/effects/audit_effects.py --require-complete` 与 `backend/tests/effects/test_card_effects.py`。新增未绑定卡牌会直接失败，不会仅显示为跳过测试。原 `/effect-lab` 页面已删除，案例仍通过进程内测试执行，说明见[案例文档](effect-lab.md)。

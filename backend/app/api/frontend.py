@@ -9,8 +9,8 @@ router = APIRouter()
 FRONTEND_DIST = PROJECT_ROOT / "frontend/dist"
 PAGE_FILES = {
     "/": "index.html", "/play": "index.html", "/config": "config.html",
-    "/effect-lab": "effect-lab.html", "/match": "match.html", "/game-probe": "game-probe.html",
-    "/profile": "profile.html",
+    "/match": "match.html", "/profile": "profile.html",
+    "/login": "auth.html", "/register": "auth.html",
 }
 
 

@@ -22,6 +22,10 @@
   color: var(--header-ink);
   border-bottom: 1px solid var(--gold);
 }
+.topbar nav a:hover,
+.topbar nav a:focus-visible {
+  color: var(--header-gold);
+}
 .account {
   margin-left: auto;
   display: flex;
@@ -83,49 +87,6 @@ p {
 .connection[data-status=connecting]:before {
   background: var(--header-gold);
 }
-.auth-layout {
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 72px;
-  align-items: center;
-  padding: 22px 50px 30px;
-}
-.welcome {
-  padding: 20px 15px 20px 0;
-  position: relative;
-}
-.welcome-symbol {
-  font-size: 96px;
-  line-height: 1;
-  color: var(--gold);
-  display: block;
-  margin-bottom: 32px;
-}
-.welcome h2 {
-  font-size: 36px;
-  line-height: 1.6;
-  font-weight: 600;
-  margin-bottom: 24px;
-}
-.welcome p {
-  max-width: 370px;
-  font-size: 14px;
-}
-.welcome-line {
-  width: 50px;
-  height: 1px;
-  background: var(--gold);
-  margin: 30px 0;
-}
-.auth-card {
-  padding: 38px;
-  max-width: 440px;
-  width: 100%;
-}
-.auth-card h2 {
-  font-size: 21px;
-  margin-bottom: 26px;
-}
 form {
   display: grid;
   gap: 20px;
@@ -155,9 +116,7 @@ label small {
   font-weight: 400;
   font-size: 12px;
 }
-.auth-card > .text-button {
-  margin-top: 18px;
-}
+
 .lobby-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
@@ -373,13 +332,8 @@ label small {
   .shell {
     padding-top: 30px;
   }
-  .auth-layout {
-    padding: 0;
-    gap: 30px;
-  }
-  .welcome h2 {
-    font-size: 28px;
-  }
+
+
   .room-layout {
     grid-template-columns: 1fr 1.2fr;
   }
@@ -399,18 +353,12 @@ label small {
     flex-direction: column;
     gap: 15px;
   }
-  .auth-layout,
   .room-layout,
   .lobby-aside {
     grid-template-columns: 1fr;
   }
-  .welcome {
-    display: none;
-  }
-  .auth-card {
-    max-width: none;
-    padding: 28px;
-  }
+
+
   .card {
     padding: 22px;
   }

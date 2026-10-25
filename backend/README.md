@@ -17,7 +17,7 @@ backend/
       v1/                      auth, users, rooms, matches and rule configuration
   engine-worker/               JSON-lines transport to ../engine/
   devtools/
-    api/                       local setup/battle/effect-lab routers
+    api/                       isolated setup/battle/effect-lab test transports
     effect_lab/                effect trace service and advanced cases
   scripts/catalog/             catalog indexing and SQLite import
   scripts/effects/             reviewed effect builders and coverage audits
@@ -25,7 +25,7 @@ backend/
   tests/                       Python integration and migration tests
 ```
 
-Routes parse requests and call `modules/<domain>/service.py`; services coordinate repositories and the shared engine. Database access belongs in repositories. The application composition root (`app/main.py`) mounts the public API and local tool routers separately. Only the composition root imports `devtools`; public application modules do not depend on tool code.
+Routes parse requests and call `modules/<domain>/service.py`; services coordinate repositories and the shared engine. Database access belongs in repositories. The application composition root (`app/main.py`) mounts only formal application routes. It does not import or mount `devtools`. Sandbox transports remain available only through `tests/support/sandbox_app.py` for in-process regression tests; the deployed application returns 404 for them.
 
 The public Python rules boundary is `app/integrations/game_engine/api.py`; callers do not need worker serialization details. See [test groups](tests/README.md) and [maintenance commands](scripts/README.md). Runtime data stays in the root `data/`, and catalog inputs in `cards/`.
 
@@ -59,7 +59,7 @@ upgrades. After updating dependencies in an existing `.venv`, restart the backen
 the running process does not reload newly installed protocol libraries. The launcher
 reports missing WebSocket support before starting the service.
 
-The frontend development server is at `http://127.0.0.1:5173/`; start it with `frontend/run_frontend.bat` or `.sh`. The backend also hosts the built pages, including `/config`, `/match`, `/game-probe` and `/effect-lab`, at port 8765. Account routes are `/api/v1/auth/register`, `/login`, `/refresh` and `/api/v1/users/me`. `/ws` accepts an initial JSON message `{"type":"auth","payload":{"token":"<access token>"}}`, then supports `{"type":"heartbeat"}`. The panel uses `/api/v1/options`, `/validate` and `/setup`; the old `/api/...` preview paths remain as compatibility aliases. `/health` reports process availability. Install `backend/requirements-dev.txt` and run `.\.venv\Scripts\python.exe -m unittest discover -s backend/tests -t .` to test both layers.
+The frontend development server is at `http://127.0.0.1:5173/`; start it with `frontend/run_frontend.bat` or `.sh`. The backend also hosts the built formal pages at `/login`, `/register`, `/play`, `/config`, `/match` and `/profile`. Authentication endpoints remain under `/api/v1/auth/`; `/api/v1/users/me` returns the current account. `/ws` accepts an initial JSON message `{"type":"auth","payload":{"token":"<access token>"}}`, then supports `{"type":"heartbeat"}`. Room configuration uses `/api/v1/options` and `/api/v1/validate`. Setup, battle sandboxes, effect-lab endpoints, legacy `/api/...` aliases, Swagger, ReDoc and OpenAPI JSON are not exposed. `/health` reports process availability. Install `backend/requirements-dev.txt` and run `.\.venv\Scripts\python.exe -m unittest discover -s backend/tests -t .` for backend tests.
 
 ## Room visibility
 
@@ -96,9 +96,18 @@ Account emails, password hashes and local file paths are not included in player 
 printed values. `/cards/TS-BACK-001.jpg` serves the common card back alongside
 the numbered face images. Neither endpoint returns match state or local asset paths.
 
+`api/resources.py` serves the built `/rulebooks/TS4_rules_CN.pdf` and root
+`/asset-cache-sw.js` as well. Public files use `Cache-Control: public, no-cache`,
+ETag and Last-Modified validators: unchanged requests return an empty 304;
+PDF range requests and HEAD remain supported. The browser's media-only service
+worker persists previously viewed card images and the rulebook, without caching
+account or match APIs. See [browser cache behavior](../frontend/README.md#卡图与规则书缓存).
+Build the frontend before serving it directly from the backend. Vite serves the
+worker and PDF from `frontend/public/` in development.
+
 The [battle team API](../docs/game-engine/battle-team-api.md) adds visible preparation
-and formal submission adapters, plus `/api/v1/battle/context` and `/api/v1/battle/submit`
-for the stateless local sandbox. The match module supplies its persisted server
+and formal submission adapters. The former `/api/v1/battle/context` and `/api/v1/battle/submit`
+sandbox endpoints are no longer mounted. The match module supplies its persisted server
 state directly to the adapter, exposes visible preview inputs only to the actor,
 and accepts an editable team selection through the authenticated command route.
 

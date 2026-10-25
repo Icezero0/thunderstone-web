@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
+import {createConfigModel} from '../src/pages/config/model.js';
 
 const source = await readFile(new URL('../.test-dist/config-page.js', import.meta.url), 'utf8');
 
@@ -37,7 +38,7 @@ function dom() {
   const extras = ['guardian', 'environment', 'trap', 'treasure'].map(extraKind => {
     const node = new Element('button'); node.dataset.extraKind = extraKind; return node;
   });
-  const document = {createElement: tag => new Element(tag), querySelector(selector) {
+  const document = {body: new Element('body'), createElement: tag => new Element(tag), querySelector(selector) {
     if (selector.startsWith('#')) return get(selector.slice(1));
     return get(selector);
   }, querySelectorAll(selector) {
@@ -64,24 +65,27 @@ function catalog() {
 }
 
 const settle = () => new Promise(resolve => setImmediate(resolve));
-async function page(responses = []) {
-  const ui = dom(); const storage = new Map(); const requests = [];
-  ui.get('setup-players').value = 'alice,bob'; ui.get('setup-seed').value = 'page-test';
-  const context = vm.createContext({document: ui.document, Option: ui.Option,
-    URLSearchParams, location: {search: ''}, structuredClone, setTimeout, clearTimeout,
-    localStorage: {getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value)},
-    fetch: async (url, options) => {
-      if (url === '/api/v1/options') return {ok: true, json: async () => catalog()};
-      requests.push(JSON.parse(options.body));
-      const result = responses.shift();
-      assert.ok(result, 'Unexpected request: ' + url);
-      return typeof result === 'function' ? result() : {ok: true, json: async () => result};
+async function page({authenticated = true, search = '?room=' + 'a'.repeat(32), host = 1} = {}) {
+  const ui = dom(), requests = [], navigations = [];
+  const room = {id: 'a'.repeat(32), host_user_id: host, status: 'waiting', config_version: 1, version: 3,
+    name: 'Test room', config: createConfigModel({}).defaultState()};
+  const storage = new Map(authenticated ? [['thunderstone-session-v1', JSON.stringify({access_token: 'a', refresh_token: 'r'})]] : []);
+  ui.get('app').hidden = true;
+  const context = vm.createContext({document: ui.document, Option: ui.Option, Headers, URL, URLSearchParams,
+    location: {search, replace: url => navigations.push(url)}, window: {addEventListener() {}},
+    structuredClone, setTimeout, clearTimeout,
+    sessionStorage: {getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value), removeItem: key => storage.delete(key)},
+    fetch: async (url, options = {}) => {
+      requests.push({url, ...options});
+      const json = value => new Response(JSON.stringify(value), {headers: {'Content-Type': 'application/json'}});
+      if (url === '/api/v1/options') return json(catalog());
+      if (url === '/api/v1/users/me') return json({id: 1});
+      if (url === '/api/v1/rooms/' + room.id) return json(room);
+      if (url.endsWith('/config') && options.method === 'PATCH') {room.config = JSON.parse(options.body).config; room.version++; return json(room);}
+      throw new Error('Unexpected request: ' + url);
     }, console});
-  vm.runInContext(source, context);
-  await settle();
-  assert.equal(ui.get('app').hidden, false, ui.get('loading').textContent);
-  assert.equal(ui.get('loading').hidden, true, ui.get('loading').textContent);
-  return {...ui, storage, requests, payload: () => JSON.parse(ui.get('json-output').value)};
+  vm.runInContext(source, context); await settle(); await settle();
+  return {...ui, requests, navigations, payload: () => JSON.parse(ui.get('json-output').value)};
 }
 
 test('configuration page wires selection, environment limits, export and reset after module split', async () => {
@@ -102,9 +106,10 @@ test('configuration page wires selection, environment limits, export and reset a
   ui.get('reset').dispatch('click');
   assert.equal(ui.payload().selection.dungeon_features.mode, 'classic_random');
   assert.deepEqual(ui.payload().selection.village.fixed_randomizer_ids, []);
-  const saved = JSON.parse(ui.storage.get('thunderstone-rules-draft-v7'));
-  assert.equal(saved.catalog_hash, 'config-fixture');
-  assert.equal(saved.state.counts.monster_groups, 3);
+  ui.get('save-room').dispatch('click'); await settle();
+  const saved = JSON.parse(ui.requests.find(request => request.method === 'PATCH').body);
+  assert.equal(saved.expected_version, 3);
+  assert.equal(saved.config.counts.monster_groups, 3);
 });
 
 test('default configuration locks 8/4/3 random groups and unit multipliers, preserving the custom draft on toggle', async () => {
@@ -122,40 +127,13 @@ test('default configuration locks 8/4/3 random groups and unit multipliers, pres
   for (const id of ['fixed-config-panel', 'extras-config-panel', 'multipliers-config-panel']) assert.equal(ui.get(id).hidden, false);
 });
 
-test('flying spire allocation keeps the original request and submits two groups per dungeon', async () => {
-  const ready = {status: 'ready', events: [], state: {first_player_id: 'alice',
-    selected_groups: {village: [], hero: [], monster: []}, selected_features: {environment: [], guardian: [], trap: [], treasure: []},
-    selected_thunderstones: [], supply_rules: {disease_weights: {}, disease_card_ids: [], disease_mode: 'normal'},
-    instances: {}, zones: {}, player_order: [], players: {}}};
-  const ui = await page([{status: 'choice_required', choice: {
-    group_ids: ['monster-0', 'monster-1', 'monster-2', 'monster-3'], feature_ids: [],
-  }}, ready]);
-  ui.get('generate-setup').dispatch('click'); await settle();
-  assert.equal(ui.get('setup-choice').hidden, false);
-  const selects = ui.get('setup-choice').querySelectorAll('select[data-allocation-id]');
-  selects[1].value = 'b'; selects[1].dispatch('change');
-  assert.equal(ui.get('submit-allocation').disabled, true);
-  selects[2].value = 'a'; selects[2].dispatch('change');
-  assert.equal(ui.get('submit-allocation').disabled, false);
-  ui.get('submit-allocation').dispatch('click'); await settle();
-  assert.equal(ui.requests.length, 2);
-  assert.deepEqual(ui.requests[1], {...ui.requests[0], scenario_choices: {two_dungeons: {
-    group_a_ids: ['monster-0', 'monster-2'], group_a_feature_ids: [],
-  }}});
-  assert.equal(ui.get('setup-choice').hidden, true);
-  assert.equal(ui.get('setup-result').hidden, false);
-  assert.match(ui.get('setup-status').textContent, /组局完成/);
-});
-
-test('editing configuration while setup is in flight discards the stale response', async () => {
-  let complete;
-  const ui = await page([() => new Promise(resolve => {complete = resolve;})]);
-  ui.get('generate-setup').dispatch('click'); await settle();
-  ui.get('reset').dispatch('click');
-  complete({ok: true, json: async () => ({status: 'choice_required', choice: {group_ids: [], feature_ids: []}})});
-  await settle();
-  assert.equal(ui.get('setup-choice').hidden, true);
-  assert.equal(ui.get('setup-result').hidden, true);
-  assert.match(ui.get('setup-status').textContent, /规则配置已修改/);
-  assert.equal(ui.get('generate-setup').disabled, false);
+test('configuration is a host-owned room editor, never a public setup sandbox', async () => {
+  const standalone = await page({search: ''});
+  assert.deepEqual(standalone.navigations, ['/play']); assert.equal(standalone.requests.length, 0);
+  const anonymous = await page({authenticated: false});
+  assert.deepEqual(anonymous.navigations, ['/login?next=' + encodeURIComponent('/config?room=' + 'a'.repeat(32))]);
+  assert.equal(anonymous.get('app').hidden, true);
+  const member = await page({host: 2}); assert.equal(member.get('app').hidden, true);
+  const html = await readFile(new URL('../config.html', import.meta.url), 'utf8');
+  assert.doesNotMatch(html, /setup-panel|generate-setup|setup-players/);
 });

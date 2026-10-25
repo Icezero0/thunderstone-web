@@ -16,8 +16,8 @@ await build({
     'probe-hand-layout': 'src/shared/components/player-deck-area/hand-layout.ts',
     'probe-face-flip': 'src/shared/components/game-card/face-flip.ts',
     'player-deck-model': 'src/shared/components/player-deck-area/model.ts',
-    'probe-demo-state': 'src/pages/game-probe/demo-state.ts',
-    'probe-public-state': 'src/pages/game-probe/public-demo-state.ts',
+    'probe-demo-state': 'tests/fixtures/game-probe/demo-state.ts',
+    'probe-public-state': 'tests/fixtures/game-probe/public-demo-state.ts',
     'table-area-model': 'src/shared/components/table-areas/model.ts',
     'profile-model': 'src/pages/profile/model.ts',
     'game-results-model': 'src/shared/components/game-results/model.ts',
@@ -55,7 +55,7 @@ await build({
 
 await build({
   absWorkingDir: fileURLToPath(new URL('../', import.meta.url)),
-  entryPoints: ['src/pages/game-probe/index.ts'], outfile: '.test-dist/game-probe.js',
+  entryPoints: ['tests/fixtures/game-probe/index.ts'], outfile: '.test-dist/game-probe.js',
   loader: {'.png': 'dataurl'},
   bundle: true, format: 'iife', platform: 'browser', target: 'es2022', logLevel: 'warning',
 });
@@ -99,4 +99,10 @@ await build({
   absWorkingDir: fileURLToPath(new URL('../', import.meta.url)),
   entryPoints: ['src/shared/components/player-deck-area/card-dissolve.ts'], outfile: '.test-dist/card-dissolve.js',
   globalName: 'CardDissolvePackage', bundle: true, format: 'iife', platform: 'browser', target: 'es2022', logLevel: 'warning',
+});
+
+await build({
+  absWorkingDir: fileURLToPath(new URL('../', import.meta.url)),
+  entryPoints: ['src/pages/auth/index.ts'], outfile: '.test-dist/auth-page.js',
+  bundle: true, format: 'iife', platform: 'browser', target: 'es2022', logLevel: 'warning',
 });

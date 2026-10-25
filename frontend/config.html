@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+  <script type="module" src="/src/app/asset-cache.ts"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>雷霆之石 · 规则配置</title>
@@ -17,7 +18,7 @@
     <div class="hero-copy">
       <p class="eyebrow">预知冒险</p>
       <h1>游戏配置</h1>
-      <p>设定牌组数量、指定卡组和实例倍率，然后在页面下方生成本局的实际卡组、地下城与起始牌组。</p>
+      <p>设定本局的牌组数量、指定卡组和供应数量。</p>
     </div>
   </header>
 
@@ -81,30 +82,17 @@
         </div>
       </section>
 
-      <section id="setup-panel" class="panel" aria-labelledby="setup-title">
-        <div class="section-heading"><span class="step">05</span><div><p class="eyebrow">实际组局</p><h2 id="setup-title">生成本局并查看结果</h2></div></div>
-        <p class="section-copy">玩家和先手在正式联机时由房间提交；这里填写临时玩家 ID 来验证 setup。使用相同配置与随机种子可复现结果。</p>
-        <div class="setup-input-grid">
-          <label class="setup-field"><span>玩家 ID（按玩家列表顺序，用逗号分隔）</span><input id="setup-players" value="玩家一,玩家二" autocomplete="off"></label>
-          <label class="setup-field"><span>随机种子</span><span class="seed-control"><input id="setup-seed" value="preview-1" autocomplete="off"><button type="button" id="new-seed" class="button secondary">换一个</button></span></label>
-          <label class="setup-field"><span>先手玩家</span><select id="setup-first-player"><option value="">随机</option></select></label>
-        </div>
-        <div class="setup-actions"><button type="button" id="generate-setup" class="button primary">生成本局</button><button type="button" id="download-setup" class="button secondary" hidden>下载完整结果 JSON</button></div>
-        <p id="setup-status" class="setup-status" role="status" aria-live="polite">填写参数后生成，即可查看选中的牌组和初始牌区。</p>
-        <div id="setup-choice" class="setup-choice" hidden></div>
-        <div id="setup-result" class="setup-result" hidden></div>
-      </section>
     </main>
 
     <aside class="side-column" aria-label="配置结果">
       <div class="summary-card">
         <p class="eyebrow">本局草稿</p><h2>组局概览</h2>
         <div id="summary" class="summary-list"></div>
-        <p id="draft-note" class="small-note">右侧仍是规则草稿；第 05 部分的玩家与种子只用于本地组局预览。</p>
+        <p id="draft-note" class="small-note">修改后点击“保存至房间”生效。</p>
       </div>
       <div class="output-card">
         <div class="output-heading"><div><p class="eyebrow">ENGINE INPUT</p><h2>规则配置 JSON</h2></div><span id="validation-badge" class="validation-badge">待预检</span></div>
-        <p id="output-note" class="small-note">预检检查参数结构与卡牌目录。要执行实际组局，请使用第 05 部分。</p>
+        <p id="output-note" class="small-note">预检检查参数结构与卡牌目录。保存时服务器会再次校验。</p>
         <div id="validation-errors" class="validation-errors" role="status" aria-live="polite"></div>
         <textarea id="json-output" readonly spellcheck="false" aria-label="规则配置 JSON"></textarea>
         <div class="action-row"><button type="button" id="validate" class="button primary">预检配置</button><button type="button" id="copy" class="button secondary">复制 JSON</button></div>

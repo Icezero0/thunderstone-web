@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 
-export const html = await readFile(new URL('../../game-probe.html', import.meta.url), 'utf8');
+export const html = await readFile(new URL('../fixtures/game-probe/page.html', import.meta.url), 'utf8');
 const probeHtml = html;
 const probeSource = await readFile(new URL('../../.test-dist/game-probe.js', import.meta.url), 'utf8');
 export const settle = () => new Promise(resolve => setImmediate(resolve));
@@ -44,7 +44,7 @@ export async function page({html = probeHtml, source = probeSource, pendingImage
       this.width = 0; this.height = 0; this.naturalWidth = 0; this.naturalHeight = 0;
       this.srcWrites = []; this.decodeCalls = 0; this.value = ''; this.className = ''; all.push(this);
       this.scrollTop = 0; this.scrollLeft = 0;
-      this.classList = {toggle: (name, force) => {
+      this.classList = {contains: name => this.className.split(/\s+/).includes(name), toggle: (name, force) => {
         const classes = new Set(this.className.split(' ').filter(Boolean));
         if (force ?? !classes.has(name)) classes.add(name); else classes.delete(name); this.className = [...classes].join(' ');
       }, add: (...names) => {this.className = [...new Set([...this.className.split(' ').filter(Boolean), ...names])].join(' ');}};
@@ -205,7 +205,7 @@ export async function page({html = probeHtml, source = probeSource, pendingImage
     inspecting() {return get('inspect-content').children.filter(node => !node.hidden);},
     enter(id = 'probe-card', extra = {}) {return get(id).fire('pointerenter', extra);},
     key(key, fields = {}) {return window.fire('keydown', {key, ...fields});},
-    release() {return window.fire('keyup', {key: 'Alt'});},
+    release() {return window.fire('keyup', {key: ' ', code: 'Space'});},
     async count(value) {get('hand-count').value = String(value); get('hand-count').fire('input'); await settle();},
     async click(id) {get(id).fire('click'); await settle();},
     async autoSort(checked) {get('auto-sort-hand').checked = checked; get('auto-sort-hand').fire('change'); await settle();},

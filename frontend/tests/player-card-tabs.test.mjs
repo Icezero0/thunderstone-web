@@ -30,15 +30,15 @@ test('only the hand tab exists visually initially; nonempty auxiliary snapshots 
   assert.equal(area.activeTab, 'aside'); assert.equal(displayed(ui, 'aside')[0].dataset.face, 'back'); area.dispose();
 });
 
-test('switching tabs preserves hand order and selection, supports Alt on both faces, and reuses decoded images', async () => {
+test('switching tabs preserves hand order and selection, supports Space on both faces, and reuses decoded images', async () => {
   const {ui, area} = await setup(); area.setState(snapshot()); await settle();
   const hand = displayed(ui, 'hand')[0]; hand.fire('click');
   assert.deepEqual(Array.from(area.selectedIds), ['h2']); area.setActiveTab('treasures');
   assert.equal(ui.get('one-hand-track').hidden, true); assert.equal(ui.get('one-draw-count').textContent, '1');
-  const treasure = displayed(ui, 'treasures')[0]; treasure.fire('pointerenter'); ui.key('Alt');
+  const treasure = displayed(ui, 'treasures')[0]; treasure.fire('pointerenter'); ui.key(' ');
   assert.equal(ui.get('one-inspect-overlay').hidden, false);
   area.setActiveTab('aside'); assert.equal(ui.get('one-inspect-overlay').hidden, true);
-  const aside = displayed(ui, 'aside')[0]; aside.fire('pointerenter', {altKey: true});
+  const aside = displayed(ui, 'aside')[0]; aside.fire('pointerenter');
   const large = ui.get('one-inspect-content').children.find(node => !node.hidden);
   assert.equal(large.children[0].hidden, true); assert.equal(large.children[1].hidden, false); assert.equal(large.children[1].width, 501);
   aside.fire('click'); assert.deepEqual(Array.from(area.selectedIds), ['h2']);
@@ -54,7 +54,7 @@ test('tabs support keyboard navigation and return focus to the hand when the sel
   const hand = ui.get('one-hand-heading'); hand.focus(); hand.fire('keydown', {key: 'ArrowRight'});
   assert.equal(area.activeTab, 'treasures'); assert.equal(ui.document.activeElement, ui.get('one-treasures-tab'));
   ui.get('one-treasures-tab').fire('keydown', {key: 'End'}); assert.equal(area.activeTab, 'aside');
-  const held = displayed(ui, 'aside')[0]; held.focus(); ui.key('Alt');
+  const held = displayed(ui, 'aside')[0]; held.focus(); ui.key(' ');
   area.setState({...snapshot(), aside: []});
   assert.equal(area.activeTab, 'hand'); assert.equal(ui.get('one-aside-tab').hidden, true);
   assert.equal(ui.document.activeElement, hand); assert.equal(ui.get('one-inspect-overlay').hidden, true);

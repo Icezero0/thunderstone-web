@@ -44,7 +44,7 @@ uv pip install --python .\.venv\Scripts\python.exe -r backend\requirements.txt
 
 前端默认 `http://127.0.0.1:5173/`，后端默认 `http://127.0.0.1:8765`。后端启动器使用根目录现有 `.venv` 的 Python，支持 `--host`、`--port` 和 `--no-reload`；前端支持 `--host`、`--port` 等 Vite 参数。Linux/macOS 对应运行 `bash backend/run_backend.sh` 和 `bash frontend/run_frontend.sh`。
 
-前端开发服务代理 API、WebSocket、卡图和实验台数据到后端。后端也可托管 `frontend/dist/` 中的大厅、配置页与效果实验台。
+前端开发服务代理 API、WebSocket、卡图到后端。后端也可托管 `frontend/dist/` 中的登录、注册、大厅、房间配置、对局和个人设置页面。开发试验页面与沙盒接口不再对外开放。
 
 ## 资产
 
@@ -58,7 +58,7 @@ uv pip install --python .\.venv\Scripts\python.exe -r backend\requirements.txt
 
 ## 使用数据
 
-`cards.csv` 使用带 BOM 的 UTF-8 编码，空白数值表示未知或不适用，不等于 0。卡牌图片的路径由 `image_path` 字段给出。旧审核页面已移除；下方的规则配置面板是新的独立原型。
+`cards.csv` 使用带 BOM 的 UTF-8 编码，空白数值表示未知或不适用，不等于 0。卡牌图片的路径由 `image_path` 字段给出。旧审核页面已移除；规则配置面板用于正式房间设置。
 
 分类、标签、英雄系列、经验值字段与审核状态见 [数据模型](docs/data-model.md)。
 
@@ -66,7 +66,7 @@ uv pip install --python .\.venv\Scripts\python.exe -r backend\requirements.txt
 
 当前成果、未完成范围和建议推进顺序见[项目阶段状态](docs/project-status.md)。
 
-[联机大厅](docs/multiplayer-lobby.md)支持登录、创建／加入房间、玩家列表、房主配置和准备状态。全员准备后房主可开始[正式对局](docs/match-lifecycle.md)，完成飞龙尖塔分配，进行村庄、休息和地下城回合，以及处理卡牌效果选择。战斗准备复用共享引擎进行本地预览，确认后由后端结算；刷新或重启后端后可恢复。大厅位于 `/` 或 `/play`，配置页位于 `/config`，对局页位于 `/match?id=...`。
+[联机大厅](docs/multiplayer-lobby.md)支持创建／加入房间、玩家列表、房主配置和准备状态。登录、注册分别位于 `/login`、`/register`。全员准备后房主可开始[正式对局](docs/match-lifecycle.md)，完成飞龙尖塔分配，进行村庄、休息和地下城回合，以及处理卡牌效果选择。战斗准备复用共享引擎进行本地预览，确认后由后端结算；刷新或重启后端后可恢复。大厅位于 `/` 或 `/play`，房间配置页位于 `/config?room={id}`，对局页位于 `/match?id=...`。
 
 前端统一使用规则配置页的暖纸色、深蓝灰与铜金色风格。共享基础样式位于 `frontend/src/shared/styles/global.css`，新页面的使用规范与示例见[前端样式说明](frontend/README.md)。
 
@@ -76,11 +76,11 @@ uv pip install --python .\.venv\Scripts\python.exe -r backend\requirements.txt
 
 [战斗队伍接口](docs/game-engine/battle-team-api.md)支持在地下城准备结束时提交参战英雄、法术／支援、装备和目标。前端逐次操作使用共享引擎即时预览，后端通过 `SubmitBattleTeam` 重新验证并结算。
 
-## 规则配置面板（本地原型）
+## 房间规则配置
 
-按上述方式启动后，打开 `http://127.0.0.1:5173/config`。面板通过后端读取已导入 SQLite 的卡牌目录，可设置经典模式的组数、固定组、雷霆之石，以及地下城特征的经典随机或手动选择。手动模式中，守护者/环境按实际卡牌选，陷阱/宝藏按整组选；未固定的名额可随机补足。末日之门、绝境庇护所、飞龙尖塔会调整实际组数；飞龙尖塔允许最多固定 2 张雷霆之石，放逐仪式强制选入全部 7 张与末日之心。村庄/英雄/怪物三类牌各有实例倍率（×1～×5）。
+房主在房间中点击“编辑配置”进入面板。面板通过后端读取已导入 SQLite 的卡牌目录，可设置经典模式的组数、固定组、雷霆之石，以及地下城特征的经典随机或手动选择。手动模式中，守护者/环境按实际卡牌选，陷阱/宝藏按整组选；未固定的名额可随机补足。末日之门、绝境庇护所、飞龙尖塔会调整实际组数；飞龙尖塔允许最多固定 2 张雷霆之石，放逐仪式强制选入全部 7 张与末日之心。村庄/英雄/怪物三类牌各有实例倍率（×1～×5）。
 
-第 05 部分可填入临时玩家 ID 和随机种子，点击“生成本局”，直接查看实际抽中的卡组、地下城特征、雷霆之石、初始大厅与玩家起始牌数，并下载完整设置状态与事件。若抽到飞龙尖塔，页面会先展示四个怪物组和已抽中的特征，让你分配到两座地下城，完成后再显示结果。正式联机时，玩家列表、先手策略和种子仍由联机层提交。
+临时玩家和种子的 setup 预览已移除。实际组局由房主点击“开始对局”触发，玩家列表、先手策略与种子由联机层提交；飞龙尖塔分配在正式对局中处理。
 
 ## 运行一次 setup
 
@@ -92,10 +92,10 @@ uv pip install --python .\.venv\Scripts\python.exe -r backend\requirements.txt
 
 输出包含初始 `state` 和仅供服务器保存的完整设置 `events`。相同输入和随机种子会得到相同结果。飞龙尖塔需要玩家决定两座地下城的怪物组与特征分配；命令会先输出所需选择，再用相同参数加 `--choices choices.json` 重新执行。`choices.json` 的结构为 `{"two_dungeons":{"group_a_ids":["组ID1","组ID2"],"group_a_feature_ids":["特征ID"]}}`，未列出的组和特征进入另一座地下城。
 
-基础回合指令由 [TypeScript 回合内核](engine/src/turn/commands.ts)执行，可以从 setup 状态推进村庄、休整和地下城行动。用 `.\.venv\Scripts\python.exe backend\scripts\sandbox\run_turns.py --state setup-result.json --commands commands.json --output turn-result.json` 可在本地重放指令。[JSON 效果处理器](docs/game-engine/ability-runtime-implementation.md)包含 467 条可执行能力及 206 条持续规则绑定，另有卡面基础数值、开局和共用规则；逐条和逐卡状态分别见 [能力覆盖清单](cards/reports/coverage.csv) 与 [卡牌覆盖清单](cards/reports/card-coverage.csv)。520 张有效果的卡牌已全部具有完整绑定及逐卡行为测试，未完成卡牌会使测试与审计门禁失败。已实现替代与反应窗口、借用与复制、附着、跨回合规则、额外回合、供应补充和特殊场景。临时 [效果实验台](docs/game-engine/effect-lab.md)展示 23 个执行案例，以及可检索的全卡覆盖清单。此覆盖范围是当前经典规则与已确认裁定；联机层、正式客户端及合作／单人变体另行开发。
+基础回合指令由 [TypeScript 回合内核](engine/src/turn/commands.ts)执行，可以从 setup 状态推进村庄、休整和地下城行动。用 `.\.venv\Scripts\python.exe backend\scripts\sandbox\run_turns.py --state setup-result.json --commands commands.json --output turn-result.json` 可在本地重放指令。[JSON 效果处理器](docs/game-engine/ability-runtime-implementation.md)包含 467 条可执行能力及 206 条持续规则绑定，另有卡面基础数值、开局和共用规则；逐条和逐卡状态分别见 [能力覆盖清单](cards/reports/coverage.csv) 与 [卡牌覆盖清单](cards/reports/card-coverage.csv)。520 张有效果的卡牌已全部具有完整绑定及逐卡行为测试，未完成卡牌会使测试与审计门禁失败。已实现替代与反应窗口、借用与复制、附着、跨回合规则、额外回合、供应补充和特殊场景。原实验台的 23 个执行案例保留为[进程内回归测试](docs/game-engine/effect-lab.md)。此覆盖范围是当前经典规则与已确认裁定；合作／单人变体另行开发。
 
 怪物审核已完成，临时审核页面及专用接口已移除。战利品符号结论保存在 `cards/reviews/monster-symbols.json`，原始导出保存在 `archive/reviews/`；对应行为回归继续保留，详见[审核处理清单](docs/game-engine/monster-review-resolution.md)。
 
-效果实验台位于 `http://127.0.0.1:8765/effect-lab`，沿用上面的启动命令。每个案例展示命令、状态、事件、选择分支和断言；请求在内存中重新组局，不修改数据库。
+效果实验台页面已删除；案例服务与回归测试继续保留，但不挂载到正式后端。`game-probe` 的组件示例迁入 `frontend/tests/fixtures/game-probe/`，仅供进程内测试，不构建或提供网页入口。旧开发页面、setup／battle 沙盒及 API 文档地址均返回 404。
 
 修改卡牌目录后，先用 `.\.venv\Scripts\python.exe backend\scripts\catalog\build_setup_catalog.py` 更新组映射，再用 `.\.venv\Scripts\python.exe backend\scripts\catalog\import_cards_to_sqlite.py --replace` 更新数据库，随后启动或重启面板。原始 TTS 存档不会参与面板或组局的读取。

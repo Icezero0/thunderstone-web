@@ -38,7 +38,7 @@ test('players use a circular-avatar image/fallback and a named native button, wi
   button.fire('click'); await settle(); assert.equal(area.browsingPlayerId, 'alice'); assert.equal(ui.get('players-player-browser-title').textContent, 'Alice'); area.dispose();
 });
 
-test('opponent hand hides identity in DOM and image requests; Alt only inspects backs for unrevealed cards', async () => {
+test('opponent hand hides identity in DOM and image requests; Space only inspects backs for unrevealed cards', async () => {
   const loaded = [], {ui, area} = await setup(snapshot(), {images: {front: id => {loaded.push(id); return `/faces/${id}.png`;}}});
   trigger(ui).fire('click'); await settle();
   const hand = visible(ui); assert.deepEqual(hand.map(node => node.dataset.face), ['back', 'front', 'back']);
@@ -46,13 +46,13 @@ test('opponent hand hides identity in DOM and image requests; Alt only inspects 
   assert.equal(loaded.includes('SECRET-99'), false);
   assert.equal(ui.all.some(node => node.isConnected && node.tagName === 'img' && node.src?.includes('SECRET-99')), false);
   for (const index of [0, 2]) {
-    hand[index].fire('pointerenter'); ui.key('Alt'); assert.equal(ui.get('players-player-browser-inspect').hidden, false);
+    hand[index].fire('pointerenter'); ui.key(' '); assert.equal(ui.get('players-player-browser-inspect').hidden, false);
     assert.equal(ui.get('players-player-browser-inspect-content').dataset.face, 'back');
     const image = ui.get('players-player-browser-inspect-content').children.find(node => !node.hidden).children[1];
     assert.equal(image.src, '/cards/TS-BACK-001.jpg'); assert.equal(image.width, 501);
     ui.release(); hand[index].fire('pointerleave');
   }
-  hand[1].fire('pointerenter'); ui.key('Alt'); assert.equal(ui.get('players-player-browser-inspect-content').dataset.face, 'front');
+  hand[1].fire('pointerenter'); ui.key(' '); assert.equal(ui.get('players-player-browser-inspect-content').dataset.face, 'front');
   assert.equal(ui.key('f').defaultPrevented, false); assert.equal(hand[0].dataset.face, 'back'); area.dispose();
 });
 
@@ -71,13 +71,13 @@ test('owners see private hand faces while draw and discard are both canonical ID
   assert.deepEqual(state, before); area.dispose();
 });
 
-test('live reveal and conceal replace only the affected view and release its front and Alt inspection on conceal', async () => {
+test('live reveal and conceal replace only the affected view and release its front and Space inspection on conceal', async () => {
   const {ui, area, state} = await setup(); area.openPlayer('alice'); await settle();
   const modal = browse(ui), firstBack = visible(ui)[0], publicCard = visible(ui)[1];
   state.players[0].cards.hand[0].revealed = true; area.setState(state); await settle();
   const revealed = visible(ui)[0]; assert.notEqual(revealed, firstBack); assert.equal(firstBack.isConnected, false);
   assert.equal(visible(ui)[1], publicCard); assert.equal(revealed.dataset.face, 'front');
-  revealed.focus(); revealed.fire('pointerenter'); ui.key('Alt'); assert.equal(ui.get('players-player-browser-inspect').hidden, false);
+  revealed.focus(); revealed.fire('pointerenter'); ui.key(' '); assert.equal(ui.get('players-player-browser-inspect').hidden, false);
   state.players[0].cards.hand[0].revealed = false; area.setState(state); await settle();
   assert.equal(revealed.isConnected, false); assert.equal(visible(ui)[0].dataset.face, 'back');
   assert.equal(ui.get('players-player-browser-inspect').hidden, true); assert.equal(ui.document.activeElement, ui.get('players-player-browser-close'));
@@ -114,7 +114,7 @@ test('player browser traps focus, supports tab keys and coordinates with hero pr
   browse(ui).fire('click'); assert.equal(area.isBrowsing, false); area.dispose();
 });
 
-test('invalid card/reveal snapshots are atomic and player-browser disposal removes modal, focus/Alt handlers and card views', async () => {
+test('invalid card/reveal snapshots are atomic and player-browser disposal removes modal, focus/Space handlers and card views', async () => {
   const {ui, area, state} = await setup(); area.openPlayer('alice'); await settle();
   const invalid = structuredClone(state); invalid.players[0].cards.hand[0].revealed = 'yes';
   assert.throws(() => area.setState(invalid), /boolean/); assert.equal(area.browsingPlayerId, 'alice');
@@ -122,7 +122,7 @@ test('invalid card/reveal snapshots are atomic and player-browser disposal remov
   assert.throws(() => area.setState(duplicate), /unique/);
   const unknown = structuredClone(state); unknown.players[0].cards.hand[2].revealed = true;
   assert.throws(() => area.setState(unknown), /require a cardId/);
-  visible(ui)[0].fire('pointerenter'); ui.key('Alt'); area.dispose();
+  visible(ui)[0].fire('pointerenter'); ui.key(' '); area.dispose();
   assert.equal(ui.get('overlays').children.length, 0); assert.equal(ui.get('host').children.length, 0);
   assert.equal(ui.key('Escape').defaultPrevented, false); assert.throws(() => area.openPlayer('alice'), /disposed/);
 });

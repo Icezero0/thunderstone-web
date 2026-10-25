@@ -1,9 +1,18 @@
-/** Preserve the existing tools' URLs and query strings on Vite's multi-page server. */
+/** Public pages shared by the development and deployment builds. */
 export const pageFiles = {
   '/': 'index.html', '/play': 'index.html', '/config': 'config.html',
-  '/effect-lab': 'effect-lab.html', '/match': 'match.html', '/game-probe': 'game-probe.html',
-  '/profile': 'profile.html',
+  '/match': 'match.html', '/profile': 'profile.html',
+  '/login': 'auth.html', '/register': 'auth.html',
 };
+
+/** These development resources must never be served, even by an existing Vite process. */
+export function isPrivateResource(url = '/') {
+  let path;
+  try {path = decodeURIComponent(url.split('?')[0]).replaceAll('\\', '/').toLowerCase();}
+  catch {return true;}
+  return /(?:^|\/)(?:tests|\.test-dist|archive)(?:\/|$)/.test(path)
+    || /(?:^|\/)(?:game-probe|effect-lab|monster-audit|setup-sandbox|battle-sandbox)(?:[/.]|$)/.test(path);
+}
 
 export function rewritePageUrl(url = '/') {
   const question = url.indexOf('?');

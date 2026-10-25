@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172631"><title>登录 · 雷霆之石</title>
+  <link rel="stylesheet" href="/src/shared/styles/global.css">
+  <link rel="stylesheet" href="/src/pages/auth/style.css">
+  <script type="module" src="/src/app/asset-cache.ts"></script>
+  <script type="module" src="/src/pages/auth/index.ts"></script>
+</head>
+<body>
+  <main class="auth-shell">
+    <section class="card auth-card" aria-labelledby="auth-title">
+      <h1 id="auth-title">登录</h1>
+      <p id="notice" class="notice" role="status" aria-live="polite" hidden></p>
+      <form id="auth-form">
+        <label id="username-field" hidden>显示名称<input id="username" name="username" autocomplete="nickname" maxlength="64"></label>
+        <label>邮箱<input id="email" name="email" type="email" autocomplete="username" required maxlength="255"></label>
+        <label>密码<input id="password" name="password" type="password" autocomplete="current-password" required></label>
+        <button id="auth-submit" class="button primary" type="submit" disabled>登录</button>
+      </form>
+      <a id="auth-mode" class="text-button" href="/register">没有账号？注册</a>
+    </section>
+  </main>
+</body>
+</html>

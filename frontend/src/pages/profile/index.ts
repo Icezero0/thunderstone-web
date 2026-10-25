@@ -25,7 +25,7 @@ function render(): void {
   save.disabled = busy || !dirty(); $('avatar-reset').hidden = !file;
   avatar.setSource(preview || user?.avatar_url);
 }
-function login(): void {leaving = true; api.signOut(); location.replace('/play?next=%2Fprofile');}
+function login(): void {leaving = true; api.signOut(); location.replace('/login?next=%2Fprofile');}
 function failure(error: unknown): string {
   if (error instanceof ApiError) return error.message;
   return error instanceof TypeError ? '连接失败，请检查网络后重试。' : error instanceof Error ? error.message : '保存失败，请稍后重试。';
@@ -68,7 +68,7 @@ $('profile-form').addEventListener('submit', event => {
         const updated = await api.request<User>('/users/me', {method: 'PATCH', body: JSON.stringify(updates)});
         if (disposed) return; user = updated;
       }
-      if (updates.password) {password.value = confirmation.value = ''; leaving = true; api.signOut(); location.replace('/play?password_changed=1'); return;}
+      if (updates.password) {password.value = confirmation.value = ''; leaving = true; api.signOut(); location.replace('/login?password_changed=1'); return;}
       username.value = user!.username ?? ''; password.value = confirmation.value = '';
       notice('个人设置已保存。', false, true);
     } catch (error) {

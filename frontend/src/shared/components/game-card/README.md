@@ -1,6 +1,6 @@
-# Game cards and Alt inspection
+# Game cards and Space inspection
 
-游戏区域通用的实体卡牌、程序翻面和 Alt 原图检视模块。玩家牌组、牌堆浏览、村庄和地下城都可以使用；不依赖玩家牌组、页面、网络或规则引擎。入口自动加载基础卡牌与检视样式，页面仍须先加载 `shared/styles/global.css`。
+游戏区域通用的实体卡牌、程序翻面和 空格 原图检视模块。玩家牌组、牌堆浏览、村庄和地下城都可以使用；不依赖玩家牌组、页面、网络或规则引擎。入口自动加载基础卡牌与检视样式，页面仍须先加载 `shared/styles/global.css`。
 
 ```ts
 import {CardInteractions, createCardElements, createCardInspection} from './shared/components/game-card/index.js';
@@ -26,7 +26,7 @@ inspection.dispose();
 
 同一游戏区可以共用一个 `CardInteractions`，也可以按组件分别持有。各组件通过共享的悬停／焦点所属记录协调，整个页面只检视当前鼠标指向的牌；没有悬停牌时，才检视键盘聚焦的牌。`PlayerDeckArea` 已使用这套模块，不需要额外注册其内部卡牌。
 
-检视使用捕获阶段的键盘监听。一旦本次 Alt 用于检视，即使鼠标移开、卡牌移除或组件暂停，也会取消该次松键的默认行为，避免漏拦截后进入浏览器菜单。输入控件、输入法组合输入及 Alt 组合快捷键不用于检视。窗口失焦仍立即关闭大图；若切换窗口导致松键事件丢失，下次按键会清除旧记录。浏览器菜单本身已取得焦点时，页面不能接收它的键盘输入，需要先按 Esc 或点击页面返回。
+检视使用捕获阶段的空格按下／松开监听，兼容 `key: ' '` 与 `code: 'Space'`。一旦本次空格用于检视，即使鼠标移开、卡牌移除或组件暂停，也会拦截重复按键和松键，避免滚动页面或误触卡牌按钮。输入控件、输入法组合输入及 Ctrl／Meta／Alt 组合键保留原有行为。没有悬停卡牌时，普通按钮仍可通过空格操作；悬停卡牌时优先检视，即使刚点击的行动按钮仍持有焦点。Alt 本身不再检视。按住空格移动鼠标可切换检视对象，滚轮优先滚动大图或状态栏，不缩放背后的公共桌面。窗口失焦或页面隐藏立即关闭大图；若松键事件丢失，下次按键会清除旧记录。
 
 - `createCardElements(cardId, images?, descriptionId?)`：创建实体卡牌和固定的检视图片；可覆盖正面 URL 生成器和公用牌背 URL。
 - `createCardInspection(host?, ids?)`：创建独立的检视覆盖层；默认挂到 `document.body`，可指定覆盖层／内容的 DOM ID。
@@ -37,10 +37,10 @@ inspection.dispose();
 - `PhysicalCard.prepared`：图片准备结束的 Promise；图片失败通过 `failed` 标记。`setName`、`setVisible`、`setFaceUp` 仅改变展示状态。
 - `CardStack(slot, counter, faceUp, options?)`：共用的牌堆侧边、顶牌与空牌位。`showTop(card | null)` / `setFaceUp(value)` 控制展示，`setCount(count)` 显示有限张数；`setCount(null)` 显示 `∞`，默认采用 8 张牌的厚度。`options.browse: false` 适用于隐藏地城牌堆，不暴露浏览入口。玩家牌组、地城和村庄供应均复用它。
 
-按住 Alt 显示当前朝向的原尺寸卡图，不附带卡名、编号或印刷数值详情。正面存在状态时，在卡图右侧追加当前全部状态，按增益、减益、摧毁标记分组；状态栏高度取原图像素高度，长内容内部滚动且隐藏滚动条。Alt 检视期间，滚轮优先滚动过长的状态栏。无状态时只显示卡图，背面朝上只显示统一牌背。松开 Alt、移出卡牌、失焦或隐藏页面时收起。初始化时加载、解码固定图片，后续检视不更换 `src`。原尺寸超过视窗时，按住 Alt 滚动查看。
+按住 空格 显示当前朝向的原尺寸卡图，不附带卡名、编号或印刷数值详情。正面存在状态时，在卡图右侧追加当前全部状态，按增益、减益、摧毁标记分组；状态栏高度取原图像素高度，长内容内部滚动且隐藏滚动条。空格 检视期间，滚轮优先滚动过长的状态栏。无状态时只显示卡图，背面朝上只显示统一牌背。松开 空格、移出卡牌、失焦或隐藏页面时收起。初始化时加载、解码固定图片，后续检视不更换 `src`。原尺寸超过视窗时，按住 空格 滚动查看。
 
 `PhysicalCard.setStatuses(statuses)` 同时更新右上角状态图标和检视侧栏。每项含 `kind`（`buff`、`debuff`、`destroy`）、`source_name`、`description` 与可选 `source_card_id`。内容以纯文本渲染；组件不计算效果、时点或数值。
 
-`PhysicalCard.setAttachments(cards, images, onPick?)` 显示左下角附着牌组与数量；每项提供 `id`、`cardId`、`name`、`kind`。点击打开使用共享样式的浏览窗口，支持 Alt 检视，武器、囚禁、附着疾病等分开标明类型。`attachmentRect()` 给动画提供缩略牌组位置。组件仅展示关系，不改变卡牌的规则区域或所有权。
+`PhysicalCard.setAttachments(cards, images, onPick?)` 显示左下角附着牌组与数量；每项提供 `id`、`cardId`、`name`、`kind`。点击打开使用共享样式的浏览窗口，支持 空格 检视，武器、囚禁、附着疾病等分开标明类型。`attachmentRect()` 给动画提供缩略牌组位置。组件仅展示关系，不改变卡牌的规则区域或所有权。
 
 `PhysicalCard.setGlow(true / false)` 控制卡牌周围的光晕，独立于悬停、选中和翻面，用于提示效果的可选对象。光晕跟随卡牌外框尺寸，不改变卡图、检视原图或实例状态。默认使用主题金色，宿主可通过卡牌上的 `--card-glow-color` 自定义颜色；卡牌各区域均可使用此能力。

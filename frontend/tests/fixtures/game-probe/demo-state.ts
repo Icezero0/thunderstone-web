@@ -1,5 +1,5 @@
 /** Local animation fixtures only. These operations do not implement game rules. */
-import type {PlayerDeckCard, PlayerDeckState} from '../../shared/components/player-deck-area/types.js';
+import type {PlayerDeckCard, PlayerDeckState} from '../../../src/shared/components/player-deck-area/types.js';
 export type DemoCard = PlayerDeckCard;
 export type DemoState = PlayerDeckState;
 export interface DemoChange {state: DemoState; moved: DemoCard[];}

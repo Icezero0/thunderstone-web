@@ -80,7 +80,7 @@ flowchart TD
 
 ## 7. 当前实现接口
 
-`backend.app.integrations.game_engine.setup.start_game(request)` 接收 `match_id`、按回合顺序排列的 `player_ids`、`rng_seed` 和面板导出的 `config`，返回完整初始 `state` 与供服务器保存的设置 `events`。随机流使用固定版本的 SHA-256 计数器，同一目录、输入和种子生成相同结果；状态保存种子、算法版本和计数器。本地配置面板通过 `POST /api/v1/setup` 调用这一接口，展示所选牌组、初始大厅与玩家牌数；`backend/scripts/sandbox/run_setup.py` 也提供一次性命令行入口。
+`backend.app.integrations.game_engine.setup.start_game(request)` 接收 `match_id`、按回合顺序排列的 `player_ids`、`rng_seed` 和房间的 `config`，返回完整初始 `state` 与供服务器保存的设置 `events`。随机流使用固定版本的 SHA-256 计数器，同一目录、输入和种子生成相同结果；状态保存种子、算法版本和计数器。正式房间开局调用这一接口；原 `POST /api/v1/setup` 本地预览地址已不再挂载。`backend/scripts/sandbox/run_setup.py` 保留一次性命令行入口。
 
 `backend.app.integrations.game_engine.disease.take_disease(state, player_id, destination="discard")` 从本局无限疾病供应取一张牌，返回新 `state`、新实例与事件。函数使用状态内保存的权重和随机计数器，每次调用都分配新的 `instance_id`，默认加入该玩家弃牌堆；原状态保持不变。调用方须将返回的状态和事件作为同一次状态转换保存。它是供后续能力运行时调用的内核接口，不向客户端开放指定疾病种类的参数。
 

@@ -4,8 +4,11 @@ export function createRoomEditor(page, {enginePayload, refresh}) {
   async function loadRoomEditor() {
     if (!/^[a-f0-9]{32}$/.test(page.editingRoomId || "")) throw new Error("房间编号无效");
     const { api } = await import("../../app/session.ts");
+    const {loginLink} = await import("../../app/navigation.ts");
+    const login = () => location.replace(loginLink(`/config?room=${page.editingRoomId}`));
+    api.onExpired = login;
     const user = await api.restore();
-    if (!user) throw new Error("请先在联机大厅登录，再编辑房间配置。");
+    if (!user) {login(); return null;}
     const room = await api.request(`/rooms/${page.editingRoomId}`);
     if (room.host_user_id !== user.id) throw new Error("只有房主可以编辑房间配置。");
     if (room.status !== "waiting") throw new Error("本局已经开始，不能修改配置。请返回大厅进入对局。");
@@ -13,7 +16,6 @@ export function createRoomEditor(page, {enginePayload, refresh}) {
     document.body.classList.add("room-mode");
     $("#room-editor").hidden = false;
     $("#room-editor-name").textContent = room.name + " · 规则配置";
-    $("#setup-panel").hidden = true;
     $(".hero-copy h1").textContent = "游戏配置";
     $(".hero-copy p:last-child").textContent = "调整卡组与地下城特征后，点击“保存至房间”。其他玩家会同步看到新的配置，并重新确认准备状态。";
     $("#draft-note").textContent = "当前显示的是房间配置。页面修改需点击“保存至房间”后才会生效。";

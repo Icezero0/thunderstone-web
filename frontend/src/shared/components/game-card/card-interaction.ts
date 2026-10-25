@@ -121,7 +121,7 @@ export class PhysicalCard {
     button.dataset.flipping = String(this.flip.isAnimating);
     button.dataset.imagesReady = String(this.ready);
     button.setAttribute('aria-busy', String(!this.ready && !this.failed));
-    button.setAttribute('aria-label', `${this.faceUp ? this.name + '，正面' : '背面'}朝上的卡牌；按住 Alt 检视`);
+    button.setAttribute('aria-label', `${this.faceUp ? this.name + '，正面' : '背面'}朝上的卡牌；按住空格检视`);
     front.hidden = !this.faceUp; back.hidden = this.faceUp;
     front.setAttribute('aria-hidden', String(!this.faceUp));
     back.setAttribute('aria-hidden', String(this.faceUp));
@@ -132,7 +132,7 @@ export class PhysicalCard {
   }
 }
 
-/** Game-wide card interactions: any region can register cards with a single Alt inspection owner. */
+/** Game-wide card interactions: any region can register cards with one Space inspection owner. */
 export class CardInteractions {
   private static hoverOwner: CardInteractions | null = null;
   private static focusOwner: CardInteractions | null = null;
@@ -141,9 +141,9 @@ export class CardInteractions {
   private hovered: PhysicalCard | null = null;
   private focused: PhysicalCard | null = null;
   private active: PhysicalCard | null = null;
-  private altHeld = false;
-  // Once inspection consumes Alt, consume its release even if the card disappears.
-  private altCaptured = false;
+  private inspectionHeld = false;
+  // Consume this press's repeats/release even if its inspected card disappears.
+  private inspectionCaptured = false;
   private inspected: PhysicalCard | null = null;
   private inspectedFace = '';
   private suspended = false;
@@ -154,7 +154,7 @@ export class CardInteractions {
     window.addEventListener('keyup', this.keyup, true);
     window.addEventListener('blur', this.reset);
     window.addEventListener('pagehide', this.reset);
-    window.addEventListener('wheel', this.scrollInspection, {passive: false});
+    window.addEventListener('wheel', this.scrollInspection, {passive: false, capture: true});
     document.addEventListener('visibilitychange', this.visibility);
   }
 
@@ -165,11 +165,11 @@ export class CardInteractions {
     this.cards.push(card);
     const enter = (event: PointerEvent): void => {
       if (this.suspended || !this.allowed(card) || event.pointerType === 'touch') return;
-      const altHeld = event.altKey && !event.ctrlKey && !event.metaKey && !this.editing(document.activeElement);
-      if (this.hovered === card && this.altHeld === altHeld && CardInteractions.hoverOwner === this) return;
+      const held = this.inspectionHeld && !event.altKey && !event.ctrlKey && !event.metaKey && !this.editing(document.activeElement);
+      if (this.hovered === card && this.inspectionHeld === held && CardInteractions.hoverOwner === this) return;
       const previous = CardInteractions.hoverOwner ?? CardInteractions.focusOwner;
-      this.hovered = card; this.altHeld = altHeld; CardInteractions.hoverOwner = this;
-      if (altHeld) this.altCaptured = true;
+      this.hovered = card; this.inspectionHeld = held; CardInteractions.hoverOwner = this;
+      if (this.inspectionHeld) this.inspectionCaptured = true;
       if (previous && previous !== this) previous.render();
       this.render();
     };
@@ -220,7 +220,7 @@ export class CardInteractions {
     card.setVisible(false); this.unbind.get(card)?.(); this.unbind.delete(card);
     this.cards.splice(index, 1); card.dispose(); card.elements.button.remove(); card.elements.inspection.remove(); this.render();
   }
-  setScope(scope: HTMLElement | null): void {this.scope = scope; this.reset();}
+  setScope(scope: HTMLElement | null): void {this.scope = scope; this.resetState(true);}
   private allowed(card: PhysicalCard): boolean {
     if (!card.visible || !card.elements.button.isConnected || (this.scope && !this.scope.contains(card.elements.button))) return false;
     for (let node: HTMLElement | null = card.elements.button; node; node = node.parentElement) {
@@ -231,49 +231,66 @@ export class CardInteractions {
   setSuspended(suspended: boolean): void {
     this.suspended = suspended;
     for (const card of this.cards) card.setStatusSuspended(suspended);
-    if (suspended) this.reset(); else this.render();
+    if (suspended) this.resetState(true); else this.render();
   }
   private editing(target: EventTarget | null): boolean {
     return target instanceof HTMLElement &&
       (target.isContentEditable || !!target.closest('input, textarea, select'));
   }
+  private control(target: EventTarget | null): boolean {
+    if (!(target instanceof HTMLElement)) return false;
+    const control = target.closest('button, a[href], summary, [role="button"], [role="switch"], [role="tab"]');
+    return !!control && !control.classList.contains('physical-card');
+  }
+  private isInspectionKey(event: KeyboardEvent): boolean {
+    return event.code === 'Space' || event.key === ' ' || event.key === 'Spacebar';
+  }
+  private consume(event: KeyboardEvent): void {event.preventDefault(); event.stopPropagation();}
   private keydown = (event: KeyboardEvent): void => {
-    if (event.key !== 'Alt') {
-      // Leave Alt shortcuts to the browser/OS; they are not inspection gestures.
-      if (event.altKey) {this.altHeld = this.altCaptured = false; this.render();}
+    if (!this.isInspectionKey(event)) {
+      // Modifier shortcuts and Escape belong to their normal handlers.
+      if (event.altKey || event.ctrlKey || event.metaKey || event.key === 'Escape') {this.inspectionHeld = false; this.render();}
       return;
     }
-    if (!event.repeat) this.altCaptured = false;
-    if (event.isComposing || this.editing(event.target) || event.ctrlKey || event.metaKey) {
-      this.altHeld = false; this.render(); return;
+    if (!event.repeat) this.inspectionCaptured = false;
+    const hoverOwner = CardInteractions.hoverOwner;
+    const hovering = hoverOwner?.hovered && !hoverOwner.suspended && hoverOwner.allowed(hoverOwner.hovered);
+    if (event.isComposing || this.editing(event.target) || this.editing(document.activeElement)
+        || (this.control(event.target) && !hovering) || event.altKey || event.ctrlKey || event.metaKey) {
+      if (this.inspectionCaptured) this.consume(event);
+      this.inspectionHeld = false; this.render(); return;
     }
     this.render();
-    this.altHeld = true;
-    if (this.active) {this.altCaptured = true; event.preventDefault();}
+    this.inspectionHeld = true;
+    if (this.active || this.inspectionCaptured) {this.inspectionCaptured = true; this.consume(event);}
     this.render();
   };
   private keyup = (event: KeyboardEvent): void => {
-    if (event.key !== 'Alt') return;
-    if (this.altCaptured) event.preventDefault();
-    this.altHeld = this.altCaptured = false; this.render();
+    if (!this.isInspectionKey(event)) return;
+    if (this.inspectionCaptured) this.consume(event);
+    this.inspectionHeld = this.inspectionCaptured = false; this.render();
   };
-  private reset = (): void => {
-    // Reset presentation on blur/suspension, but retain ownership of this Alt release.
+  private reset = (): void => {this.resetState();};
+  private resetState(keepHeld = false): void {
+    // Reset presentation on blur/suspension, but retain ownership of this Space release.
     // A new keydown clears it if a window switch prevented keyup from reaching us.
-    this.altHeld = false; this.hovered = this.focused = null;
+    if (!keepHeld) this.inspectionHeld = false;
+    this.hovered = this.focused = null;
     if (CardInteractions.hoverOwner === this) CardInteractions.hoverOwner = null;
     if (CardInteractions.focusOwner === this) CardInteractions.focusOwner = null;
     for (const card of this.cards) card.settle();
     this.render();
     const owner = CardInteractions.hoverOwner ?? CardInteractions.focusOwner;
     if (owner && owner !== this) owner.render();
-  };
+  }
   private visibility = (): void => {if (document.hidden) this.reset();};
   private scrollInspection = (event: WheelEvent): void => {
     if (this.overlay.hidden) return;
-    if (this.inspected?.scrollStatuses(event.deltaY)) {event.preventDefault(); return;}
+    // Capture before a public viewport can interpret the same wheel as zoom.
+    event.preventDefault(); event.stopPropagation();
+    if (this.inspected?.scrollStatuses(event.deltaY)) return;
     if (this.overlay.scrollHeight > this.overlay.clientHeight || this.overlay.scrollWidth > this.overlay.clientWidth) {
-      event.preventDefault(); this.overlay.scrollBy({top: event.deltaY, left: event.deltaX});
+      this.overlay.scrollBy({top: event.deltaY, left: event.deltaX});
     }
   };
   private render(): void {
@@ -287,7 +304,7 @@ export class CardInteractions {
     const active = this.suspended || owner !== this ? null : CardInteractions.hoverOwner === this ? this.hovered : this.focused;
     if (this.active !== active) {this.active?.setActive(false); this.active = active;}
     active?.setActive(true);
-    const inspection = active?.ready && this.altHeld ? active : null;
+    const inspection = active?.ready && this.inspectionHeld ? active : null;
     this.overlay.hidden = !inspection;
     if (this.inspected !== inspection || this.inspectedFace !== inspection?.face) {
       this.inspected?.inspect(false);
@@ -310,7 +327,7 @@ export class CardInteractions {
     window.removeEventListener('keyup', this.keyup, true);
     window.removeEventListener('blur', this.reset);
     window.removeEventListener('pagehide', this.reset);
-    window.removeEventListener('wheel', this.scrollInspection);
+    window.removeEventListener('wheel', this.scrollInspection, true);
     document.removeEventListener('visibilitychange', this.visibility);
   }
 }

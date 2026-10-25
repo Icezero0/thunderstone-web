@@ -1,6 +1,6 @@
-import {api} from '../../app/session.js';
-import {ApiError} from '../../shared/api/client.js';
-import type {User} from '../../shared/api/types.js';
+import {api} from '../../../src/app/session.js';
+import {ApiError} from '../../../src/shared/api/client.js';
+import type {User} from '../../../src/shared/api/types.js';
 
 /** Optional account identity for the demo; card components still receive plain snapshots. */
 export class ProbeProfileBinding {

@@ -1,5 +1,10 @@
 # Battle team API
 
+The former stateless HTTP sandbox routes listed below are retained only in
+isolated test applications. Since 2026-10-25 the deployed backend returns 404 for
+`/api/v1/battle/context` and `/api/v1/battle/submit`. Formal matches use the
+authenticated match view and command endpoints; shared engine interfaces remain unchanged.
+
 ## State and ownership
 
 The backend owns `GameState`. During uninterrupted `DUNGEON_PREPARE` or `DUNGEON_DECLARE`, it calls

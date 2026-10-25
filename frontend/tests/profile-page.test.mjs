@@ -73,7 +73,7 @@ async function page({authenticated = true, saveFailure = false, confirmLeave = f
 
 test('settings require login and the page exposes the immutable email without changing it', async () => {
   const anonymous = await page({authenticated: false});
-  assert.deepEqual(anonymous.navigations, ['/play?next=%2Fprofile']); assert.equal(anonymous.requests.length, 0);
+  assert.deepEqual(anonymous.navigations, ['/login?next=%2Fprofile']); assert.equal(anonymous.requests.length, 0);
   const p = await page();
   assert.equal(p.get('profile-username').value, account.username); assert.equal(p.get('profile-email').value, account.email);
   assert.match(html, /id="profile-email"[^>]*readonly/); assert.equal(p.get('profile-save').disabled, true);
@@ -89,7 +89,7 @@ test('password confirmation blocks an invalid save; successful change clears the
   assert.match(p.get('profile-notice').textContent, /不一致/);
   await p.change('profile-password-confirm', 'new-secret'); await p.submit();
   assert.deepEqual(JSON.parse(p.requests.find(request => request.method === 'PATCH').body), {password: 'new-secret'});
-  assert.equal(p.saved.size, 0); assert.deepEqual(p.navigations, ['/play?password_changed=1']);
+  assert.equal(p.saved.size, 0); assert.deepEqual(p.navigations, ['/login?password_changed=1']);
   assert.equal(p.get('profile-password').value, '');
 });
 

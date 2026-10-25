@@ -1,5 +1,5 @@
-import type {DungeonState, SupplyCard, SupplySelection, VillageState} from '../../shared/components/table-areas/index.js';
-import type {PublicTablePlayer} from '../../shared/components/public-table-area/index.js';
+import type {DungeonState, SupplyCard, SupplySelection, VillageState} from '../../../src/shared/components/table-areas/index.js';
+import type {PublicTablePlayer} from '../../../src/shared/components/public-table-area/index.js';
 
 export interface DungeonDemoOptions {spire: boolean; forest?: boolean; rankZero: boolean; rankFour: boolean;}
 

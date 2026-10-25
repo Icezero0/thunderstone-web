@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="zh-CN">
   <head>
-    <meta charset="utf-8">
+      <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="雷霆之石游戏区域试验：地下城、村庄供应与玩家牌组。">
     <title>游戏区域 · 雷霆之石</title>
     <link rel="stylesheet" href="/src/shared/styles/global.css">
-    <link rel="stylesheet" href="/src/pages/game-probe/style.css">
+    <link rel="stylesheet" href="./style.css">
     <link rel="preload" as="image" href="/src/shared/components/player-deck-area/cursors/pointer.png">
     <link rel="preload" as="image" href="/src/shared/components/player-deck-area/cursors/pressed.png">
-    <script type="module" src="/src/pages/game-probe/index.ts"></script>
+    <script type="module" src="./index.ts"></script>
   </head>
   <body class="probe-page">
     <header id="probe-header" class="masthead">
@@ -86,7 +86,7 @@
         <div id="public-table-area"></div>
         <div id="player-deck-area"></div>
       </section>
-      <div class="probe-footnote"><p id="probe-shortcuts">拖动空白处平移 · 滚轮缩放 · 点击牌堆浏览 · 关闭自动理牌后可拖动手牌 · 按住 <kbd>Alt</kbd> 检视</p><p id="probe-notice" role="status" aria-live="polite"></p></div>
+      <div class="probe-footnote"><p id="probe-shortcuts">拖动空白处平移 · 滚轮缩放 · 点击牌堆浏览 · 关闭自动理牌后可拖动手牌 · 按住 <kbd>空格</kbd> 检视</p><p id="probe-notice" role="status" aria-live="polite"></p></div>
     </main>
     <div id="player-deck-overlays"></div>
   </body>

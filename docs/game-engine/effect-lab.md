@@ -1,16 +1,15 @@
-# Effect runtime verification lab
+# Effect runtime verification cases
 
-This temporary local page exercises the executable JSON effect interpreter through the public setup and turn APIs. It is a developer probe, not a playable match client. Each request creates a fresh deterministic game in memory, applies an explicitly described fixture, submits commands, and returns a step trace. No trace or game state is stored in SQLite.
+The former effect-lab webpage and its production HTTP routes were retired on
+2026-10-25. No server exposes `/effect-lab`, its case endpoints, or the setup and
+battle sandboxes. The deterministic case runners remain for in-process regression
+tests and still exercise the public engine command API without writing to SQLite.
 
-## Open the page
-
-From the project root, start the existing local preview yourself:
+Run cases without starting a service:
 
 ```powershell
-.\.venv\Scripts\python.exe backend\run_backend.py --host 127.0.0.1 --port 8765
+.\.venv\Scripts\python.exe -m unittest backend.tests.devtools.test_effect_lab -v
 ```
-
-Open `http://127.0.0.1:8765/effect-lab`. Select a case, move through the timeline, and inspect the command, state before and after, actual DSL node path, emitted events, available next commands, assertions, and compiled JSON ability. Supported replay choices have clickable candidates; other pending choices show the recorded scripted candidates without pretending that a click can alter that step. The page marks synthetic DSL examples separately from reviewed card abilities. The expandable coverage manifest lists all 520 effect cards, searchable by name, ID and type, with covered ability IDs and per-card unit-test names. This manifest reads the generated audit report; it does not start a test process.
 
 ## Case matrix
 
@@ -42,7 +41,7 @@ Open `http://127.0.0.1:8765/effect-lab`. Select a case, move through the timelin
 
 The synthetic abilities use `TS-0001` as a source solely to drive the interpreter. They are not entries in the reviewed effect JSON and do not claim that militia has these powers. The 23 lab examples illustrate selected behaviors. The state view includes hero protection, pending destruction, copied abilities, borrowed ownership, attachments, cross-turn rules, listeners, all players' fixture hands/discards, eliminated players, settlement results, and the first five dungeon cards as explicit developer-only data. This page is not a private multiplayer client. Complete per-card verification is tracked in `cards/reports/card-coverage.csv` and `backend/tests/effects/test_card_effects.py`.
 
-The runner lives in `backend/devtools/effect_lab/service.py`, the HTML entry in `frontend/effect-lab.html` and page code in `frontend/src/pages/effect-lab/`, and the read-only preview routes in `backend/devtools/api/effects.py`. Each trace includes its fixed seed, rule version, input command sequence, state projections, actual interpreter decisions, engine events, and explicit checks. `apply_command(..., trace_effects=True)` returns these debug decisions as `effect_trace`; they do not enter game state or the authoritative event log. Unit tests in `backend/tests/devtools/test_effect_lab.py` run every case, alternative choices, rollback behavior, and the HTTP preview routes without starting a server.
+The runner lives in `backend/devtools/effect_lab/service.py`. Its optional HTTP transport is mounted only by `backend/tests/support/sandbox_app.py` inside isolated tests. The former HTML entry and frontend page code have been deleted; their history remains in Git. Traces record the seed, commands, state projections, interpreter decisions and assertions. `apply_command(..., trace_effects=True)` returns `effect_trace` without adding it to authoritative game state or the event log.
 
 ```powershell
 .\.venv\Scripts\python.exe -m unittest backend.tests.devtools.test_effect_lab -v

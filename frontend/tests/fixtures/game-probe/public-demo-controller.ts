@@ -1,10 +1,10 @@
-import type {SupplySelection} from '../../shared/components/table-areas/index.js';
-import {PublicTableArea} from '../../shared/components/public-table-area/index.js';
+import type {SupplySelection} from '../../../src/shared/components/table-areas/index.js';
+import {PublicTableArea} from '../../../src/shared/components/public-table-area/index.js';
 import {createDungeonDemo, createPublicPlayersDemo, createVillageDemo, takeDemoSupply} from './public-demo-state.js';
 import {probePublicElementId} from './element-ids.js';
-import type {PlayerDeckState} from '../../shared/components/player-deck-area/index.js';
-import type {User} from '../../shared/api/types.js';
-import {GameResultsDialog} from '../../shared/components/game-results/index.js';
+import type {PlayerDeckState} from '../../../src/shared/components/player-deck-area/index.js';
+import type {User} from '../../../src/shared/api/types.js';
+import {GameResultsDialog} from '../../../src/shared/components/game-results/index.js';
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 

@@ -7,7 +7,7 @@ const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const source = await readFile(new URL('../.test-dist/lobby-page.js', import.meta.url), 'utf8');
 const settle = () => new Promise(resolve => setImmediate(resolve));
 
-async function page(search = '') {
+async function page(search = '', {authenticated = true} = {}) {
   const nodes = new Map(), requests = [], sockets = [], events = {}, navigations = [];
   let user = {id: 1, username: '阿莉丝', email: 'alice@example.com', avatar_url: '/api/v1/users/avatars/first.png'};
   let room = null;
@@ -33,7 +33,7 @@ async function page(search = '') {
     constructor() {sockets.push(this);}
     send() {} close() {this.onclose?.();}
   }
-  const tokens = new Map([['thunderstone-session-v1', JSON.stringify({access_token: 'access', refresh_token: 'refresh'})]]);
+  const tokens = new Map(authenticated ? [['thunderstone-session-v1', JSON.stringify({access_token: 'access', refresh_token: 'refresh'})]] : []);
   const context = vm.createContext({document, Headers, URLSearchParams, URL, WebSocket: Socket, confirm: () => true,
     sessionStorage: {getItem: key => tokens.get(key) ?? null, setItem: (key, value) => tokens.set(key, value), removeItem: key => tokens.delete(key)},
     window: {addEventListener: (type, callback) => {events[type] = callback;}},
@@ -96,4 +96,19 @@ for (const isPublic of [true, false]) test(`creating a ${isPublic ? 'public' : '
     assert.equal(p.get('room-view').hidden, false); assert.equal(p.get('lobby-view').hidden, true);
     assert.match(p.get('room-state').textContent, isPublic ? /公开/ : /私有/);
   } finally {p.cleanup();}
+});
+
+test('anonymous visitors and logout navigate to the separate login page', async () => {
+  const anonymous = await page('', {authenticated: false});
+  try {
+    assert.equal(anonymous.requests.length, 0);
+    assert.deepEqual(anonymous.navigations, ['/login?next=%2Fplay']);
+    assert.doesNotMatch(html, /auth-form|auth-view/);
+  } finally {anonymous.cleanup();}
+  const signedIn = await page();
+  try {
+    signedIn.get('logout').fire('click');
+    assert.equal(signedIn.navigations.at(-1), '/login?next=%2Fplay');
+    assert.equal(signedIn.get('lobby-view').hidden, true);
+  } finally {signedIn.cleanup();}
 });

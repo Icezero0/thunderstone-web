@@ -1,11 +1,8 @@
-import {STORAGE_KEY, kinds, kindNames, multiplierFields} from './constants.js';
+import {kinds, kindNames, multiplierFields} from './constants.js';
 import {$} from './dom.js';
 import {createPageState} from './state.js';
 import {createConfigModel, sameConfiguration} from './model.js';
-import {createDraftStorage} from './draft-storage.js';
 import {createSelectionView} from './selection.js';
-import {createSetupResults} from './setup-results.js';
-import {createSetupPreview} from './setup-preview.js';
 import {createRoomEditor} from './room-editor.js';
 
 const page = createPageState(new URLSearchParams(location.search).get('room'));
@@ -13,9 +10,6 @@ const {
   defaultState, environmentRule, effectiveCounts, fixedThunderstoneIds,
   thunderstoneTarget, enginePayload,
 } = createConfigModel(page);
-const {restoreState} = createDraftStorage(page, {defaultState, effectiveCounts});
-const results = createSetupResults(page);
-const {clearSetupPreview, renderFirstPlayerChoices, bindSetupEvents} = createSetupPreview(page, {enginePayload, ...results});
 const {loadRoomEditor} = createRoomEditor(page, {enginePayload, refresh});
 const {
   renderCounts, renderTabs, renderGroups, renderExtraTabs, renderFeatureMode,
@@ -29,7 +23,6 @@ function setDraftChanged() {
     page.roomEditor.dirty = true;
     $("#room-editor-status").textContent = "有未保存的修改。保存后，所有玩家需要重新准备。";
   }
-  clearSetupPreview("规则配置已修改，请重新生成本局。");
   const badge = $("#validation-badge");
   badge.textContent = "待预检";
   badge.className = "validation-badge";
@@ -50,8 +43,6 @@ function refresh() {
   renderMultipliers();
   renderSummary();
   $("#json-output").value = JSON.stringify(enginePayload(), null, 2);
-  try { if (!page.roomEditor) localStorage.setItem(STORAGE_KEY, JSON.stringify({ catalog_hash: page.catalog.catalog_hash, state: page.state, card_configuration: page.cardConfiguration })); }
-  catch (_) { /* Local storage is optional. */ }
 }
 
 async function validate() {
@@ -80,12 +71,11 @@ async function validate() {
   } catch (_) {
     badge.textContent = "预检失败";
     badge.className = "validation-badge bad";
-    $("#validation-errors").textContent = "无法连接本地配置服务。";
+    $("#validation-errors").textContent = "无法连接配置服务，请稍后重试。";
   }
 }
 
 function bindEvents() {
-  bindSetupEvents();
   $("#card-configuration").addEventListener("change", event => {
     if (event.target.value === "default") {page.customState = structuredClone(page.state); page.state = defaultState();}
     else if (page.customState) page.state = structuredClone(page.customState);
@@ -165,20 +155,21 @@ function bindEvents() {
 }
 
 async function main() {
+  if (!page.editingRoomId) {location.replace('/play'); return;}
   try {
     const response = await fetch("/api/v1/options");
     if (!response.ok) throw new Error("catalog response failed");
     page.catalog = await response.json();
-    page.state = page.editingRoomId ? await loadRoomEditor() : restoreState();
+    page.state = await loadRoomEditor();
+    if (!page.state) return;
     const defaults = defaultState();
     if (!sameConfiguration(enginePayload(), defaults)) page.cardConfiguration = "custom";
     bindEvents();
-    renderFirstPlayerChoices();
     refresh();
     $("#loading").hidden = true;
     $("#app").hidden = false;
   } catch (error) {
-    $("#loading").textContent = page.editingRoomId ? error.message : "卡牌目录读取失败。请从仓库根目录使用 Python 启动配置面板。";
+    $("#loading").textContent = error.message || "配置读取失败，请稍后重试。";
     if (page.editingRoomId) {
       const link = document.createElement("a"); link.href = "/play"; link.textContent = " 返回联机大厅";
       $("#loading").append(link);

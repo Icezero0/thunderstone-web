@@ -15,7 +15,6 @@ from backend.app.core.exceptions import register_exception_handlers
 from backend.app.core.startup import initialize_runtime
 from backend.app.realtime.manager import RealtimeManager
 from backend.app.realtime.ws_router import router as ws_router
-from backend.devtools.api.router import create_devtools_router
 
 
 @asynccontextmanager
@@ -30,13 +29,13 @@ async def lifespan(_app: FastAPI):
 
 def create_app() -> FastAPI:
     settings = get_settings()
-    app = FastAPI(title=settings.app_name, debug=settings.debug, lifespan=lifespan)
+    app = FastAPI(title=settings.app_name, debug=settings.debug, lifespan=lifespan,
+                  docs_url=None, redoc_url=None, openapi_url=None)
     app.state.realtime_manager = RealtimeManager()
     if settings.cors_origins:
         app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins,
                            allow_methods=["*"], allow_headers=["*"])
     app.include_router(api_router, prefix=settings.api_v1_prefix)
-    app.include_router(create_devtools_router(settings.api_v1_prefix))
     app.include_router(resources_router)
     app.include_router(frontend_router)
     app.include_router(ws_router)

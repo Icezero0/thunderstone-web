@@ -10,9 +10,6 @@ export function createPageState(editingRoomId = null) {
     trimNotice: "",
     activeExtraKind: "guardian",
     extraSearchText: "",
-    setupResult: null,
-    pendingSetupRequest: null,
-    setupRunToken: 0,
     roomEditor: null,
     editingRoomId,
   };

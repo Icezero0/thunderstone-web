@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, patch
 from fastapi.testclient import TestClient
 
 from backend.app.core.database import get_db
-from backend.app.main import create_app
+from backend.tests.support.sandbox_app import create_sandbox_app
 from backend.app.integrations.game_engine.battle import battle_preparation, submit_battle_team
 from backend.app.integrations.game_engine.catalog.repository import load_catalog
 from backend.app.integrations.game_engine.setup import start_game
@@ -29,7 +29,7 @@ class BattleTeamApiTests(TestCase):
                     cls.state["instances"][instance]["card_id"] = "TS-0476"
 
     def setUp(self):
-        self.app = create_app()
+        self.app = create_sandbox_app()
 
         async def database():
             yield None

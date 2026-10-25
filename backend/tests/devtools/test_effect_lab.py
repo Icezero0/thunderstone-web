@@ -6,12 +6,11 @@ import unittest
 
 from fastapi.testclient import TestClient
 
-from backend.app.main import app
+from backend.tests.support.sandbox_app import create_sandbox_app
 from backend.devtools.effect_lab.service import CASES, run_case
 from backend.app.integrations.game_engine.setup import start_game
 from backend.app.integrations.game_engine.turn import apply_command
 from backend.tests.support.setup import request
-from backend.tests.support.frontend import assert_frontend_page
 
 
 class EffectLabTests(unittest.TestCase):
@@ -110,11 +109,10 @@ class EffectLabTests(unittest.TestCase):
         self.assertNotIn("effect_trace", plain)
         self.assertEqual([node["op"] for node in traced["effect_trace"]], ["draw"])
 
-    def test_preview_page_and_read_only_case_api(self) -> None:
-        client = TestClient(app)
-        page = assert_frontend_page(client, "/effect-lab")
-        self.assertEqual(page.status_code, 200)
-        self.assertIn("效果处理器实验台", page.text)
+    def test_read_only_case_api_in_isolated_test_app(self) -> None:
+        client = TestClient(create_sandbox_app())
+        self.addCleanup(client.close)
+        self.assertEqual(client.get("/effect-lab").status_code, 404)
         self.assertEqual(len(client.get("/effect-lab/cases").json()["cases"]), len(CASES))
         coverage = client.get("/effect-lab/coverage").json()
         self.assertEqual(coverage["total"], 520)

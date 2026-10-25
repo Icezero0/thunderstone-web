@@ -13,7 +13,7 @@ from sqlalchemy import text
 from backend.app.core.config import Settings, get_settings
 from backend.app.core.database import get_engine, get_session_factory
 from backend.app.core.startup import _upgrade_database
-from backend.app.main import create_app
+from backend.tests.support.sandbox_app import create_sandbox_app
 from backend.app.modules.cards.importer import import_catalog
 from backend.app.integrations.game_engine.setup import start_game
 from backend.tests.support.frontend import assert_frontend_page
@@ -60,7 +60,7 @@ class BackendApiTests(unittest.TestCase):
         asyncio.run(seed())
         get_session_factory.cache_clear()
         get_engine.cache_clear()
-        cls.client_context = TestClient(create_app())
+        cls.client_context = TestClient(create_sandbox_app())
         cls.client = cls.client_context.__enter__()
 
     @classmethod
@@ -96,7 +96,9 @@ class BackendApiTests(unittest.TestCase):
         self.assertEqual(self.client.post("/api/v1/setup", content=b"x" * 1_000_001).status_code, 400)
         assert_frontend_page(self.client, "/")
         assert_frontend_page(self.client, "/config")
-        assert_frontend_page(self.client, "/game-probe")
+        assert_frontend_page(self.client, "/login")
+        assert_frontend_page(self.client, "/register")
+        self.assertEqual(self.client.get("/game-probe").status_code, 404)
         self.assertEqual(self.client.get("/cards/TS-0001.png").status_code, 200)
         back = self.client.get("/cards/TS-BACK-001.jpg")
         self.assertEqual(back.status_code, 200)

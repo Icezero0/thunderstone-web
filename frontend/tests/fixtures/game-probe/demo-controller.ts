@@ -1,11 +1,11 @@
-import {PlayerDeckArea} from '../../shared/components/player-deck-area/index.js';
+import {PlayerDeckArea} from '../../../src/shared/components/player-deck-area/index.js';
 import {createDemoState, drawDemoCards, discardDemoCards, toggleDemoTreasures, toggleDemoAside, MAX_HAND, type DemoChange, type DemoState} from './demo-state.js';
 import {probeElementId} from './element-ids.js';
 import {PublicAreaDemo} from './public-demo-controller.js';
 import {ResponseDemoController} from './response-demo-controller.js';
-import type {SupplySelection} from '../../shared/components/table-areas/index.js';
-import type {User} from '../../shared/api/types.js';
-import {HandSortPreference} from '../../app/hand-sort-preference.js';
+import type {SupplySelection} from '../../../src/shared/components/table-areas/index.js';
+import type {User} from '../../../src/shared/api/types.js';
+import {HandSortPreference} from '../../../src/app/hand-sort-preference.js';
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 

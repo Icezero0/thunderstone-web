@@ -1,4 +1,4 @@
-import type {PlayerDeckArea} from '../../shared/components/player-deck-area/index.js';
+import type {PlayerDeckArea} from '../../../src/shared/components/player-deck-area/index.js';
 
 const $ = (id: string) => document.getElementById(id) as HTMLButtonElement;
 const controlIds = ['demo-response-action', 'demo-response-rest', 'demo-response-phase', 'demo-response-clear'] as const;

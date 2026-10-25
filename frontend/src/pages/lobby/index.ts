@@ -1,5 +1,5 @@
 import {api} from '../../app/session.js';
-import {matchLink, matchReturnPath} from '../../app/navigation.js';
+import {matchLink, loginLink, loginReturnPath} from '../../app/navigation.js';
 import {ApiError} from '../../shared/api/client.js';
 import {PlayerAvatar} from '../../shared/components/player-avatar/index.js';
 import {RoomConnection} from '../../shared/realtime/room-connection.js';
@@ -16,7 +16,6 @@ let room: Room | null = null;
 let rooms: RoomSummary[] = [];
 let catalog: Catalog | null = null;
 let connection: RoomConnection | null = null;
-let registering = false;
 let busy = false;
 let loadSequence = 0;
 let startAttempt: {key: string; command_id: string} | null = null;
@@ -58,7 +57,7 @@ async function refresh(): Promise<void> {
   if (sequence !== loadSequence || !user) return;
   const previousMatch = room?.active_match_id, wasWaiting = room?.status === 'waiting';
   rooms = listing.rooms; room = current.room; user = account; render();
-  const requested = pageParams.get('next') === '/profile' ? '/profile' : matchReturnPath(pageParams.get('next'));
+  const requested = loginReturnPath(pageParams.get('next'));
   if (requested) {location.replace(requested); return;}
   if (room?.status === 'playing' && room.active_match_id && (pageParams.get('view') !== 'room' || wasWaiting && previousMatch !== room.active_match_id))
     location.replace(matchLink(room.active_match_id));
@@ -80,11 +79,10 @@ function signedOut(): void {
   avatars.forEach(avatar => avatar.dispose()); avatars = [];
   connection?.close(); connection = null; loadSequence++;
   user = null; room = null; rooms = []; catalog = null; api.signOut(); render();
-  $('#connection').textContent = '尚未登录'; $('#connection').dataset.status = 'offline';
+  location.replace(loginLink(loginReturnPath(pageParams.get('next')) ?? (pageParams.get('view') === 'room' ? '/play?view=room' : '/play')));
 }
 
 function render(): void {
-  $('#auth-view').hidden = !!user;
   $('#lobby-view').hidden = !user || !!room;
   $('#room-view').hidden = !user || !room;
   $('#account').hidden = !user;
@@ -92,7 +90,6 @@ function render(): void {
   accountAvatar.setSource(user?.avatar_url);
   $<HTMLButtonElement>('#refresh').disabled = busy;
   $<HTMLInputElement>('#new-room-public').disabled = busy;
-  $<HTMLButtonElement>('#auth-submit').disabled = busy;
   $<HTMLButtonElement>('#create-room').disabled = busy;
   $<HTMLButtonElement>('#join-code').disabled = busy;
   if (user && room) renderRoom();
@@ -161,28 +158,7 @@ function renderRoom(): void {
   for (const [title, text] of summary.details) details.append(el('dt', '', title), el('dd', '', text));
 }
 
-$('#auth-mode').addEventListener('click', () => {
-  registering = !registering;
-  $('#auth-title').textContent = registering ? '创建你的账号' : '欢迎回到雷霆之石';
-  $('#username-field').hidden = !registering;
-  $<HTMLInputElement>('#username').required = registering;
-  $<HTMLInputElement>('#password').autocomplete = registering ? 'new-password' : 'current-password';
-  $('#auth-submit').textContent = registering ? '注册并进入大厅' : '登录';
-  $('#auth-mode').textContent = registering ? '已有账号？登录' : '没有账号？注册'; notice();
-});
-
-$('#auth-form').addEventListener('submit', event => {
-  event.preventDefault(); void action(async () => {
-    const email = $<HTMLInputElement>('#email').value.trim();
-    const password = $<HTMLInputElement>('#password').value;
-    if (registering) await api.request('/auth/register', {method: 'POST', body: JSON.stringify({email, password, username: $<HTMLInputElement>('#username').value.trim()})});
-    const account = await api.login(email, password);
-    $<HTMLInputElement>('#password').value = '';
-    await signedIn(account);
-  });
-});
-
-$('#logout').addEventListener('click', () => {signedOut(); notice('已退出登录。');});
+$('#logout').addEventListener('click', signedOut);
 $('#refresh').addEventListener('click', () => void action(refresh));
 $('#create-form').addEventListener('submit', event => {
   event.preventDefault(); void action(async () => {
@@ -232,7 +208,7 @@ $('#copy-room').addEventListener('click', () => {
   if (!navigator.clipboard) {notice('请选中房间编号复制。'); return;}
   void navigator.clipboard.writeText(room.id).then(() => notice('房间编号已复制，朋友可在大厅输入编号加入。')).catch(() => notice('请选中房间编号复制。'));
 });
-api.onExpired = () => {signedOut(); notice('登录已失效，请重新登录。', true);};
+api.onExpired = signedOut;
 document.addEventListener('visibilitychange', () => {if (!document.hidden && user) void refresh().catch(() => {});});
 window.addEventListener('pagehide', () => {connection?.close(); avatars.forEach(avatar => avatar.dispose()); avatars = [];});
 window.addEventListener('pageshow', event => {
@@ -240,7 +216,6 @@ window.addEventListener('pageshow', event => {
 });
 
 busy = true;
-if (pageParams.get('password_changed') === '1') notice('密码已修改，请使用新密码重新登录。');
 render();
-void api.restore().then(value => value ? signedIn(value) : undefined)
+void api.restore().then(value => value ? signedIn(value) : signedOut())
   .catch(error => notice(message(error), true)).finally(() => {busy = false; render();});
