@@ -86,7 +86,7 @@ export function diseaseGainSteps(tx: Transition, anchor: string, timing: string)
     records.splice(records.indexOf(record), 1);
     tx.state.instances[item].owner_player_id = tx.playerId;
     tx.move(item, tx.location(item)!, `player:${tx.playerId}:discard`);
-    steps.push(...gainSteps(tx, item, origin, oldOwner, 'disease_attachment'));
+    steps.push(...gainSteps(tx, item, origin, oldOwner, 'disease_attachment', anchor));
   }
   if (!records.length) {
     delete tx.state.attachments[anchor];

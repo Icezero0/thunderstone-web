@@ -78,3 +78,7 @@ players.dispose();
 [PublicTableArea](../public-table-area/README.md) 组合本组件，负责右侧摆放、完整牌桌快照验证及与英雄预览的互斥，并提供 `showPlayerActivity`／`clearPlayerActivity` 转发。probe 的示例数据和定时公开按钮留在页面中；正式对局由 `pages/match/player-activity.ts` 将新的公开事件与回合变化转换为消息。本组件不判定何时公开手牌，也不维护权威游戏状态。
 
 `tests/player-list.test.mjs` 直接验证独立挂载、多实例、隐私、原子更新、宿主背景与卸载；`tests/player-browser.test.mjs` 和 `tests/public-table-area.test.mjs` 保留 probe 及公共视窗的组合回归。
+
+## 玩家目标选择
+
+setPlayerSelection(ids) 开启玩家目标选择：仅给传入玩家 ID 高亮并启用点击，其他条目禁用；点击触发 onPlayerClick(id)，不打开牌区浏览窗口。传入 null 退出，恢复普通浏览及“自己不可点击”的行为，空数组表示暂时禁用全部目标。候选与网络忙碌状态由宿主提供，组件不判断卡牌规则。PublicTableArea 同名方法将此状态转交给玩家列表。

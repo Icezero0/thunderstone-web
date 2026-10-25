@@ -36,6 +36,17 @@ test('camera bounds make every desktop edge reachable and clamp after viewport o
   assert.deepEqual(position(), {x: -100, y: -20}); camera.dispose();
 });
 
+test('authoritative layout can refresh an inert desktop without enabling player pan or zoom', async () => {
+  const {camera, size, viewport, ui, down, move, position} = await setup({cameraOptions: {centerContent: true}});
+  size.width = 1000; size.height = 700; camera.refresh();
+  assert.deepEqual(position(), {x: 50, y: 50});
+  viewport.inert = true; size.desktopWidth = 600; camera.refresh();
+  assert.deepEqual(position(), {x: 200, y: 50});
+  down(); move(0, 0); camera.panTo(0, 0);
+  assert.deepEqual(position(), {x: 200, y: 50}); assert.equal(camera.isPanning, false);
+  camera.dispose();
+});
+
 test('dragging starts after a threshold, translates both axes and suppresses the resulting click', async () => {
   const {camera, down, move, up, viewport, changes, position} = await setup();
   camera.panTo(-100, -100); down(); move(98, 98);

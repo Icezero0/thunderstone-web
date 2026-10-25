@@ -32,6 +32,22 @@ class ProfileApiTests(unittest.TestCase):
         return self.f.client.patch("/api/v1/users/me/avatar", headers=account["headers"],
             files={"file": ("avatar.png", image_file() if content is None else content, content_type)})
 
+    def test_hand_sort_preference_is_private_persistent_and_strictly_boolean(self):
+        account, other = self.f.account(), self.f.account()
+        url = "/api/v1/users/me"
+        self.assertFalse(self.f.client.get(url, headers=account["headers"]).json()["auto_sort_hand"])
+        self.assertEqual(self.f.client.patch(url, json={"auto_sort_hand": True}).status_code, 401)
+        for invalid in (None, 1, "true", [], {}):
+            self.assertEqual(self.f.client.patch(url, headers=account["headers"], json={"auto_sort_hand": invalid}).status_code, 422)
+        saved = self.f.successful(self.f.client.patch(url, headers=account["headers"], json={"auto_sort_hand": True}))
+        self.assertTrue(saved["auto_sort_hand"])
+        self.assertTrue(self.f.client.get(url, headers=account["headers"]).json()["auto_sort_hand"])
+        self.assertFalse(self.f.client.get(url, headers=other["headers"]).json()["auto_sort_hand"])
+        self.f.client.patch(url, headers=account["headers"], json={"username": "New name"})
+        self.assertTrue(self.f.client.get(url, headers=account["headers"]).json()["auto_sort_hand"])
+        self.f.client.patch(url, headers=account["headers"], json={"auto_sort_hand": False})
+        self.assertFalse(self.f.client.get(url, headers=account["headers"]).json()["auto_sort_hand"])
+
     def test_name_changes_keep_email_readonly_and_tokens_valid(self):
         account = self.f.account("原名称")
         denied = self.f.client.patch("/api/v1/users/me", headers=account["headers"],

@@ -22,6 +22,7 @@ from backend.app.integrations.game_engine.effects.compiler import load_ruleset
 from backend.app.integrations.game_engine.disease import take_disease
 from backend.app.integrations.game_engine.setup import start_game
 from backend.app.integrations.game_engine.turn import TurnError, apply_command, legal_commands
+from backend.app.integrations.game_engine.api import battle_preparation, submit_battle_team
 from backend.tests.migration.reference.python_engine.turn.dungeon import _combat_trace
 from backend.tests.migration.reference.python_engine.turn.operations import Transition
 from backend.scripts.effects.audit_effects import build_card_rows, build_rows
@@ -196,14 +197,19 @@ class CardEffectContractTests(unittest.TestCase):
                                 else "magic_attack")
                         self.assertEqual(after["battle_context"]["modifiers"][stat],
                                          amount)
-                        target = next(command["instance_ids"][0] for command in
-                                      legal_commands(after, snapshot=self.snapshot)
-                                      if command["type"] == "DeclareBattleTarget")
-                        battle = apply_command(after, {
+                        isolated = replace(self.ruleset, abilities=tuple(
+                            ability for ability in self.ruleset.abilities if ability.kind != "triggered"))
+                        preparation = battle_preparation(after, player, snapshot=self.snapshot, effects=isolated)
+                        submitted = submit_battle_team(after, {"type": "SubmitBattleTeam", "player_id": player,
+                            "expected_version": after["game_version"], "draft": preparation["draft"]},
+                            snapshot=self.snapshot, effects=isolated)
+                        self.assertEqual(submitted["state"]["subphase"], "DUNGEON_DECLARE")
+                        target = preparation["options"]["target_instance_ids"][0]
+                        battle = apply_command(submitted["state"], {
                             "type": "DeclareBattleTarget", "player_id": player,
+                            "expected_version": submitted["state"]["game_version"],
                             "target_instance_id": target,
-                        }, snapshot=self.snapshot, effects=replace(self.ruleset, abilities=tuple(
-                            ability for ability in self.ruleset.abilities if ability.kind != "triggered")))
+                        }, snapshot=self.snapshot, effects=isolated)
                         outcome = next(event for event in battle["events"]
                                        if event["kind"] == "battle_resolved")
                         self.assertEqual(outcome["calculation"]["modifiers"][stat],

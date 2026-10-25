@@ -12,6 +12,7 @@ from backend.app.integrations.game_engine.effects.compiler import compile_rulese
 from backend.app.integrations.game_engine.setup import start_game
 from backend.app.core.paths import PROJECT_ROOT
 from backend.app.integrations.game_engine.turn import TurnError, apply_command, legal_commands
+from backend.app.integrations.game_engine.api import battle_preparation
 
 
 CASES = (
@@ -178,7 +179,9 @@ def _view(state: dict, cards: dict) -> dict:
                            "top": _label(state, cards, pile[0])})
     choice_view = None
     if choice:
-        if choice["kind"] == "effect_purchase":
+        if choice["kind"] == "trap_activation":
+            candidates = [_label(state, cards, choice["instance_id"])]
+        elif choice["kind"] == "effect_purchase":
             candidates = [{"card_id": row["card_id"], "instance_id": "buy:" + row["card_id"],
                            "name": cards[row["card_id"]]["name"]} for row in choice["options"]]
         elif choice["kind"] == "effect_order":
@@ -309,6 +312,10 @@ class _Run:
         actor = self.state["pending_choice"]["player_id"] if self.state["pending_choice"] else self.player
         command = {"type": kind, "player_id": actor,
                    "expected_version": self.state["game_version"], **arguments}
+        # These isolated effect fixtures intentionally retain the old all-hand
+        # shortcut. Formal, versioned matches submit a team before declaration.
+        if kind == "DeclareBattleTarget" and self.state["subphase"] == "DUNGEON_PREPARE":
+            command.pop("expected_version")
         result = apply_command(self.state, command, snapshot=self.snapshot,
                                effects=self.effects, trace_effects=True)
         self.state = result["state"]
@@ -562,7 +569,10 @@ def run_case(case_id: str, *, choice_index: int = 0) -> dict:
         run.do("ChooseAction", action="dungeon")
         run.do("ActivateAbility", ability_id="TS-0268-A01", source_instance_id=ids["source"])
         _choice(run, choice_index)
-        run.check("补牌时先暂停到陷阱的选择", run.state["pending_choice"]["ability_id"] == "TS-0688-A01")
+        run.check("补牌时陷阱停在大厅等待点击", run.state["pending_choice"]["kind"] == "trap_activation"
+                  and ids["trap"] in run.state["zones"]["hall:main"])
+        run.do("ResolveTrap", instance_id=ids["trap"])
+        run.check("点击陷阱后才进入目标选择", run.state["pending_choice"]["ability_id"] == "TS-0688-A01")
         run.do("ResolveChoice", instance_id=ids["hero"])
         run.check("陷阱完成后恢复原能力的费用选择", run.state["pending_choice"]["ability_id"] == "TS-0268-A01")
         result = run.do("ResolveChoice", instance_id=ids["cost"])
@@ -710,9 +720,8 @@ def run_case(case_id: str, *, choice_index: int = 0) -> dict:
                source_instance_id=source)
         run.check("战斗上下文保存攻击 +2 和光照 +1",
                   run.state["battle_context"]["modifiers"] == {"attack": 2, "light": 1})
-        targets = next(item["instance_ids"] for item in legal_commands(
-            run.state, snapshot=run.snapshot, effects=run.effects)
-            if item["type"] == "DeclareBattleTarget")
+        targets = battle_preparation(run.state, run.player, snapshot=run.snapshot,
+                                     effects=run.effects)["options"]["target_instance_ids"]
         result = run.do("DeclareBattleTarget", target_instance_id=targets[0])
         battle = next(item for item in result["events"] if item["kind"] == "battle_resolved")
         run.check("战斗计算轨迹包含两项修正",

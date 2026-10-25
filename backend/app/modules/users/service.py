@@ -38,6 +38,8 @@ class UserService:
         changes = payload.model_dump(exclude_unset=True)
         if "username" in changes:
             user.username = changes["username"]
+        if "auto_sort_hand" in changes:
+            user.auto_sort_hand = changes["auto_sort_hand"]
         if changes.get("password") is not None:
             user.hashed_password = hash_password(changes["password"])
             user.token_version += 1

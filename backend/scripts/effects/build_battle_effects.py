@@ -15,7 +15,7 @@ ABILITIES = []
 CASES = []
 ANY = {"zone": "subject_hand", "tags_none": ["疾病"], "unmarked": True}
 HEROES = {**ANY, "tag": "英雄"}
-MILITIA = {**ANY, "card_id": "TS-0001"}
+MILITIA = {**ANY, "tag": "民兵"}
 
 
 def conditional(query, body):
@@ -105,7 +105,7 @@ for ability_id in ("TS-0554-A02", "TS-0664-A01", "TS-0666-A02"):
     add(ability_id, destroy(HEROES), hand=("TS-0302",), expected={"destroyed": ["TS-0302"]})
 add("TS-0578-A01", destroy({**ANY, "tag": "食物"}), hand=("TS-0004",), expected={"destroyed": ["TS-0004"]})
 add("TS-0584-A02", destroy({**HEROES, "tag": "牧师"}), hand=("TS-0426",), expected={"destroyed": ["TS-0426"]})
-add("TS-0632-A01", destroy({**HEROES, "exclude_card_id": "TS-0001"}), hand=("TS-0302",), expected={"destroyed": ["TS-0302"]})
+add("TS-0632-A01", destroy({**HEROES, "tags_none": ["疾病", "民兵"]}), hand=("TS-0302",), expected={"destroyed": ["TS-0302"]})
 add("TS-0637-A01", destroy({**ANY, "tag": "物品"}), hand=("TS-0003",), expected={"destroyed": ["TS-0003"]})
 add("TS-0638-A02", destroy({**ANY, "tags_any": ["武器", "法术"]}), hand=("TS-0002",), expected={"destroyed": ["TS-0002"]})
 add("TS-0640-A02", destroy({**HEROES, "level_min": 1, "level_max": 1}), hand=("TS-0302",), expected={"destroyed": ["TS-0302"]})

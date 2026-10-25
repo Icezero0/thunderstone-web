@@ -148,13 +148,13 @@ def build_artifacts() -> dict[Path, bytes]:
     add_reviewed("TS-0213-A01", ("village",), "destroy_militia_xp", 2,
                  "村庄：摧毁 1 名民兵，获得 2 点经验值。", {
                      "op": "select", "query": {"zone": "active_hand",
-                                                 "card_id": "TS-0001"},
+                                                 "tag": "民兵"},
                      "bind": "militia", "min": 1, "max": 1,
                      "then": {"op": "cost_gate", "cost": {
                          "op": "destroy", "target": {"var": "militia"}},
                          "then": {"op": "gain_xp", "amount": 2}},
                  }, conditions=[{"exists": {"zone": "active_hand",
-                                            "card_id": "TS-0001"}}])
+                                            "tag": "民兵"}}])
 
     printed_contracts = []
     target_contracts = []

@@ -10,7 +10,7 @@ import {reconcileEquipment, equipmentPairs} from '../battle/equipment.js';
 import {equipWeapon} from '../battle/equipment.js';
 import {borrow, release} from './ownership.js';
 import {offerPurchase} from './purchase-transition.js';
-import {upgradeOptions} from '../turn/village.js';
+import {produceGold, upgradeOptions} from '../turn/village.js';
 import {relocate, swapHall, exchangeHall, shuffleHallTop} from '../turn/hall.js';
 import {offerEffect, offerDestroy, hasGlobalWork} from './responses.js';
 import {pause, valueOptions, valueBindings, reorderCards, dungeonZone} from './choice-transition.js';
@@ -60,12 +60,13 @@ export function dispatchEvent(tx: Transition, event: string): boolean {
     event, turn_number: tx.state.turn_number,
     repeatable_ability_ids: tx.ruleset.abilities.filter(item => item.source_zone === 'battle_target').map(item => item.id)});
   if (plan.mode === 'none') return true;
+  if (event === 'BATTLE_TRIUMPH') produceGold(tx, 'triumph');
   tx.state.registered_triggers = tx.state.registered_triggers.filter((_: any, i: number) =>
     !plan.consumed_listener_indices.includes(i));
   tx.state.scheduled_effects = tx.state.scheduled_effects.filter((_: any, i: number) =>
     !plan.consumed_scheduled_indices.includes(i));
   const candidates = plan.candidates;
-  if (plan.mode === 'battle') {
+  if (plan.mode === 'battle' || plan.mode === 'sequence') {
     const stack: Record<string, any>[] = [];
     for (const item of [...candidates].reverse()) stack.push(...abilityFrames(item.ability_id,
       item.source_instance_id, item.body, {_subject: tx.playerId, ...item.bindings}));
@@ -284,7 +285,8 @@ export function runEffect(tx: Transition, initialAbilityId: string, initialSourc
           item = tx.state.zones[origin][0]; tx.state.instances[item].owner_player_id = subject;
           tx.move(item, origin, destination);
         }
-        tx.event('effect_card_gained', {ability_id: abilityId, instance_id: item, card_id: cardId, destination});
+        tx.event('effect_card_gained', {ability_id: abilityId, player_id: subject, instance_id: item, card_id: cardId,
+          source: origin ?? `basic_supply:${cardId}`, destination});
         const steps = gainSteps(tx, item, origin, null, abilityId);
         if (steps.length) {
           steps.push({op: 'effect_continuation', ability_id: abilityId, source_instance_id: sourceId, stack: structuredClone(stack)});
@@ -306,18 +308,19 @@ export function runEffect(tx: Transition, initialAbilityId: string, initialSourc
         const count = expression(tx, node.count, bindings);
         if (!(0 <= count && count <= 100)) throw new RuleError('invalid effect disease count');
         tx.trace(abilityId, sourceId, node, bindings);
-        const steps = Array.from({length: count}, () => ({op: 'gain_disease', player_id: subject}));
+        const steps = Array.from({length: count}, () => ({op: 'gain_disease', player_id: subject, source_instance_id: sourceId}));
         steps.push({op: 'effect_continuation', ability_id: abilityId,
           source_instance_id: sourceId, stack: structuredClone(stack)} as any);
         queueSteps(tx, steps, true); return tx.state.pending_choice === null;
       }
       case 'buy': {
         const maximumCost = node.maximum_cost === undefined ? null : expression(tx, node.maximum_cost, bindings);
-        const options = offerPurchase(tx, node.filter, maximumCost);
+        const options = offerPurchase(tx, node.filter, maximumCost, node.payment === 'gold');
         if (!options.length) {tx.event('effect_purchase_unavailable', {ability_id: abilityId}); break;}
         tx.state.pending_choice = {kind: 'effect_purchase', player_id: tx.playerId,
           ability_id: abilityId, source_instance_id: sourceId, options, filter: node.filter,
-          destination: node.destination, payment: node.payment ?? 'none', maximum_cost: maximumCost, bindings};
+          destination: node.destination, payment: node.payment ?? 'none', maximum_cost: maximumCost,
+          may_skip: node.may_skip !== false, bindings};
         tx.state.resolution_frames = [{ability_id: abilityId, source_instance_id: sourceId, stack: structuredClone(stack)}];
         tx.event('effect_purchase_requested', {ability_id: abilityId, options}); return false;
       }
@@ -345,7 +348,8 @@ export function runEffect(tx: Transition, initialAbilityId: string, initialSourc
           tx.move(instance, origin, zone); taken.push(instance);
           if (node.until && matches(tx.card(instance), node.until)) break;
         }
-        tx.event('cards_revealed', {ability_id: abilityId, player_id: subject, instance_ids: taken});
+        tx.event('cards_revealed', {ability_id: abilityId, player_id: subject, instance_ids: taken,
+          zone, origin, visible_to: [...new Set([tx.playerId, subject])]});
         stack.push({node: {op: '_discard_reveal', zone, ...(isDungeon ? {return_to: origin} : {})}, bindings});
         stack.push({node: node.then, bindings: {...bindings, [node.bind]: taken,
           _reveal_zone: zone, _reveal_origins: origins}}); break;
@@ -363,7 +367,8 @@ export function runEffect(tx: Transition, initialAbilityId: string, initialSourc
           origins[instance] = {origin, temporary_zone: zone,
             owner_player_id: tx.state.instances[instance].owner_player_id};
           tx.move(instance, origin, zone);
-          tx.event('cards_revealed', {ability_id: abilityId, player_id: subject, instance_ids: [instance]});
+          tx.event('cards_revealed', {ability_id: abilityId, player_id: subject, instance_ids: [instance],
+            zone, origin, visible_to: [...new Set([tx.playerId, subject])], public: true});
           if (matches(tx.card(instance), node.filter)) {found.push(instance); break;}
           tx.move(instance, zone, `player:${subject}:discard`);
           progress.recordNoProgress(subject, instance);

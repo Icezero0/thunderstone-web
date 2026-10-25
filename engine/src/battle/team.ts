@@ -4,7 +4,9 @@ import {RuleError, type BattleTeam, type CombatTrace} from '../types.js';
 import {combatValues, equipmentCapacity, equipmentChoices, monsterHealth} from './combat.js';
 import {ENGINE_VERSION} from '../build-info.js';
 import type {PreviewContext} from './preview.js';
-import {isBattleSupport} from './participation.js';
+import {isBattleSupport, teamSourceSelected} from './participation.js';
+import {continuousCardStatuses, type CardStatus} from './statuses.js';
+import {StatusEvidence} from './status-evidence.js';
 
 export interface BattleDraft extends BattleTeam {
   schema_version: 'thunderstone.battle-draft/1';
@@ -32,6 +34,8 @@ export interface BattleTeamPreview {
   health: number | null;
   outcome_before_battle_effects: 'win' | 'loss' | 'cannot_attack' | null;
   equipment_events_pending: number;
+  battle_effects_pending: boolean;
+  continuous_card_statuses: Record<string, CardStatus[]>;
 }
 
 function checkContext(context: PreviewContext) {
@@ -85,7 +89,7 @@ export function battleDraftInput(context: PreviewContext, draft: BattleDraft): P
   if (new Set(weapons).size !== weapons.length) throw new RuleError('a weapon may only be equipped once');
   for (const [hero, values] of Object.entries(draft.equipment)) {
     selection(values, options.weapon_instance_ids, 'weapons');
-    if (!draft.hero_instance_ids.includes(hero) || values.includes(hero)) throw new RuleError('equipment requires a selected hero');
+    if (!options.hero_instance_ids.includes(hero) || values.includes(hero)) throw new RuleError('equipment requires a hand hero');
     if (values.length > equipmentCapacity(input, hero)) throw new RuleError('hero equipment capacity exceeded');
   }
   // Validate new pairs in the same order and against the same shared choices
@@ -130,10 +134,23 @@ export function previewBattleTeam(context: PreviewContext, draft: BattleDraft): 
   const input = battleDraftInput(context, draft), tx = new Calculation(input);
   const rank = draft.target_instance_id === null ? null : battleTargetRank(input, draft.target_instance_id);
   const target = draft.target_instance_id === null ? null : tx.card(draft.target_instance_id);
-  const calculation = combatValues(input, rank ?? 0, target);
+  if (draft.target_instance_id) {
+    input.state.battle_context!.target_instance_id = draft.target_instance_id;
+    input.state.battle_context!.target_rank = rank!;
+  } else {delete input.state.battle_context!.target_instance_id; delete input.state.battle_context!.target_rank;}
+  const evidence = new StatusEvidence(input);
+  const calculation = combatValues(input, rank ?? 0, target, evidence);
   const health = target ? monsterHealth(input, target, rank!, draft.target_instance_id) : null;
   const existing = new Set(equipmentPairs(context.state.battle_context!).map(([hero, weapon]) => `${hero}\0${weapon}`));
   return {draft: structuredClone(draft), calculation, target_instance_id: draft.target_instance_id, rank, health,
+    continuous_card_statuses: continuousCardStatuses(input, calculation, evidence),
+    battle_effects_pending: !!target && (context.battle_effect_sources ?? []).some(source => {
+      if (source.affects_outcome === false) return false;
+      if (source.source_zone === 'battle_target') return source.source_instance_id === draft.target_instance_id;
+      if (source.source_zone === 'active_hand' && source.source_instance_id) return teamSourceSelected(tx, source.source_instance_id)
+        && !(isHero(tx.card(source.source_instance_id)) && calculation.excluded_instance_ids.includes(source.source_instance_id));
+      return true;
+    }),
     outcome_before_battle_effects: health === null ? null : !calculation.can_attack ? 'cannot_attack'
       : calculation.can_defeat && calculation.effective_attack >= health ? 'win' : 'loss',
     equipment_events_pending: equipmentPairs(input.state.battle_context!).filter(([hero, weapon]) => !existing.has(`${hero}\0${weapon}`)).length};
@@ -148,14 +165,13 @@ export function updateBattleDraft(context: PreviewContext, draft: BattleDraft, a
     if (!pool.includes(action.instance_id)) throw new RuleError('card is not an optional battle selection');
     result[key] = result[key].filter(id => id !== action.instance_id);
     if (action.selected) result[key].push(action.instance_id);
-    else if (action.type === 'set_hero') delete result.equipment[action.instance_id];
   } else if (action.type === 'equip' || action.type === 'unequip') {
     for (const hero of Object.keys(result.equipment)) {
       result.equipment[hero] = result.equipment[hero].filter(id => id !== action.weapon_instance_id);
       if (!result.equipment[hero].length) delete result.equipment[hero];
     }
     if (action.type === 'equip') {
-      if (!result.hero_instance_ids.includes(action.hero_instance_id)) throw new RuleError('equipment requires a selected hero');
+      if (!battleTeamOptions(context).hero_instance_ids.includes(action.hero_instance_id)) throw new RuleError('equipment requires a hand hero');
       (result.equipment[action.hero_instance_id] ??= []).push(action.weapon_instance_id);
     }
   } else throw new RuleError('unknown battle draft action');
@@ -163,7 +179,7 @@ export function updateBattleDraft(context: PreviewContext, draft: BattleDraft, a
   return result;
 }
 export function buildSubmitBattleTeamCommand(context: PreviewContext, draft: BattleDraft): SubmitBattleTeamCommand {
-  battleDraftInput(context, draft);
-  if (!draft.target_instance_id) throw new RuleError('select a battle target before submitting');
-  return {type: 'SubmitBattleTeam', player_id: context.player_id, expected_version: context.game_version, draft: structuredClone(draft)};
+  const selection = {...structuredClone(draft), target_instance_id: null};
+  battleDraftInput(context, selection);
+  return {type: 'SubmitBattleTeam', player_id: context.player_id, expected_version: context.game_version, draft: selection};
 }

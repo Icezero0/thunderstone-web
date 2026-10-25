@@ -7,7 +7,7 @@
 </head>
 <body>
   <header class="masthead"><div class="topbar"><a class="brand" href="/play"><span class="brand-mark" aria-hidden="true">ϟ</span><span><strong>雷霆之石</strong><small>THUNDERSTONE</small></span></a>
-    <nav aria-label="主导航"><a href="/play" aria-current="page">联机大厅</a><a href="/config">规则配置</a></nav>
+    <nav aria-label="主导航"><a href="/play" aria-current="page">联机大厅</a></nav>
     <div id="account" class="account" hidden><a class="account-profile" href="/profile" title="个人设置"><span id="account-avatar"></span><span id="account-name"></span></a><button id="logout" class="text-button" type="button">退出</button></div>
   </div><div class="hero-copy page-heading"><div><p class="eyebrow">冒险者工会</p><h1>联机大厅</h1></div><span id="connection" class="connection" data-status="offline" role="status">尚未登录</span></div></header>
   <main class="shell">
@@ -30,7 +30,7 @@
     </section>
     <section id="room-view" hidden>
       <div class="room-heading"><div><p id="room-state" class="eyebrow">等待中的房间</p><h2 id="room-name"></h2><div class="room-code"><code id="room-code"></code><button id="copy-room" class="text-button" type="button">复制编号</button></div></div><button id="leave-room" class="button secondary" type="button">离开房间</button></div>
-      <div class="room-layout"><section class="card"><div class="section-title"><h3>玩家列表</h3><span id="readiness" class="label"></span></div><ul id="players" class="players"></ul><button id="ready" class="button primary ready-button" type="button">我准备好了</button><p id="ready-note" class="muted small">玩家列表或规则配置改变后，所有玩家需要重新准备。</p><div id="start-controls" class="start-controls" hidden><label for="first-player">先手玩家</label><select id="first-player"><option value="random">随机选择</option></select><button id="start-match" class="button primary" type="button">开始对局</button><p id="start-note" class="muted small">全员准备后即可开始。</p></div><a id="enter-match" class="button primary ready-button" href="/match" hidden>进入对局</a></section>
+      <div class="room-layout"><section class="card"><div class="section-title"><h3>玩家列表</h3><span id="readiness" class="label"></span></div><ul id="players" class="players"></ul><button id="ready" class="button primary ready-button" type="button">准备</button><p id="ready-note" hidden></p><div id="start-controls" class="start-controls" hidden><label for="first-player">先手玩家</label><select id="first-player"><option value="random">随机选择</option></select><button id="start-match" class="button primary" type="button">开始对局</button><p id="start-note" class="muted small">全员准备后即可开始。</p></div><a id="enter-match" class="button primary ready-button" href="/match" hidden>进入对局</a></section>
         <section class="card"><div class="section-title"><div><p class="eyebrow">经典模式</p><h3>本局配置</h3></div><a id="edit-config" class="button secondary" href="/config">编辑配置</a></div><div id="config-counts" class="config-counts"></div><div class="config-meta"><span>地下城特征 <strong id="feature-mode"></strong></span><span id="multipliers"></span></div><dl id="config-details" class="config-details"></dl></section>
       </div><div class="room-bottom"><p id="host-note" class="muted small"></p><button id="close-room" class="text-button danger" type="button">关闭房间</button></div>
     </section>

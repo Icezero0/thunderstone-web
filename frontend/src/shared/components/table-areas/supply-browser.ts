@@ -19,8 +19,18 @@ export class SupplyBrowser {
   private readonly take = node('button', 'button primary');
   private readonly items = new Map<string, LevelView>();
   private current: PhysicalCard[] = [];
+  private targets = new Set<string>();
+  private selected = new Set<string>();
   private trigger: HTMLElement | null = null;
   private pile: SupplyPile | null = null;
+  setCardTargets(ids: readonly string[], selected: readonly string[]): void {
+    this.targets = new Set(ids); this.selected = new Set(selected);
+    for (const card of this.current) this.target(card);
+  }
+  private target(card: PhysicalCard): void {
+    const id = card.elements.button.dataset.cardId!;
+    card.setGlow(this.targets.has(id)); card.setActive(this.selected.has(id));
+  }
   private inertBefore: boolean[] = [];
   get pileId(): string | null {return this.pile?.id ?? null;}
   constructor(private cards: AreaCards, private background: readonly HTMLElement[],
@@ -54,6 +64,11 @@ export class SupplyBrowser {
     const ordered = pile.cards.map(card => {
       const key = `browse-${pile.id}-${card.cardId}`;
       const view = this.cards.card(key, {id: key, ...card});
+      this.target(view);
+      view.elements.button.onclick = () => {
+        if (this.pile && this.targets.has(card.cardId)) this.options.onSupplyClick?.({pileId: this.pile.id, cardId: card.cardId,
+          name: card.name, level: card.level, infinite: false, preview: true});
+      };
       let item = this.items.get(key);
       if (!item) {
         const root = node('article', 'supply-browser-card'), heading = node('div', 'supply-level-heading');

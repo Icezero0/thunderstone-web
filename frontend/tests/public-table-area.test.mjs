@@ -14,6 +14,33 @@ async function setup(options = {}) {
   const area = new api.PublicTableArea(ui.get('one'), {overlayRoot: ui.get('overlays'), idPrefix: 'first', ...options});
   area.setState(snapshot()); await settle(); return {ui, api, area};
 }
+
+test('local continuous hall statuses update markers and restore the authoritative state without moving cards', async () => {
+  const {ui, area} = await setup();
+  const button = top(ui.get('first-dungeon-cards-main-rank-1').children[1]), id = button.dataset.instanceId;
+  const visit = node => node.children.flatMap(child => [child, ...visit(child)]);
+  const markers = () => visit(button).find(node => node.className === 'card-status-markers');
+  area.setStatusOverrides({[id]: [{kind: 'buff', source_name: '终末骑士', description: '生命值 +1', continuous: true}]});
+  assert.equal(markers().hidden, false); assert.match(markers().children[0].getAttribute('aria-label'), /终末骑士：生命值 \+1/);
+  area.setStatusOverrides({[id]: []}); assert.equal(markers().hidden, true);
+  area.setStatusOverrides(null); assert.equal(markers().hidden, true);
+  assert.equal(top(ui.get('first-dungeon-cards-main-rank-1').children[1]), button); area.dispose();
+});
+
+test('visible hall origins require the active dungeon tab and overlap with both viewport and window', async () => {
+  const {ui, area} = await setup();
+  const button = top(ui.get('first-dungeon-cards-main-rank-1').children[1]);
+  const visit = node => node.children.flatMap(child => [child, ...visit(child)]);
+  const body = visit(button).find(node => node.className === 'card-body');
+  let left = 100, y = 200;
+  body.getBoundingClientRect = () => ({left, top: y, width: 144, height: 201, right: left + 144, bottom: y + 201});
+  assert.ok(area.visibleHallCardRect(button.dataset.instanceId));
+  left = -500; assert.equal(area.visibleHallCardRect(button.dataset.instanceId), null);
+  left = 100; y = 800; assert.equal(area.visibleHallCardRect(button.dataset.instanceId), null);
+  y = 200; area.setTab('village'); assert.equal(area.visibleHallCardRect(button.dataset.instanceId), null);
+  area.setTab('dungeon'); assert.ok(area.visibleHallCardRect(button.dataset.instanceId));
+  assert.equal(area.visibleHallCardRect('missing'), null); area.dispose();
+});
 function size(ui, area, prefix = 'first') {
   for (const kind of ['dungeon', 'village']) {
     const desktop = ui.get(`${prefix}-${kind}-desktop`);
@@ -21,6 +48,19 @@ function size(ui, area, prefix = 'first') {
   }
   area.refresh();
 }
+
+test('supply animation geometry remains available while the public area is locked, but hidden or removed cards have no origin', async () => {
+  const {ui, area} = await setup({initialTab: 'village'});
+  const button = top(ui.get('first-village-cards-pile-amazon').children[1]), cardId = button.dataset.cardId;
+  assert.ok(area.supplyCardRect(cardId));
+  area.root.inert = true;
+  assert.ok(area.supplyCardRect(cardId), 'inert disables interaction, not visible geometry');
+  assert.ok(area.focusSupply(cardId), 'timeline can frame its source after locking player interaction');
+  assert.equal(area.root.inert, true, 'measuring a source must never unlock the table');
+  area.root.hidden = true; assert.equal(area.supplyCardRect(cardId), null);
+  area.root.hidden = false; area.root.remove(); assert.equal(area.supplyCardRect(cardId), null);
+  area.dispose();
+});
 
 test('the standalone public component owns all DOM and overlays, generates unique IDs and supports custom images', async () => {
   const ui = await page({html, source}), api = ui.evaluate('PublicTablePackage');

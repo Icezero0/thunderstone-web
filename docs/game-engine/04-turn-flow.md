@@ -120,8 +120,9 @@ flowchart TD
 | `UpgradeHero` | 村庄升级 | 原英雄仍在手牌、目标同系列下一等级、经验与库存充足 |
 | `RestDestroy` / `SkipRestDestroy` | 休整第一阶段 | 摧毁至多一张当前手牌，或跳过，然后进入 `ACTION_END` |
 | `FinishTurn` | `ACTION_END` | 当前玩家确认结束，三种行动共用同一清理流程 |
-| `DeclareBattleTarget` | 地下城准备完成后 | 目标在可攻击大厅阶层，满足禁止攻击的限制 |
-| `SubmitBattleTeam` | 地下城准备完成后 | 当前版本的队伍草稿；英雄、支援与武器来自手牌，装备合法且目标可攻击 |
+| `DeclareBattleTarget` | `DUNGEON_DECLARE` | 队伍已提交；目标在可攻击大厅阶层，满足禁止攻击的限制 |
+| `SubmitBattleTeam` | `DUNGEON_PREPARE` | 当前版本的队伍草稿；英雄、支援与武器来自手牌，装备合法，无目标 |
+| `ReviseBattleTeam` | `DUNGEON_DECLARE` | 返回准备，保留已结算效果与使用记录 |
 | `ResolveChoice` | 有待选择项时 | 指令来自指定选择者，选项是当前候选的一部分 |
 
-前端只发送意图和实例 ID，不发送金币合计、攻击值或抽牌结果。新客户端使用 [`SubmitBattleTeam`](battle-team-api.md)提交战斗队伍；`DeclareBattleTarget` 保留用于旧回放兼容。
+前端只发送意图和实例 ID，不发送金币合计、攻击值或抽牌结果。客户端先使用 [`SubmitBattleTeam`](battle-team-api.md)提交战斗队伍，再在独立的宣言阶段使用 `DeclareBattleTarget` 选择攻击对象。

@@ -47,10 +47,11 @@ export interface BattleContext {
   spell_cast_counts?: Record<string, number>;
   damage_divisor?: number;
   zero_weapon_weight?: boolean;
+  flag_sources?: Record<string, string>;
   excluded_participants?: string[];
   convert_all_magic?: boolean; convert_equipped_magic?: boolean; convert_card_magic?: string[];
   modifiers?: Partial<Stats>;
-  modifier_sources?: {source_instance_id: string|null; field: Stat; amount: number}[];
+  modifier_sources?: {source_instance_id: string|null; source_card_id?: string; field: Stat; amount: number}[];
   disease_order?: string[];
   disease_penalty_assignments?: Record<string, string>;
   cannot_defeat?: boolean; used_card_tags?: string[];
@@ -65,7 +66,8 @@ export interface CalculationState {
   active_settings: string[];
   battle_context: BattleContext | null;
   copied_heroes?: Record<string, {card_ids: string[]; full_card?: boolean; preserve_attack: boolean}>;
-  continuous_effects?: {kind: string; scope: string; player_id: string; amount: number}[];
+  continuous_effects?: {kind: string; scope: string; player_id: string; amount: number; source_card_id?: string;
+    source_instance_id?: string; until?: string; created_turn?: number}[];
   attachments?: Record<string, {kind: string}[]>;
 }
 export interface CalculationInput {

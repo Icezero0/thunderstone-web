@@ -1,7 +1,7 @@
 import {STORAGE_KEY, kinds, kindNames, multiplierFields} from './constants.js';
 import {$} from './dom.js';
 import {createPageState} from './state.js';
-import {createConfigModel} from './model.js';
+import {createConfigModel, sameConfiguration} from './model.js';
 import {createDraftStorage} from './draft-storage.js';
 import {createSelectionView} from './selection.js';
 import {createSetupResults} from './setup-results.js';
@@ -38,6 +38,8 @@ function setDraftChanged() {
 }
 
 function refresh() {
+  $("#card-configuration").value = page.cardConfiguration;
+  for (const id of ["fixed-config-panel", "extras-config-panel", "multipliers-config-panel"]) $("#" + id).hidden = page.cardConfiguration === "default";
   renderCounts();
   renderTabs();
   renderGroups();
@@ -48,7 +50,7 @@ function refresh() {
   renderMultipliers();
   renderSummary();
   $("#json-output").value = JSON.stringify(enginePayload(), null, 2);
-  try { if (!page.roomEditor) localStorage.setItem(STORAGE_KEY, JSON.stringify({ catalog_hash: page.catalog.catalog_hash, state: page.state })); }
+  try { if (!page.roomEditor) localStorage.setItem(STORAGE_KEY, JSON.stringify({ catalog_hash: page.catalog.catalog_hash, state: page.state, card_configuration: page.cardConfiguration })); }
   catch (_) { /* Local storage is optional. */ }
 }
 
@@ -84,6 +86,12 @@ async function validate() {
 
 function bindEvents() {
   bindSetupEvents();
+  $("#card-configuration").addEventListener("change", event => {
+    if (event.target.value === "default") {page.customState = structuredClone(page.state); page.state = defaultState();}
+    else if (page.customState) page.state = structuredClone(page.customState);
+    page.cardConfiguration = event.target.value === "default" ? "default" : "custom";
+    setDraftChanged();
+  });
   for (const kind of kinds) {
     $("#count-" + kind).addEventListener("change", event => {
       if (event.target.disabled) return;
@@ -153,7 +161,7 @@ function bindEvents() {
     anchor.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
-  $("#reset").addEventListener("click", () => { page.state = defaultState(); page.trimNotice = ""; setDraftChanged(); });
+  $("#reset").addEventListener("click", () => { page.state = defaultState(); page.cardConfiguration = "default"; page.customState = null; page.trimNotice = ""; setDraftChanged(); });
 }
 
 async function main() {
@@ -162,6 +170,8 @@ async function main() {
     if (!response.ok) throw new Error("catalog response failed");
     page.catalog = await response.json();
     page.state = page.editingRoomId ? await loadRoomEditor() : restoreState();
+    const defaults = defaultState();
+    if (!sameConfiguration(enginePayload(), defaults)) page.cardConfiguration = "custom";
     bindEvents();
     renderFirstPlayerChoices();
     refresh();

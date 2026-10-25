@@ -4,7 +4,7 @@ export function optionRows(command: LegalCommand): CommandOption[] {
   return (command.options ?? []).filter((option): option is CommandOption => typeof option === 'object' && option !== null);
 }
 export function instanceCardId(view: MatchView, instance: string): string | undefined {
-  return view.command_instances?.[instance]?.card_id ?? [...view.hand, ...view.discard, ...view.settings,
+  return view.command_instances?.[instance]?.card_id ?? [...view.hand, ...view.discard, ...view.settings, ...view.revealed ?? [],
     ...view.players.flatMap(player => player.control), ...view.dungeons.flatMap(dungeon => dungeon.hall)]
     .find(card => card.instance_id === instance)?.card_id;
 }

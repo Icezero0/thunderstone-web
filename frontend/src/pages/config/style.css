@@ -199,8 +199,7 @@
 .search-wrap {
   flex: 1;
 }
-.search-wrap input,
-.multiplier-card select {
+.search-wrap input {
   border: 1px solid #d6d4cb;
   border-radius: 8px;
   background: #fff;
@@ -397,10 +396,9 @@
   font-weight: 700;
 }
 .multiplier-card select {
+  width: 100%;
   font-size: 17px;
   font-weight: 700;
-  color: #805d2b;
-  padding: 7px 10px;
 }
 .multiplier-card small {
   color: var(--muted);
@@ -507,12 +505,14 @@
 .allocation-row select {
   width: 100%;
   min-width: 0;
+  font-size: 14px;
+}
+.setup-field input {
   border: 1px solid #d6d4cb;
   border-radius: 7px;
   background: #fff;
   color: var(--ink);
   padding: 9px 11px;
-  font-size: 14px;
 }
 .seed-control {
   display: flex;
@@ -595,10 +595,9 @@
   min-width: 0;
 }
 .allocation-row select {
-  width: 93px;
+  width: 110px;
   flex: 0 0 auto;
   font-size: 12px;
-  padding: 7px 4px;
 }
 .allocation-counter {
   font-size: 12px;
@@ -801,3 +800,8 @@
     flex-direction: column;
   }
 }
+
+.configuration-modes {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:24px;}
+.configuration-modes label {display:grid;gap:8px;font-size:13px;color:var(--muted);}
+.configuration-modes select {width:100%;}
+#fixed-config-panel[hidden], #extras-config-panel[hidden], #multipliers-config-panel[hidden] {display:none;}

@@ -12,23 +12,49 @@ export function rememberFronts(tx: Transition) {
 }
 const eventStep = (event: string, instance: string, hall: string, details: Record<string, any> = {}) =>
   ({op: 'event', event, context: {source_instance_id: instance, hall_zone: hall, ...details}});
+/** Public slots include empty capacity, even when the dungeon deck is exhausted. */
+export function hallRankCount(tx: Transition, hall: string): number {
+  hall = hall.replace(/:rank0$/, '');
+  const pile: string[] = tx.state.zones[hall] ?? [];
+  return Math.max(3, pile.length, hallCapacity(pile.map(id => tx.card(id).card_id), tx.state.active_settings));
+}
 export function settleOnStone(tx: Transition, stoneId: string, acquire: boolean): boolean {
   const ritual = tx.state.active_settings.includes('TS-0199'), stoneZone = tx.location(stoneId)!;
+  const rank = tx.state.zones[stoneZone].indexOf(stoneId) + 1;
   if (Object.entries(tx.state.zones).some(([zone, pile]) => zone.startsWith('hall:') && zone.endsWith(':rank0') && (pile as string[]).length)) acquire = false;
   if (acquire) {
     tx.state.instances[stoneId].owner_player_id = tx.playerId;
     tx.move(stoneId, stoneZone, `player:${tx.playerId}:discard`);
     const acquired = tx.state.acquired_stones ??= [];
     if (!acquired.includes(stoneId)) acquired.push(stoneId);
-    tx.event('thunderstone_acquired', {player_id: tx.playerId, instance_id: stoneId});
+    tx.event('thunderstone_acquired', {player_id: tx.playerId, instance_id: stoneId, hall_zone: stoneZone,
+      rank, hall_rank_count: hallRankCount(tx, stoneZone)});
     if (ritual || tx.state.active_settings.includes('TS-0198') && acquired.length < 2) return false;
   } else if (ritual) {
     const deckZone = stoneZone.replace('hall:', 'dungeon:');
     tx.move(stoneId, stoneZone, deckZone);
-    tx.event('thunderstone_returned_to_deck', {instance_id: stoneId, deck_zone: deckZone, reason: 'banishing_ritual_breach'});
+    tx.event('thunderstone_returned_to_deck', {instance_id: stoneId, deck_zone: deckZone, hall_zone: stoneZone,
+      rank, hall_rank_count: hallRankCount(tx, stoneZone), reason: 'banishing_ritual_breach'});
     return false;
   }
   settleGame(tx, 'thunderstone_entered_rank_1', {instance_id: stoneId, acquired_by: acquire ? tx.playerId : null});
+  return true;
+}
+function awaitTrap(tx: Transition, instance: string, hallZone: string, step: Record<string, any>, origin: 'hall'|'deck') {
+  tx.event('trap_revealed', {instance_id: instance, hall_zone: hallZone, origin,
+    rank: tx.state.zones[hallZone].indexOf(instance) + 1, hall_rank_count: hallRankCount(tx, hallZone)});
+  tx.state.pending_choice = {kind: 'trap_activation', player_id: tx.playerId, instance_id: instance, hall_zone: hallZone};
+  tx.state.resolution_frames = [{kind: 'trap_activation', instance_id: instance}];
+  tx.state.effect_resume = 'workflow';
+  queueSteps(tx, [eventStep('TRAP_REVEALED', instance, hallZone, {defeated_instance_id: step.defeated_instance_id ?? null}),
+    {op: 'dispose_trap', instance_id: instance, hall_zone: hallZone}, step], true);
+}
+export function activateTrap(tx: Transition, instance: string): boolean {
+  const choice = tx.state.pending_choice;
+  if (choice?.kind !== 'trap_activation' || choice.instance_id !== instance || tx.location(instance) !== choice.hall_zone)
+    throw new RuleError('choose the revealed trap in the hall');
+  tx.state.pending_choice = null; tx.state.resolution_frames = [];
+  tx.event('trap_activated', {instance_id: instance, hall_zone: choice.hall_zone, player_id: tx.playerId});
   return true;
 }
 export function refillStep(tx: Transition, step: Record<string, any>) {
@@ -41,19 +67,15 @@ export function refillStep(tx: Transition, step: Record<string, any>) {
   }
   const hall = tx.state.zones[hallZone], deckZone = hallZone.replace('hall:', 'dungeon:'), deck = tx.state.zones[deckZone];
   const targetSize = hallCapacity(hall.map((id: string) => tx.card(id).card_id), tx.state.active_settings);
-  if (hall.length && ['陷阱', '宝藏'].includes(tx.card(hall[0]).subcategory)) {
+  const trap = hall.find((id: string, index: number) => tx.card(id).subcategory === '陷阱'
+    && (index === 0 || !tx.state.active_settings.includes('TS-0188')));
+  if (trap) {awaitTrap(tx, trap, hallZone, step, 'hall'); return;}
+  if (hall.length && tx.card(hall[0]).subcategory === '宝藏') {
     const instance = hall[0];
-    if (tx.card(instance).subcategory === '陷阱') {
-      tx.move(instance, hallZone, `revealed:${hallZone.slice(5)}`);
-      tx.event('trap_revealed', {instance_id: instance});
-      queueSteps(tx, [eventStep('TRAP_REVEALED', instance, hallZone, {defeated_instance_id: step.defeated_instance_id ?? null}),
-        {op: 'dispose_revealed', instance_id: instance}, step], true);
-    } else {
-      tx.state.instances[instance].owner_player_id = tx.playerId;
-      tx.move(instance, hallZone, `player:${tx.playerId}:control`);
-      tx.event('treasure_claimed', {player_id: tx.playerId, instance_id: instance});
-      queueSteps(tx, [step], true);
-    }
+    tx.state.instances[instance].owner_player_id = tx.playerId;
+    tx.move(instance, hallZone, `player:${tx.playerId}:control`);
+    tx.event('treasure_claimed', {player_id: tx.playerId, instance_id: instance, hall_zone: hallZone, origin: 'hall', hall_rank_count: hallRankCount(tx, hallZone)});
+    queueSteps(tx, [step], true);
     return;
   }
   if (hall.length < targetSize && deck.length) {
@@ -70,19 +92,18 @@ export function refillStep(tx: Transition, step: Record<string, any>) {
     const category = tx.card(instance).subcategory;
     if (['陷阱', '宝藏'].includes(category) && !tx.state.active_settings.includes('TS-0188')) {
       if (category === '陷阱') {
-        tx.move(instance, deckZone, `revealed:${hallZone.slice(5)}`);
-        tx.event('trap_revealed', {instance_id: instance});
-        queueSteps(tx, [eventStep('TRAP_REVEALED', instance, hallZone, {defeated_instance_id: step.defeated_instance_id ?? null}),
-          {op: 'dispose_revealed', instance_id: instance}, step], true);
+        tx.move(instance, deckZone, hallZone);
+        awaitTrap(tx, instance, hallZone, step, 'deck');
       } else {
         tx.state.instances[instance].owner_player_id = tx.playerId;
         tx.move(instance, deckZone, `player:${tx.playerId}:control`);
-        tx.event('treasure_claimed', {player_id: tx.playerId, instance_id: instance});
+        tx.event('treasure_claimed', {player_id: tx.playerId, instance_id: instance, hall_zone: hallZone, origin: 'deck'});
         queueSteps(tx, [step], true);
       }
     } else {
       tx.move(instance, deckZone, hallZone);
-      tx.event('hall_card_entered', {hall_zone: hallZone, instance_id: instance, rank: hall.length});
+      tx.event('hall_card_entered', {hall_zone: hallZone, instance_id: instance, rank: hall.length,
+        hall_rank_count: hallRankCount(tx, hallZone)});
       queueSteps(tx, [eventStep('HALL_REVEALED', instance, hallZone), step], true);
     }
     return;
@@ -124,16 +145,17 @@ export function relocate(tx: Transition, instance: string, destination: string, 
   } else if (destination === 'rank3') {
     const pile = tx.state.zones[hall];
     pile.splice(pile.indexOf(instance), 1); pile.splice(Math.min(2, pile.length), 0, instance);
-    tx.event('hall_card_repositioned', {instance_id: instance, hall_zone: hall, rank: Math.min(3, pile.length)});
+    tx.event('hall_card_repositioned', {instance_id: instance, hall_zone: hall, from_rank: rank, rank: Math.min(3, pile.length)});
   } else throw new RuleError('unsupported hall relocation');
   tx.event('effect_hall_relocated', {instance_id: instance, card_id: tx.card(instance).card_id,
-    hall_zone: hall, destination, defeat});
+    player_id: tx.playerId, hall_zone: hall, rank, hall_rank_count: hallRankCount(tx, hall), destination, defeat});
   const steps: Record<string, any>[] = [];
   if (defeat) {
     (tx.state.turn_defeated_monsters ??= []).push(instance);
     const xp = Number(tx.card(instance).defeat_xp_reward || 0);
     tx.player.xp += xp;
-    tx.event('monster_defeated', {player_id: tx.playerId, target_instance_id: instance, xp_gained: xp, by_effect: true});
+    tx.event('monster_defeated', {player_id: tx.playerId, target_instance_id: instance, xp_gained: xp, by_effect: true,
+      hall_zone: hall, rank, hall_rank_count: hallRankCount(tx, hall)});
     steps.push(eventStep('MONSTER_DEFEATED', instance, hall, {rank}));
     if (tx.card(instance).card_id === 'TS-0683') steps.push({op: 'heart_of_doom_outcome', instance_id: instance, won: true});
   }
@@ -148,7 +170,7 @@ export function swapHall(tx: Transition, first: string, second: string): Record<
   const pile = tx.state.zones[hall], a = pile.indexOf(first), b = pile.indexOf(second);
   if (Math.abs(a-b) !== 1) throw new RuleError('hall swap requires adjacent monsters');
   rememberFronts(tx); [pile[a], pile[b]] = [pile[b], pile[a]];
-  tx.event('hall_cards_swapped', {first, second, hall_zone: hall});
+  tx.event('hall_cards_swapped', {first, second, hall_zone: hall, first_rank: a + 1, second_rank: b + 1});
   return [{op: 'refill_hall', hall_zone: hall}];
 }
 export function exchangeHall(tx: Transition, target: string, replacement: string): Record<string, any>[] {
@@ -159,12 +181,13 @@ export function exchangeHall(tx: Transition, target: string, replacement: string
       !isMonster(tx.card(target)) || !dungeonCard || !canMoveMonster(tx, target) ||
       origin.startsWith('hall:') && !canMoveMonster(tx, replacement)) throw new RuleError('invalid monster exchange');
   rememberFronts(tx);
-  const rank = tx.state.zones[hall].indexOf(target), owner = tx.state.instances[replacement].owner_player_id;
+  const rank = tx.state.zones[hall].indexOf(target), originRank = tx.state.zones[origin].indexOf(replacement) + 1,
+    owner = tx.state.instances[replacement].owner_player_id;
   tx.state.instances[replacement].owner_player_id = null;
   tx.state.instances[target].owner_player_id = owner;
   tx.move(target, hall, origin); tx.move(replacement, origin, hall);
   const pile = tx.state.zones[hall]; pile.splice(pile.indexOf(replacement), 1); pile.splice(rank, 0, replacement);
-  tx.event('hall_monster_exchanged', {target, replacement, hall_zone: hall, origin});
+  tx.event('hall_monster_exchanged', {target, replacement, hall_zone: hall, origin, rank: rank + 1, origin_rank: originRank});
   return [eventStep('HALL_REVEALED', replacement, hall), {op: 'refill_hall', hall_zone: hall}];
 }
 export function shuffleHallTop(tx: Transition, target: string, count: number): Record<string, any>[] {
@@ -176,7 +199,7 @@ export function shuffleHallTop(tx: Transition, target: string, count: number): R
   tx.move(target, hall, deck); top.push(target);
   for (const item of top) tx.state.zones[deck].splice(tx.state.zones[deck].indexOf(item), 1);
   tx.rng.shuffle(top); tx.state.zones[deck].unshift(...top);
-  tx.event('dungeon_top_shuffled', {hall_zone: hall, instance_ids: top});
+  tx.event('dungeon_top_shuffled', {hall_zone: hall, deck_zone: deck, count: top.length, instance_ids: top});
   return hall.endsWith(':rank0') ? [] : [{op: 'refill_hall', hall_zone: hall}];
 }
 export function shuffleDestroyedTraps(tx: Transition, bindings: Record<string, any>, dungeonZone: (tx: Transition, bindings: Record<string, any>) => string) {
@@ -188,5 +211,5 @@ export function shuffleDestroyedTraps(tx: Transition, bindings: Record<string, a
   }
   for (const item of top) tx.state.zones[deck].splice(tx.state.zones[deck].indexOf(item), 1);
   tx.rng.shuffle(top); tx.state.zones[deck].unshift(...top);
-  tx.event('destroyed_traps_shuffled', {deck_zone: deck, instance_ids: top});
+  tx.event('destroyed_traps_shuffled', {deck_zone: deck, count: top.length, instance_ids: top});
 }

@@ -21,7 +21,7 @@ def command_options(state: dict, player_id: str, *, snapshot, root: Path = PROJE
     labels.extend({"id": m.id, "source_card_id": m.source_card_id, "source_line": m.source_line}
                   for m in rules.mechanics)
     preparation = None
-    if state.get("subphase") == "DUNGEON_PREPARE" and state.get("pending_choice") is None:
+    if player_id == state.get("active_player_id") and state.get("subphase") in {"DUNGEON_PREPARE", "DUNGEON_DECLARE"} and state.get("pending_choice") is None:
         preparation = battle_preparation(state, player_id, snapshot=snapshot, effects=rules)
     options = transition_call("turn_options", state, root=root, snapshot=snapshot, effects=rules, player_id=player_id)
     return {**options,

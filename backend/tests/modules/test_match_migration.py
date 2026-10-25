@@ -47,9 +47,9 @@ class MatchMigrationTests(unittest.TestCase):
                     _upgrade_database()
                     with closing(sqlite3.connect(path)) as db:
                         db.execute('PRAGMA foreign_keys=ON')
-                        self.assertEqual(db.execute('SELECT version_num FROM alembic_version').fetchone()[0], '0007_room_visibility')
+                        self.assertEqual(db.execute('SELECT version_num FROM alembic_version').fetchone()[0], '0009_match_history')
                         self.assertEqual(db.execute('SELECT * FROM users ORDER BY id').fetchall(),
-                                         [(*row, None) for row in users])
+                                         [(*row, None, 0) for row in users])
                         columns = 'id,name,host_user_id,status,version,config_version,config,created_at,updated_at'
                         self.assertEqual(db.execute(f'SELECT {columns} FROM rooms ORDER BY id').fetchall(), rooms)
                         self.assertEqual(db.execute('SELECT * FROM room_players ORDER BY id').fetchall(), memberships)

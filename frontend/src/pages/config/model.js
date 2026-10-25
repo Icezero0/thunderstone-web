@@ -1,5 +1,11 @@
 import {kinds, extraKinds} from './constants.js';
 
+export function sameConfiguration(first, second) {
+  const normalize = value => Array.isArray(value) ? value.map(normalize) : value && typeof value === 'object'
+    ? Object.fromEntries(Object.keys(value).sort().map(key => [key, normalize(value[key])])) : value;
+  return JSON.stringify(normalize(first)) === JSON.stringify(normalize(second));
+}
+
 export function createConfigModel(page) {
   function defaultState() {
     return {

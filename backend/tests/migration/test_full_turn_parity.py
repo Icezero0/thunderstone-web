@@ -36,13 +36,38 @@ def difference(left, right, path="result"):
 
 def legacy_contract_result(result):
     """Ignore added UI metadata, retaining the legacy rule/state comparison."""
+    result = normalize_disease_events(result)
     if isinstance(result, dict) and "legal_commands" in result:
         commands = [{key: value for key, value in item.items()
                      if not (item["type"] == "BuyCard" and key == "options")}
-                    for item in result["legal_commands"] if item["type"] != "SubmitBattleTeam"]
+                    for item in result["legal_commands"] if item["type"] not in {"SubmitBattleTeam", "DeclareBattleTarget"}]
         commands = [{**item, "type": "FinishRest"} if item["type"] == "SkipRestDestroy" else item
                     for item in commands]
         return {**result, "legal_commands": commands}
+    return result
+
+
+def normalize_disease_events(result):
+    """The public disease spotlight adds events/labels, not a different draw."""
+    result = {**result, "state": {**result["state"]}}
+    events, added = [], 0
+    for raw in result.get("events", []):
+        if raw["kind"] == "disease_gain_started":
+            added += 1
+            continue
+        event = {**raw, "sequence": raw["sequence"] - added}
+        event.pop("hall_rank_count", None)  # public animation metadata added after the frozen reference
+        if raw["kind"] == "monster_returned_to_deck":
+            event.pop("hall_zone", None)
+            event.pop("rank", None)
+        if raw["kind"] == "effect_hall_relocated":
+            event.pop("rank", None)
+        if raw["kind"] in {"disease_gain_completed", "disease_redirected"}:
+            event.pop("gain_id", None)
+            event.pop("card_id", None)
+        events.append(event)
+    result["events"] = events
+    result["state"]["next_event_sequence"] -= added
     return result
 
 
@@ -74,6 +99,8 @@ class FullTurnParity(TestCase):
         # Compare equivalent completed actions, while current-engine tests cover
         # the new persisted ACTION_END boundary independently.
         current_command = {**command, "type": "SkipRestDestroy"} if kind == "FinishRest" else command
+        if kind == "DeclareBattleTarget":
+            current_command = {key: value for key, value in current_command.items() if key != "expected_version"}
         actual = client.call("apply_command", {**self.payload, "state": state, "command": current_command})
         if actual["state"]["subphase"] == "ACTION_END":
             ended = client.call("apply_command", {**self.payload, "state": actual["state"], "command": {
@@ -81,7 +108,7 @@ class FullTurnParity(TestCase):
                 "expected_version": actual["state"]["game_version"]}})
             actual = {**ended, "events": actual["events"] + ended["events"]}
             actual["state"]["game_version"] -= 1  # one additional confirmation command
-        mismatch = difference(expected, legacy_contract_result(actual))
+        mismatch = difference(legacy_contract_result(expected), legacy_contract_result(actual))
         self.assertIsNone(mismatch, mismatch)
         return expected["state"]
 
@@ -106,5 +133,5 @@ class FullTurnParity(TestCase):
                                       snapshot=self.catalog, effects=self.rules)
             actual = client.call("take_disease", {**self.payload, "state": state,
                                                   "player_id": player, "destination": "hand"})
-            mismatch = difference(expected, actual)
+            mismatch = difference(normalize_disease_events(expected), normalize_disease_events(actual))
             self.assertIsNone(mismatch, mismatch)

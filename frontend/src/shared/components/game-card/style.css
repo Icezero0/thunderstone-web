@@ -3,12 +3,25 @@
   background: transparent; padding: 0; border: 0; border-radius: var(--card-radius, 9px); cursor: default; appearance: none;
   user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
 }
+.card-motion-layer {position: fixed; inset: 0; z-index: 70; pointer-events: none;}
+.card-motion-layer .card-flight {position: absolute; pointer-events: none;}
+.card-motion-layer .card-flight > .physical-card {position: absolute; pointer-events: none;}
+.card-motion-layer .card-flight .card-lift {top: 0; left: 0; width: 100%; height: 100%; transition: none;}
 .physical-card:focus-visible {outline: 2px solid var(--header-gold); outline-offset: 5px;}
 /* The illustration, frame and shadow share one box with the printed aspect ratio. */
 .physical-card .card-lift {position: absolute; top: 0; left: 0; width: 100%; aspect-ratio: 504 / 704; display: block; transition: top 180ms ease-out, left 180ms ease-out, width 180ms ease-out;}
 .physical-card .card-lift::after {content: ''; position: absolute; inset: 0; border-radius: var(--card-radius, 9px); pointer-events: none; opacity: 0; transition: opacity 140ms ease-out; box-shadow: 0 0 3px 2px var(--card-glow-color, var(--header-gold)), 0 0 16px 4px color-mix(in srgb, var(--card-glow-color, var(--header-gold)) 65%, transparent);}
 .physical-card[data-glowing="true"] .card-lift::after {opacity: 1;}
 .physical-card[data-active="true"] .card-lift {top: -12px; left: -3px; width: calc(100% + 6px);}
+.card-status-markers {position: absolute; top: 5px; right: 5px; z-index: 20; display: flex; gap: 3px;}
+.physical-card[data-face="back"] .card-status-markers {display: none;}
+.card-status-icon {display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--navy); color: var(--game-action-green); box-shadow: 0 1px 5px rgb(0 0 0 / 65%);}
+.card-status-icon[data-kind="debuff"] {color: var(--game-action-violet);}
+.card-status-icon[data-kind="destroy"] {color: var(--game-action-red);}
+.card-status-icon svg {width: 18px; height: 18px;}
+.card-status-icon:focus-visible {outline: 2px solid var(--header-gold); outline-offset: 2px;}
+.card-status-tooltip {position: fixed; z-index: 130; pointer-events: none; max-width: min(320px, calc(100vw - 16px)); padding: 10px 13px; border: 1px solid var(--header-line); border-radius: 9px; background: var(--navy); color: var(--header-ink); box-shadow: 0 8px 24px rgb(0 0 0 / 35%); font: 12px/1.65 var(--font-body); overflow-wrap: anywhere;}
+.card-status-tooltip strong {display: block; margin-bottom: 3px; color: var(--header-gold); font-size: 11px;}
 /* Only a programmatic half-turn creates a temporary 3D animation layer. */
 .physical-card .card-body {position: absolute; inset: 0; display: block; border-radius: var(--card-radius, 9px); box-shadow: 0 10px 20px rgb(0 0 0 / 42%);}
 .physical-card .card-face {position: absolute; inset: 0; display: block; overflow: hidden; border-radius: var(--card-radius, 9px); border: 1px solid rgb(191 185 165 / 45%); background: var(--ink);}
@@ -21,9 +34,28 @@
 .card-stack .pile-empty:disabled {opacity: 1;}
 .game-card-inspection {position: fixed; inset: 0; z-index: 100; display: grid; place-items: safe center; overflow: auto; padding: 20px; background: rgb(16 26 32 / 78%); pointer-events: none;}
 .game-card-inspection .inspect-content {width: max-content; max-width: none; background: var(--ink); border-radius: 15px; box-shadow: 0 24px 90px rgb(0 0 0 / 50%);}
-.game-card-inspection .inspect-picture {border-radius: 15px; overflow: hidden; background: var(--ink);}
+.game-card-inspection .inspect-picture {display: flex; align-items: flex-start; border-radius: 15px; overflow: hidden; background: var(--ink);}
+.game-card-inspection .inspect-status-panel {box-sizing: border-box; flex: none; width: clamp(220px, 24vw, 280px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; padding: 20px; border-left: 1px solid var(--header-line); background: var(--navy); color: var(--header-ink); font: 13px/1.65 var(--font-body);}
+.game-card-inspection .inspect-status-panel::-webkit-scrollbar {display: none;}
+.inspect-status-group + .inspect-status-group {margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--header-line);}
+.inspect-status-group h3 {margin: 0 0 12px; font: 14px var(--font-heading); color: var(--game-action-green);}
+.inspect-status-group[data-kind="debuff"] h3 {color: var(--game-action-violet);}
+.inspect-status-group[data-kind="destroy"] h3 {color: var(--game-action-red);}
+.inspect-status-entry + .inspect-status-entry {margin-top: 14px;}
+.inspect-status-entry strong, .inspect-status-entry span {display: block; overflow-wrap: anywhere;}
+.inspect-status-entry strong {font-weight: 500; color: var(--header-gold);}
+.inspect-status-entry span {color: var(--header-muted);}
 /* Keep one image pixel per CSS pixel. Narrow screens scroll the original. */
-.game-card-inspection .inspect-picture img {display: block; max-width: none; max-height: none; object-fit: contain;}
+.game-card-inspection .inspect-picture img {display: block; flex: none; max-width: none; max-height: none; object-fit: contain;}
 @media (prefers-reduced-motion: reduce) {
   .physical-card .card-lift, .physical-card .card-lift::after {transition-duration: 0.01ms;}
 }
+.card-attachments {position:absolute;left:-9%;bottom:-5%;width:43%;height:44%;z-index:12;cursor:inherit;}
+.card-attachments img {position:absolute;left:calc(var(--attachment-index) * 8%);bottom:calc(var(--attachment-index) * 5%);width:85%;height:85%;object-fit:fill;border-radius:6%;box-shadow:0 2px 5px #0009;}
+.card-attachment-count {position:absolute;right:0;bottom:0;min-width:1.5em;padding:2px 5px;border-radius:12px;background:var(--ink);color:var(--paper);font:600 12px/1.2 var(--font-body);}
+.physical-card[data-face="back"] .card-attachments {display:none;}
+.attachment-browser {z-index:220;}
+.attachment-browser-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,190px));gap:24px;justify-content:center;padding:24px;max-height:70vh;overflow:auto;scrollbar-width:none;}
+.attachment-browser-grid::-webkit-scrollbar {display:none;}
+.attachment-browser-grid .physical-card {width:100%;aspect-ratio:504 / 704;}
+.attachment-kind {display:block;text-align:center;color:var(--muted);font-size:12px;margin-bottom:10px;}

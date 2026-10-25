@@ -1,17 +1,18 @@
 import type {GameCommand, MatchCard, MatchView} from '../../shared/api/types.js';
 import {allocation, cardImageUrl, matchHeading, phaseLabel, type SetupSelection} from './model.js';
 import {$, el} from './dom.js';
-import {renderEventLog} from './event-view.js';
 import {MatchTable} from './table.js';
+import {renderMatchStatus} from './status-view.js';
 
 export class MatchPage {
   private readonly table: MatchTable;
   constructor(private inspect: (id: string) => void, private select: (kind: 'groupA' | 'featureA', id: string, checked: boolean) => void,
-    send: (command: GameCommand) => void, hand: (ids: readonly string[]) => void, target: (id: string) => void,
-    completeBattle: () => void, respond: () => void) {
-    this.table = new MatchTable(send, hand, target, completeBattle, respond);
+    send: (command: GameCommand) => void, onAutoSortChange?: (enabled: boolean) => void) {
+    this.table = new MatchTable(send, onAutoSortChange);
   }
-  controls(view: MatchView, busy: boolean): void {this.table.controls(view, busy);}
+  setAutoSort(enabled: boolean): void {this.table.setAutoSort(enabled);}
+  setCommandError(message = ''): void {this.table.setError(message);}
+  controls(view: MatchView, busy: boolean): void {renderMatchStatus(view); this.table.controls(view, busy);}
   setSelected(ids: readonly string[]): void {this.table.setSelected(ids);}
   finish(): void {this.table.finish();}
   closeBrowsers(): void {this.table.closeBrowsers();}
@@ -45,10 +46,10 @@ export class MatchPage {
     $('#match-title').textContent = heading.title; $('#match-subtitle').textContent = heading.detail;
     $('#turn-marker').hidden = false; $('#phase-label').textContent = phaseLabel(view.turn?.subphase);
     $('#match-id').textContent = `对局 ${view.id.slice(0, 8)}`;
-    $('#page-state').textContent = view.status === 'setup_pending' ? '分配确认后将生成初始牌组与地下城大厅。' : '牌桌进度已保存，刷新和重新连接后可继续。';
+    $('#page-state').textContent = view.status === 'setup_pending' ? '分配确认后将生成初始牌组与地下城大厅。' : '鼠标悬停卡牌时，按住 Alt 检视大图。';
     $('#setup-panel').hidden = view.status !== 'setup_pending'; $('#active-table').hidden = !['active', 'finished'].includes(view.status);
-    if (view.status === 'setup_pending') this.renderSetup(view, selection, busy);
-    else {this.table.receive(view); this.renderInfo(view); renderEventLog(view);}
+    if (view.status === 'setup_pending') {this.table.finish(); this.table.closeBrowsers(); this.renderSetup(view, selection, busy);}
+    else this.table.receive(view);
   }
 
   renderSetup(view: MatchView, selection: SetupSelection, busy: boolean): void {
@@ -83,14 +84,6 @@ export class MatchPage {
     const confirm = $<HTMLButtonElement>('#confirm-setup'); confirm.hidden = !view.can_resolve_setup;
     confirm.disabled = busy || !summary.valid; confirm.textContent = busy ? '正在生成牌桌…' : '确认分配，进入牌桌';
     $('#setup-hint').textContent = view.can_resolve_setup ? (summary.valid ? '分配完成后，两座地下城会分别洗牌并补齐大厅。' : '先为地下城 A 选齐怪物组。') : '等待房主确认分配；完成后本页会自动更新。';
-  }
-
-  private renderInfo(view: MatchView): void {
-    const diseases = $('#disease-cards'); diseases.replaceChildren();
-    $('#disease-description').textContent = view.disease_supply ? `${view.disease_supply.mode === 'special' ? '特殊疾病' : '普通疾病'} · 无限供应` : '本局尚未设置疾病供应。';
-    for (const item of view.disease_supply?.cards ?? []) diseases.append(this.tile(view, item.card_id, `权重 ${item.weight}`));
-    const controls = $('#public-control-cards'); controls.replaceChildren();
-    for (const player of view.players) for (const card of player.control) controls.append(this.tile(view, card.card_id, player.display_name));
   }
 
   detail(card: MatchCard): void {

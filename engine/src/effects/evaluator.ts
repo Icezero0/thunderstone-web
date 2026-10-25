@@ -67,7 +67,7 @@ export class EffectEvaluation extends Calculation {
       case 'event_source': case 'event_hero': case 'defeated_monster': {
         const key = {event_source: 'source_instance_id', event_hero: 'hero_instance_id', defeated_monster: 'defeated_instance_id'}[zone];
         const value = string(event[key]);
-        candidates = own(state.instances, value) ? [value] : []; break;
+        candidates = own(state.instances, value) && !(zone === 'defeated_monster' && state.zones.destroyed?.includes(value)) ? [value] : []; break;
       }
       case 'defeated_this_turn': candidates = [...(state.turn_defeated_monsters ?? [])]; break;
       case 'all_hand': case 'all_discard': candidates = this.activePlayers().flatMap(player => this.zone(zone.slice(4), player)); break;

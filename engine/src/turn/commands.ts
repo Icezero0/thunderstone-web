@@ -13,15 +13,16 @@ import {queueSteps} from './workflow.js';
 import {advanceVillageStages, buyCard, finishAbilities, finishBuying, goldIncomePreview, purchaseOptions, upgradeOptions,
   upgradeHero, restDestroy} from './village.js';
 import {attackTargets, declareBattleTarget} from './dungeon.js';
-import {equipmentOptions, equipWeapon, reconcileEquipment} from '../battle/equipment.js';
+import {activateTrap, hallRankCount} from './hall.js';
+import {equipmentOptions, equipWeapon, unequipWeapon, equipmentPairs, reconcileEquipment} from '../battle/equipment.js';
 import {submitBattleTeam} from '../battle/team-transition.js';
 import {battlePreparationResult} from '../battle/preparation.js';
-import {spellUseOptions, useSpell} from '../effects/spell-use.js';
+import {cardStatuses} from '../battle/statuses.js';
 
 const SUBPHASES = new Set(['TURN_START', 'VILLAGE_ABILITIES', 'VILLAGE_BUY', 'VILLAGE_UPGRADE', 'REST', 'ACTION_END',
-  'DUNGEON_PREPARE', 'BATTLE_COMMIT', 'ACTION_EXIT_EFFECTS', 'TURN_END_EFFECTS', 'GAME_END', 'BATTLE_EFFECTS', 'BATTLE_AFTER_EFFECTS']);
+  'DUNGEON_PREPARE', 'DUNGEON_DECLARE', 'BATTLE_COMMIT', 'ACTION_EXIT_EFFECTS', 'TURN_END_EFFECTS', 'GAME_END', 'BATTLE_EFFECTS', 'BATTLE_AFTER_EFFECTS']);
 const CHOICES = new Set(['effect_select', 'effect_order', 'effect_purchase', 'effect_value',
-  'effect_reorder', 'effect_upgrade', 'disease_replacement', 'effect_reuse', 'effect_response']);
+  'effect_reorder', 'effect_upgrade', 'disease_replacement', 'effect_reuse', 'effect_response', 'trap_activation']);
 export function validateTurnState(state: GameState, cards: GameCatalog['cards']) {
   if (!['PLAYING', 'SETTLING'].includes(state.phase)) throw new RuleError('game is not in a turn or settlement phase');
   if (!SUBPHASES.has(state.subphase)) throw new RuleError('unknown turn subphase');
@@ -41,6 +42,11 @@ export function validateTurnState(state: GameState, cards: GameCatalog['cards'])
   if ((choice === null) !== (frames.length === 0)) throw new RuleError('effect choice and continuation must occur together');
   if (choice !== null && (typeof choice !== 'object' || !order.includes(choice.player_id) ||
       !CHOICES.has(choice.kind) || frames.length !== 1)) throw new RuleError('invalid pending effect choice');
+  if (choice?.kind === 'trap_activation' && (choice.player_id !== state.active_player_id ||
+      !String(choice.hall_zone).startsWith('hall:') || !state.zones[choice.hall_zone]?.includes(choice.instance_id) ||
+      cards[state.instances[choice.instance_id]?.card_id]?.subcategory !== '陷阱' ||
+      frames[0].kind !== 'trap_activation' || frames[0].instance_id !== choice.instance_id || state.effect_resume !== 'workflow'))
+    throw new RuleError('invalid trap activation');
   const seen = new Set<string>();
   for (const [zone, pile] of Object.entries(state.zones) as [string, string[]][]) {
     if (!Array.isArray(pile)) throw new RuleError(`invalid zone: ${zone}`);
@@ -76,18 +82,20 @@ function legal(tx: Transition): Record<string, any>[] {
   const state = tx.state, choice = state.pending_choice;
   if (choice !== null) {
     switch (choice.kind) {
+      case 'trap_activation': return [{type: 'ResolveTrap', player_id: choice.player_id, instance_ids: [choice.instance_id]}];
       case 'effect_response': return [{type: 'ResolveResponse', player_id: choice.player_id,
         stage: choice.stage, options: choice.options, may_decline: true}];
-      case 'effect_reuse': return [{type: 'ResolveReusedAbility', player_id: choice.player_id, ability_ids: choice.options}];
+      case 'effect_reuse': return [{type: 'ResolveReusedAbility', player_id: choice.player_id,
+        source_instance_id: choice.reused_instance_id, ability_ids: choice.options}];
       case 'disease_replacement': return [{type: 'ResolveDiseaseReplacement', player_id: choice.player_id,
-        stage: choice.stage, options: choice.options}];
+        stage: choice.stage, options: choice.options, may_decline: !!choice.may_decline}];
       case 'effect_upgrade': return [{type: 'ResolveEffectUpgrade', player_id: choice.player_id,
         options: choice.options, may_skip: true}];
       case 'effect_value': return [{type: 'ResolveValueChoice', player_id: choice.player_id, options: choice.options}];
       case 'effect_reorder': return [{type: 'ResolveCardOrder', player_id: choice.player_id,
         instance_ids: choice.candidate_instance_ids}];
       case 'effect_purchase': return [{type: 'ResolveEffectPurchase', player_id: choice.player_id,
-        options: choice.options, may_skip: true}];
+        options: choice.options, may_skip: choice.may_skip !== false}];
       case 'effect_order': return [{type: 'ResolveEffectOrder', player_id: choice.player_id,
         effects: choice.effects.map((item: any) => ({effect_id: item.effect_id,
           ability_id: item.ability_id, source_instance_id: item.source_instance_id}))}];
@@ -122,17 +130,18 @@ function legal(tx: Transition): Record<string, any>[] {
       {type: 'SkipRestDestroy'}];
     case 'ACTION_END': return [{type: 'FinishTurn'}];
     case 'DUNGEON_PREPARE': {
-      const equipment = equipmentOptions(tx), abilities = available(tx), trace = tx.combat(1), spells = spellUseOptions(tx);
+      const equipment = equipmentOptions(tx), abilities = available(tx), trace = tx.combat(1);
+      const equipped = equipmentPairs(tx.state.battle_context).map(([, weapon]) => weapon).filter(id => tx.zone('hand').includes(id));
       return [...(trace.strength_penalties.length ? [{type: 'AssignStrengthPenalty', penalties: trace.strength_penalties,
         hero_instance_ids: Object.keys(trace.hero_strength)}] : []),
         ...(trace.disease_penalties.length ? [{type: 'AssignDiseasePenalty',
           instance_ids: trace.disease_penalties.map(item => item.instance_id), attack_types: ['attack', 'magic_attack']}] : []),
         ...(abilities.length ? [{type: 'ActivateAbility', options: abilities}] : []),
-        ...(spells.length ? [{type: 'UseSpell', instance_ids: spells}] : []),
         ...(equipment.length ? [{type: 'EquipWeapon', options: equipment}] : []),
-        {type: 'DeclareBattleTarget', instance_ids: attackTargets(tx)},
-        {type: 'SubmitBattleTeam', target_instance_ids: attackTargets(tx), requires_draft: true}];
+        ...(equipped.length ? [{type: 'UnequipWeapon', instance_ids: equipped}] : []),
+        {type: 'SubmitBattleTeam', requires_draft: true}];
     }
+    case 'DUNGEON_DECLARE': return [{type: 'DeclareBattleTarget', instance_ids: attackTargets(tx)}, {type: 'ReviseBattleTeam'}];
     default: throw new RuleError(`unknown turn subphase: ${state.subphase}`);
   }
 }
@@ -144,12 +153,14 @@ export function legalCommands(state: GameState, catalog: GameCatalog, rules: Gam
 export function turnOptions(state: GameState, playerId: string, catalog: GameCatalog, rules: GameRules) {
   checkVersions(state, catalog, rules); validateTurnState(state, catalog.cards);
   const tx = new Transition(state, catalog, rules);
-  return {legal_commands: legal(tx), gold_income_preview: goldIncomePreview(tx, playerId)};
+  return {legal_commands: legal(tx), gold_income_preview: goldIncomePreview(tx, playerId), card_statuses: cardStatuses(tx),
+    hall_rank_counts: Object.fromEntries(Object.keys(state.zones).filter(zone => zone.startsWith('hall:') && !zone.endsWith(':rank0'))
+      .map(zone => [zone, hallRankCount(tx, zone)]))};
 }
 /** Server entry point: validates authority before returning only visible preview data. */
 export function battlePreparation(state: GameState, playerId: string, catalog: GameCatalog, rules: GameRules) {
   checkVersions(state, catalog, rules); validateTurnState(state, catalog.cards);
-  if (state.phase !== 'PLAYING' || state.subphase !== 'DUNGEON_PREPARE' || state.pending_choice !== null)
+  if (state.phase !== 'PLAYING' || !['DUNGEON_PREPARE', 'DUNGEON_DECLARE'].includes(state.subphase) || state.pending_choice !== null)
     throw new RuleError('battle preparation requires an uninterrupted dungeon preparation phase');
   if (playerId !== state.active_player_id) throw new RuleError('only the active player can prepare a battle team');
   return battlePreparationResult(state, catalog, rules);
@@ -167,6 +178,7 @@ export function applyCommand(state: GameState, command: Record<string, any>, cat
   if (state.pending_choice !== null) {
     const choice = state.pending_choice;
     const routes: Record<string, [string, () => boolean]> = {
+      trap_activation: ['ResolveTrap', () => activateTrap(tx, command.instance_id)],
       effect_response: ['ResolveResponse', () => resolveResponse(tx, command.source_instance_id ?? null, command.recipient_id ?? null)],
       effect_reuse: ['ResolveReusedAbility', () => resolveReuse(tx, command.ability_id)],
       disease_replacement: ['ResolveDiseaseReplacement', () => resolveReplacement(tx, command.source_instance_id ?? null, command.recipient_id ?? null)],
@@ -197,8 +209,16 @@ export function applyCommand(state: GameState, command: Record<string, any>, cat
   else if (phase === 'REST' && kind === 'SkipRestDestroy') tx.awaitTurnEnd();
   else if (phase === 'ACTION_END' && kind === 'FinishTurn') tx.finishTurn();
   else if (phase === 'DUNGEON_PREPARE' && kind === 'EquipWeapon') equipWeapon(tx, command.hero_instance_id, command.weapon_instance_id);
-  else if (phase === 'DUNGEON_PREPARE' && kind === 'UseSpell') useSpell(tx, command.instance_id);
-  else if (phase === 'DUNGEON_PREPARE' && kind === 'DeclareBattleTarget') declareBattleTarget(tx, command.target_instance_id);
+  else if (phase === 'DUNGEON_PREPARE' && kind === 'UnequipWeapon') unequipWeapon(tx, command.instance_id);
+  else if (phase === 'DUNGEON_DECLARE' && kind === 'ReviseBattleTeam') {
+    delete tx.state.battle_context.battle_team;
+    tx.state.subphase = tx.state.timing_window = 'DUNGEON_PREPARE';
+    tx.event('battle_team_reopened', {player_id: tx.playerId});
+  }
+  // Unversioned direct calls remain available to the frozen migration fixtures
+  // and effect lab. Network clients always carry a version and must submit first.
+  else if ((phase === 'DUNGEON_DECLARE' || phase === 'DUNGEON_PREPARE' && command.expected_version === undefined)
+      && kind === 'DeclareBattleTarget') declareBattleTarget(tx, command.target_instance_id);
   else if (phase === 'DUNGEON_PREPARE' && kind === 'SubmitBattleTeam') {
     if (command.expected_version !== state.game_version) throw new RuleError('battle submission requires the current expected_version');
     submitBattleTeam(tx, command.draft);

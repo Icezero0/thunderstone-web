@@ -57,7 +57,7 @@ V = ("village",)
 D = ("dungeon",)
 VD = ("village", "dungeon")
 HEROES = {"zone": "active_hand", "tag": "英雄"}
-MILITIA = {"zone": "active_hand", "card_id": "TS-0001"}
+MILITIA = {"zone": "active_hand", "tag": "民兵"}
 DISEASE = {"zone": "active_hand", "tag": "疾病"}
 MONSTERS = {"zone": "active_hand", "tag": "怪物"}
 SPELLS = {"zone": "active_hand", "tag": "法术"}
@@ -396,7 +396,7 @@ add("TS-0458-A03", D, remember({"zone": "other_discard"}, "before", seq(
     expected={"other_discard": 1, "modified": {"TS-0458": {"magic_attack": 2}}})
 CASES[-1]["variants"] = [{"others": ["TS-0267"], "expected": {"other_discard": 1, "modified": {}}}]
 add("TS-0253-A03", D, atom("draw", 1), hand=("TS-0001",), equipment=("TS-0001", "TS-0253"),
-    conditions=({"exists": {"zone": "bound", "var": "source", "equipper_card_id": "TS-0001"}},), expected={"draw": 1})
+    conditions=({"exists": {"zone": "bound", "var": "source", "equipper_tags_any": ["民兵"]}},), expected={"draw": 1})
 
 
 def reorder_top_three():
@@ -551,7 +551,7 @@ add("TS-0421-A02", D, select(DISEASE, choose_value("player", seq(
     {"op": "for_players", "scope": "active", "body": atom("mod_magic_attack")}),
     bind="recipient", scope="others", as_subject=True)), hand=("TS-0714",), expected={"transferred_disease": 1, "battle_modifiers": {"magic_attack": 1}})
 add("TS-0396-A02", V, {"op": "cost_gate", "cost": target("destroy", "source"),
-    "then": select({"zone": "other_control", "subcategory": "宝藏"},
+    "then": select({"zone": "other_control", "tag": "宝藏"},
         {"op": "move", "target": {"var": "chosen"}, "destination": "control", "recipient": "active"})},
     expected={"destroyed": ["TS-0396"], "stolen_treasure": 1})
 CASES[-1]["other_control"] = ["TS-0697"]
@@ -582,8 +582,8 @@ add("TS-0216-A01", V, select(HEROES, {"op": "let", "bind": "strength", "value": 
                 "then": seq(each(opponent_hero, target("destroy")), {"op": "for_players", "scope": "active", "body": atom("gain_xp")})})},
         scope="others", as_subject=True))}), hand=("TS-0304",), expected={"discard_count": 1, "xp": 1, "other_hero_destroyed": 1})
 add("TS-0317-A02", D, seq({"op": "clear_collection", "collection": "militia"}, for_others({"op": "if",
-    "condition": {"exists": {"zone": "subject_hand", "card_id": "TS-0001"}},
-    "then": select({"zone": "subject_hand", "card_id": "TS-0001"}, seq(target("show"),
+    "condition": {"exists": {"zone": "subject_hand", "tag": "民兵"}},
+    "then": select({"zone": "subject_hand", "tag": "民兵"}, seq(target("show"),
         {"op": "collect", "collection": "militia", "query": {"zone": "bound", "var": "chosen"}})),
     "else": atom("random_discard")}), atom("mod_attack", {"mul": [2, {"add": [{"count": MILITIA},
         {"count": {"zone": "collection", "collection": "militia"}}]}]})), hand=("TS-0001",), others=("TS-0001",),

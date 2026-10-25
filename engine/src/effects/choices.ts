@@ -81,6 +81,7 @@ export interface EffectPurchaseChoice {
   source_instance_id: string;
   options: {card_id: string}[];
   payment: string;
+  may_skip?: boolean;
   bindings: Bindings;
 }
 export interface EffectPurchaseInput {
@@ -94,6 +95,7 @@ export interface EffectPurchaseInput {
 export function validateEffectPurchase(input: EffectPurchaseInput): {payment_op: 'discard'|'destroy'|null} {
   const choice = input.choice;
   if (!choice || choice.kind !== 'effect_purchase') throw new RuleError('no effect purchase is pending');
+  if (input.card_id === null && choice.may_skip === false) throw new RuleError('this effect requires gaining a card');
   if (input.card_id !== null && (typeof input.card_id !== 'string' ||
       !choice.options.some(option => option.card_id === input.card_id))) {
     throw new RuleError('invalid effect purchase card');
@@ -102,7 +104,7 @@ export function validateEffectPurchase(input: EffectPurchaseInput): {payment_op:
   if (!sourceMatches(evaluation, choice.source_instance_id, input.source_card_id)) {
     throw new RuleError('invalid effect purchase continuation');
   }
-  if (input.card_id === null || choice.payment === 'none') return {payment_op: null};
+  if (input.card_id === null || ['none', 'gold'].includes(choice.payment)) return {payment_op: null};
   const op = choice.payment === 'discard_source' ? 'discard' : 'destroy';
   if (!evaluateCost({evaluation: input.evaluation,
     cost: {op, target: {var: 'source'}}, bindings: choice.bindings}).payable) {

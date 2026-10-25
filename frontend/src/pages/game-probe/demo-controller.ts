@@ -5,6 +5,7 @@ import {PublicAreaDemo} from './public-demo-controller.js';
 import {ResponseDemoController} from './response-demo-controller.js';
 import type {SupplySelection} from '../../shared/components/table-areas/index.js';
 import type {User} from '../../shared/api/types.js';
+import {HandSortPreference} from '../../app/hand-sort-preference.js';
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -12,6 +13,7 @@ const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as 
 export class DemoController {
   private state = createDemoState();
   private readonly area: PlayerDeckArea;
+  private readonly sortPreference: HandSortPreference;
   private readonly publicAreas: PublicAreaDemo;
   private readonly responseDemo: ResponseDemoController;
   private supplyInstance = 0;
@@ -34,12 +36,14 @@ export class DemoController {
         this.state = this.displayedState(); this.status.textContent = '已调整手牌顺序。';
       },
       onAutoSortChange: enabled => {
+        this.sortPreference.change(enabled);
         this.state = this.displayedState();
         this.status.textContent = enabled ? '自动理牌已开启，手牌按卡牌 ID 排序。' : '自动理牌已关闭，可以拖动手牌调整顺序。';
       },
       onBusyChange: () => this.updateControls(),
       onResponse: (responseId, choiceId) => this.responseDemo.handleChoice(responseId, choiceId),
     });
+    this.sortPreference = new HandSortPreference(enabled => this.area.setAutoSort(enabled, {notify: false}), text => {this.status.textContent = text;});
     this.responseDemo = new ResponseDemoController(this.area, () => this.blocked || this.area.isBrowsing, text => {this.status.textContent = text;});
     this.publicAreas = new PublicAreaDemo(selection => this.receiveSupply(selection));
     const resources = () => {
@@ -74,7 +78,7 @@ export class DemoController {
     this.area.setState(this.state, {clearSelection: true, resetHandOrder: true}); this.updateControls();
   }
 
-  setProfile(user: User | null): void {if (!this.disposed) this.publicAreas.setProfile(user);}
+  setProfile(user: User | null): void {if (!this.disposed) {this.publicAreas.setProfile(user); this.sortPreference.receive(user);}}
   private get blocked(): boolean {return this.area.isBusy || this.disposed;}
   private bind(element: HTMLElement, type: string, callback: () => void): void {
     element.addEventListener(type, callback); this.cleanup.push(() => element.removeEventListener(type, callback));
@@ -234,7 +238,7 @@ export class DemoController {
   dispose(): void {
     if (this.disposed) return;
     this.cancelSyncTest();
-    this.finish(); this.responseDemo.dispose(); this.publicAreas.dispose(); this.area.dispose(); this.disposed = true; ++this.revision;
+    this.finish(); this.sortPreference.dispose(); this.responseDemo.dispose(); this.publicAreas.dispose(); this.area.dispose(); this.disposed = true; ++this.revision;
     this.cleanup.forEach(cleanup => cleanup());
     window.removeEventListener('blur', this.finish); document.removeEventListener('visibilitychange', this.visibility);
   }

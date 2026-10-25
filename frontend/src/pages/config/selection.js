@@ -12,7 +12,7 @@ export function createSelectionView(page, {setDraftChanged, refresh, environment
       const fixed = rule?.count_override?.[kind] !== undefined;
       const available = page.catalog.groups[kind].length;
       input.value = effective[kind];
-      input.disabled = fixed;
+      input.disabled = fixed || page.cardConfiguration === "default";
       input.min = Math.max(0, delta);
       input.max = Math.min(available, available + delta);
       const adjustment = $("#" + kind + "-adjustment");

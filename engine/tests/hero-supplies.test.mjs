@@ -14,6 +14,18 @@ function apply(f, value) {
   assert.deepEqual(f.state, before); f.state = result.state; return result;
 }
 function stage(f, name) {f.state.subphase = f.state.timing_window = name; f.state.chosen_action = 'village'; f.state.battle_context = null;}
+
+test('buying elite militia can destroy any hand card with the militia tag, including elite militia itself', () => {
+  for (const victimCard of ['TS-0001', 'TS-0261']) {
+    const f = fixture([victimCard, 'TS-0272']); stage(f, 'VILLAGE_BUY');
+    f.add('TS-0261', 'village_supply:TS-0261'); f.state.players.alice.temporary_gold = 20;
+    apply(f, {type: 'BuyCard', card_id: 'TS-0261'});
+    const choices = server.legalCommands(f.state, f.catalog, f.rules).find(command => command.type === 'ResolveChoice');
+    assert.deepEqual(choices.instance_ids, [f.hand[0]]);
+    apply(f, {type: 'ResolveChoice', instance_ids: [f.hand[0]]});
+    assert.ok(f.state.zones.destroyed.includes(f.hand[0])); assert.ok(f.state.zones['player:alice:hand'].includes(f.hand[1]));
+  }
+});
 function villageSupply(f, low = 5, high = 3) {
   f.state.zones[villageZone] = [];
   for (let n = 0; n < low; n++) f.add('TS-0301', villageZone);

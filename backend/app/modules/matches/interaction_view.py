@@ -9,15 +9,16 @@ COMMAND_FIELDS = {
     "ChooseAction": ("actions",), "FinishAbilities": (), "FinishBuying": (),
     "FinishUpgrading": (), "SkipRestDestroy": (), "FinishTurn": (),
     "ActivateAbility": (), "BuyCard": ("card_ids",), "UpgradeHero": (),
-    "RestDestroy": ("instance_ids",), "UseSpell": ("instance_ids",), "EquipWeapon": (),
-    "SubmitBattleTeam": ("target_instance_ids", "requires_draft"),
+    "RestDestroy": ("instance_ids",), "UnequipWeapon": ("instance_ids",), "EquipWeapon": (),
+    "SubmitBattleTeam": ("requires_draft",), "DeclareBattleTarget": ("instance_ids",), "ReviseBattleTeam": (),
     "AssignStrengthPenalty": ("hero_instance_ids",),
     "AssignDiseasePenalty": ("instance_ids", "attack_types"),
     "ResolveChoice": ("instance_ids", "ability_id", "min_count", "max_count", "highest_by"),
     "ResolveCardOrder": ("instance_ids",), "ResolveValueChoice": ("options",),
-    "ResolveReusedAbility": ("ability_ids",), "ResolveEffectOrder": (),
+    "ResolveTrap": ("instance_ids",),
+    "ResolveReusedAbility": ("ability_ids", "source_instance_id"), "ResolveEffectOrder": (),
     "ResolveEffectPurchase": ("may_skip",), "ResolveEffectUpgrade": ("may_skip",),
-    "ResolveResponse": ("stage", "may_decline"), "ResolveDiseaseReplacement": ("stage",),
+    "ResolveResponse": ("stage", "may_decline"), "ResolveDiseaseReplacement": ("stage", "may_decline"),
 }
 OPTION_FIELDS = {
     "ActivateAbility": ("ability_id", "source_instance_id"),
@@ -110,40 +111,69 @@ EVENT_FIELDS = {
     "ACTION_ENTERED": ("player_id", "action"), "ACTION_EXITED": ("player_id", "action"),
     "village_abilities_started": ("player_id",), "village_abilities_finished": ("player_id",),
     "village_gold_counted": ("player_id", "total"), "village_upgrade_started": ("player_id",),
+    "triumph_gold_counted": ("player_id", "total"),
     "card_bought": ("player_id", "card_id", "price", "gold_remaining"),
+    "effect_card_gained": ("player_id", "card_id", "source", "destination"),
+    "effect_purchase_completed": ("player_id", "card_id", "source", "destination"),
     "hero_upgraded": ("player_id", "source_card_id", "target_card_id", "xp_cost"),
     "ability_activated": ("player_id", "reused"), "spell_used": ("player_id", "card_id"),
     "weapon_equipped": ("player_id",), "battle_team_submitted": ("player_id",),
     "battle_team_revision_required": ("player_id",),
     "rest_card_destroyed": ("player_id", "card_id"),
-    "card_destroyed": ("card_id",),
+    "card_destroyed": ("card_id", "hall_zone", "rank"),
+    "card_destruction_replaced": ("card_id", "source", "destination"),
     "cards_drawn": ("player_id",), "turn_hand_discarded": ("player_id",),
     "player_deck_shuffled": ("player_id",),
     "dungeon_hand_revealed": ("player_id",), "cards_shown": ("player_id",),
     "battle_target_declared": ("player_id", "rank"),
     "battle_resolved": ("target_card_id", "rank", "health", "outcome"),
-    "monster_defeated": ("player_id", "xp_gained"),
-    "thunderstone_acquired": ("player_id",), "treasure_claimed": ("player_id",),
-    "hall_card_entered": ("rank",), "guardian_entered_rank_0": (), "trap_revealed": (),
+    "monster_defeated": ("player_id", "xp_gained", "hall_zone", "rank", "hall_rank_count"),
+    "monster_returned_to_deck": ("deck_zone", "hall_zone", "rank", "position", "hall_rank_count"),
+    "thunderstone_returned_to_deck": ("deck_zone", "hall_zone", "rank", "hall_rank_count"),
+    "effect_hall_relocated": ("player_id", "card_id", "hall_zone", "rank", "destination", "defeat", "hall_rank_count"),
+    "hall_cards_swapped": ("hall_zone", "first_rank", "second_rank"), "hall_card_repositioned": ("hall_zone", "from_rank", "rank"),
+    "thunderstone_acquired": ("player_id", "hall_zone", "rank", "hall_rank_count"), "treasure_claimed": ("player_id", "hall_zone", "origin", "hall_rank_count"),
+    "hall_card_entered": ("rank", "hall_zone", "hall_rank_count"), "guardian_entered_rank_0": ("hall_zone", "hall_rank_count"),
+    "trap_revealed": ("hall_zone", "origin", "rank", "hall_rank_count"),
+    "trap_activated": ("player_id", "hall_zone"), "trap_removed": ("hall_zone", "rank", "hall_rank_count"),
+    "disease_gain_started": ("player_id", "gain_id", "destination", "card_id", "source_card_id", "source_hall_zone", "source_rank"),
+    "disease_gain_completed": ("player_id", "gain_id", "destination", "card_id"),
+    "disease_redirected": ("from_player_id", "to_player_id", "gain_id", "card_id"),
+    "disease_gain_destroyed": ("gain_id", "card_id"),
     "player_eliminated": ("player_id",), "game_end_triggered": (), "game_scored": (),
 }
 PUBLIC_INSTANCE_EVENTS = {"battle_target_declared": "target_instance_id", "monster_defeated": "target_instance_id",
+                          "monster_returned_to_deck": "target_instance_id",
                           "ability_activated": "source_instance_id",
-                          **{kind: "instance_id" for kind in ("thunderstone_acquired", "treasure_claimed",
-                             "hall_card_entered", "guardian_entered_rank_0", "trap_revealed")}}
+                          **{kind: "instance_id" for kind in ("thunderstone_acquired", "thunderstone_returned_to_deck", "treasure_claimed",
+                             "hall_card_entered", "guardian_entered_rank_0", "trap_revealed", "trap_activated", "trap_removed", "disease_gain_started",
+                             "disease_gain_completed", "disease_redirected", "disease_gain_destroyed")}}
 
 
 def event_view(events, instances, add_card):
     summaries = []
+    disease_removals = {raw.get("instance_id") for raw in events if raw.get("kind") == "disease_gain_destroyed" and raw.get("instance_id")}
     for raw in events:
         kind = raw.get("kind")
         if kind not in EVENT_FIELDS:
             continue
         row = {"kind": kind, **fields(raw, ("sequence", *EVENT_FIELDS[kind]))}
+        if kind in {"card_destroyed", "card_destruction_replaced"}:
+            # A small semantic enum, never an interpreter ability/reason string.
+            row["cause"] = "disease_gain" if raw.get("instance_id") in disease_removals else (
+                raw.get("reason") if raw.get("reason") in {"hero_upgrade", "after_battle", "trap_resolved"} else "effect")
+        if kind in {"disease_gain_started", "disease_gain_completed", "effect_card_gained", "effect_purchase_completed"} and isinstance(row.get("destination"), str):
+            row["destination"] = row["destination"].rsplit(":", 1)[-1]
         # Destruction is public: name the destroyed card and its former player,
         # without copying private instance records or the engine's zone data.
-        if kind == "card_destroyed" and str(raw.get("source", "")).startswith("player:"):
+        if kind in {"card_destroyed", "card_destruction_replaced"} and str(raw.get("source", "")).startswith("player:"):
             row["player_id"] = raw["source"].split(":")[1]
+        if kind == "card_destroyed" and str(raw.get("source", "")).startswith(("basic_supply:", "hero_supply:", "village_supply:")):
+            row["source_supply"] = raw["source"]
+        if kind == "card_destruction_replaced":
+            for key in ("source", "destination"):
+                if isinstance(row.get(key), str):
+                    row[key] = row[key].rsplit(":", 1)[-1]
         reference = PUBLIC_INSTANCE_EVENTS.get(kind)
         if reference and raw.get(reference) in instances:
             row["card_id"] = instances[raw[reference]]["card_id"]
@@ -160,7 +190,7 @@ def event_view(events, instances, add_card):
         summaries.append(row)
     # History is public information, but never exposes the instance identity of
     # a card that later re-enters a hidden pile or the order produced by a shuffle.
-    summaries = summaries[-80:]
+    # Keep complete committed chains, including long reveal/search effects.
     for row in summaries:
         collect_references(row, lambda _: None, add_card, lambda _: None)
     return summaries
@@ -170,7 +200,7 @@ def result_view(state):
     raw = state.get("result")
     if not raw:
         return None
-    return {"players": {pid: {**fields(values, ("victory_points", "thunderstones")),
+    return {"players": {pid: {**fields(values, ("victory_points", "thunderstones", "card_victory_points", "experience_points")),
                               "eliminated": bool(state.get("players", {}).get(pid, {}).get("eliminated"))}
                          for pid, values in raw.get("players", {}).items() if pid in state.get("players", {})},
             "winner_ids": [pid for pid in raw.get("winner_ids", []) if pid in state.get("players", {})],

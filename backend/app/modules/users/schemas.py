@@ -1,6 +1,6 @@
 """Public user request and response models."""
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, StrictBool, field_validator
 
 from backend.app.core.validators import (normalize_email,
                                          normalize_optional_non_empty_str,
@@ -39,6 +39,7 @@ class UserPatch(BaseModel):
     model_config = ConfigDict(extra="forbid")
     username: str | None = Field(default=None, max_length=64)
     password: str | None = None
+    auto_sort_hand: StrictBool = False
 
     @field_validator("username", mode="before")
     @classmethod
@@ -58,3 +59,4 @@ class UserResponse(BaseModel):
     email: EmailStr
     username: str | None
     avatar_url: str | None = None
+    auto_sort_hand: bool = False

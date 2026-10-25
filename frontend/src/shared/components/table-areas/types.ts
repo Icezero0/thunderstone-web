@@ -1,6 +1,7 @@
-import type {CardImageSource} from '../game-card/index.js';
+import type {CardImageSource, CardStatus} from '../game-card/index.js';
+import type {CardAttachment} from '../game-card/types.js';
 
-export interface TableCard {readonly id: string; readonly cardId: string; readonly name: string;}
+export interface TableCard {readonly id: string; readonly cardId: string; readonly name: string; readonly statuses?: readonly CardStatus[]; readonly attachments?: readonly CardAttachment[];}
 export interface DungeonLane {
   readonly id: string;
   readonly name: string;
@@ -34,6 +35,8 @@ export interface TableAreaOptions {
 export interface SupplySelection {
   readonly pileId: string; readonly cardId: string; readonly name: string;
   readonly level?: number; readonly infinite: boolean;
+  /** A particular displayed level, rather than a pile-top click. */
+  readonly preview?: boolean;
 }
 export interface VillageOptions extends TableAreaOptions {
   /** Return true to consume a top-card click instead of opening its hero preview. */

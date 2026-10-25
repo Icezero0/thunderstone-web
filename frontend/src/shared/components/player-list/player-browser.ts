@@ -21,12 +21,22 @@ export class PlayerBrowser {
   private returnFocus: HTMLElement | null = null;
   private inertBefore: boolean[] = [];
   private sequence = 0;
+  private targets = new Set<string>();
+  private selected = new Set<string>();
+  setCardTargets(ids: readonly string[], selected: readonly string[]): void {
+    this.targets = new Set(ids); this.selected = new Set(selected);
+    for (const item of this.current) this.target(item);
+  }
+  private target(item: CardView): void {
+    const id = item.card.elements.button.dataset.instanceId!;
+    item.card.setGlow(!!item.identity && this.targets.has(id)); item.card.setActive(this.selected.has(id));
+  }
   get playerId(): string | null {return this.selectedPlayer;}
   get zone(): PlayerBrowseZone {return this.selectedZone;}
   get isOpen(): boolean {return this.selectedPlayer !== null;}
 
   constructor(host: HTMLElement, private background: readonly HTMLElement[], images: Partial<CardImageSource> | undefined,
-    private id: (key: string) => string, private trigger: (playerId: string) => HTMLElement | undefined) {
+    private id: (key: string) => string, private trigger: (playerId: string) => HTMLElement | undefined, private onPick?: (id: string) => void) {
     this.view = createPlayerBrowserView(host, id);
     this.images = {front: images?.front ?? defaultCardImages.front, back: images?.back ?? defaultCardImages.back};
     this.interactions = new CardInteractions(this.view.inspection.overlay, this.view.inspection.content, this.view.notice);
@@ -77,12 +87,14 @@ export class PlayerBrowser {
         const elements = shown ? createCardElements(data.cardId!, this.images)
           : createCardElements('hidden', {front: () => this.images.back, back: this.images.back});
         elements.button.id = this.id(`player-card-${++this.sequence}`); elements.button.dataset.instanceId = data.id;
+        elements.button.addEventListener('click', () => {if (this.isOpen && data.cardId && this.targets.has(data.id)) this.onPick?.(data.id);});
         if (!shown) delete elements.button.dataset.cardId;
         const card = this.interactions.add(elements, data.name ?? '未公开手牌', shown);
         const root = node('article', 'player-browser-entry'); root.append(elements.button);
         item = {key: cacheKey, identity: data.cardId, root, card}; this.items.set(cacheKey, item);
       }
-      item.card.setName(data.name ?? '未公开手牌'); item.card.setFaceUp(data.cardId !== undefined, false); item.card.setVisible(true);
+      item.card.setName(data.name ?? '未公开手牌'); item.card.setStatuses(data.cardId ? data.statuses : []); item.card.setFaceUp(data.cardId !== undefined, false); item.card.setVisible(true);
+      this.target(item);
       item.root.dataset.revealed = String(this.zone === 'hand' && (data as PublicPlayerHandCard).revealed);
       return item;
     });

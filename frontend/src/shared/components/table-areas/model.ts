@@ -10,7 +10,9 @@ function unique(values: readonly string[]): void {
   if (new Set(values).size !== values.length) throw new Error('Identifiers must be unique.');
 }
 function cardCopy(card: TableCard): TableCard {
-  text(card.id); text(card.cardId); text(card.name); return {...card};
+  text(card.id); text(card.cardId); text(card.name); return {...card,
+    ...(card.attachments ? {attachments: card.attachments.map(entry => ({...entry}))} : {}),
+    ...(card.statuses ? {statuses: card.statuses.map(status => ({...status}))} : {})};
 }
 export function copyDungeonState(state: DungeonState): DungeonState {
   unique(state.dungeons.map(lane => lane.id));

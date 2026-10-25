@@ -29,7 +29,14 @@
         </div>
         <div id="match-deck-area"></div>
       </div>
-      <details id="match-information" class="match-information"><summary>疾病、控制区与对局记录</summary><div class="match-information-body"><section><h2>疾病供应</h2><p id="disease-description" class="muted small"></p><div id="disease-cards" class="card-grid compact-grid"></div></section><section><h2>公开控制区</h2><div id="public-control-cards" class="card-grid compact-grid"></div></section><section aria-labelledby="event-log-title"><h2 id="event-log-title">近期进程</h2><ol id="event-log" class="event-log" aria-live="polite" aria-relevant="additions text"></ol></section></div></details>
+      <aside id="history-panel" class="history-drawer" data-open="false" aria-label="操作历史">
+        <button id="history-toggle" class="history-drawer-toggle" type="button" aria-label="展开操作历史" aria-expanded="false" aria-controls="history-body"><span aria-hidden="true"></span></button>
+        <section id="history-body" class="history-drawer-body" inert aria-hidden="true">
+          <header><h2>操作历史</h2><button id="history-undo" class="button secondary" type="button" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 4-5 5 5 5M4 9h10a6 6 0 0 1 0 12h-2"></path></svg><span>撤回</span></button></header>
+          <ol id="history-entries"></ol>
+          <footer><button id="history-download" class="button secondary" type="button" disabled>下载当前对局</button></footer>
+        </section>
+      </aside>
       <div id="cancel-match-bar" class="cancel-match-bar" hidden><button id="cancel-match" class="text-button danger" type="button">取消本局，返回房间</button></div>
     </div>
   </main>

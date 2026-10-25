@@ -8,6 +8,7 @@ export const FIELDS: Readonly<Record<string, string>> = Object.freeze({
 export const STATS = ['attack', 'magic_attack', 'light', 'strength'] as const;
 export const tags = (card: Card): string[] => card.tags.split('|');
 export const isHero = (card: Card): boolean => tags(card).includes('英雄');
+export const isMilitia = (card: Card): boolean => tags(card).includes('民兵');
 export const isMonster = (card: Card): boolean => tags(card).includes('怪物');
 export const isDisease = (card: Card): boolean => tags(card).includes('疾病');
 export const isThunderstone = (card: Card): boolean => tags(card).includes('雷霆之石');

@@ -29,8 +29,12 @@ export function reconcileEquipment(tx: Transition, duringBattle = false) {
   }
   if (duringBattle || context.negative_effects_committed) for (const [hero, strength] of Object.entries(trace.hero_strength)) {
     const flags = tx.state.instances[hero].flags;
-    if (strength === 0 && !flags.pending_turn_end_destruction) {
-      flags.pending_turn_end_destruction = true;
+    if (strength !== 0) continue;
+    const marked = context.zero_strength_marked_heroes ??= [];
+    if (marked.includes(hero)) continue;
+    marked.push(hero);
+    if (!flags.pending_after_battle_destruction) {
+      flags.pending_after_battle_destruction = true;
       tx.event('hero_zero_strength_marked', {instance_id: hero});
     }
   }
@@ -38,6 +42,14 @@ export function reconcileEquipment(tx: Transition, duringBattle = false) {
 }
 export function equipmentOptions(tx: Transition): {hero_instance_id: string; weapon_instance_id: string}[] {
   return equipmentChoices(tx.evaluation());
+}
+export function unequipWeapon(tx: Transition, weaponId: string): void {
+  const pairs = equipmentPairs(tx.state.battle_context), pair = pairs.find(([, weapon]) => weapon === weaponId);
+  if (!pair || !tx.zone('hand').includes(weaponId)) throw new RuleError('weapon is not equipped in the current hand');
+  const mapping: Record<string, string[]> = {};
+  for (const [hero, weapon] of pairs) if (weapon !== weaponId) (mapping[hero] ??= []).push(weapon);
+  tx.state.battle_context.equipped_weapon_by_hero = mapping;
+  tx.event('weapon_unequipped', {player_id: tx.playerId, hero_instance_id: pair[0], weapon_instance_id: weaponId, reason: 'player'});
 }
 export function equipWeapon(tx: Transition, heroId: string, weaponId: string, deferEvents = false): Record<string, any>[] {
   const hand = tx.zone('hand');

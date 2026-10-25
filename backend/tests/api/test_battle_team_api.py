@@ -49,7 +49,7 @@ class BattleTeamApiTests(TestCase):
 
     def command(self, preparation):
         draft = preparation["draft"]
-        draft["target_instance_id"] = preparation["options"]["target_instance_ids"][0]
+        draft["target_instance_id"] = None
         return {"type": "SubmitBattleTeam", "player_id": self.player,
                 "expected_version": self.state["game_version"], "draft": draft}
 
@@ -72,6 +72,8 @@ class BattleTeamApiTests(TestCase):
         direct = submit_battle_team(self.state, command, snapshot=self.snapshot)
         self.assertEqual({key: result[key] for key in direct}, direct)
         self.assertTrue(any(event["kind"] == "battle_team_submitted" for event in result["events"]))
+        self.assertEqual(result["state"]["subphase"], "DUNGEON_DECLARE")
+        self.assertFalse(any(event["kind"] == "battle_target_declared" for event in result["events"]))
         self.assertEqual(result["state"]["game_version"], self.state["game_version"] + 1)
 
     def test_submission_rejects_forged_actor_stale_build_version_and_foreign_cards(self):

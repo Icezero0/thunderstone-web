@@ -11,9 +11,23 @@ const defaultDungeon = {spire: false, rankZero: false, rankFour: false};
 const topCard = slot => slot.children.find(node => node.className === 'physical-card' && !node.hidden);
 const browserCards = ui => ui.get('village-browser-grid').children.map(entry => entry.children.find(child => child.className === 'physical-card'));
 const check = async (ui, id, value) => {ui.get(id).checked = value; ui.get(id).fire('change'); await settle();};
-async function setup() {
-  const ui = await page({html, source}); return {ui, api: ui.evaluate('GameCardPackage')};
+async function setup(options = {}) {
+  const ui = await page({html, source, ...options}); return {ui, api: ui.evaluate('GameCardPackage')};
 }
+
+test('hall reflows use local distances after the zoomed camera changes its framing', async () => {
+  const {ui, api} = await setup({animationsEnabled: true});
+  const area = new api.DungeonArea(ui.get('dungeon'), {idPrefix: 'dungeon'}), state = createDungeonDemo(defaultDungeon);
+  area.setState(state); await settle();
+  const monster = topCard(ui.get('dungeon-main-rank-1').children[1]); let reframed = false;
+  Object.defineProperties(monster, {offsetWidth: {get: () => 104}, offsetHeight: {get: () => 140}});
+  monster.getBoundingClientRect = () => ({left: reframed ? 180 : 360, top: reframed ? 150 : 240, width: 156, height: 210});
+  const pending = area.animateTo(state, () => {reframed = true;}); await settle();
+  const reflow = ui.animations.find(animation => animation.element === monster);
+  assert.equal(reflow.keyframes[0].transform, 'translate(120px, 60px)');
+  assert.equal(reflow.keyframes.at(-1).transform, 'translate(0px, 0px)');
+  await ui.advance(250); await pending; area.dispose();
+});
 
 test('dungeon normalization retains ranks 1–3, orders extra ranks, copies inputs and rejects invalid or repeated positions', () => {
   const state = {dungeons: [{id: 'main', name: '主地下城', deckCount: 0, hall: [{rank: 4, card: null}, {rank: 0, card: null}]}]};

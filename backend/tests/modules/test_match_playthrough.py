@@ -72,13 +72,15 @@ class MatchPlaythroughTests(unittest.TestCase):
                     draft = deepcopy(preparation["draft"])
                     # All cards stay in hand. An empty team loses and cycles the
                     # rank-one monster, eventually exposing the thunderstone.
-                    target = next(item for dungeon in view["dungeons"] for item in dungeon["hall"]
-                                  if item["rank"] == 1)
                     command = {"type": "SubmitBattleTeam", "draft": {
                         "hero_instance_ids": [], "support_instance_ids": [], "equipment": {},
-                        "target_instance_id": target["instance_id"],
+                        "target_instance_id": None,
                     }}
                     self.assertEqual(draft["player_id"], view["viewer_player_id"])
+                elif "DeclareBattleTarget" in options:
+                    target = next(item for dungeon in view["dungeons"] for item in dungeon["hall"]
+                                  if item["rank"] == 1)
+                    command = {"type": "DeclareBattleTarget", "target_instance_id": target["instance_id"]}
                 else:
                     self.fail(f"Unexpected prompt in simple orc game: {options}")
 
@@ -125,8 +127,24 @@ class MatchPlaythroughTests(unittest.TestCase):
                 self.assertEqual(current["status"], "waiting")
                 self.assertIsNone(current["active_match_id"])
                 self.assertFalse(any(player["ready"] for player in current["players"]))
+            # Undoing the winning/ending operation restores the active room for
+            # everyone; the host may also jump back to the finished branch.
+            endpoint = f"/api/v1/matches/{match_id}/history/restore"
+            undone = fixture.successful(fixture.client.post(endpoint, headers=b['headers'], json={
+                'expected_version': view['version'], 'command_id': uuid4().hex}))
+            self.assertEqual(undone['status'], 'active')
+            resumed = fixture.successful(fixture.client.get('/api/v1/rooms/current', headers=a['headers']))['room']
+            self.assertEqual(resumed['active_match_id'], match_id)
+            restored = fixture.successful(fixture.client.post(endpoint, headers=a['headers'], json={
+                'expected_version': undone['version'], 'command_id': uuid4().hex, 'target_step': view['history']['cursor']}))
+            self.assertEqual(restored['result'], view['result'])
+            self.assertEqual(fixture.stored_match(match_id)['state'], saved['state'])
+            current = fixture.successful(fixture.client.get('/api/v1/rooms/current', headers=a['headers']))['room']
             # The same people can immediately prepare a fresh match.
             room = fixture.ready_all(current, a, b)
             next_game = fixture.successful(fixture.start(a, room))
             self.assertNotEqual(next_game["id"], match_id)
+            conflict = fixture.client.post(endpoint, headers=a['headers'], json={
+                'expected_version': restored['version'], 'command_id': uuid4().hex})
+            self.assertEqual(conflict.status_code, 409)
 

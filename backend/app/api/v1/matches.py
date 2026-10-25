@@ -1,13 +1,14 @@
-"""Authenticated persisted setup; full engine states never cross this router."""
+"""Authenticated match projections and explicit participant snapshot downloads."""
 
 import asyncio
 
 from fastapi import APIRouter, Depends, Request
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.core.database import get_db
 from backend.app.modules.auth.deps import get_current_user
-from backend.app.modules.matches.schemas import MatchCommand, SetupChoiceCommand, StartMatchCommand
+from backend.app.modules.matches.schemas import MatchCommand, SetupChoiceCommand, StartMatchCommand, RestoreMatchCommand
 from backend.app.modules.matches.command_schemas import PlayCommand
 from backend.app.modules.matches.service import MatchResult, MatchService
 from backend.app.modules.users.models import User
@@ -44,6 +45,14 @@ async def match(match_id: str, user: User = Depends(get_current_user), db: Async
     return await service.get(db, match_id, user.id)
 
 
+@router.get("/matches/{match_id}/export")
+async def export_match(match_id: str, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    data = await service.export(db, match_id, user.id)
+    filename = f"thunderstone-match-{data['match']['id']}-v{data['match']['version']}.json"
+    return JSONResponse(data, headers={"Cache-Control": "no-store",
+        "Content-Disposition": f'attachment; filename="{filename}"'})
+
+
 @router.post("/matches/{match_id}/setup-choice")
 async def setup_choice(match_id: str, payload: SetupChoiceCommand, request: Request,
                        user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
@@ -60,3 +69,9 @@ async def cancel(match_id: str, payload: MatchCommand, request: Request,
 async def commands(match_id: str, payload: PlayCommand, request: Request,
                    user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     return await publish(request, await service.play(db, match_id, user.id, payload))
+
+
+@router.post("/matches/{match_id}/history/restore")
+async def restore_history(match_id: str, payload: RestoreMatchCommand, request: Request,
+                          user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    return await publish(request, await service.restore(db, match_id, user.id, payload))

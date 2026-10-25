@@ -17,16 +17,35 @@
 .player-turn-indicator svg {width: 17px; height: 17px;}
 .player-response-progress {flex: 0 1 auto; color: var(--header-ink); font-size: 11px; line-height: 1.5; overflow-wrap: anywhere;}
 .player-response-prompt {flex: 1; text-align: center; color: var(--header-muted); font-size: 10px; overflow-wrap: anywhere;}
-.player-response-choice {padding: 4px 7px; border: 1px solid var(--header-line); border-radius: 5px; background: transparent; color: var(--header-ink); font: 11px var(--font-body); white-space: nowrap;}
-.player-response-choice:hover, .player-response-choice[aria-pressed="true"] {border-color: var(--header-gold); background: rgb(185 140 69 / 12%); color: var(--header-gold);}
+.player-response-prompt[data-error="true"] {color: var(--game-action-red); font-size: 12px;}
+.battle-preview-outcome {display: inline-flex; vertical-align: middle; margin-right: 5px; color: var(--game-action-red);}
+.battle-preview-outcome[data-outcome="win"] {color: var(--game-action-green);}
+.battle-preview-outcome[data-outcome="unknown"] {color: var(--header-gold);}
+.battle-preview-outcome svg {width: 20px; height: 20px;}
+.battle-preview-note {display: block; font-size: 10px; color: var(--header-muted);}
+.combat-value-adjusted {color: var(--header-muted); font-size: 11px;}
+.player-response-choice {--response-tone: var(--header-gold); position: relative; padding: 4px 7px; border: 1px solid var(--header-line); border-radius: 5px; background: rgb(255 255 255 / 3%); color: var(--header-ink); font: 11px var(--font-body); white-space: nowrap; box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%), 0 2px 0 rgb(0 0 0 / 25%); transition: transform 70ms ease-out, box-shadow 70ms ease-out, background-color 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out;}
+.player-response-choice:hover:not(:disabled) {border-color: var(--response-tone); background: color-mix(in srgb, var(--response-tone) 18%, transparent); color: var(--response-tone);}
 .player-response-choice[data-tone="gold"] {--response-tone: var(--game-action-gold);}
 .player-response-choice[data-tone="violet"] {--response-tone: var(--game-action-violet);}
 .player-response-choice[data-tone="blue"] {--response-tone: var(--game-action-blue);}
 .player-response-choice[data-tone="red"] {--response-tone: var(--game-action-red);}
 .player-response-choice[data-tone] {color: var(--response-tone); border-color: color-mix(in srgb, var(--response-tone) 48%, transparent); background: color-mix(in srgb, var(--response-tone) 12%, transparent);}
-.player-response-choice[data-tone]:hover, .player-response-choice[data-tone][aria-pressed="true"] {border-color: var(--response-tone); background: color-mix(in srgb, var(--response-tone) 22%, transparent);}
+.player-response-choice[data-tone]:hover:not(:disabled) {background: color-mix(in srgb, var(--response-tone) 24%, transparent);}
+/* A latched mode stays visibly filled after release, unlike transient hover. */
+.player-response-choice[aria-pressed="true"] {border-color: var(--response-tone); background: var(--response-tone); color: var(--ink); box-shadow: inset 0 1px 3px rgb(0 0 0 / 22%);}
+.player-response-choice[aria-pressed="true"]:hover:not(:disabled) {background: color-mix(in srgb, var(--response-tone) 88%, white); color: var(--ink);}
+.player-response-choice:active:not(:disabled) {transform: translateY(1px) scale(.97); border-color: var(--response-tone); box-shadow: inset 0 2px 4px rgb(0 0 0 / 35%); filter: brightness(1.16);}
 .player-response-choice:focus-visible {outline: 2px solid var(--header-gold); outline-offset: 2px;}
 .player-response-choice:disabled {opacity: .45;}
+.player-response-combat {display: inline-flex; align-items: center; gap: 12px; color: var(--header-ink); font-variant-numeric: tabular-nums;}
+.combat-value {display: inline-flex; align-items: center; gap: 4px; font-size: 12px;}
+.combat-value svg {width: 21px; height: 21px; flex: none;}
+.combat-value-magicAttack {color: var(--game-action-violet);}
+.combat-value-light {color: var(--header-gold);}
+.physical-card[data-forced="true"] .card-face {border: 2px solid var(--game-action-violet) !important;}
+.hand-track > .physical-card[data-equipment-moving="true"] {z-index: 200 !important; transition: none !important; pointer-events: none;}
+.hand-track > .physical-card[data-equipped-to] .card-lift {top: 0; left: 0; width: 100%;}
 .player-resources {display: flex; flex: none; align-items: center; gap: 12px; padding-inline: 2px; font-variant-numeric: tabular-nums;}
 .player-resource {display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; color: var(--header-ink); font: 13px var(--font-body);}
 .player-resource-gold {color: var(--header-gold);}
@@ -53,7 +72,8 @@
 :where(.player-deck-area, .player-deck-overlays) .hand-track .physical-card {touch-action: none;}
 :where(.player-deck-area, .player-deck-overlays) .physical-card[data-selected="true"] .card-lift {top: -18px; left: -3px; width: calc(100% + 6px);}
 :where(.player-deck-area, .player-deck-overlays) .physical-card[data-selected="true"] .card-face {border-color: var(--header-gold);}
-:where(.player-deck-area, .player-deck-overlays) .physical-card[data-selected="true"] .card-lift::after {content: '✓'; position: absolute; bottom: 7px; left: 7px; z-index: 1; width: 18px; height: 18px; display: grid; place-content: center; border-radius: 50%; background: var(--primary); color: var(--header-ink); font-size: 11px; pointer-events: none;}
+/* Selection keeps its gold outline; eligibility uses the full-card glow independently. */
+:where(.player-deck-area, .player-deck-overlays) .physical-card[data-selected="true"] .card-face {box-shadow: inset 0 0 0 1px var(--header-gold);}
 /* Keep the complete card inside the hand while dragging, without scaling its illustration. */
 :where(.player-deck-area, .player-deck-overlays) .hand-track .physical-card[data-dragging="true"] .card-lift,
 :where(.player-deck-area, .player-deck-overlays) .hand-track .physical-card[data-dropping="true"] .card-lift {top: 0; left: 0; width: 100%; transition: none;}
@@ -80,5 +100,7 @@
   :where(.player-deck-area, .player-deck-overlays) .zone-heading > span:not(.pile-count) {display: none;}
 }
 @media (prefers-reduced-motion: reduce) {
+  .player-response-choice {transition-duration: 0.01ms;}
+  .player-response-choice:active:not(:disabled) {transform: none;}
   :where(.player-deck-area, .player-deck-overlays) .hand-track[data-reordering="true"] > .physical-card, :where(.player-deck-area, .player-deck-overlays) .hand-drop-slot, :where(.player-deck-area, .player-deck-overlays) .hand-auto-sort-track, :where(.player-deck-area, .player-deck-overlays) .hand-auto-sort-track::after {transition-duration: 0.01ms;}
 }

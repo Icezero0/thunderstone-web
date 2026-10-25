@@ -4,11 +4,34 @@ from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.core.exceptions import AppError, NotFoundError
-from backend.app.modules.matches.models import Match, MatchCommand
+from backend.app.modules.matches.models import Match, MatchCommand, MatchHistory
 from backend.app.modules.rooms.models import Room, RoomPlayer
 
 
 class MatchRepository:
+    async def checkpoint(self, db, match, user_id, label, snapshot):
+        db.add(MatchHistory(match_id=match.id, step=match.version, parent_step=match.history_cursor,
+            user_id=user_id, label=label, turn_number=(match.state or {}).get("turn_number"), snapshot=snapshot))
+        match.history_cursor = match.version
+        await db.flush()
+
+    async def history_step(self, db, match_id, step):
+        return await db.get(MatchHistory, (match_id, step))
+
+    async def history(self, db, match_id):
+        # Never fetch the large private snapshots when rendering the timeline.
+        return (await db.execute(select(MatchHistory.step, MatchHistory.parent_step, MatchHistory.user_id,
+            MatchHistory.label, MatchHistory.turn_number, MatchHistory.created_at)
+            .where(MatchHistory.match_id == match_id).order_by(MatchHistory.step))).mappings().all()
+
+    async def resume_room(self, db, room, match_id):
+        changed = await db.execute(update(Room).where(Room.id == room.id, Room.version == room.version,
+            Room.status == "waiting", Room.active_match_id.is_(None)).values(status="playing", active_match_id=match_id,
+                version=room.version + 1, updated_at=func.now()).execution_options(synchronize_session=False))
+        if changed.rowcount != 1:
+            raise AppError("房间已开始其他对局，不能恢复旧对局", code="history_room_conflict", status_code=409)
+        await db.refresh(room)
+
     async def get(self, db: AsyncSession, match_id: str) -> Match:
         match = await db.get(Match, match_id)
         if match is None:

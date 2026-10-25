@@ -21,6 +21,8 @@ class Match(Base):
     host_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     status: Mapped[str] = mapped_column(String(16), nullable=False)
     version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    history_cursor: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    history_epoch: Mapped[int] = mapped_column(Integer, default=0, server_default="0", nullable=False)
     frozen_players: Mapped[list] = mapped_column(JSON, nullable=False)
     setup_request: Mapped[dict] = mapped_column(JSON, nullable=False)
     setup_choice: Mapped[dict | None] = mapped_column(JSON, nullable=True)
@@ -31,6 +33,20 @@ class Match(Base):
     effects_version: Mapped[str] = mapped_column(String(64), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class MatchHistory(Base):
+    """Immutable complete checkpoints; parent links retain alternate continuations."""
+
+    __tablename__ = "match_history"
+    match_id: Mapped[str] = mapped_column(ForeignKey("matches.id"), primary_key=True)
+    step: Mapped[int] = mapped_column(Integer, primary_key=True)
+    parent_step: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    label: Mapped[str] = mapped_column(String(160), nullable=False)
+    turn_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    snapshot: Mapped[dict] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class MatchCommand(Base):

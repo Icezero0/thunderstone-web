@@ -1,5 +1,14 @@
 import type {MatchView} from '../../shared/api/types.js';
 import type {CardFlightOrigin, DeckAnimationStep, PlayerDeckState} from '../../shared/components/player-deck-area/index.js';
+import {withoutDeckCards} from '../../shared/components/player-deck-area/model.js';
+
+/** Effect gains animate only when the engine names a public supply origin. */
+export function supplyGainDestination(event: MatchView['event_log'][number]): 'hand' | 'draw' | 'discard' | null {
+  if (event.kind === 'card_bought') return 'discard';
+  if (!['effect_card_gained', 'effect_purchase_completed'].includes(event.kind) || typeof event.source !== 'string'
+    || !/^(basic_supply|village_supply|hero_supply):/.test(event.source)) return null;
+  return ['hand', 'draw', 'discard'].includes(event.destination as string) ? event.destination as 'hand' | 'draw' | 'discard' : null;
+}
 
 /** Reconstruct presentation stages from known inventories and committed outcomes, never hidden deck order. */
 export function deckTransitions(previous: PlayerDeckState, final: PlayerDeckState,
@@ -20,25 +29,28 @@ export function deckTransitions(previous: PlayerDeckState, final: PlayerDeckStat
       state: {...current, hand: current.hand.filter(card => card.id !== source.id), discard: [...current.discard, target]}});
   }
   const destruction = own.filter(event => event.kind === 'card_destroyed' || event.kind === 'rest_card_destroyed');
-  const destroyed = previous.hand.filter(card => !finalOwned.has(card.id) && !upgradeSources.has(card.id) && destruction.some(event => event.card_id === card.cardId));
+  const destroyed = [...previous.hand, ...previous.draw, ...previous.discard, ...previous.treasures ?? [], ...previous.aside ?? []]
+    .filter(card => !finalOwned.has(card.id) && !upgradeSources.has(card.id) && destruction.some(event => event.card_id === card.cardId));
   for (const cardId of new Set(destroyed.map(card => card.cardId))) {
     const explicit = destruction.filter(event => event.kind === 'card_destroyed' && event.card_id === cardId);
     const count = explicit.length || destruction.filter(event => event.kind === 'rest_card_destroyed' && event.card_id === cardId).length;
     if (destroyed.filter(card => card.cardId === cardId).length > count) return []; // Ambiguous identical-card removals: snap instead.
   }
   if (destroyed.length) add({kind: 'destroy', instanceIds: destroyed.map(card => card.id),
-    state: {...current, hand: current.hand.filter(card => !destroyed.some(victim => victim.id === card.id))}});
+    state: withoutDeckCards(current, new Set(destroyed.map(card => card.id)))});
 
-  const bought = own.filter(event => event.kind === 'card_bought');
-  const purchases = final.discard.filter(card => !previousOwned.has(card.id) && !upgradeTargets.has(card.id) && bought.some(event => event.card_id === card.cardId));
-  if (purchases.length) {
+  for (const destination of ['hand', 'draw', 'discard'] as const) {
+    const bought = own.filter(event => supplyGainDestination(event) === destination);
+    const purchases = final[destination].filter(card => !previousOwned.has(card.id) && !upgradeTargets.has(card.id) && bought.some(event => event.card_id === card.cardId));
+    if (!purchases.length) continue;
     // Do not guess which of several identical gains was the paid purchase.
     for (const cardId of new Set(purchases.map(card => card.cardId)))
       if (purchases.filter(card => card.cardId === cardId).length !== bought.filter(event => event.card_id === cardId).length) return [];
     if (purchases.some(card => !origins[card.cardId])) return [];
-    add({kind: 'gain', instanceIds: purchases.map(card => card.id),
-      origins: Object.fromEntries(purchases.map(card => [card.id, {...origins[card.cardId]}])),
-      state: {...current, discard: [...current.discard, ...purchases]}});
+    add({kind: 'gain', destination, instanceIds: purchases.map(card => card.id),
+      origins: Object.fromEntries(purchases.map(card => {const rect = origins[card.cardId];
+        return [card.id, {left: rect.left, top: rect.top, width: rect.width, height: rect.height}];})),
+      state: {...current, [destination]: [...current[destination], ...purchases]}});
   }
 
   const cleanup = own.some(event => event.kind === 'turn_hand_discarded');

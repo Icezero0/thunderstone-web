@@ -435,7 +435,7 @@
     "source_line": "若装备给民兵，额外获得攻击 +2。",
     "op": "equipment_bonus",
     "params": {
-      "hero_card_id": "TS-0001",
+      "hero_tag": "民兵",
       "attack": 2
     }
   },
@@ -928,7 +928,7 @@
     "op": "hero_aura",
     "params": {
       "filter": {
-        "card_id": "TS-0001"
+        "tag": "民兵"
       },
       "attack": 1
     }

@@ -15,4 +15,6 @@ export interface PublicTableOptions extends VillageOptions {
   elementId?: (key: string) => string;
   initialTab?: PublicTableTab;
   onTabChange?: (tab: PublicTableTab) => void;
+  onPlayerClick?: (playerId: string) => void;
+  onCardTargetClick?: (instanceId: string) => void;
 }

@@ -2,10 +2,14 @@ import {isHero, isMonster, stat} from '../catalog/cards.js';
 import type {Card} from '../types.js';
 import {Calculation} from './context.js';
 
+export function economySources(tx: Calculation) {
+  return [...tx.handRules('economy').filter(([, rule]) => rule.params.scope !== 'hall'),
+    ...tx.hallRules('economy').filter(([, rule]) => rule.params.scope !== 'hand'),
+    ...tx.mechanics.filter(rule => rule.op === 'economy' && tx.state.active_settings.includes(rule.source_card_id))
+      .map(rule => [Object.entries(tx.state.instances).find(([, instance]) => instance.card_id === rule.source_card_id)?.[0], rule] as const)];
+}
 export function economyRules(tx: Calculation) {
-  return [...tx.handRules('economy').map(([, rule]) => rule).filter(rule => rule.params.scope !== 'hall'),
-    ...tx.hallRules('economy').map(([, rule]) => rule).filter(rule => rule.params.scope !== 'hand'),
-    ...tx.mechanics.filter(rule => rule.op === 'economy' && tx.state.active_settings.includes(rule.source_card_id))];
+  return economySources(tx).map(([, rule]) => rule);
 }
 export function printedGold(tx: Calculation, card: Card): number {
   if (isMonster(card) && economyRules(tx).some(rule => rule.params.monster_gold_zero)) return 0;

@@ -17,7 +17,7 @@ def shared_command(test, f, snapshot, ruleset, command):
     f.tx.events.extend(result["events"])
 
 
-def settle_shared(test, f, snapshot, ruleset):
+def settle_shared(test, f, snapshot, ruleset, *, take_optional=False):
     for _ in range(100):
         choice = f.tx.state["pending_choice"]
         if choice is None:
@@ -28,7 +28,10 @@ def settle_shared(test, f, snapshot, ruleset):
         elif kind == "effect_response":
             command = {"type": "ResolveResponse"}
         elif kind == "effect_select":
-            command = {"type": "ResolveChoice", "instance_ids": choice["candidate_instance_ids"][:choice["min_count"]]}
+            count = min(choice.get("max_count", 1), getattr(f, "choose_count", 100)) if take_optional else choice["min_count"]
+            command = {"type": "ResolveChoice", "instance_ids": choice["candidate_instance_ids"][:count]}
+        elif kind == "effect_purchase":
+            command = {"type": "ResolveEffectPurchase", "card_id": f.purchase_preference}
         else:
             test.fail(f"unexpected event continuation: {kind}")
         shared_command(test, f, snapshot, ruleset, {**command, "player_id": choice["player_id"]})
@@ -147,6 +150,13 @@ def verify_event(test, base, snapshot, ruleset, case):
         shared_command(test, f, snapshot, isolated, {"type": "DeclareBattleTarget", "player_id": f.player,
                                                     "target_instance_id": target})
         settle_shared(test, f, snapshot, isolated)
+    elif ability.event == "BATTLE_TRIUMPH":
+        # Triumph timing and gold spending postdate the frozen Python reference.
+        state["subphase"] = "TURN_START"
+        state["started_turn"] = state["turn_number"]
+        state["workflow_steps"] = [{"op": "event", "event": ability.event, "context": dict(state["event_context"])}]
+        shared_command(test, f, snapshot, isolated, {"type": "ChooseAction", "player_id": f.player, "action": "village"})
+        settle_shared(test, f, snapshot, isolated, take_optional=True)
     elif ability.id in ("TS-0463-A01", "TS-0689-A01", "TS-0693-A01"):
         # User-confirmed search rules postdate the frozen Python interpreter.
         # Exercise the current shared engine through its ordinary command path.

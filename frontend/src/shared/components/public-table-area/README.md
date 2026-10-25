@@ -56,11 +56,15 @@ board.dispose();
 | `isBrowsing` | 是否正在打开英雄等级或玩家牌区弹窗。 |
 | `openSupply(pileId)` | 切到村庄，打开指定英雄或村庄英雄供应的等级预览；普通供应不打开弹窗。 |
 | `setPurchaseOptions([{cardId, price}])` | 高亮匹配的当前顶牌，不在卡面叠加价格标签；空数组清除。不会推算购买权限或修改库存。 |
+| `setStatusOverrides(map \| null)` | 将宿主的本地持续效果投影显示到地下城大厅及环境牌的状态图标和 Alt 检视中；不重新布局牌桌。空数组清除该牌状态，`null` 恢复权威快照。 |
+| `setTabAttention(tabs)` | 未激活且包含待响应目标的公共桌面 Tab 高亮，不自动切换桌面。 |
+| `setCardTargets(ids, selected)` | 在玩家原有浏览窗口标出授权目标，通过 `onCardTargetClick` 回传；不会公开隐藏手牌身份或牌堆次序。 |
 | `supplyCardRect(cardId)` | 返回村庄当前可见顶牌的屏幕坐标，用于宿主在快照更新前捕获飞牌来源；隐藏、空堆或非顶牌返回 `null`。不返回隐藏牌序。 |
 | `openPlayer(playerId, zone = 'hand')` | 查看该玩家的 `hand`、`draw` 或 `discard`，与英雄弹窗互斥。也可直接点击侧栏头像／名称打开。 |
 | `browsingPlayerId` / `closePlayer()` | 当前浏览的玩家 ID（否则 `null`），以及关闭并恢复玩家入口焦点。 |
 | `closeBrowsers()` | 关闭玩家与英雄浏览、恢复背景交互并结束手势，适用于退出、取消或失去访问权限。 |
 | `options.onHallCardClick(card)` | 大厅卡片点击回调，供宿主选择攻击目标；不自动发送命令或改变规则状态。 |
+| `visibleHallCardRect(instanceId)` | 只在地下城 tab 激活、对应卡面与视窗和屏幕相交时返回屏幕坐标，供疾病等来源动画使用；其余返回 `null`。 |
 | `resetView()` | 恢复当前桌面的初始位置和 150% 缩放，另一桌面不变。 |
 | `showPlayerActivity(playerId, text, durationMs?)` / `clearPlayerActivity()` | 在右侧对应玩家条目旁显示向左展开的临时气泡，或清除；默认 4.5 秒，消息及触发时点由调用方决定 |
 | `refresh()` | 重新测量当前可见桌面；外层容器重新显示或手动调整尺寸后可调用。 |
@@ -106,6 +110,10 @@ probe 的己方牌区跟随底部玩家牌组变化，己方名称和头像由�
 - `elementId(key)`：旧页面的 DOM ID 适配钩子；通常不需要设置。probe 在页面自己的 `element-ids.ts` 中保留原有钩子。
 
 ## 交互与内部职责
+
+`setHallSelection(highlightedInstanceIds, selectedInstanceIds)` 和 `setSupplySelection(highlightedCardIds, selectedCardIds)` 将调用方授权的候选／选中状态同步到大厅或供应顶牌；刷新快照后仍应用到当前对应卡面。它们只负责展示，不决定目标或购买是否合法。正式页用这两个接口完成效果点选和战斗目标选择；购买价格继续独立使用 `setPurchaseOptions()`。
+
+`hallCardRect(id)`、`dungeonDeckRect(laneId)`、`playerRect(playerId)` 提供当前展示位置，`hideHallCard(id)` 隐藏正在移出的顶面；`animateDungeon(snapshot)` 将已确定的大厅快照以补位／翻牌方式展示。调用方决定顺序、卡牌归属和最终快照，组件不抽牌或执行陷阱。`finish()` 立即结束当前公共动画，正式页的跨区域队列负责同步最终牌桌及玩家库存。
 
 地下城和村庄各有一个 [TableViewport](../table-viewport/README.md)，初始缩放 150%，默认居中，边界外预留 240px 平移余量，以鼠标为中心进行 80%～250% 滚轮缩放。左键可拖空白处、牌堆和公共卡牌，中键拖任意位置，方向键平移，Home 恢复默认位置及 150% 缩放。切换 Tab 支持左右键、Home／End；复位按钮和玩家列表固定在移动内容之外。鼠标拖动时使用抓握光标，停止立即恢复斜向指示手。
 

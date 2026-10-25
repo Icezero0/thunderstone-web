@@ -111,3 +111,27 @@ worker lazily, reuses it and closes it on shutdown; it opens no HTTP port. Build
 after TypeScript changes. `/engine/engine.js` serves the same rule package to the
 browser for local previews. The backend remains responsible for authentication,
 catalog persistence, room membership and authoritative match snapshots.
+
+`GET /api/v1/users/me` includes the boolean `auto_sort_hand` preference (default
+false). `PATCH /api/v1/users/me` accepts that field independently of name/password
+changes; it neither advances a match nor broadcasts a public profile change.
+Migration `0008_hand_sort_preference` adds the non-null column for existing
+accounts and runs through the normal startup migration process.
+
+Migration `0009_match_history` adds complete operation checkpoints and a history cursor.
+It runs on the next normal backend startup; no new dependency is required.
+`POST /api/v1/matches/{id}/history/restore` takes `expected_version`, `command_id`
+and optional `target_step`. Omitting the target undoes one accepted operation for any
+participant; selecting a checkpoint is restricted to the host. Snapshots include
+RNG state, pending effects and setup choices and remain private in SQLite. Public
+responses contain operation metadata and the normal viewer-specific board projection.
+REST/WebSocket versions always increase, even when the history cursor moves backwards.
+Existing matches begin recording at their next accepted operation, with the preceding
+state saved as a baseline; earlier unrecorded states cannot be reconstructed.
+
+`GET /api/v1/matches/{id}/export` explicitly downloads a complete current checkpoint
+for an authenticated match participant. It includes frozen players/catalogue, rule
+revisions, setup, all engine state and events in `thunderstone-match` format version 1.
+This read-only, uncached endpoint remains available without invoking the engine.
+Normal views/realtime messages still use visibility projections. File import is not
+implemented yet; restoration will need rule compatibility and identity validation.

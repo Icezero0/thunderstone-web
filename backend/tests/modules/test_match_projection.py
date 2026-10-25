@@ -6,12 +6,94 @@ import unittest
 
 from backend.app.core.exceptions import AppError
 from backend.app.modules.matches.projection import build_match_view
+from backend.app.modules.matches.interaction_view import event_view
 from backend.tests.support.match_projection import sample_match
 
 
 
 
 class MatchProjectionTests(unittest.TestCase):
+    def test_authorized_inventory_targets_match_their_original_browser_without_disclosing_other_instance_ids(self):
+        match = sample_match()
+        match.state["pending_choice"] = {"kind": "effect_select", "player_id": "alice"}
+        command = {"type": "ResolveChoice", "instance_ids": ["secret-bob-discard"], "min_count": 1, "max_count": 1}
+        view = build_match_view(match, 1, legal_commands=[command])
+        bob = next(player for player in view["players"] if player["player_id"] == "bob")
+        self.assertEqual(bob["cards"]["discard"][0]["instance_id"], "secret-bob-discard")
+        self.assertNotEqual(bob["cards"]["draw"][0]["instance_id"], "secret-bob-draw")
+        spectator = build_match_view(match, 2, legal_commands=[command])
+        self.assertEqual(spectator["legal_commands"], [])
+        alice = next(player for player in spectator["players"] if player["player_id"] == "alice")
+        self.assertNotEqual(alice["cards"]["discard"][0]["instance_id"], "alice-discard")
+
+    def test_destruction_replacement_exposes_public_discard_movement_without_buff_internals(self):
+        rows = event_view([{"kind": "card_destruction_replaced", "sequence": 1, "card_id": "TS-0001", "instance_id": "private-hero",
+                            "source": "player:alice:hand", "destination": "player:alice:discard", "reason": "after_battle",
+                            "replacement": {"source_instance_id": "private-blade", "buff": "discard_instead_of_destroy"}}], {}, lambda _: None)
+        self.assertEqual(rows[0]["cause"], "after_battle")
+        self.assertEqual(rows[0]["source"], "hand")
+        self.assertEqual(rows[0]["destination"], "discard")
+        self.assertEqual(rows[0]["player_id"], "alice")
+        self.assertNotIn("private-", json.dumps(rows))
+        self.assertNotIn("replacement", rows[0])
+
+    def test_trap_stays_public_in_the_hall_but_only_the_actor_can_trigger_it(self):
+        match = sample_match()
+        match.state["pending_choice"] = {"kind": "trap_activation", "player_id": "alice", "instance_id": "hall-trap"}
+        match.state["zones"]["hall:main"].append("hall-trap")
+        match.state["instances"]["hall-trap"] = {"card_id": "TS-0008"}
+        match.catalog_snapshot["cards"]["TS-0008"]["subcategory"] = "陷阱"
+        command = {"type": "ResolveTrap", "player_id": "alice", "instance_ids": ["hall-trap"]}
+        for user in (1, 2):
+            view = build_match_view(match, user, legal_commands=[command])
+            self.assertTrue(any(card["instance_id"] == "hall-trap" for card in view["dungeons"][0]["hall"]))
+            self.assertEqual(view["legal_commands"], [command] if user == 1 else [])
+            self.assertEqual(view["pending_choice"]["can_resolve"], user == 1)
+        rows = event_view([{"sequence": 1, "kind": "trap_removed", "instance_id": "hall-trap", "hall_zone": "hall:main",
+                            "rank": 3, "hall_rank_count": 3, "private": "continuation"}], match.state["instances"], lambda _: None)
+        self.assertEqual(rows, [{"sequence": 1, "kind": "trap_removed", "card_id": "TS-0008", "hall_zone": "hall:main", "rank": 3, "hall_rank_count": 3}])
+
+    def test_destruction_cause_is_semantic_and_never_exposes_interpreter_reasons(self):
+        reasons = ["hero_upgrade", "after_battle", "trap_resolved", "private-ability-secret"]
+        rows = event_view([{"kind": "card_destroyed", "sequence": i + 1, "card_id": "TS-0001", "reason": reason}
+                           for i, reason in enumerate(reasons)], {}, lambda _: None)
+        self.assertEqual([row["cause"] for row in rows], ["hero_upgrade", "after_battle", "trap_resolved", "effect"])
+        self.assertNotIn("private-ability-secret", json.dumps(rows))
+        removed = event_view([{"kind": "disease_gain_destroyed", "sequence": 1, "instance_id": "private-disease", "card_id": "TS-0714"},
+                              {"kind": "card_destroyed", "sequence": 2, "instance_id": "private-disease", "card_id": "TS-0714", "reason": "private-ability"}], {}, lambda _: None)
+        self.assertEqual(removed[1]["cause"], "disease_gain")
+        self.assertNotIn("private-", json.dumps(removed))
+
+    def test_statuses_are_copied_only_onto_visible_instances(self):
+        match = sample_match()
+        statuses = {"alice-hand": [{"kind": "buff", "source_name": "Own source", "source_card_id": "TS-0002", "description": "Strength +2"}],
+                    "secret-bob-hand": [{"kind": "destroy", "source_name": "secret-status-source", "description": "private mark"}]}
+        own = build_match_view(match, 1, card_statuses=statuses)
+        self.assertEqual(own["hand"][0]["statuses"][0]["source_name"], "Own source")
+        self.assertNotIn("secret-status-source", json.dumps(own))
+        self.assertNotIn("card_statuses", own)
+        own["hand"][0]["statuses"][0]["description"] = "changed"
+        self.assertEqual(statuses["alice-hand"][0]["description"], "Strength +2")
+
+    def test_empty_extra_ranks_use_engine_counts_for_all_viewers(self):
+        match = sample_match()
+        for viewer in (1, 2):
+            view = build_match_view(match, viewer, hall_rank_counts={"hall:main": 5})
+            self.assertEqual(view["dungeons"][0]["rank_count"], 5)
+
+    def test_retreat_events_expose_public_origin_and_capacity_without_hidden_deck_order(self):
+        match = sample_match()
+        match.events = [{"sequence": 1, "kind": "monster_returned_to_deck", "target_instance_id": "hall-monster",
+                         "hall_zone": "hall:main", "deck_zone": "dungeon:main", "rank": 4,
+                         "position": "bottom", "hall_rank_count": 3, "private_order": ["secret-dungeon"]}]
+        view = build_match_view(match, 1)
+        event = view["event_log"][0]
+        self.assertEqual(event["hall_rank_count"], 3)
+        self.assertEqual(event["deck_zone"], "dungeon:main")
+        self.assertEqual(event["card_id"], match.state["instances"]["hall-monster"]["card_id"])
+        self.assertNotIn("target_instance_id", event)
+        self.assertNotIn("private_order", event)
+
     def test_own_cards_and_public_board_without_hidden_ids_or_definitions(self):
         match = sample_match()
         view = build_match_view(match, 1)
@@ -69,6 +151,67 @@ class MatchProjectionTests(unittest.TestCase):
 
 
 class MatchInteractionProjectionTests(unittest.TestCase):
+    def test_pending_disease_is_public_without_raw_instance_or_replacement_continuations(self):
+        match = sample_match()
+        match.catalog_snapshot["cards"]["TS-0714"] = {"card_id": "TS-0714", "name": "疾病", "tags": "疾病", "effect_text": "攻击 -1。"}
+        match.state["instances"]["secret-disease-instance"] = {"card_id": "TS-0714", "flags": {"secret": "secret-flag"}}
+        match.state["zones"]["pending:disease"] = ["secret-disease-instance"]
+        match.state["pending_choice"] = {"kind": "disease_replacement", "player_id": "alice", "stage": "recipient", "options": ["bob"]}
+        match.state["resolution_frames"] = [{"kind": "disease_gain", "gain": {"instance_id": "secret-disease-instance", "gain_id": "DG-10",
+                                                "player_id": "alice", "used_sources": ["secret-source"]}}]
+        for user_id in (1, 2):
+            view = build_match_view(match, user_id, legal_commands=[{"type": "ResolveDiseaseReplacement", "stage": "recipient", "may_decline": True, "options": ["bob"]}])
+            self.assertEqual(view["pending_disease"], {"gain_id": "DG-10", "card_id": "TS-0714", "player_id": "alice"})
+            self.assertIn("TS-0714", view["cards"])
+            self.assertNotIn("secret-disease-instance", json.dumps(view))
+            self.assertNotIn("secret-source", json.dumps(view))
+            if user_id == 1:
+                self.assertTrue(view["legal_commands"][0]["may_decline"])
+            else:
+                self.assertEqual(view["legal_commands"], [])
+
+    def test_disease_events_preserve_public_card_after_deletion_but_exclude_sampling_and_private_identity(self):
+        rows = event_view([{"kind": kind, "sequence": index, "gain_id": "DG-1", "card_id": "TS-0714",
+                            "instance_id": "secret-disease", "roll": 12, "candidates": ["secret-next"], "destination": "player:alice:discard"}
+                           for index, kind in enumerate(("disease_gain_started", "disease_gain_destroyed", "disease_gain_completed"), 1)], {}, lambda _: None)
+        self.assertTrue(all(row["card_id"] == "TS-0714" and row["gain_id"] == "DG-1" for row in rows))
+        self.assertEqual(rows[2]["destination"], "discard")
+        self.assertNotIn("secret-", json.dumps(rows))
+        self.assertNotIn("roll", json.dumps(rows))
+
+    def test_disease_origin_exposes_only_public_monster_card_and_hall_position(self):
+        row = event_view([{"kind": "disease_gain_started", "sequence": 1, "gain_id": "DG-1", "card_id": "TS-0714",
+                           "source_card_id": "TS-0679", "source_hall_zone": "hall:b:rank0", "source_rank": 0,
+                           "source_instance_id": "secret-source", "roll": 42, "deck_order": ["secret-next"]}], {}, lambda _: None)[0]
+        self.assertEqual(row["source_card_id"], "TS-0679")
+        self.assertEqual(row["source_hall_zone"], "hall:b:rank0")
+        self.assertEqual(row["source_rank"], 0)
+        self.assertNotIn("secret", json.dumps(row))
+        self.assertNotIn("roll", row)
+
+    def test_revealed_dungeon_events_supply_animation_origin_without_hidden_instance_or_deck_order(self):
+        instances = {"private-instance": {"card_id": "TS-0009"}}
+        known_cards = set()
+        for kind in ("trap_revealed", "treasure_claimed", "hall_card_entered"):
+            row = event_view([{"kind": kind, "sequence": 1, "instance_id": "private-instance",
+                               "hall_zone": "hall:b", "origin": "deck", "rank": 3,
+                               "deck_order": ["private-instance", "secret-next"]}], instances, known_cards.add)[0]
+            self.assertEqual(row["hall_zone"], "hall:b")
+            self.assertEqual(row["card_id"], "TS-0009")
+            if kind != "hall_card_entered":
+                self.assertEqual(row["origin"], "deck")
+            self.assertNotIn("private-instance", json.dumps(row))
+            self.assertNotIn("secret-next", json.dumps(row))
+        self.assertIn("TS-0009", known_cards)
+
+    def test_unequip_intent_and_projection_preserve_only_the_instance_selection(self):
+        from backend.app.modules.matches.command_schemas import InstanceAction
+        intent = InstanceAction(type="UnequipWeapon", instance_id="alice-hand")
+        self.assertEqual(intent.model_dump(), {"type": "UnequipWeapon", "instance_id": "alice-hand"})
+        match = sample_match()
+        view = build_match_view(match, 1, legal_commands=[{"type": "UnequipWeapon", "instance_ids": ["alice-hand"], "private": "secret"}])
+        self.assertEqual(view["legal_commands"], [{"type": "UnequipWeapon", "instance_ids": ["alice-hand"]}])
+
     def test_every_choice_kind_is_actionable_only_by_its_recipient(self):
         choices = [
             ("effect_select", {"type": "ResolveChoice", "instance_ids": ["alice-hand"],
@@ -159,6 +302,7 @@ class MatchInteractionProjectionTests(unittest.TestCase):
         match.status = "finished"
         match.state["phase"] = "SETTLING"
         match.state["result"] = {"players": {"alice": {"victory_points": 7, "thunderstones": 1,
+                                                      "card_victory_points": 4, "experience_points": 3,
                                                       "cards": [{"instance_id": "secret-alice-draw"}]}},
                                   "winner_ids": ["alice"], "tie_break": None}
         match.events = [
@@ -171,7 +315,8 @@ class MatchInteractionProjectionTests(unittest.TestCase):
         view = build_match_view(match, 1, legal_commands=[{"type": "FinishTurn"}])
         self.assertEqual(view["legal_commands"], [])
         self.assertIsNone(view["actor_player_id"])
-        self.assertEqual(view["result"]["players"]["alice"], {"victory_points": 7, "thunderstones": 1, "eliminated": False})
+        self.assertEqual(view["result"]["players"]["alice"], {"victory_points": 7, "thunderstones": 1,
+                         "card_victory_points": 4, "experience_points": 3, "eliminated": False})
         self.assertEqual(view["event_log"][0], {"kind": "player_deck_shuffled", "sequence": 1})
         self.assertEqual(view["event_log"][1], {"kind": "cards_drawn", "sequence": 2, "player_id": "bob", "count": 1})
         self.assertEqual(view["event_log"][2]["calculation"], {"attack": 5})
@@ -203,10 +348,33 @@ class MatchInteractionProjectionTests(unittest.TestCase):
         self.assertNotIn("secret-bob-hand", json.dumps(view))
         self.assertNotIn("private-", json.dumps(view))
 
-    def test_legacy_target_command_is_not_advertised_by_the_formal_api(self):
+    def test_target_command_is_allowlisted_separately_from_team_submission(self):
         view = build_match_view(sample_match(), 1, legal_commands=[
             {"type": "DeclareBattleTarget", "instance_ids": ["hall-monster"]},
             {"type": "SubmitBattleTeam", "target_instance_ids": ["hall-monster"], "requires_draft": True},
         ])
-        self.assertEqual([item["type"] for item in view["legal_commands"]], ["SubmitBattleTeam"])
+        self.assertEqual([item["type"] for item in view["legal_commands"]], ["DeclareBattleTarget", "SubmitBattleTeam"])
+        self.assertEqual(view["legal_commands"][0]["instance_ids"], ["hall-monster"])
+        self.assertNotIn("target_instance_ids", view["legal_commands"][1])
+
+    def test_effect_supply_gain_exposes_animation_origin_without_private_instance_or_continuation(self):
+        match = sample_match()
+        match.events = [{"kind": kind, "sequence": i, "player_id": "alice", "card_id": "TS-0001",
+                         "source": "basic_supply:TS-0001", "destination": "player:alice:discard",
+                         "instance_id": "private-instance", "ability_id": "private-ability", "bindings": {"private": True}}
+                        for i, kind in enumerate(("effect_card_gained", "effect_purchase_completed"), 1)]
+        view = build_match_view(match, 1)
+        self.assertEqual(len(view["event_log"]), 2)
+        for event in view["event_log"]:
+            self.assertEqual(event["source"], "basic_supply:TS-0001")
+            self.assertEqual(event["destination"], "discard")
+            self.assertEqual(event["player_id"], "alice")
+        self.assertNotIn("private", json.dumps(view["event_log"]))
+
+    def test_declaration_retains_visible_committed_team_for_active_player_only(self):
+        match = sample_match(); match.state["subphase"] = "DUNGEON_DECLARE"
+        preparation = {"context": {"cards": {}}, "options": {}, "draft": {"hero_instance_ids": ["alice-hand"]}}
+        own = build_match_view(match, 1, battle_preparation=preparation)
+        self.assertEqual(own["battle_preparation"], preparation)
+        self.assertIsNone(build_match_view(match, 2, battle_preparation=preparation)["battle_preparation"])
 

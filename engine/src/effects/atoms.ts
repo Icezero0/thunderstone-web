@@ -1,5 +1,5 @@
 import {RuleError} from '../types.js';
-import {matches} from '../catalog/cards.js';
+import {isHero, isMilitia, matches} from '../catalog/cards.js';
 import {EffectEvaluation} from './evaluator.js';
 import {evaluateCost} from './costs.js';
 import {planCardModifier, planMonsterHealthModifier} from './modifiers.js';
@@ -11,6 +11,7 @@ import {shuffleDestroyedTraps} from '../turn/hall.js';
 import {dungeonZone} from './choice-transition.js';
 import {reconcileEquipment, equipmentPairs} from '../battle/equipment.js';
 import type {Transition} from '../turn/transaction.js';
+import {recordCardStatus, statStatus} from '../battle/statuses.js';
 
 const evaluator = (tx: Transition) => new EffectEvaluation(tx.evaluation());
 const expr = (tx: Transition, spec: any, bindings: any) => evaluator(tx).expression(spec, bindings);
@@ -60,12 +61,17 @@ export function atom(tx: Transition, node: any, initialBindings: Record<string, 
         battle_context: tx.state.battle_context, source_instance_id: bindings.source ?? null});
       if ('battle_context' in result) tx.state.battle_context = result.battle_context;
       else tx.state.players[result.player_id][result.field] = result.value;
+      if ('battle_context' in result && bindings.source) {
+        const sources = tx.state.battle_context.modifier_sources;
+        if (sources?.length) sources[sources.length - 1].source_card_id = tx.printedCard(bindings.source).card_id;
+      }
       tx.event('effect_resource_changed', {ability_id: abilityId, op, player_id: subject, amount}); return;
     }
     case 'mod_card': {
       const patch = planCardModifier({evaluation: tx.evaluation(), node, bindings, subphase: tx.state.subphase});
       const context = tx.state.battle_context;
       ((context.card_modifiers ??= {})[patch.instance_id] ??= {})[patch.field] = patch.value;
+      if (patch.amount) recordCardStatus(tx, patch.instance_id, bindings.source, abilityId, patch.amount > 0 ? 'buff' : 'debuff', statStatus(patch.field, patch.amount));
       tx.event('effect_card_modified', {ability_id: abilityId, instance_id: patch.instance_id,
         stat: patch.field, amount: patch.amount});
       if (patch.reconcile_equipment) reconcileEquipment(tx, tx.state.subphase === 'BATTLE_EFFECTS');
@@ -74,6 +80,8 @@ export function atom(tx: Transition, node: any, initialBindings: Record<string, 
     case 'mod_monster_health': {
       const patch = planMonsterHealthModifier({evaluation: tx.evaluation(), node, bindings});
       (tx.state.battle_context.monster_health_modifiers ??= {})[patch.instance_id] = patch.value;
+      const amount = expr(tx, node.amount, bindings);
+      if (amount) recordCardStatus(tx, patch.instance_id, bindings.source, abilityId, amount > 0 ? 'buff' : 'debuff', statStatus('health', amount));
       return;
     }
     case 'collect': case 'clear_collection': {
@@ -85,18 +93,21 @@ export function atom(tx: Transition, node: any, initialBindings: Record<string, 
     }
     case 'add_global_rule': {
       const rule = Object.fromEntries(['kind', 'until', 'scope', 'amount'].map(key => [key, node[key]]));
-      Object.assign(rule, {player_id: tx.playerId, source_instance_id: bindings.source, created_turn: tx.state.turn_number});
+      Object.assign(rule, {player_id: tx.playerId, source_instance_id: bindings.source,
+        source_card_id: bindings.source ? tx.card(bindings.source).card_id : tx.ruleset.abilities.find(ability => ability.id === abilityId)?.source_card_id,
+        created_turn: tx.state.turn_number});
       tx.state.continuous_effects.push(rule);
       tx.event('continuous_rule_added', {rule, ability_id: abilityId}); return;
     }
     case 'copy_hero': {
       const target = bound(bindings, node.target), other = bound(bindings, node.other);
       if (target === other || !tx.zone('hand').includes(target) || !tx.zone('hand').includes(other) ||
-          tx.card(target).card_id !== 'TS-0001' || !tx.card(other).tags.split('|').includes('英雄'))
+          !isMilitia(tx.card(target)) || !isHero(tx.card(other)))
         throw new RuleError('hero copying requires a militia and a different hand hero');
       const cardIds = [tx.card(other).card_id, ...(tx.state.copied_heroes?.[other]?.card_ids ?? [])];
       (tx.state.copied_heroes ??= {})[target] = {card_ids: [...new Set(cardIds)],
         preserve_attack: node.preserve_attack, full_card: node.full_card ?? false};
+      recordCardStatus(tx, target, bindings.source, abilityId, 'buff', `复制${tx.card(other).name}的能力`);
       tx.event('hero_abilities_copied', {instance_id: target, template_instance_id: other,
         preserve_attack: node.preserve_attack}); return;
     }
@@ -131,8 +142,11 @@ export function atom(tx: Transition, node: any, initialBindings: Record<string, 
       }
       return;
     }
-    case 'convert_card_magic':
-      (tx.state.battle_context.convert_card_magic ??= []).push(bound(bindings, node.target)); return;
+    case 'convert_card_magic': {
+      const target = bound(bindings, node.target);
+      (tx.state.battle_context.convert_card_magic ??= []).push(target);
+      recordCardStatus(tx, target, bindings.source, abilityId, 'buff', '攻击转化为魔法攻击'); return;
+    }
     case 'grant_turn_buff': {
       const instance = bound(bindings, node.target);
       const result = grantTurnBuff({instance: tx.state.instances[instance] ?? null,
@@ -152,6 +166,8 @@ export function atom(tx: Transition, node: any, initialBindings: Record<string, 
       if (op === 'mark_destroy') tx.state.instances[instance].flags[
         (node.when ?? 'after_battle') === 'after_battle' ? 'pending_after_battle_destruction' : 'pending_turn_end_destruction'] = true;
       else (tx.state.battle_context.excluded_participants ??= []).push(instance);
+      recordCardStatus(tx, instance, bindings.source, abilityId, op === 'mark_destroy' ? 'destroy' : 'debuff', op === 'exclude_combat' ? '不参与本场战斗'
+        : (node.when ?? 'after_battle') === 'after_battle' ? '本场战斗结束后摧毁，仍参与本场战斗结算' : '本回合结束时摧毁');
       tx.event('effect_card_marked', {ability_id: abilityId, instance_id: instance,
         mark: op, timing: node.when ?? 'after_battle'}); return;
     }
@@ -200,7 +216,10 @@ export function atom(tx: Transition, node: any, initialBindings: Record<string, 
     }
     case 'set_battle_flag':
       if (!tx.state.battle_context) throw new RuleError('battle flag needs dungeon preparation');
-      tx.state.battle_context[node.flag] = node.value; return;
+      tx.state.battle_context[node.flag] = node.value;
+      (tx.state.battle_context.flag_sources ??= {})[node.flag] = bindings.source ? tx.card(bindings.source).card_id
+        : tx.ruleset.abilities.find(ability => ability.id === abilityId)?.source_card_id;
+      return;
     case 'scale_damage': {
       const context = tx.state.battle_context, divisor = node.divisor;
       if (!context || !Number.isSafeInteger(divisor) || divisor < 1 || divisor > 100)
@@ -208,6 +227,7 @@ export function atom(tx: Transition, node: any, initialBindings: Record<string, 
       const combined = (context.damage_divisor ?? 1) * divisor;
       if (!Number.isSafeInteger(combined)) throw new RuleError('battle damage divisor exceeds numeric bounds');
       context.damage_divisor = combined;
+      if (bindings.source) recordCardStatus(tx, bindings.source, bindings.source, abilityId, 'debuff', `队伍总攻击除以 ${divisor}（向下取整）`);
       tx.event('effect_damage_scaled', {ability_id: abilityId, divisor, combined_divisor: combined});
       return;
     }

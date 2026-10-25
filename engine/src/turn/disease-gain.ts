@@ -7,6 +7,10 @@ export interface DiseaseGain {
   draw_top?: boolean;
   used_sources: string[];
   ability_id?: string|null;
+  /** Public identifier for this gain event, never the owned card's instance ID. */
+  gain_id?: string;
+  /** Public animation origin captured before replacement/redirect continuations. */
+  monster_source?: {source_card_id: string; source_hall_zone: string; source_rank: number};
 }
 export interface DiseaseReplacementRule {
   id: string;
@@ -101,27 +105,35 @@ export function planDiseaseGain(input: DiseaseGainPlanInput): DiseaseGainPlan {
       actions.push({op: 'destroy', instance_id: gain.instance_id, reason: option.ability_id});
       return true;
     }
-    gain.destination = 'discard';
     return false;
   };
   const redirect = (recipient: string) => {
     const previous = gain.player_id;
     gain.player_id = recipient;
+    gain.destination = 'discard';
     actions.push({op: 'redirect', instance_id: gain.instance_id, from_player_id: previous,
       to_player_id: recipient, ability_id: gain.ability_id!});
+  };
+  const accept = (): DiseaseGainPlan => {
+    // Declining optional redirection never overrides mandatory disease removal.
+    const mandatory = sources().find(option => option.action === 'destroy');
+    if (mandatory) applySource(mandatory);
+    else actions.push({op: 'complete', gain: copyGain(gain)});
+    return result(true);
   };
   if (input.mode === 'resolve') {
     if (choice!.stage === 'source') {
       const saved = choice!.options as DiseaseSourceOption[];
+      if (input.source_instance_id == null && input.recipient_id == null && saved.some(option => option.action === 'redirect')) return accept();
       const selected = sources().find(option =>
         option.source_instance_id === input.source_instance_id && saved.some(item => sameOption(option, item)));
       if (!selected || input.recipient_id != null) throw new RuleError('invalid disease replacement source');
       if (applySource(selected)) return result(true);
       const recipients = others();
-      if (recipients.length > 1) return pause('recipient', recipients);
       if (!recipients.length) throw new RuleError('disease redirection has no recipient');
-      redirect(recipients[0]);
+      return pause('recipient', recipients);
     } else if (choice!.stage === 'recipient') {
+      if (input.source_instance_id == null && input.recipient_id == null) return accept();
       const selected = input.recipient_id;
       if (input.source_instance_id != null || !selected ||
           !(choice!.options as string[]).includes(selected) || !activePlayers().includes(selected)) {
@@ -132,18 +144,14 @@ export function planDiseaseGain(input: DiseaseGainPlanInput): DiseaseGainPlan {
       throw new RuleError('invalid disease replacement continuation');
     }
   }
-  for (let count = 0; count <= input.instance_count; count++) {
-    const options = sources();
-    if (!options.length) {
-      actions.push({op: 'complete', gain: copyGain(gain)});
-      return result(true);
-    }
-    if (options.length > 1) return pause('source', options);
-    if (applySource(options[0])) return result(true);
-    const recipients = others();
-    if (recipients.length > 1) return pause('recipient', recipients);
-    if (!recipients.length) throw new RuleError('disease redirection has no recipient');
-    redirect(recipients[0]);
+  const options = sources();
+  if (!options.length) {
+    actions.push({op: 'complete', gain: copyGain(gain)});
+    return result(true);
   }
-  throw new RuleError('disease replacement failed to consume a source');
+  if (options.length > 1 && !options.every(option => option.action === 'destroy')) return pause('source', options);
+  if (applySource(options[0])) return result(true);
+  const recipients = others();
+  if (!recipients.length) throw new RuleError('disease redirection has no recipient');
+  return pause('recipient', recipients);
 }

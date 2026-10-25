@@ -19,7 +19,8 @@ export function resolveRevealCycle(tx: Transition, predicate: any, goal: number,
       const instance = draw[0], zone = revealed[player] ??= `player:${player}:revealed_cycle_${tx.state.next_event_sequence}`;
       tx.state.zones[zone] ??= [];
       tx.move(instance, `player:${player}:draw`, zone);
-      tx.event('cards_revealed', {player_id: player, instance_ids: [instance], ability_id: abilityId});
+      tx.event('cards_revealed', {player_id: player, instance_ids: [instance], ability_id: abilityId,
+        zone, origin: `player:${player}:draw`, visible_to: [player], public: true});
       shown++;
       if (matches(tx.card(instance), predicate)) {
         tx.destroyCard(instance, abilityId); destroyed++;

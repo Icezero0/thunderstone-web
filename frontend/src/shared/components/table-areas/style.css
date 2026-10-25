@@ -17,6 +17,9 @@
 .public-pile-count {color: var(--header-gold); font-size: 12px; line-height: 1.35; font-variant-numeric: tabular-nums; flex: none;}
 .hall-rank-label {height: 33px; margin: 0; font: 11px/1.35 var(--font-body); color: var(--header-muted);}
 .hall-rank[data-rank="0"] .hall-rank-label {color: var(--header-gold);}
+.dungeon-rank-ghost {position: absolute; pointer-events: none; transform-origin: left center; color: var(--header-muted);}
+.dungeon-rank-ghost .hall-empty {height: auto; border-radius: 7px;}
+.dungeon-rank-ghost[data-rank="0"] .hall-rank-label {color: var(--header-gold);}
 .hall-card-slot, .hall-empty {height: calc(var(--card-width) * 1.3968254);}
 .hall-empty {display: grid; place-content: center; border: 1px dashed var(--header-line); border-radius: var(--card-radius); color: var(--header-muted); font-size: 10px;}
 .village-groups {display: grid; grid-template-columns: 1fr; gap: 18px;}
@@ -30,6 +33,7 @@
 .supply-browser-grid {--card-width: 244px; --card-radius: 10px; display: grid; grid-template-columns: repeat(var(--supply-level-count, 3), minmax(0, 1fr)); gap: 16px; padding: 24px;}
 .supply-browser-card {display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 14px 12px 16px; min-width: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-subtle);}
 .supply-browser-card[data-current="true"] {border-color: var(--gold); background: var(--surface-selected);}
+.dungeon-area .physical-card[data-selected="true"] .card-face {border: 2px solid var(--header-gold); box-shadow: 0 0 0 2px var(--header-gold);}
 .supply-level-heading {display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 24px;}
 .supply-level-badge {padding: 3px 9px; border-radius: 5px; background: var(--gold-soft); color: var(--gold-ink); font-size: 12px; font-weight: 700; white-space: nowrap;}
 .supply-level-status {color: var(--gold-ink); font-size: 11px; white-space: nowrap;}

@@ -2,7 +2,7 @@ import {isMonster, isThunderstone, stat, tags} from '../catalog/cards.js';
 import type {Card, Instance, Mechanic} from '../types.js';
 
 export interface ScoringInput {
-  state: {player_order: string[]; players: Record<string, {eliminated?: boolean}>; instances: Record<string, Instance>};
+  state: {player_order: string[]; players: Record<string, {eliminated?: boolean; xp?: number}>; instances: Record<string, Instance>};
   cards: Record<string, Card>; mechanics: Mechanic[];
 }
 export function scoreGame({state, cards, mechanics}: ScoringInput) {
@@ -28,7 +28,10 @@ export function scoreGame({state, cards, mechanics}: ScoringInput) {
       }
       return {instance_id: id, card_id: definition.card_id, victory_points: points, ability_ids: applied};
     });
-    return [player, {victory_points: entries.reduce((sum, item) => sum + item.victory_points, 0), thunderstones: stones, cards: entries}];
+    const cardPoints = entries.reduce((sum, item) => sum + item.victory_points, 0);
+    const experiencePoints = state.players[player].xp ?? 0;
+    return [player, {victory_points: cardPoints + experiencePoints, card_victory_points: cardPoints,
+      experience_points: experiencePoints, thunderstones: stones, cards: entries}];
   }));
   const maximum = eligible.length ? Math.max(...eligible.map(player => players[player].victory_points)) : 0;
   const winners = eligible.filter(player => players[player].victory_points === maximum);

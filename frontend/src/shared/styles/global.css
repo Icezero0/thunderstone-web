@@ -42,6 +42,7 @@
   --game-action-violet: #cbb7e6;
   --game-action-blue: #a3cedf;
   --game-action-red: #f0a59b;
+  --game-action-green: #a8d5b3;
   --header-line: rgba(255, 255, 255, .12);
   --header-background:
     radial-gradient(
@@ -141,6 +142,114 @@ code {
   border-radius: var(--radius-control);
   background: var(--control-background);
   color: var(--ink);
+}
+/* Shared single-choice controls; keep native form events and keyboard behavior. */
+select:not([multiple]):not([size]) {
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 42px;
+  padding: 10px 38px 10px 13px;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  background-color: var(--panel);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%237b6039' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 13px center;
+  background-size: 16px;
+  color: var(--ink);
+  cursor: pointer;
+}
+select:not([multiple]):not([size]):hover:not(:disabled) {
+  border-color: var(--gold);
+  background-color: var(--surface-selected);
+}
+select:not([multiple]):not([size]):focus-visible {
+  border-color: var(--gold);
+}
+select:not([multiple]):not([size]):disabled {
+  background-color: var(--surface-subtle);
+  color: var(--muted);
+  cursor: not-allowed;
+  opacity: .65;
+}
+/* Customizable native pickers also theme the expanded menu on supporting browsers.
+   Others retain their native menu with the styled closed control above. */
+@supports (appearance: base-select) and selector(::picker(select)) {
+  select:not([multiple]):not([size]),
+  select:not([multiple]):not([size])::picker(select) {
+    appearance: base-select;
+  }
+  select:not([multiple]):not([size]) {
+    align-items: center;
+    gap: 12px;
+    padding-right: 15px;
+    background-image: none;
+  }
+  select:not([multiple]):not([size])::picker-icon {
+    content: '';
+    flex: 0 0 auto;
+    width: 7px;
+    height: 7px;
+    margin: -4px 2px 0 auto;
+    border-right: 1.7px solid var(--gold-ink);
+    border-bottom: 1.7px solid var(--gold-ink);
+    transform: rotate(45deg);
+  }
+  select:not([multiple]):not([size]):open {
+    border-color: var(--gold);
+    background-color: var(--surface-selected);
+  }
+  select:not([multiple]):not([size]):open::picker-icon {
+    margin-top: 3px;
+    transform: rotate(225deg);
+  }
+  select:not([multiple]):not([size])::picker(select) {
+    margin-block: 6px;
+    padding: 5px;
+    min-inline-size: anchor-size(self-inline);
+    max-block-size: min(360px, 60vh);
+    overflow-y: auto;
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    background: var(--panel);
+    color: var(--ink);
+    box-shadow: 0 12px 28px rgba(23, 38, 49, .16);
+    scrollbar-width: thin;
+    scrollbar-color: var(--control-border) transparent;
+  }
+  select:not([multiple]):not([size]) option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 38px;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--ink);
+    font: 14px/1.5 var(--font-body);
+    cursor: pointer;
+  }
+  select:not([multiple]):not([size]) option:checked {
+    background: var(--gold-soft);
+    color: var(--gold-ink);
+    font-weight: 700;
+  }
+  select:not([multiple]):not([size]) option:hover,
+  select:not([multiple]):not([size]) option:focus-visible {
+    background: var(--secondary-hover);
+    outline: none;
+  }
+  select:not([multiple]):not([size]) option::checkmark {
+    order: 1;
+    margin-left: auto;
+    color: var(--gold-ink);
+  }
+  select:not([multiple]):not([size]) option:disabled {
+    color: var(--muted);
+    opacity: .55;
+    cursor: not-allowed;
+  }
 }
 input[type=checkbox],
 input[type=radio],
@@ -385,4 +494,8 @@ footer {
   html {
     scroll-behavior: auto;
   }
+}
+/* Shared hint for a legal effect target on an inactive game tab. */
+:where(.public-area-tab, .player-card-tab)[data-attention="true"] {
+  color: var(--header-gold); box-shadow: inset 0 -2px 0 var(--header-gold), 0 0 10px rgb(205 166 95 / 20%);
 }

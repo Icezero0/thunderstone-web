@@ -20,6 +20,8 @@ export class VillageArea {
   private readonly prefix: string;
   private disposed = false;
   private highlighted = new Map<string, number>();
+  private targets = new Set<string>();
+  private selected = new Set<string>();
   get isBrowsing(): boolean {return this.browser.pileId !== null;}
 
   constructor(host: HTMLElement, private options: VillageOptions = {}) {
@@ -103,8 +105,10 @@ export class VillageArea {
   closeSupply(restoreFocus = true): void {this.browser.close(restoreFocus);}
   /** Capture before replacing a depleted pile's top. Never expose hidden supply order. */
   topCardRect(cardId: string): DOMRect | null {
-    if (this.disposed) return null;
-    for (let element: HTMLElement | null = this.root; element; element = element.parentElement) if (element.hidden || element.inert) return null;
+    if (this.disposed || !this.root.isConnected) return null;
+    // Animation locks interaction with inert before framing its supply origin.
+    // A locked card is still visible: geometry must not depend on clickability.
+    for (let element: HTMLElement | null = this.root; element; element = element.parentElement) if (element.hidden) return null;
     const pile = this.state.piles.find(pile => supplyTop(pile)?.cardId === cardId);
     const rect = pile && this.entries.get(pile.id)?.card?.elements.surface.getBoundingClientRect();
     return rect && rect.width > 0 && rect.height > 0 ? rect : null;
@@ -114,9 +118,15 @@ export class VillageArea {
     this.highlighted = new Map(options.map(item => [item.cardId, item.price]));
     for (const pile of this.state.piles) {const view = this.entries.get(pile.id); if (view) this.highlight(pile, view);}
   }
+  setCardSelection(highlighted: readonly string[], selected: readonly string[]): void {
+    this.targets = new Set(highlighted); this.selected = new Set(selected);
+    this.browser.setCardTargets(highlighted, selected);
+    for (const pile of this.state.piles) {const view = this.entries.get(pile.id); if (view) this.highlight(pile, view);}
+  }
   private highlight(pile: SupplyPile, view: PileView): void {
     const top = supplyTop(pile), price = top && this.highlighted.get(top.cardId);
-    view.card?.setGlow(price !== undefined);
+    view.card?.setGlow(price !== undefined || pile.cards.some(card => this.targets.has(card.cardId)));
+    view.card?.setActive(!!top && this.selected.has(top.cardId));
     view.root.dataset.purchasePrice = price === undefined ? '' : String(price);
     if (view.card) {
       view.card.elements.button.dataset.purchasePrice = price === undefined ? '' : String(price);

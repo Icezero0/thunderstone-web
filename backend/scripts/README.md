@@ -13,3 +13,5 @@
 | 审计效果覆盖及分类／标签判断 | `effects/audit_effects.py`、`effects/audit_effect_identity.py` |
 
 效果生成脚本仍是规则维护工具，测试和覆盖审计依赖它们的产物。一次性的资产清洗、排序和 TTS 数量导入脚本位于 `archive/legacy-code/`。
+
+`effects/audit_effect_identity.py` 默认只读输出 JSON 汇总，扫描分类、具体卡牌编号、装备者身份、同名及系列谓词。可用 `--output cards/reports/effect-identity-inventory.md` 导出原始清单；人工审核结论保存在 `docs/game-engine/effect-identity-audit.md`，不由生成器覆盖。

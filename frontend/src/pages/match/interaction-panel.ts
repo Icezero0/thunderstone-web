@@ -1,6 +1,6 @@
 import {$, el} from './dom.js';
 
-/** Shared dialog shell for local card actions and authoritative effect responses. */
+/** A card action menu; card targets are always selected on the table. */
 export class InteractionPanel {
   readonly root = el('section', 'match-interaction-panel browse-dialog game-cursor');
   readonly body = el('div', 'match-interaction-body browse-dialog-body');

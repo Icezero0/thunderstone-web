@@ -2,8 +2,3 @@
 .match-interaction-panel .match-interaction-body {padding: 20px 24px 24px;}
 .match-card-abilities {display: grid; gap: 12px;}
 .match-card-abilities > button {text-align: left; white-space: pre-line; line-height: 1.7; padding: 14px 18px;}
-.match-upgrade-options {display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px;}
-.match-upgrade-option {--card-width: 170px; --card-radius: 7px; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 12px; border: 1px solid var(--line); border-radius: 8px;}
-.match-upgrade-option > .button {white-space: normal; width: 100%; font-size: 12px; font-variant-numeric: tabular-nums;}
-#match-effect-response #turn-controls > .section-heading {display: none;}
-#match-effect-response #turn-controls-note {white-space: pre-line;}

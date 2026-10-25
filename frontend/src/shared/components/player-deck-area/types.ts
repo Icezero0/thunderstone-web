@@ -1,8 +1,13 @@
 /** A visible card instance. id identifies the instance; cardId selects its catalog image. */
-export interface PlayerDeckCard {readonly id: string; readonly cardId: string; readonly name: string;}
+import type {CardStatus, CardAttachment} from '../game-card/types.js';
+export interface PlayerDeckCard {readonly id: string; readonly cardId: string; readonly name: string; readonly statuses?: readonly CardStatus[]; readonly attachments?: readonly CardAttachment[];}
 export interface PlayerAuxiliaryCard extends PlayerDeckCard {readonly faceUp?: boolean;}
-export type PlayerCardTab = 'hand' | 'treasures' | 'aside';
+export type PlayerCardTab = 'hand' | 'treasures' | 'aside' | 'revealed';
 export interface PlayerResources {readonly xp: number; readonly gold?: number; readonly goldIncomePreview?: number;}
+export interface HandBattleDisplay {
+  readonly mandatoryIds: readonly string[];
+  readonly equipment: Readonly<Record<string, readonly string[]>>;
+}
 
 /** Presentation data supplied by the host. Draw top is first; discard top is last. */
 export interface PlayerDeckState {
@@ -11,6 +16,7 @@ export interface PlayerDeckState {
   readonly discard: readonly PlayerDeckCard[];
   readonly treasures?: readonly PlayerAuxiliaryCard[];
   readonly aside?: readonly PlayerAuxiliaryCard[];
+  readonly revealed?: readonly PlayerAuxiliaryCard[];
 }
 
 /** The host supplies phase text and optional choices, and explicitly clears or replaces the display. */
@@ -18,6 +24,7 @@ export interface PlayerResponseChoice {
   readonly id: string;
   readonly label: string;
   readonly disabled?: boolean;
+  readonly pressed?: boolean;
   readonly tone?: 'gold' | 'violet' | 'blue' | 'red';
 }
 export interface PlayerResponse {
@@ -29,6 +36,10 @@ export interface PlayerResponse {
   readonly progress?: {readonly action: string; readonly stage: string; readonly step: number; readonly total: number};
   readonly selectedId?: string;
   readonly disabled?: boolean;
+  readonly error?: string;
+  readonly battlePreview?: {readonly outcome: 'win' | 'loss' | 'cannot_attack' | 'unknown'; readonly rank: number; readonly total: number};
+  readonly combat?: {readonly attack: number; readonly magicAttack: number; readonly light: number;
+    readonly versusTarget?: {readonly attack: number; readonly magicAttack: number; readonly light: number}};
 }
 
 export interface DeckTransition {kind: 'draw' | 'discard'; instanceIds: readonly string[];}
@@ -37,8 +48,9 @@ export interface CardFlightOrigin {readonly left: number; readonly top: number; 
 /** Intermediate snapshots are supplied by the host; animations never decide game outcomes. */
 export type DeckAnimationStep = {state: PlayerDeckState} & (
   {kind: 'draw' | 'discard' | 'destroy'; instanceIds: readonly string[]}
+  | {kind: 'transfer'; instanceIds: readonly string[]; source: keyof PlayerDeckState; destination: keyof PlayerDeckState; fast?: boolean}
   | {kind: 'upgrade'; sourceInstanceId: string; targetInstanceId: string}
-  | {kind: 'gain'; instanceIds: readonly string[]; origins: Readonly<Record<string, CardFlightOrigin>>}
+  | {kind: 'gain'; instanceIds: readonly string[]; origins: Readonly<Record<string, CardFlightOrigin>>; destination?: 'hand' | 'draw' | 'discard'}
   | {kind: 'shuffle'});
 
 export interface PlayerDeckOptions {
@@ -55,6 +67,8 @@ export interface PlayerDeckOptions {
   onSelectionChange?: (instanceIds: readonly string[]) => void;
   /** Return true to consume a click instead of toggling the ordinary selection. */
   onHandCardClick?: (instanceId: string) => boolean | void;
+  /** Cards in their original auxiliary area or draw/discard browser. */
+  onCardTargetClick?: (instanceId: string) => void;
   onHandOrderChange?: (instanceIds: readonly string[]) => void;
   onAutoSortChange?: (enabled: boolean) => void;
   onBusyChange?: (busy: boolean) => void;

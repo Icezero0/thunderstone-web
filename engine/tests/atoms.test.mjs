@@ -49,7 +49,7 @@ test('event dispatch selects hand triggers and consumes one-shot listeners', () 
     listeners: [{event: 'TURN_START', ability_id: 'extra', source_instance_id: 'h',
       body: {op: 'draw', count: 1}, bindings: {}, conditions: [], once: true}], scheduled: [],
     event: 'TURN_START', turn_number: 2, repeatable_ability_ids: []});
-  assert.equal(plan.mode, 'choice');
+  assert.equal(plan.mode, 'sequence');
   assert.deepEqual(plan.consumed_listener_indices, [0]);
   assert.equal(plan.candidates.length, 2);
 });
@@ -147,9 +147,13 @@ function gainInput() {
 }
 test('disease gain replacement redirects once per source and completes', () => {
   const input = gainInput(), plan = rules.planDiseaseGain(input);
-  assert.equal(plan.done, true);
-  assert.deepEqual(plan.actions.map(item => item.op), ['apply_source','redirect','complete']);
-  assert.equal(plan.actions.at(-1).gain.player_id, 'bob');
+  assert.equal(plan.done, false);
+  assert.deepEqual(plan.actions.map(item => item.op), ['apply_source','pause']);
+  const pause = plan.actions.at(-1);
+  const resolved = rules.planDiseaseGain({...input, mode: 'resolve', pending_choice: {kind: 'disease_replacement', player_id: 'alice', stage: 'recipient', options: ['bob']},
+    resolution_frames: [{kind: 'disease_gain', gain: pause.gain}], source_instance_id: null, recipient_id: 'bob'});
+  assert.equal(resolved.done, true); assert.deepEqual(resolved.actions.map(item => item.op), ['redirect', 'complete']);
+  assert.equal(resolved.actions.at(-1).gain.player_id, 'bob');
 });
 test('disease replacement rejects stale source choices', () => {
   const input = gainInput();

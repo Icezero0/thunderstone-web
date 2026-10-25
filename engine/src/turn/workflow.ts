@@ -5,8 +5,8 @@ import {advanceGain} from '../effects/disease-transition.js';
 import {returnBorrowed, diseaseGainSteps} from '../effects/ownership.js';
 import {expireRules, mustEnterDungeon} from '../effects/durations.js';
 import {enterVillage, finishAbilities} from './village.js';
-import {enterDungeon, startCommittedBattle, resolveBattleOutcome, destroyBattleMarks, battleDeparture} from './dungeon.js';
-import {refillStep} from './hall.js';
+import {enterDungeon, awaitBattleDeclaration, startCommittedBattle, resolveBattleOutcome, destroyBattleMarks, battleDeparture} from './dungeon.js';
+import {hallRankCount, refillStep} from './hall.js';
 import {resolveHeartOutcome} from './settlement.js';
 import type {Transition} from './transaction.js';
 import {advanceBattleTeamEquipment} from '../battle/team-transition.js';
@@ -46,6 +46,16 @@ export function runSteps(tx: Transition) {
           else tx.state.resolving_event = step.event;
           break;
         case 'refill_hall': refillStep(tx, step); break;
+        case 'dispose_trap': {
+          const instance = step.instance_id, hall = step.hall_zone;
+          delete tx.state.trap_responses?.[instance];
+          if (tx.location(instance) === hall) {
+            const rank = tx.state.zones[hall].indexOf(instance) + 1;
+            tx.destroyCard(instance, 'trap_resolved');
+            tx.event('trap_removed', {instance_id: instance, hall_zone: hall, rank, hall_rank_count: hallRankCount(tx, hall)});
+          }
+          break;
+        }
         case 'dispose_revealed': {
           const instance = step.instance_id;
           delete tx.state.trap_responses?.[instance];
@@ -57,7 +67,7 @@ export function runSteps(tx: Transition) {
           const hall = step.hall_zone, instance = step.instance_id;
           if (tx.state.zones[hall].includes(instance)) {
             tx.move(instance, hall, `${hall}:rank0`);
-            tx.event('guardian_entered_rank_0', {instance_id: instance, hall_zone: hall});
+            tx.event('guardian_entered_rank_0', {instance_id: instance, hall_zone: hall, hall_rank_count: hallRankCount(tx, hall)});
           }
           break;
         }
@@ -70,17 +80,19 @@ export function runSteps(tx: Transition) {
         case 'cleanup_turn': tx.cleanupTurn(); break;
         case 'resolve_battle_outcome': resolveBattleOutcome(tx); break;
         case 'start_committed_battle': startCommittedBattle(tx, step.target_id); break;
+        case 'await_battle_declaration': awaitBattleDeclaration(tx); break;
         case 'battle_team_equipment': advanceBattleTeamEquipment(tx, step.pairs, step.draft, step.hand); break;
         case 'release_battle_diseases': queueSteps(tx, diseaseGainSteps(tx, step.target_id, step.timing), true); break;
-        case 'destroy_battle_marks': destroyBattleMarks(tx); break;
+        case 'destroy_battle_marks': destroyBattleMarks(tx, step.processed); break;
         case 'destroy_one':
+          if (!tx.state.instances[step.instance_id]?.flags.pending_after_battle_destruction) break;
           if (offerDestroy(tx, step.instance_id, step.reason)) tx.state.effect_resume = 'workflow';
           else tx.destroyCard(step.instance_id, step.reason);
           break;
         case 'battle_departure': battleDeparture(tx); break;
         case 'return_borrowed': returnBorrowed(tx, step.timing); break;
         case 'heart_of_doom_outcome': resolveHeartOutcome(tx, step.instance_id, step.won); break;
-        case 'gain_disease': tx.takeDisease(step.destination ?? 'discard', step.player_id); break;
+        case 'gain_disease': tx.takeDisease(step.destination ?? 'discard', step.player_id, step.source_instance_id); break;
         case 'resolve_disease_gain': advanceGain(tx, step.gain); break;
         case 'effect_continuation':
           if (!runEffect(tx, step.ability_id, step.source_instance_id, step.stack)) tx.state.effect_resume = 'workflow';

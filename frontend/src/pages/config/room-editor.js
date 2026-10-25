@@ -14,7 +14,7 @@ export function createRoomEditor(page, {enginePayload, refresh}) {
     $("#room-editor").hidden = false;
     $("#room-editor-name").textContent = room.name + " · 规则配置";
     $("#setup-panel").hidden = true;
-    $(".hero-copy h1").textContent = "为房间配置这一局。";
+    $(".hero-copy h1").textContent = "游戏配置";
     $(".hero-copy p:last-child").textContent = "调整卡组与地下城特征后，点击“保存至房间”。其他玩家会同步看到新的配置，并重新确认准备状态。";
     $("#draft-note").textContent = "当前显示的是房间配置。页面修改需点击“保存至房间”后才会生效。";
     $("#output-note").textContent = "预检检查参数结构与卡牌目录。保存时服务器会再次校验。";

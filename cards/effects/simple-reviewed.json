@@ -837,7 +837,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_id": "TS-0001"
+            "tag": "民兵"
           }
         }
       ],
@@ -845,7 +845,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_id": "TS-0001"
+          "tag": "民兵"
         },
         "bind": "militia",
         "min": 1,

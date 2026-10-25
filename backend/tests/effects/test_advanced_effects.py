@@ -74,6 +74,8 @@ class AdvancedEffectTests(unittest.TestCase):
                 self.do("ResolveChoice", instance_ids=items)
             elif kind == "effect_order":
                 self.do("ResolveEffectOrder", effect_ids=[r["effect_id"] for r in choice["effects"]])
+            elif kind == "trap_activation":
+                self.do("ResolveTrap", instance_id=choice["instance_id"])
             elif kind == "effect_response":
                 self.do("ResolveResponse")
             elif kind == "effect_value":
@@ -166,6 +168,7 @@ class AdvancedEffectTests(unittest.TestCase):
             self.add("TS-0476", zone="dungeon:main")
         self.do("ActivateAbility", ability_id="TS-0268-A01", source_instance_id=banish)
         self.do("ResolveChoice", instance_id=victim)
+        self.do("ResolveTrap", instance_id=trap)
         if self.state["pending_choice"]["kind"] == "effect_order":
             self.do("ResolveEffectOrder", effect_ids=[r["effect_id"] for r in self.state["pending_choice"]["effects"]])
         self.assertEqual(self.state["pending_choice"]["kind"], "effect_response")
@@ -205,7 +208,7 @@ class AdvancedEffectTests(unittest.TestCase):
             self.add("TS-0476", zone="dungeon:main")
         self.do("ActivateAbility", ability_id="TS-0268-A01", source_instance_id=banish)
         self.do("ResolveChoice", instance_id=victim)
-        self.do("ResolveEffectOrder", effect_ids=[r["effect_id"] for r in self.state["pending_choice"]["effects"]])
+        self.do("ResolveTrap", instance_id=self.state["pending_choice"]["instance_id"])
         self.do("ResolveResponse", source_instance_id=veteran)
         self.do("ResolveResponse", recipient_id=self.other)
         self.do("ResolveResponse", source_instance_id=bandit)

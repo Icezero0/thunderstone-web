@@ -111,7 +111,7 @@ export function resolvePurchase(tx: Transition, cardId: string|null): boolean {
     source_card_id: ability?.source_card_id ?? null, card_id: cardId}).payment_op;
   const steps: Record<string, any>[] = [];
   if (cardId !== null) {
-    steps.push(...buyEffectCard(tx, cardId, choice.filter, choice.destination, choice.ability_id, choice.maximum_cost));
+    steps.push(...buyEffectCard(tx, cardId, choice.filter, choice.destination, choice.ability_id, choice.maximum_cost, choice.payment === 'gold'));
     if (payment) atom(tx, {op: payment, target: {var: 'source'}}, choice.bindings, choice.ability_id);
   }
   tx.state.pending_choice = null; tx.state.resolution_frames = [];

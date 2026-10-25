@@ -15,15 +15,15 @@ export class PlayerResourceDisplay {
     this.xp.id = id('xp-resource'); this.xpValue.id = id('xp-value');
     this.gold.title = '金币'; this.xp.title = '经验值';
     for (const counter of [this.gold, this.xp]) {counter.setAttribute('role', 'status'); counter.setAttribute('aria-live', 'polite');}
-    // Lucide Coins, ISC license: frontend/public/licenses/lucide.txt.
+    // A low stack with an upright coin, drawn at the same weight as combat icons.
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     for (const [key, value] of Object.entries({viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor',
       'stroke-width': '1.8', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', focusable: 'false'})) svg.setAttribute(key, value);
-    for (const d of ['M13.744 17.736a6 6 0 1 1-7.48-7.48', 'M15 6h1v4', 'm6.134 14.768.866-.5 2 3.464']) {
+    for (const d of ['M3 13c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3Z',
+      'M3 13v4c0 1.7 3.1 3 7 3s7-1.3 7-3v-4', 'M3 17v3c0 1.7 3.1 3 7 3s7-1.3 7-3v-3',
+      'M16 3c-2.8 0-5 2.2-5 5v2c3.5.2 6 1.4 6 3v1a5 5 0 0 0-1-11Z', 'M16 6v4']) {
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); path.setAttribute('d', d); svg.append(path);
     }
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('cx', '16'); circle.setAttribute('cy', '8'); circle.setAttribute('r', '6'); svg.append(circle);
     const amount = node('span', 'player-resource-amount'); amount.append(this.goldValue, this.goldPreview);
     this.gold.append(svg, amount); this.xp.append(node('span', 'player-resource-label', 'XP'), this.xpValue);
     root.append(this.gold, this.xp); this.set(null);

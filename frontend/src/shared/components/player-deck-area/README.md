@@ -65,9 +65,10 @@ deck.dispose();
 | `PlayerDeckState.discard` | 当前展示的弃牌堆，末项为堆顶。浏览副本按堆顶到堆底排列。 |
 | `PlayerDeckState.treasures` | 可选的宝藏实例数组；有牌时显示手牌之后的“宝藏”Tab，省略或清空时隐藏。 |
 | `PlayerDeckState.aside` | 可选的旁置实例数组；有牌时显示“旁置”Tab，排列在宝藏之后。 |
+| `PlayerDeckState.revealed` | 可选的临时翻开实例数组；有牌时显示“翻开”Tab。宿主只传入观看者获准查看的牌，支持原位高亮和选卡。 |
 | `PlayerAuxiliaryCard.faceUp` | 宝藏／旁置牌的朝向，默认 `true`。`false` 时桌面及 Alt 检视均只显示牌背。 |
 
-组件复制输入数据，不修改调用方数组或卡牌对象；五个区域之间实例 ID 重复、缺失或改换卡牌身份会被拒绝。自动理牌只作用于手牌，按 `cardId` 升序，同编号的已有实例保留相对顺序。手牌数量没有 probe 的 30 张限制。
+组件复制输入数据，不修改调用方数组或卡牌对象；六个区域之间实例 ID 重复、缺失或改换卡牌身份会被拒绝。自动理牌只作用于手牌，按 `cardId` 升序，同编号的已有实例保留相对顺序。手牌数量没有 probe 的 30 张限制。历史恢复可能在不同分支复用实例编号，此时宿主须调用 `resetState` 清理旧卡面缓存，不能按普通快照更新处理。
 
 初始仅显示“手牌”Tab。新出现的宝藏／旁置不会自动抢占当前视图；当前 Tab 对应的牌全部移走时回到手牌，并处理被隐藏的键盘焦点。切换保留手牌顺序与选中状态，收起旧区域的检视，不重建卡图。Tab 支持左右方向键、Home／End；抽牌堆和弃牌堆始终在两侧。宝藏和旁置使用同样的独立／重叠布局和 Alt 检视，当前仅手牌支持选择及手动排序。
 
@@ -78,16 +79,22 @@ deck.dispose();
 | 接口 | 行为 |
 | --- | --- |
 | `setState(snapshot, options?)` | 直接显示新快照并中断旧动画；已打开的牌堆浏览视窗同步更新卡牌、排序、张数和空状态，保留滚动位置及仍存在的焦点牌。默认保留仍在手牌中的选中和显示顺序。 |
+| `resetState(snapshot)` | 用于新对局或历史恢复。关闭浏览、清理旧卡面和事件绑定，重置选择、装备展示和局部排序；保留用户自动理牌偏好。 |
 | `options.clearSelection` | 清除选中，用于重置演示等场景。 |
 | `options.resetHandOrder` | 放弃现有手动顺序，采用输入顺序；开启自动理牌时仍排序。 |
 | `options.closeBrowser` | 显式关闭浏览视窗，适用于用户重置演示等操作；普通外部快照保持视窗打开。 |
 | `openPileBrowser('draw' \| 'discard')` | 打开指定牌堆的浏览视窗；忙碌或已经浏览时忽略。 |
 | `animateTo(snapshot, {kind, instanceIds})` | 播放 `draw`／`discard` 移动；移动实例必须在前后快照对应的来源和目标区域中。最终状态在开始时确定。 |
 | `shuffleTo(snapshot)` | 用当前弃牌堆的至多 6 张视图播放洗回动画，再显示调用方给出的最终快照；不计算随机次序。 |
-| `destroyTo(snapshot, ids)` | 将指定手牌移至视窗中央、放大后逐渐化为原图色彩的尘埃；这些实例须离开玩家拥有的区域，实际摧毁由宿主先完成。 |
-| `animateSequence(final, steps)` | 顺序播放 `discard`、`draw`、`shuffle`、`destroy`、`gain`、`upgrade` 步骤；每步包含宿主提供的区域快照及相应实例 ID。整个队列持续忙碌，中断直接显示 `final`。 |
+| `destroyTo(snapshot, ids)` | 将指定已拥有的牌移至中央、放大并消散；支持手牌和牌堆中的卡牌，实例须离开所有拥有区域，实际摧毁由宿主先完成。 |
+| `animateSequence(final, steps)` | 顺序播放 `discard`、`draw`、`shuffle`、`destroy`、`gain`、`upgrade`、`transfer` 步骤；每步包含宿主提供的区域快照及相应实例 ID。整个队列持续忙碌，中断直接显示 `final`。 |
 | `setSelectedIds(ids)` | 同步宿主决定的手牌参战／选中标记；须为当前手牌中不重复的实例 ID，不触发用户选择回调。 |
 | `setHighlightedIds(ids)` | 给指定手牌实例添加周围光晕；与选中独立，移出手牌自动取消，不自行决定卡牌是否合法。 |
+| `setBattleDisplay({mandatoryIds, equipment})` | 紫色边缘标记强制选中牌；将武器缩小附在英雄左下方，右上角留给状态图标。装备／卸下时同一张已解码卡牌在两处平滑移动并缩放，约 220ms；相同映射不重播。仅改变显示，不移出手牌，规则及参战标记仍由宿主提供。 |
+| `setStatusOverrides(map \| null)` | 宿主提供的本地手牌状态投影，用于勾选参战后的即时持续效果；按实例复制，清除后恢复快照原状态。手牌移到其他牌区后不再使用该投影，组件不计算加成。 |
+| `setCardTargets(ids, selected)` | 效果目标在原宝藏／旁置区域及抽牌、弃牌浏览窗口中发光并显示选中。含目标的牌堆顶牌提示可进入浏览；非当前玩家牌区 Tab 高亮。通过 `onCardTargetClick` 返回目标，不创建候选区域。 |
+| `setInteractionLocked(locked)` | 公共动画期间锁定点击、拖拽、浏览、Tab 和响应按钮；组件内部仍可播放已确定的动画。 |
+| `receiveTreasure(snapshot, id, origin)` | 展示已获得的宝藏，从指定屏幕位置飞入宝藏区，自动切换到宝藏 Tab。 |
 | `closeBrowser()` | 关闭牌堆浏览并结束当前手势／动画，供退出对局等生命周期处理使用。 |
 
 | `setAutoSort(enabled)` | 开关自动理牌；忙碌或浏览窗口打开时不更改设置。 |
@@ -101,11 +108,15 @@ deck.dispose();
 
 `PlayerResponse.isCurrentTurn` 在响应区最左侧显示“你的回合”小旗帜；选项的 `tone` 可为 `gold`、`violet`、`blue`、`red`，文字标签始终保留，红色用于结束回合。`PlayerDeckOptions.onHandCardClick(instanceId)` 可处理手牌点选，返回 `true` 时消耗点击，不再切换普通选中状态；拖拽、牌堆浏览、隐藏或禁用的区域不会触发此回调。正式页用它接收休整的摧毁目标。
 
+`PlayerResponse.combat` 接收 `{attack, magicAttack, light}`，以剑、书本和提灯图标显示数值；可选 `versusTarget` 提供同结构的目标预估值，在原数字后以括号显示。`battlePreview` 接收 `{outcome, rank, total}`，`outcome` 支持 `win`、`loss`、`cannot_attack` 和 `unknown`；未知结果用问号，并由宿主通过 `prompt` 提供“有效果待执行”。`error` 在响应区中央用红字及 `role="alert"` 展示操作失败信息。组件仅负责展示，不计算规则。`PlayerResponseChoice.pressed` 可独立表示“使用效果”等临时模式按钮的状态。装备附着不会影响手牌库存或实例 ID，拖动英雄时附着武器同步移动；`setActiveTab(tab, {duringAnimation: true})` 供宿主在动画锁定时主动展示效果目标所在区。
+
 摧毁表现分为约 300ms 的移入中央和约 980ms 的粒子消散。`card-dissolve.ts` 适配 [Vanilla Disintegrate](https://github.com/uvarov-frontend/vanilla-disintegrate) 的底层粒子入口，将现有卡图绘制为有圆角的临时 Canvas，再由 WebGL2 按原图颜色拆成颗粒；不截图整个 DOM，也不请求新卡图。分辨率上限为 2 倍 CSS 像素，并限定纹理与渲染面积。完成或取消时释放纹理、临时画布与渲染节点；库自行复用少量 WebGL 上下文。许可保存在 `public/licenses/vanilla-disintegrate.txt`。WebGL 不可用时，`card-shards.ts` 用共享图片背景构成 35 块边缘相接的不规则纸片，错开时序散开；这条路径不依赖 Canvas 或 WebGL。
 
 新的 `setState`／`animateTo` 可以中断旧展示，迟到的图片解码和动画完成回调不会覆盖新数据。缩放、失焦、页面隐藏或离开也会结束当前展示；系统减少动态效果设置生效时直接显示结果。
 
-`animateSequence()` 也支持外部来源的 `{kind: 'gain', instanceIds, origins, state}` 步骤：`origins` 按新实例 ID 提供 `left`、`top`、`width`、`height`，均为屏幕 CSS 像素；卡牌必须是先前各牌区都不存在、现在进入弃牌堆的新实例。组件复用飞牌动画，保持正面朝上，到达时增加弃牌显示数量；不操作供应、金币或规则。正式页面通过 `PublicTableArea.supplyCardRect(cardId)` 在供应更新前捕获顶牌坐标，结合公开购买事件构建步骤。减少动态效果、浏览中断、新快照和卸载遵守与抽弃牌相同的收敛规则。
+`animateSequence()` 也支持外部来源的 `{kind: 'gain', instanceIds, origins, destination?, state}` 步骤：`origins` 按新实例 ID 提供 `left`、`top`、`width`、`height`，均为屏幕 CSS 像素；卡牌必须是先前各牌区都不存在的新实例，`destination` 可为 `hand`、`draw`、`discard`，默认弃牌堆。组件复用飞牌动画，不操作供应、金币或规则。正式页面通过 `PublicTableArea.supplyCardRect(cardId)` 在供应更新前捕获顶牌坐标，结合已提交的获得事件构建步骤。减少动态效果、浏览中断、新快照和卸载遵守与抽弃牌相同的收敛规则。
+
+已有卡牌跨区移动使用 `{kind: 'transfer', source, destination, instanceIds, state}`，区域为 `hand`、`draw`、`discard`、`treasures`、`aside`。实例必须存在于原区域及目标快照的对应区域；手牌抽取／弃牌复用原有队列，其余移动按实际牌堆或卡片位置飞行。来源或目标是 Tab 时由展示组件切换，规则状态由宿主提供。临时揭牌不属于这五个区域，由页面的事件适配层处理，组件不推断规则中的隐藏区域。
 
 升级使用 `{kind: 'upgrade', sourceInstanceId, targetInstanceId, state}`：原实例必须从手牌移出，新实例此前不存在并进入弃牌堆。约 320ms 将原卡移到屏幕中央并放大，1000ms 播放旋转光环、汇聚粒子、亮光和新卡显现，再以 300ms 飞入弃牌堆。两张卡分别使用各自固定的已解码图片，保持实例和卡牌定义身份不变；不复用摧毁动画。`upgrade-motion.ts` 管理时间轴及中断，`upgrade-energy.ts` 生成有数量上限的临时特效，使用浏览器原生 [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API)，无需新增依赖。新快照、失焦、隐藏、调整窗口或卸载会清理动画；减少动态效果、浏览状态或渲染失败时直接显示权威结果。
 
@@ -155,7 +166,8 @@ Alt 检视使用独立的 [game-card 通用模块](../game-card/README.md)。其
 - `types.ts` / `model.ts`：数据契约、验证、复制及稳定排序。
 - `hand-area.ts` / `hand-layout.ts`：手牌布局、尺寸监听和有界拖拽。
 - `pile-browser.ts`：浏览副本与焦点管理；牌堆侧边和顶牌复用 `../game-card/card-stack.ts`。
-- `../game-card/`：固定图片、悬停、Alt 检视和程序翻面，由所有游戏区域复用。
+- `../game-card/`：固定图片、悬停、Alt 检视、程序翻面及状态标记，由所有游戏区域复用。`PlayerDeckCard.statuses` 传给 `PhysicalCard.setStatuses()`；每项含 `kind`（`buff`／`debuff`／`destroy`）、`source_name`、`description` 与可选 `source_card_id`。仅有对应状态时显示右上角图标，悬浮说明使用纯文本，牌背隐藏。组件不判断或产生游戏状态。
 - `card-motion.ts` / `shuffle-motion.ts`：只移动既有视图的视觉动画。
+- `equipment-motion.ts`：装备与卸下的 FLIP 位置及尺寸过渡，连带手牌让位；中断、失焦、卸载时取消动画并保留最终布局，尊重减少动态效果偏好。
 - `upgrade-motion.ts` / `upgrade-energy.ts` / `upgrade-motion.css`：旧英雄到新英雄的进化时间轴、粒子与光环，仅处理展示。
 - `style.css`：组件范围内的样式；共用光标状态已移至 `shared/styles/game-cursor.css`，由 `game-card/` 入口加载，`.game-cursor` 可用于外层游戏区域。

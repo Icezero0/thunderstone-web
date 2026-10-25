@@ -27,6 +27,11 @@ class StartMatchCommand(MatchCommand):
     first_player: FirstPlayer = Field(default_factory=FirstPlayer)
 
 
+class RestoreMatchCommand(MatchCommand):
+    # Omitted means undo one parent. An explicit target is a host-only jump.
+    target_step: int | None = Field(default=None, strict=True, ge=1)
+
+
 CardGroupId = Annotated[str, Field(min_length=1, max_length=64)]
 
 

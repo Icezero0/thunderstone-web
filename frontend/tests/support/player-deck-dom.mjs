@@ -54,6 +54,7 @@ export async function page({html = probeHtml, source = probeSource, pendingImage
     get tag() {return this.tagName;}
     get childElementCount() {return this.children.length;}
     dispatch(type) {return this.fire(type);}
+    click() {return this.fire('click');}
     showModal() {this.open = true;}
     close() {this.open = false;}
     get textContent() {return (this.text ?? '') + this.children.map(item => item.textContent).join('');}
@@ -177,6 +178,7 @@ export async function page({html = probeHtml, source = probeSource, pendingImage
   const find = id => all.find(node => node.id === id && node.isConnected) ?? all.find(node => node.id === id) ?? null;
   const get = id => {const node = find(id); assert.ok(node, `Missing actual HTML: ${id}`); return node;};
   const window = new Target(), document = new Target();
+  window.innerWidth = 1280; window.innerHeight = 900;
   window.matchMedia = () => ({matches: reducedMotion});
   window.setTimeout = schedule; window.clearTimeout = id => timers.delete(id);
   document.getElementById = find; document.createElement = tag => new Element(tag); document.hidden = false;

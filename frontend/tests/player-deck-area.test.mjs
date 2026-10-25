@@ -14,6 +14,136 @@ async function setup(options = {}) {
   return {ui, Area: ui.evaluate('PlayerDeckPackage.PlayerDeckArea')};
 }
 
+test('temporary revealed cards use their own targetable tab and disappear when resolved', async () => {
+  const {ui, Area} = await setup(), picked = [];
+  const area = new Area(ui.get('first'), {idPrefix: 'one', onCardTargetClick: id => picked.push(id)});
+  area.setState({...snapshot(), revealed: [card('revealed')]}); area.setActiveTab('revealed'); area.setCardTargets(['revealed'], []);
+  const button = ui.all.find(node => node.dataset.instanceId === 'revealed');
+  assert.equal(button.dataset.glowing, 'true'); button.dispatch('click'); assert.deepEqual(picked, ['revealed']);
+  area.setState(snapshot()); assert.equal(button.hidden, true); area.dispose();
+});
+
+test('internal temporary tab changes preserve every reveal and discard flight in a running sequence', async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const first = card('top'); area.setState({hand: [], draw: [first], discard: []}); await settle();
+  const reveal = {hand: [], draw: [], discard: [], revealed: [first]}, discarded = {...reveal, revealed: [], discard: [first]};
+  const task = area.animateSequence(discarded, [
+    {kind: 'transfer', state: reveal, source: 'draw', destination: 'revealed', instanceIds: ['top']},
+    {kind: 'transfer', state: discarded, source: 'revealed', destination: 'discard', instanceIds: ['top']},
+  ]);
+  await settle(); assert.equal(area.activeTab, 'revealed'); assert.equal(area.isBusy, true);
+  await ui.advance(2000); await task;
+  assert.equal(ui.animations.filter(animation => animation.element.className === 'card-flight').length, 2);
+  assert.equal(ui.get('one-discard-count').textContent, '1'); area.dispose();
+});
+
+test('attachments form a mini stack, merge equipped weapons, browse with Alt and close during state updates', async () => {
+  const {ui, Area} = await setup(), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const child = {...card('captive'), kind: 'cage'}, weapon = card('weapon');
+  const state = {hand: [{...card('hero'), attachments: [child]}, weapon, child], draw: [], discard: []};
+  area.setState(state); area.setBattleDisplay({mandatoryIds: [], equipment: {hero: ['weapon']}}); await settle();
+  assert.deepEqual(handCards(ui, 'one').map(card => card.dataset.instanceId), ['hero']);
+  const marker = ui.all.find(node => node.className === 'card-attachments');
+  assert.match(marker.getAttribute('aria-label'), /2/); marker.dispatch('click'); await settle();
+  const browser = ui.all.find(node => node.className.includes('attachment-browser') && node.isConnected); assert.ok(browser);
+  assert.match(browser.textContent, /武器/); assert.match(browser.textContent, /囚禁/);
+  area.setState({hand: [card('hero'), weapon], draw: [], discard: [child]});
+  assert.equal(browser.isConnected, false); area.dispose();
+});
+
+test('local status projections preserve manual statuses and are cleared when a hand card moves to discard', async () => {
+  const {ui, Area} = await setup(), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const manual = {kind: 'buff', source_name: '临时力量', description: '力量 +2'};
+  const live = {kind: 'buff', source_name: '维里斯侍从', description: '光照 +1', continuous: true};
+  const item = {...card('weapon'), statuses: [manual]}, state = {hand: [item], draw: [], discard: []};
+  area.setState(state); area.setStatusOverrides({weapon: [manual, live]});
+  const badge = ui.get('one-first-card').children[0].children[1].children[0];
+  assert.match(badge.getAttribute('aria-label'), /临时力量：力量 \+2/); assert.match(badge.getAttribute('aria-label'), /维里斯侍从：光照 \+1/);
+  assert.equal(state.hand[0].statuses.length, 1);
+  area.setState({hand: [], draw: [], discard: [item]});
+  assert.doesNotMatch(ui.get('one-first-card').children[0].children[1].children[0].getAttribute('aria-label'), /维里斯/);
+  area.setStatusOverrides(null); area.dispose();
+});
+
+test('a host preference waits for animation completion and does not emit a user toggle callback', async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), changes = [];
+  const area = new Area(ui.get('first'), {idPrefix: 'one', onAutoSortChange: value => changes.push(value)});
+  area.setState(snapshot()); await settle();
+  const final = {...snapshot(), hand: [card('b', 'TS-0002')], discard: [card('old'), card('a')]};
+  const animation = area.animateSequence(final, [{kind: 'discard', state: final, instanceIds: ['a']}]);
+  area.setAutoSort(true, {notify: false}); assert.equal(area.autoSortEnabled, false);
+  await settle(); await ui.advance(2000); await animation; assert.equal(area.autoSortEnabled, true); assert.deepEqual(changes, []); area.dispose();
+});
+
+for (const weaponFirst of [false, true]) test(`unequipping restores full hand geometry, including after relayout: weapon first ${weaponFirst}`, async () => {
+  const {ui, Area} = await setup(), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const hero = card('hero'), weapon = card('weapon', 'TS-0002'), other = card('other', 'TS-0300');
+  const initial = {hand: weaponFirst ? [weapon, hero, other] : [hero, weapon, other], draw: [], discard: []};
+  area.setState(initial);
+  const button = handCards(ui, 'one').find(card => card.dataset.instanceId === 'weapon');
+  // Model the inline width used by attached cards, including a weapon in slot 1.
+  Object.defineProperty(button, 'offsetWidth', {get() {return parseFloat(this.style.width) || 144;}});
+  const regularPositions = handCards(ui, 'one').map(card => [card.dataset.instanceId, card.style.left]);
+  area.setBattleDisplay({mandatoryIds: [], equipment: {hero: ['weapon']}});
+  assert.equal(button.dataset.equippedTo, 'hero'); assert.equal(button.offsetWidth, 144 * .55);
+  const anchor = handCards(ui, 'one').find(card => card.dataset.instanceId === 'hero');
+  assert.ok(parseFloat(button.style.left) >= parseFloat(anchor.style.left));
+  assert.ok(parseFloat(button.style.left) < parseFloat(anchor.style.left) + 144 * .1);
+  assert.ok(parseFloat(button.style.top) > 144 * 704 / 504 * .4);
+  assert.ok(parseFloat(button.style.top) + 144 * .55 * 704 / 504 <= 144 * 704 / 504);
+  area.setBattleDisplay({mandatoryIds: [], equipment: {}});
+  assert.equal(button.dataset.equippedTo, undefined);
+  assert.equal(button.style.width, ''); assert.equal(button.style.top, ''); assert.equal(button.offsetWidth, 144);
+  assert.deepEqual(handCards(ui, 'one').map(card => [card.dataset.instanceId, card.style.left]), regularPositions);
+  area.setState(initial); ui.window.fire('resize');
+  assert.equal(button.style.width, ''); assert.equal(button.offsetWidth, 144);
+  assert.deepEqual(Array.from(area.handOrder), initial.hand.map(card => card.id));
+  area.dispose();
+});
+
+test('equipment moves and scales the same decoded weapon in both directions without replaying unchanged displays', async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  area.setState({hand: [card('hero'), card('weapon', 'TS-0002'), card('other')], draw: [], discard: []}); await settle();
+  const buttons = handCards(ui, 'one'), weapon = buttons.find(button => button.dataset.instanceId === 'weapon');
+  for (const button of buttons) {
+    Object.defineProperty(button, 'offsetWidth', {get() {return parseFloat(this.style.width) || 144;}});
+    button.getBoundingClientRect = () => ({left: parseFloat(button.style.left) || 0, top: parseFloat(button.style.top) || 0,
+      width: button.offsetWidth, height: button.offsetWidth * 704 / 504});
+  }
+  const image = weapon.children[0].children[0].children[0], srcWrites = image.srcWrites.length;
+  area.setBattleDisplay({mandatoryIds: [], equipment: {hero: ['weapon']}});
+  const equip = ui.animations.find(animation => animation.element === weapon && animation.playState === 'running');
+  assert.ok(equip); assert.match(equip.keyframes[0].transform, /scale\(1\.818/);
+  assert.equal(weapon.dataset.equipmentMoving, 'true');
+  const count = ui.animations.length;
+  area.setBattleDisplay({mandatoryIds: ['other'], equipment: {hero: ['weapon']}});
+  assert.equal(ui.animations.length, count); assert.equal(equip.playState, 'running');
+  await ui.advance(250); assert.equal(weapon.dataset.equipmentMoving, undefined);
+  area.setBattleDisplay({mandatoryIds: [], equipment: {}});
+  const unequip = ui.animations.findLast(animation => animation.element === weapon);
+  assert.match(unequip.keyframes[0].transform, /scale\(0\.55/);
+  assert.equal(weapon.style.width, ''); assert.equal(weapon.style.top, '');
+  assert.equal(weapon.dataset.equippedTo, undefined); assert.equal(area.handOrder.length, 3);
+  assert.equal(image.srcWrites.length, srcWrites, 'animation must reuse the already decoded card');
+  area.finish(); assert.equal(unequip.playState, 'idle'); assert.equal(weapon.dataset.equipmentMoving, undefined);
+  assert.equal(weapon.parentElement.id, 'one-hand-track'); area.dispose();
+});
+
+for (const reducedMotion of [false, true]) test(`equipment animation interruption preserves final geometry: reduced motion ${reducedMotion}`, async () => {
+  const {ui, Area} = await setup({animationsEnabled: true, reducedMotion}), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  area.setState({hand: [card('hero'), card('weapon', 'TS-0002')], draw: [], discard: []}); await settle();
+  const weapon = handCards(ui, 'one').find(button => button.dataset.instanceId === 'weapon');
+  weapon.getBoundingClientRect = () => ({left: parseFloat(weapon.style.left) || 0, top: parseFloat(weapon.style.top) || 0,
+    width: parseFloat(weapon.style.width) || 144, height: (parseFloat(weapon.style.width) || 144) * 704 / 504});
+  area.setBattleDisplay({mandatoryIds: [], equipment: {hero: ['weapon']}});
+  assert.equal(ui.animations.length > 0, !reducedMotion);
+  area.setBattleDisplay({mandatoryIds: [], equipment: {}});
+  ui.window.fire('blur');
+  assert.equal(weapon.style.width, ''); assert.equal(weapon.dataset.equippedTo, undefined);
+  assert.equal(weapon.dataset.equipmentMoving, undefined);
+  area.dispose(); assert.ok(ui.animations.every(animation => animation.playState !== 'running'));
+});
+
 function refillSequence() {
   const initial = {hand: [card('h1'), card('h2')], draw: [card('d1'), card('d2')], discard: [card('x1'), card('x2')]};
   const final = {hand: [...initial.draw, ...initial.discard, ...initial.hand], draw: [], discard: []};
@@ -68,6 +198,23 @@ function purchaseSequence() {
   const origin = {left: 180, top: 140, width: 168, height: 168 * 704 / 504};
   return {initial, final, origin, steps: [{kind: 'gain', instanceIds: [purchased.id], origins: {[purchased.id]: origin}, state: final}]};
 }
+
+test('browser DOMRect prototype getters survive gain snapshot copying and still animate', async () => {
+  const {ui, Area} = await setup({animationsEnabled: true}), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  const {initial, final, steps} = purchaseSequence();
+  class BrowserRect {
+    get left() {return 180;} get top() {return 140;} get width() {return 168;} get height() {return 235;}
+  }
+  const rect = new BrowserRect(); assert.deepEqual(Object.keys(rect), []);
+  steps[0].origins.bought = rect;
+  area.setState(initial); await settle();
+  const pending = area.animateSequence(final, steps); await settle();
+  const flight = ui.get('one-card-motion-layer').children[0];
+  assert.equal(flight.style.left, '180px'); assert.equal(flight.style.top, '140px'); assert.equal(flight.style.width, '168px');
+  assert.equal(flight.children[0].dataset.cardId, 'TS-0354'); assert.equal(area.isBusy, true);
+  await ui.advance(300); await pending; assert.equal(ui.get('one-discard-count').textContent, '2');
+  area.dispose();
+});
 
 test('a purchase flies face up from its captured supply bounds into discard, retaining decoded images and busy state', async () => {
   const {ui, Area} = await setup({animationsEnabled: true}), area = new Area(ui.get('first'), {idPrefix: 'one'});

@@ -1,33 +1,29 @@
-import type {CommandOption, GameCommand, MatchView} from '../../shared/api/types.js';
+﻿import type {CommandOption, GameCommand, MatchView} from '../../shared/api/types.js';
 import type {PlayerResponseChoice} from '../../shared/components/player-deck-area/index.js';
 import type {SupplySelection} from '../../shared/components/table-areas/index.js';
-import {CardInteractions, createCardElements, createCardInspection, defaultCardImages} from '../../shared/components/game-card/index.js';
-import {instanceName, optionRows} from './commands.js';
-import {$, el} from './dom.js';
+import {instanceName, optionRows, valueLabel} from './commands.js';
+import {BoardPicker} from './board-picker.js';
+import {el} from './dom.js';
 import {InteractionPanel} from './interaction-panel.js';
 
-/** Local targeting only: prices, uses, XP and available upgrades come from legal_commands. */
+/** Card menus select an action; every target is chosen directly on the board. */
 export class CardActionInteraction {
   private view: MatchView | null = null;
   private busy = false;
   private disposed = false;
   private key = '';
   private mode: 'buy' | 'upgrade' | null = null;
-  private readonly panel = new InteractionPanel('match-card-actions', () => this.releaseCards());
-  private readonly inspection = createCardInspection($('#match-overlays'), {overlay: 'match-upgrade-inspect', content: 'match-upgrade-inspect-content'});
-  private cardViews: CardInteractions | null = null;
-  constructor(private send: (command: GameCommand) => void,
-    private participation: {selected: (id: string) => boolean; toggle: (id: string) => void}) {}
-
+  private readonly panel = new InteractionPanel('match-card-actions');
+  constructor(private send: (command: GameCommand) => void, private picker: BoardPicker) {}
   receive(view: MatchView, busy: boolean): void {
     const key = `${view.id}:${view.version}`;
     if (this.key !== key) {
-      if (view.id !== this.view?.id || view.turn?.number !== this.view.turn?.number
-        || view.turn?.subphase !== this.view.turn?.subphase) this.mode = null;
+      if (view.id !== this.view?.id || view.turn?.number !== this.view.turn?.number || view.turn?.subphase !== this.view.turn?.subphase) this.mode = null;
       this.key = key; this.panel.close(false);
     }
     this.view = view; this.busy = busy;
     if (!this.active) {this.mode = null; this.panel.close(false);}
+    if (busy) this.panel.close(false);
   }
   private get active(): boolean {
     const view = this.view;
@@ -42,7 +38,7 @@ export class CardActionInteraction {
   }
   get choices(): PlayerResponseChoice[] | null {
     if (!this.active) return null;
-    const commands = this.view!.legal_commands, has = (type: string) => commands.some(command => command.type === type);
+    const has = (type: string) => this.view!.legal_commands.some(command => command.type === type);
     if (this.view!.turn?.subphase === 'VILLAGE_ABILITIES') return has('FinishAbilities') ? [{id: 'FinishAbilities', label: '跳过'}] : [];
     if (this.view!.turn?.subphase === 'VILLAGE_BUY') return [
       {id: 'village:buy', label: '购买卡牌', disabled: !this.options('BuyCard').length, tone: 'gold'},
@@ -55,10 +51,13 @@ export class CardActionInteraction {
     return null;
   }
   get selectedId(): string | undefined {return this.mode ? `village:${this.mode}` : undefined;}
+  get prompt(): string {return this.mode === 'buy' ? '点击高亮的供应卡牌购买' : this.mode === 'upgrade' ? '选择要升级的英雄' : '';}
   get highlightedIds(): readonly string[] {
     if (!this.active || this.busy) return [];
     const options = this.mode === 'upgrade' ? this.options('UpgradeHero') : this.abilities;
-    return [...new Set(options.map(option => option.source_instance_id!))].filter(id => this.view!.hand.some(card => card.instance_id === id));
+    const penalties = this.view!.legal_commands.filter(command => ['AssignDiseasePenalty', 'AssignStrengthPenalty'].includes(command.type))
+      .flatMap(command => command.instance_ids ?? command.penalties?.map(item => item.instance_id) ?? []);
+    return [...new Set([...options.map(option => option.source_instance_id!), ...penalties])].filter(id => this.view!.hand.some(card => card.instance_id === id));
   }
   get purchaseOptions(): {cardId: string; price: number}[] {
     return this.mode === 'buy' && !this.busy ? this.options('BuyCard')
@@ -80,30 +79,39 @@ export class CardActionInteraction {
       if (this.mode === 'upgrade' && !this.busy) {
         const options = this.options('UpgradeHero').filter(option => option.source_instance_id === id);
         if (options.length === 1) this.execute('UpgradeHero', options[0]);
-        else if (options.length) this.showUpgrades(id, options);
+        else if (options.length) this.chooseUpgrade(id, options);
       }
       return true;
     }
     const abilities = this.abilities.filter(option => option.source_instance_id === id);
-    if (!this.busy && abilities.length) {
-      const content = el('div', 'match-card-abilities');
-      const prep = this.view!.battle_preparation;
-      if (prep && (prep.options.hero_instance_ids.includes(id) || prep.options.support_instance_ids.includes(id))) {
-        const hero = prep.options.hero_instance_ids.includes(id), selected = this.participation.selected(id);
-        const toggle = el('button', 'button secondary', hero ? (selected ? '取消参战' : '选择参战') : (selected ? '不使用此牌' : '选用此牌'));
-        toggle.type = 'button'; toggle.dataset.participation = id; const key = this.key;
-        toggle.addEventListener('click', () => {
-          if (!this.active || this.busy || this.key !== key) return;
-          this.panel.close(false); this.participation.toggle(id);
-        }); content.append(toggle);
-      }
-      for (const option of abilities) {
-        const text = this.view!.abilities[option.ability_id!]?.source_line ?? '使用此效果';
-        content.append(this.button(text, 'ActivateAbility', option));
+    if (!this.busy && (abilities.length || this.penaltyCommands(id).length)) {
+      const content = el('div', 'match-card-abilities'), key = this.key;
+      for (const option of abilities) content.append(this.button(this.view!.abilities[option.ability_id!]?.source_line ?? '使用此效果', 'ActivateAbility', option));
+      for (const type of this.penaltyCommands(id)) {
+        const button = el('button', 'button secondary', type === 'AssignDiseasePenalty' ? '分配疾病惩罚' : '分配力量惩罚'); button.type = 'button';
+        button.addEventListener('click', () => {if (this.key === key && !this.busy && this.panel.isOpen) {this.panel.close(false); this.choosePenalty(type, id);}});
+        content.append(button);
       }
       this.panel.show(instanceName(this.view!, id), content); return true;
     }
-    return this.view!.turn?.subphase?.startsWith('VILLAGE_') ?? false;
+    // Preparation hand clicks are card menus, never implicit battle toggles.
+    return this.view!.turn?.subphase === 'DUNGEON_PREPARE' || (this.view!.turn?.subphase?.startsWith('VILLAGE_') ?? false);
+  }
+  private penaltyCommands(id: string): string[] {
+    return this.active ? this.view!.legal_commands.filter(command => ['AssignDiseasePenalty', 'AssignStrengthPenalty'].includes(command.type)
+      && (command.instance_ids ?? command.penalties?.map(item => item.instance_id) ?? []).includes(id)).map(command => command.type) : [];
+  }
+  private choosePenalty(type: string, id: string): void {
+    const command = this.view!.legal_commands.find(command => command.type === type)!, key = this.key;
+    if (type === 'AssignStrengthPenalty') {
+      this.picker.start({prompt: `为${instanceName(this.view!, id)}选择承受力量惩罚的英雄`, cards: (command.hero_instance_ids ?? []).map(hero => ({key: hero, instanceId: hero,
+        cardId: this.view!.command_instances[hero]?.card_id ?? this.view!.hand.find(card => card.instance_id === hero)!.card_id})), immediate: true, cancel: () => {},
+        submit: ids => {if (this.key === key && !this.busy) this.send({type, instance_id: id, hero_instance_id: ids[0]});}});
+    } else {
+      this.picker.start({prompt: `为${instanceName(this.view!, id)}选择扣除的攻击类型`, cards: [], immediate: true,
+        cancel: () => {}, submit: () => {}, actions: (command.attack_types ?? []).map(attackType => ({label: `扣除${valueLabel(this.view!, attackType)}`,
+          run: () => {if (this.key === key && !this.busy) this.send({type, instance_id: id, attack_type: attackType});}}))});
+    }
   }
   clickSupply(item: SupplySelection): boolean {
     if (this.mode !== 'buy' || !this.active) return false;
@@ -111,27 +119,19 @@ export class CardActionInteraction {
       const pile = this.view!.supplies.find(pile => pile.zone_id === item.pileId);
       if (pile?.top_card_id === item.cardId) this.send({type: 'BuyCard', card_id: item.cardId});
     }
-    // Suppress hero browsing while explicitly choosing a purchase, including unaffordable stacks.
     return true;
   }
-  private showUpgrades(id: string, options: CommandOption[]): void {
-    const content = el('div', 'match-upgrade-options');
-    this.releaseCards(); this.cardViews = new CardInteractions(this.inspection.overlay, this.inspection.content);
-    for (const option of options) {
-      const definition = this.view!.cards[option.target_card_id!], name = definition?.name ?? option.target_card_id!;
-      const entry = el('article', 'match-upgrade-option'), elements = createCardElements(option.target_card_id!, defaultCardImages);
-      this.cardViews.add(elements, name); const key = this.key;
-      elements.button.addEventListener('click', () => {if (this.key === key) this.execute('UpgradeHero', option);});
-      entry.append(elements.button, this.button(`${name} · ${option.xp_cost} XP`, 'UpgradeHero', option)); content.append(entry);
-    }
-    this.panel.show(`${instanceName(this.view!, id)} · 选择升级目标`, content);
+  private chooseUpgrade(id: string, options: CommandOption[]): void {
+    this.picker.start({prompt: `${instanceName(this.view!, id)} · 选择升级后的英雄`, cards: options.map(option => ({key: option.target_card_id!,
+      cardId: option.target_card_id!, label: `${this.view!.cards[option.target_card_id!]?.name ?? option.target_card_id} · ${option.xp_cost} XP`})),
+      immediate: true, cancel: () => {}, submit: keys => {const option = options.find(option => option.target_card_id === keys[0]); if (option) this.execute('UpgradeHero', option);}});
   }
   private button(text: string, type: string, option: CommandOption): HTMLButtonElement {
     const button = el('button', 'button secondary', text); button.type = 'button'; button.dataset.command = type;
     if (option.source_instance_id) button.dataset.sourceInstanceId = option.source_instance_id;
     if (option.ability_id) button.dataset.abilityId = option.ability_id;
     const key = this.key;
-    button.addEventListener('click', () => {if (this.key === key) this.execute(type, option);}); return button;
+    button.addEventListener('click', () => {if (this.key === key && this.panel.isOpen) this.execute(type, option);}); return button;
   }
   private execute(type: string, option: CommandOption): void {
     if (!this.active || this.busy || !this.options(type).some(current => current.source_instance_id === option.source_instance_id
@@ -141,6 +141,5 @@ export class CardActionInteraction {
       : {type, source_instance_id: option.source_instance_id, target_card_id: option.target_card_id});
   }
   close(): void {this.panel.close(false);}
-  private releaseCards(): void {this.cardViews?.dispose(); this.cardViews = null;}
-  dispose(): void {this.disposed = true; this.panel.dispose(); this.releaseCards(); this.inspection.dispose();}
+  dispose(): void {this.disposed = true; this.panel.dispose();}
 }

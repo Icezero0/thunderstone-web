@@ -8,7 +8,7 @@ export interface BrowserElements {
 export interface PlayerDeckElements {
   root: HTMLElement; handTrack: HTMLElement; handEmpty: HTMLElement; autoSort: HTMLInputElement;
   tabs: Record<PlayerCardTab, HTMLButtonElement>; panels: Record<PlayerCardTab, HTMLElement>;
-  auxiliaryEmpty: Record<'treasures' | 'aside', HTMLElement>; response: HTMLElement; resources: HTMLElement;
+  auxiliaryEmpty: Record<'treasures' | 'aside' | 'revealed', HTMLElement>; response: HTMLElement; resources: HTMLElement;
   drawSlot: HTMLElement; drawCount: HTMLElement; discardSlot: HTMLElement; discardCount: HTMLElement;
   cache: HTMLElement; motion: HTMLElement; browser: BrowserElements;
   inspectOverlay: HTMLElement; inspectContent: HTMLElement; notice: HTMLElement; descriptionId: string;
@@ -45,7 +45,7 @@ export function createPlayerDeckView(host: HTMLElement, options: PlayerDeckOptio
   const tablist = node('div', 'card-tabs', 'player-card-tabs', handHeading);
   tablist.setAttribute('role', 'tablist'); tablist.setAttribute('aria-label', '玩家牌区');
   const tabs = {} as Record<PlayerCardTab, HTMLButtonElement>;
-  for (const [kind, caption] of [['hand', '手牌'], ['treasures', '宝藏'], ['aside', '旁置']] as const) {
+  for (const [kind, caption] of [['hand', '手牌'], ['treasures', '宝藏'], ['aside', '旁置'], ['revealed', '翻开']] as const) {
     const tab = node('button', kind === 'hand' ? 'hand-heading' : `${kind}-tab`, 'player-card-tab', tablist, caption);
     tab.type = 'button'; tab.setAttribute('role', 'tab'); tab.setAttribute('aria-controls', id(`${kind === 'hand' ? 'hand' : kind}-track`));
     tab.setAttribute('aria-selected', String(kind === 'hand')); tab.tabIndex = kind === 'hand' ? 0 : -1;
@@ -76,8 +76,8 @@ export function createPlayerDeckView(host: HTMLElement, options: PlayerDeckOptio
   handTrack.setAttribute('role', 'tabpanel'); handTrack.setAttribute('aria-labelledby', id('hand-heading'));
   const handEmpty = node('p', 'empty-hand', 'empty-hand', handTrack, '暂无手牌');
   const panels = {} as Record<PlayerCardTab, HTMLElement>; panels.hand = handTrack;
-  const auxiliaryEmpty = {} as Record<'treasures' | 'aside', HTMLElement>;
-  for (const [kind, caption] of [['treasures', '宝藏'], ['aside', '旁置']] as const) {
+  const auxiliaryEmpty = {} as Record<'treasures' | 'aside' | 'revealed', HTMLElement>;
+  for (const [kind, caption] of [['treasures', '宝藏'], ['aside', '旁置'], ['revealed', '翻开']] as const) {
     const track = node('div', `${kind}-track`, 'hand-track auxiliary-track', handArea); track.hidden = true;
     track.setAttribute('role', 'tabpanel'); track.setAttribute('aria-labelledby', tabs[kind].id);
     auxiliaryEmpty[kind] = node('p', `${kind}-empty`, 'empty-hand', track, `暂无${caption}`); panels[kind] = track;
@@ -90,7 +90,7 @@ export function createPlayerDeckView(host: HTMLElement, options: PlayerDeckOptio
   const notice = options.notice ?? node('p', 'card-notice', 'player-deck-notice', root);
   notice.setAttribute('role', 'status'); notice.setAttribute('aria-live', 'polite');
 
-  const overlays = node('div', 'overlays', 'player-deck-overlays', options.overlayRoot ?? document.body);
+  const overlays = node('div', 'overlays', 'player-deck-overlays game-cursor', options.overlayRoot ?? document.body);
   const overlay = node('section', 'pile-browser', 'pile-browser-overlay browse-dialog game-cursor', overlays); overlay.hidden = true;
   overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true');
   overlay.setAttribute('aria-labelledby', id('pile-browser-title'));

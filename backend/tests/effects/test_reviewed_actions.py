@@ -2,7 +2,7 @@
 from dataclasses import asdict
 import unittest
 
-from backend.app.integrations.game_engine.api import load_catalog, start_game, TurnError
+from backend.app.integrations.game_engine.api import battle_preparation, load_catalog, start_game, TurnError
 from backend.app.integrations.game_engine.effects.compiler import load_ruleset, compile_ruleset
 from backend.tests.support.reviewed_actions import ActionScenario
 from backend.tests.support.setup import config, request
@@ -177,11 +177,19 @@ class ReviewedActionTests(unittest.TestCase):
         f.do('EquipWeapon',hero_instance_id=caster,weapon_instance_id=staff)
         return f,staff,caster,spell
 
-    def test_pure_spell_requires_explicit_use_before_full_recast(self):
+    def commit_spell_and_reopen(self, f, spell):
+        # A passive spell is actually used only by committing it to a team.
+        draft = battle_preparation(f.state, 'alice', snapshot=f.snapshot, effects=f.effects)['draft']
+        draft['support_instance_ids'] = [spell]
+        f.do('SubmitBattleTeam', draft=draft, expected_version=f.state['game_version'])
+        self.assertEqual(f.state['subphase'], 'DUNGEON_DECLARE')
+        f.do('ReviseBattleTeam')
+
+    def test_pure_spell_requires_committed_use_before_full_recast(self):
         f,staff,caster,spell=self.staff('TS-0272')
         self.assertNotIn(spell,f.state.get('used_cards',[]))
-        f.do('UseSpell',instance_id=spell)
         with self.assertRaises(TurnError):f.do('UseSpell',instance_id=spell)
+        self.commit_spell_and_reopen(f,spell)
         f.activate(staff,'TS-0244-A02')
         self.assertIsNone(f.state['pending_choice'])
         self.assertEqual(f.state['battle_context']['spell_cast_counts'][spell],2)
@@ -193,7 +201,7 @@ class ReviewedActionTests(unittest.TestCase):
 
     def test_recast_dynamic_magic_is_recomputed_and_card_modifiers_are_not_multiplied(self):
         f,staff,caster,spell=self.staff('TS-0278')
-        f.add('TS-0002');f.add('TS-0002');f.do('UseSpell',instance_id=spell);f.activate(staff,'TS-0244-A02')
+        f.add('TS-0002');f.add('TS-0002');self.commit_spell_and_reopen(f,spell);f.activate(staff,'TS-0244-A02')
         first=next(c['magic_attack'] for c in f.combat(self.effects)['components'] if c['instance_id']==spell)
         f.add('TS-0002');f.add('TS-0002')
         second=next(c['magic_attack'] for c in f.combat(self.effects)['components'] if c['instance_id']==spell)
@@ -228,7 +236,7 @@ class ReviewedActionTests(unittest.TestCase):
         f=self.scenario(effects=rules);staff=f.add('TS-0244');caster=f.add('TS-0435')
         hero=f.add('TS-0001');spell=f.add('TS-0272');drawn=f.add('TS-0003',part='draw')
         f.do('EquipWeapon',hero_instance_id=caster,weapon_instance_id=staff)
-        f.do('UseSpell',instance_id=spell);f.activate(staff,'TS-0244-A02')
+        self.commit_spell_and_reopen(f,spell);f.activate(staff,'TS-0244-A02')
         self.assertEqual(f.state['pending_choice']['kind'],'effect_select')
         self.assertEqual(f.state['battle_context']['spell_cast_counts'][spell],1)
         f.do('ResolveChoice',instance_id=hero)
@@ -241,7 +249,7 @@ class ReviewedActionTests(unittest.TestCase):
 
     def test_recast_respects_a_current_dungeon_deck_lock(self):
         f,staff,caster,spell=self.staff('TS-0268')
-        f.do('UseSpell',instance_id=spell)
+        self.commit_spell_and_reopen(f,spell)
         target=f.add('TS-0476',zone='hall:main');f.add('TS-0523',zone='hall:main')
         f.activate(staff,'TS-0244-A02')
         self.assertIsNone(f.state['pending_choice'])

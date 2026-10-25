@@ -81,7 +81,7 @@ for id, query, fixture in (
         draw=(fixture, fixture, "TS-0003", "TS-0004", "TS-0002"),
         expected={"destroy_count_each": 2, "discard_count_each": 3})
 for id, query, fixture in (
-    ("TS-0501-A02", {"card_id": "TS-0001"}, "TS-0001"),
+    ("TS-0501-A02", {"tag": "民兵"}, "TS-0001"),
     ("TS-0502-A01", {"tag": "英雄", "level_min": 1, "level_max": 1}, "TS-0302"),
     ("TS-0503-A02", {"tag": "英雄", "level_min": 2, "level_max": 2}, "TS-0303"),
     ("TS-0504-A01", {"vp_present": True}, "TS-0476"),
@@ -149,11 +149,11 @@ add("TS-0247-A02", "CARD_EQUIPPED", each({"zone": "event_hero"},
     {"op": "grant_turn_buff", "target": {"var": "chosen"},
      "buff": "discard_instead_of_destroy"}), expected={"protected_heroes": 1})
 for id, amount in (("TS-0323-A03", 1), ("TS-0324-A03", 2)):
-    add(id, "MONSTER_DEFEATED", atom("gain_xp", amount), zone="active_hand", expected={"xp": 5 + amount})
+    add(id, "BATTLE_TRIUMPH", atom("gain_xp", amount), zone="active_hand", expected={"xp": 5 + amount})
 for id in ("TS-0307-A03", "TS-0365-A03"):
     add(id, "MONSTER_DEFEATED", atom("gain_xp"), zone="active_hand",
         conditions=({"compare": {"left": {"context": "rank"}, "op": "eq", "right": 3}},), expected={"xp": 6})
-add("TS-0446-A03", "MONSTER_DEFEATED", atom("mod_next_hand"), zone="active_hand", expected={"next_hand": 1})
+add("TS-0446-A03", "BATTLE_TRIUMPH", atom("mod_next_hand"), zone="active_hand", expected={"next_hand": 1})
 for id in ("TS-0523-A02", "TS-0528-A02"):
     body = choose_remove(HAND, 3, "discard") if id == "TS-0523-A02" else seq(
         {"op": "show_hand"}, each(HERO, target("discard")), atom("draw", {"max": [0, {"sub": [6, {"count": HAND}]}]}))
@@ -161,7 +161,7 @@ for id in ("TS-0523-A02", "TS-0528-A02"):
         zone="battle_target", hand=("TS-0001", "TS-0302", "TS-0004", "TS-0003", "TS-0002", "TS-0004"),
         draw=("TS-0003", "TS-0004"), active_only=True, scheduled=True,
         expected={"discard_count_each": 3 if id == "TS-0523-A02" else 2})
-add("TS-0561-A01", "TURN_WILL_END", choose_remove({**HAND, "card_id": "TS-0001"}), zone="hall",
+add("TS-0561-A01", "TURN_WILL_END", choose_remove({**HAND, "tag": "民兵"}), zone="hall",
     conditions=({"action_in": ["dungeon"]},), hand=("TS-0001",), expected={"destroyed": ["TS-0001"]})
 add("TS-0682-A03", "TURN_WILL_END", choose_remove(HAND), zone="hall", hand=("TS-0004",),
     conditions=({"exists": {"zone": "bound", "var": "source", "rank": 0}},), expected={"destroyed": ["TS-0004"]})
@@ -222,7 +222,7 @@ for id, predicate, purchased, supply in (
     ("TS-0579-A02", {"tag": "食物"}, "TS-0004", None),
     ("TS-0595-A03", {"tag": "村庄"}, "TS-0002", None),
 ):
-    add(id, "MONSTER_DEFEATED", buy_offer(predicate), zone="event_source" if id.startswith(("TS-0579", "TS-0595")) else "active_hand",
+    add(id, "BATTLE_TRIUMPH", {**buy_offer(predicate), "payment": "gold"}, zone="event_source" if id.startswith(("TS-0579", "TS-0595")) else "active_hand",
         hand=("TS-0003",) * 5, supplies=({"card_id": supply, "count": 3, "kind": "village"},) if supply else (),
         expected={"purchased_card": purchased})
 
@@ -232,7 +232,7 @@ add("TS-0482-A01", "MONSTER_DEFEATED", players(atom("gain_disease")), zone="hall
 add("TS-0675-A01", "MONSTER_DEFEATED", {"op": "schedule", "event": "TURN_START", "body": {"op": "force_dungeon"}},
     zone="hall", scheduled=True, expected={"forced_dungeon": 1})
 
-add("TS-0652-A02", "MONSTER_DEFEATED", reveal(select(BOUND,
+add("TS-0652-A02", "BATTLE_TRIUMPH", reveal(select(BOUND,
     each({"zone": "bound", "var": "victims"}, target("destroy")), bind="victims", minimum=0, maximum=100), 6),
     draw=("TS-0001", "TS-0003", "TS-0004", "TS-0001", "TS-0003", "TS-0004"),
     active_only=True, expected={"destroy_total": 6, "active_discard": 0})
@@ -252,7 +252,7 @@ for id, destination in (("TS-0352-A02", "draw_top"), ("TS-0353-A02", "refill_add
         bind="retained", minimum=0, maximum=1), zone="active_hand",
         conditions=({"exists": {"zone": "defeated_this_turn", "vp_max": 3}},),
         expected={"source_top": True} if destination == "draw_top" else {"source_refill": True})
-add("TS-0344-A04", "MONSTER_DEFEATED", select({"zone": "subject_hand", "tag": "佣兵"},
+add("TS-0344-A04", "BATTLE_TRIUMPH", select({"zone": "subject_hand", "tag": "佣兵"},
     each({"zone": "bound", "var": "retained"}, {"op": "move", "target": {"var": "chosen"}, "destination": "refill_add"}),
     bind="retained", minimum=0, maximum=100), zone="active_hand", hand=("TS-0226", "TS-0229"), expected={"refill_count": 2})
 add("TS-0409-A02", "MONSTER_DEFEATED", select({"zone": "hall", "tag": "怪物", "movable": True},
@@ -271,14 +271,14 @@ add("TS-0563-A01", "CARD_PURCHASED", {"op": "if", "condition": {"exists": {
 add("TS-0673-A02", "CARD_PURCHASED", {"op": "destroy_purchased_supply"}, zone="hall",
     conditions=({"exists": {"zone": "bound", "var": "source", "rank": 0}},),
     supplies=({"card_id": "TS-0226", "kind": "village", "count": 3},), expected={"supply_destroyed": 1})
-add("TS-0261-A02", "CARD_PURCHASED", seq(atom("grant_buy"), select({"zone": "subject_hand", "card_id": "TS-0001"},
+add("TS-0261-A02", "CARD_PURCHASED", seq(atom("grant_buy"), select({"zone": "subject_hand", "tag": "民兵"},
     each({"zone": "bound", "var": "sacrificed"}, target("destroy")), bind="sacrificed", minimum=0, maximum=1)),
     hand=("TS-0001",), expected={"destroyed": ["TS-0001"], "extra_buys": 1})
 
 
 add("TS-0288-A01", "MONSTER_DEFEATED", {"op": "add_global_rule", "kind": "light", "scope": "all", "amount": 1,
     "until": "owner_next_turn_end"}, zone="active_hand", expected={"global_rule": "light"})
-add("TS-0499-A03", "MONSTER_DEFEATED", players(reveal(each({"zone": "reveal_zone", "tag": "怪物", "vp_max": 3},
+add("TS-0499-A03", "BATTLE_TRIUMPH", players(reveal(each({"zone": "reveal_zone", "tag": "怪物", "vp_max": 3},
     {"op": "move", "target": {"var": "chosen"}, "destination": "discard", "recipient": "active"}), count=3), scope="others"),
     draw=("TS-0476", "TS-0003", "TS-0476"), expected={"harvested_monsters": 2})
 add("TS-0526-A01", "BREACH", {"op": "shuffle_destroyed_traps"}, expected={"shuffled_traps": True})

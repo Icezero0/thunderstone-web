@@ -4,11 +4,13 @@ import {createDungeonDemo, createPublicPlayersDemo, createVillageDemo, takeDemoS
 import {probePublicElementId} from './element-ids.js';
 import type {PlayerDeckState} from '../../shared/components/player-deck-area/index.js';
 import type {User} from '../../shared/api/types.js';
+import {GameResultsDialog} from '../../shared/components/game-results/index.js';
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
 export class PublicAreaDemo {
   private readonly area: PublicTableArea;
+  private readonly results: GameResultsDialog;
   private dungeon = createDungeonDemo({spire: false, rankZero: false, rankFour: false});
   private players = createPublicPlayersDemo();
   private readonly guestIdentity = {name: this.players[0].name, avatarUrl: this.players[0].avatarUrl};
@@ -20,6 +22,7 @@ export class PublicAreaDemo {
   constructor(private receive: (selection: SupplySelection) => boolean) {
     this.area = new PublicTableArea($('public-table-area'), {overlayRoot: $('player-deck-overlays'),
       background: [$('probe-shell'), $('probe-header')], elementId: probePublicElementId});
+    this.results = new GameResultsDialog($('player-deck-overlays'), [$('probe-shell'), $('probe-header')], () => location.assign('/play?view=room'));
     this.renderDungeon();
     for (const id of ['dungeon-demo-layout', 'show-rank-zero', 'show-rank-four']) {
       this.bind($(id), 'change', () => {this.renderDungeon(); this.area.setTab('dungeon');});
@@ -35,6 +38,18 @@ export class PublicAreaDemo {
     this.bind($('test-player-reveal'), 'click', () => this.testReveal());
     this.bind($('demo-player-activity'), 'click', () => this.area.showPlayerActivity('player-2', '展示了手牌'));
     this.bind($('demo-player-destroy'), 'click', () => this.area.showPlayerActivity('player-2', '摧毁了 民兵'));
+    this.bind($('demo-game-results'), 'click', () => {
+      this.area.closeBrowsers();
+      const scores = this.players.map((player, index) => {
+        const xp = index === 0 ? Math.max(0, Math.trunc(Number($<HTMLInputElement>('demo-xp').value)) || 0) : index === 1 ? 4 : 2;
+        const cardPoints = index === 0 ? 28 : index === 1 ? 24 : 15;
+        return {id: player.id, name: player.name, avatarUrl: player.avatarUrl,
+          total: cardPoints + xp, cardPoints, experiencePoints: xp, thunderstones: index === 1 ? 1 : 0, winner: false};
+      });
+      const highest = Math.max(...scores.map(player => player.total));
+      const hasStone = scores.some(player => player.total === highest && player.thunderstones > 0);
+      this.results.show(scores.map(player => ({...player, winner: player.total === highest && (!hasStone || player.thunderstones > 0)})));
+    });
   }
   private bind(element: HTMLElement, type: string, callback: (event: Event) => void): void {
     element.addEventListener(type, callback); this.cleanup.push(() => element.removeEventListener(type, callback));
@@ -93,6 +108,6 @@ export class PublicAreaDemo {
   dispose(): void {
     if (this.disposed) return; this.disposed = true;
     if (this.revealTimer !== null) window.clearTimeout(this.revealTimer);
-    this.cleanup.forEach(cleanup => cleanup()); this.area.dispose();
+    this.cleanup.forEach(cleanup => cleanup()); this.results.dispose(); this.area.dispose();
   }
 }

@@ -32,6 +32,19 @@ export class TableViewport {
   get position(): ViewPosition {return {x: this.x, y: this.y};}
   get isPanning(): boolean {return !!this.gesture?.started;}
   get zoom(): number {return this.scale;}
+  capture(): {x: number; y: number; zoom: number} {return {x: this.x, y: this.y, zoom: this.scale};}
+  /** Presentation-only camera changes may run while gameplay input is inert. */
+  restore(camera: {x: number; y: number; zoom: number}): void {
+    if (this.disposed) return;
+    this.finish(); this.scale = camera.zoom; this.measure(); this.apply(camera.x, camera.y);
+  }
+  frame(rect: {left: number; top: number; width: number; height: number}): void {
+    const bounds = this.viewport.getBoundingClientRect();
+    if (bounds.width <= 0 || bounds.height <= 0 || rect.width <= 0 || rect.height <= 0) return;
+    if (rect.left >= bounds.left && rect.top >= bounds.top && rect.left + rect.width <= bounds.right && rect.top + rect.height <= bounds.bottom) return;
+    this.measure(); this.apply(this.x + bounds.left + (bounds.width - rect.width) / 2 - rect.left,
+      this.y + bounds.top + (bounds.height - rect.height) / 2 - rect.top);
+  }
 
   constructor(readonly viewport: HTMLElement, readonly desktop: HTMLElement, private options: TableViewportOptions = {}) {
     this.initialScale = options.zoom?.initial ?? 1;
@@ -89,7 +102,9 @@ export class TableViewport {
     if (this.disposed) return;
     this.finish();
     // Hidden tabs have no measurable desktop. Preserve their camera until shown again.
-    if (this.blocked() || this.viewport.clientWidth <= 0 || this.viewport.clientHeight <= 0) return;
+    // Inert blocks input, not layout: authoritative animations still need the
+    // final camera bounds before measuring flight destinations and reflows.
+    if (this.viewport.clientWidth <= 0 || this.viewport.clientHeight <= 0) return;
     this.measure(); this.apply(this.x, this.y);
   };
   panTo(x: number, y: number): void {

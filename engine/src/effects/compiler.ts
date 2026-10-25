@@ -7,7 +7,7 @@ export const EFFECTS_SCHEMA_VERSION = 'thunderstone.effects/1';
 export const MAX_EFFECT_DEPTH = 16, MAX_EFFECT_NODES = 128;
 const words = (value: string): string[] => value ? value.split(' ') : [];
 export const QUERY_ZONES = words('active_hand subject_hand active_draw active_discard subject_discard village_supply_top hero_supply_top hall bound event_source active_control event_supply_top active_hand_or_village_top defeated_monster other_hand other_discard subject_control other_control event_hero defeated_this_turn all_discard all_hand reveal_zone collection');
-export const ALLOWED_EVENTS = words('ACTION_EXITED TURN_WILL_END DUNGEON_ENTER BATTLE_TEAM_COMMITTED BATTLE_BEFORE_OUTCOME BATTLE_AFTER_OUTCOME MONSTER_DEFEATED TURN_START VILLAGE_ENTER CARD_PURCHASED HERO_UPGRADED HALL_REVEALED BREACH TRAP_REVEALED HAND_REFILL_COMPLETE CARD_EQUIPPED BEFORE_HALL_REFILL');
+export const ALLOWED_EVENTS = words('ACTION_EXITED TURN_WILL_END DUNGEON_ENTER BATTLE_TEAM_COMMITTED BATTLE_BEFORE_OUTCOME BATTLE_TRIUMPH BATTLE_AFTER_OUTCOME MONSTER_DEFEATED TURN_START VILLAGE_ENTER CARD_PURCHASED HERO_UPGRADED HALL_REVEALED BREACH TRAP_REVEALED HAND_REFILL_COMPLETE CARD_EQUIPPED BEFORE_HALL_REFILL');
 const STATS = words('attack magic_attack light strength weight level gold vp health cost xp_reward');
 const COMPARISONS = words('eq ne lt le gt ge');
 const get = (object: ObjectValue, key: string, fallback: unknown): unknown => has(object, key) ? object[key] : fallback;
@@ -80,7 +80,7 @@ const NODE_FIELDS: Readonly<Record<string, readonly [string, string?]>> = {
   convert_card_magic: ['target'], grant_turn_buff: ['target buff'], destroy: ['target','as_owner'], discard: ['target','as_owner'], mark_destroy: ['target','when as_owner'], exclude_combat: ['target','as_owner'], show: ['target','as_owner'],
   draw: ['count','bind then'], gain_xp: ['amount'], spend_xp: ['amount'], lose_xp: ['amount'], gain_disease: ['count'], mod_gold: ['amount'], grant_buy: ['amount'], scale_damage: ['divisor'],
   mod_attack: ['amount'], mod_magic_attack: ['amount'], mod_light: ['amount'], random_discard: ['count'], mod_next_hand: ['amount'], mod_next_gold: ['amount'], set_retreat_position: ['amount'],
-  force_dungeon: [''], show_hand: [''], buy: ['filter destination','payment maximum_cost'], upgrade: ['destination','payment'], reveal_cycle: ['filter goal'],
+  force_dungeon: [''], show_hand: [''], buy: ['filter destination','payment maximum_cost may_skip'], upgrade: ['destination','payment'], reveal_cycle: ['filter goal'],
   move: ['target destination','recipient'], relocate_hall: ['target destination','defeat'], destroy_supply: ['target count','from_bottom'], mod_card: ['target stat amount'], set_battle_flag: ['flag value'], gain_card: ['card_id','destination'],
 };
 export const EFFECT_OPERATIONS = Object.keys(NODE_FIELDS);
@@ -106,7 +106,7 @@ function node(value: unknown, place: string, counter: {nodes: number}, depth = 0
   if (has(item, 'filter')) validateFilter(item.filter);
   if (has(item, 'card_id')) nonempty(item.card_id, place);
   if (has(item, 'collection')) nonempty(item.collection, place);
-  for (const key of ['as_owner','from_bottom','family','preserve_attack','full_card','return_destroyed','destroy_anchor','once','allow_shortfall','as_subject']) if (has(item, key)) boolean(item[key], place);
+  for (const key of ['as_owner','from_bottom','family','preserve_attack','full_card','return_destroyed','destroy_anchor','once','allow_shortfall','as_subject','may_skip']) if (has(item, key)) boolean(item[key], place);
   for (const key of ['amount','times','maximum_cost']) if (has(item, key)) validateExpression(item[key], `${place}.${key}`);
   if (has(item, 'count')) {
     if (op === 'shuffle_hall_top') integer(item.count, place, 0, 100); else validateExpression(item.count, `${place}.count`);
@@ -161,7 +161,7 @@ function node(value: unknown, place: string, counter: {nodes: number}, depth = 0
   if (op === 'draw' && (has(item, 'bind') || has(item, 'then'))) keys(item, ['op','count','bind','then'], [], place);
   if (op === 'buy' || op === 'upgrade') {
     allowed(item.destination, ['hand','discard'], place, `invalid effect ${op === 'buy' ? 'purchase' : 'upgrade'}`);
-    allowed(get(item, 'payment', 'none'), op === 'buy' ? ['none','discard_source','destroy_source'] : ['none','discard_source'], place, 'invalid effect payment');
+    allowed(get(item, 'payment', 'none'), op === 'buy' ? ['none','gold','discard_source','destroy_source'] : ['none','discard_source'], place, 'invalid effect payment');
   }
   if (op === 'reveal_cycle') integer(item.goal, place, 1, 10);
   if (op === 'move') {
@@ -205,7 +205,7 @@ export function compileRuleset(data: unknown, cards: Record<string, Card>): Comp
   const seen = new Set<string>();
   const abilities = source.abilities.map((raw, index) => {
     const place = `abilities[${index}]`;
-    const item = keys(raw, words('id source_card_id kind source_zone usage conditions body'), ['actions','event'], place);
+    const item = keys(raw, words('id source_card_id kind source_zone usage conditions body'), ['actions','event','resolution_order'], place);
     const {id, source_card_id: card} = item;
     if (typeof id !== 'string' || typeof card !== 'string' || !id.startsWith(`${card}-A`) || seen.has(id) || !has(cards, card) || cards[card].slot_kind !== 'front') throw new EffectCompileError(`${place}: invalid or duplicate ability source`);
     seen.add(id);
@@ -214,6 +214,8 @@ export function compileRuleset(data: unknown, cards: Record<string, Card>): Comp
     } else if (item.kind === 'triggered') {
       if (!words('settings active_hand active_control attached battle_target hall event_source').includes(item.source_zone as string) || item.usage !== 'once_per_event' || !ALLOWED_EVENTS.includes(item.event as string) || has(item, 'actions')) throw new EffectCompileError(`${place}: invalid trigger`);
     } else throw new EffectCompileError(`${place}: invalid ability kind`);
+    if (has(item, 'resolution_order') && (item.kind !== 'triggered' || item.resolution_order !== 'player'))
+      throw new EffectCompileError(`${place}: resolution_order requires an explicitly player-ordered trigger`);
     list(item.conditions, place, 'conditions must be a list').forEach((condition, i) => {validateCondition(condition, `${place}.conditions[${i}]`); references(condition, new Set(['source']), place);});
     const body = node(item.body, `${place}.body`, {nodes: 0});
     bindings(body, new Set(['source']), cards, `${place}.body`);

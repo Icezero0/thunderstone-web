@@ -8,6 +8,8 @@ export interface PreviewContext extends CalculationInput {
   schema_version: 'thunderstone.preview/1';
   engine_version: string;
   game_version: number; catalog_version: string; effects_version: string; player_id: string;
+  /** Public sources with a pre-outcome trigger still to execute. No private inputs. */
+  battle_effect_sources?: {source_instance_id: string | null; source_zone: string; affects_outcome?: boolean}[];
 }
 export interface BattlePreview {
   engine_version: string;

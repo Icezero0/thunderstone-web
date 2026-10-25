@@ -56,10 +56,11 @@ async function refresh(): Promise<void> {
     api.request<User>('/users/me'),
   ]);
   if (sequence !== loadSequence || !user) return;
+  const previousMatch = room?.active_match_id, wasWaiting = room?.status === 'waiting';
   rooms = listing.rooms; room = current.room; user = account; render();
   const requested = pageParams.get('next') === '/profile' ? '/profile' : matchReturnPath(pageParams.get('next'));
   if (requested) {location.replace(requested); return;}
-  if (room?.status === 'playing' && room.active_match_id && pageParams.get('view') !== 'room')
+  if (room?.status === 'playing' && room.active_match_id && (pageParams.get('view') !== 'room' || wasWaiting && previousMatch !== room.active_match_id))
     location.replace(matchLink(room.active_match_id));
 }
 
@@ -136,11 +137,11 @@ function renderRoom(): void {
     item.append(avatar.root, name, el('span', player.ready ? 'ready-state ready' : 'ready-state', player.ready ? '已准备' : '准备中'));
     list.append(item);
   }
-  const ready = $<HTMLButtonElement>('#ready'); ready.textContent = view.ready ? '取消准备' : '我准备好了'; ready.disabled = busy || view.playing; ready.hidden = view.playing;
+  const ready = $<HTMLButtonElement>('#ready'); ready.textContent = view.ready ? '取消准备' : '准备'; ready.disabled = busy || view.playing; ready.hidden = view.playing;
   $<HTMLButtonElement>('#leave-room').disabled = busy || view.playing;
   const close = $<HTMLButtonElement>('#close-room'); close.hidden = !view.isHost || view.playing; close.disabled = busy || view.playing;
   const edit = $<HTMLAnchorElement>('#edit-config'); edit.hidden = !view.isHost || view.playing; edit.href = `/config?room=${room.id}`;
-  $('#ready-note').textContent = view.playing ? '本局已开始，玩家列表和规则配置已锁定。' : '玩家列表或规则配置改变后，所有玩家需要重新准备。';
+  $('#ready-note').hidden = true;
   $('#host-note').textContent = view.playing ? '本局进行中。可以随时通过“进入对局”回到牌桌。' : view.isHost ? '你是房主，可以修改本局配置。离开时，房主身份交给列表中的下一位玩家。' : `由 ${room.host_name} 设置本局规则。`;
   $('#start-controls').hidden = !view.isHost || view.playing;
   const first = $<HTMLSelectElement>('#first-player'), selected = first.value;

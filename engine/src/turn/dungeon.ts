@@ -1,7 +1,7 @@
 import {RuleError} from '../types.js';
 import {isMonster, stat} from '../catalog/cards.js';
 import {reconcileEquipment} from '../battle/equipment.js';
-import {canMoveMonster, rememberFronts} from './hall.js';
+import {canMoveMonster, hallRankCount, rememberFronts} from './hall.js';
 import {queueSteps} from './workflow.js';
 import type {Transition} from './transaction.js';
 
@@ -29,6 +29,11 @@ export function declareBattleTarget(tx: Transition, targetId: string) {
   if (target['wiki_生命值'] === '') throw new RuleError(`target ${target.card_id} has no recorded health`);
   Object.assign(tx.state.battle_context, {target_rank: rank, target_instance_id: targetId, hall_zone: hallZone});
   if (!tx.combat(rank, target).can_attack) throw new RuleError("target's attack restrictions are not satisfied");
+  if (!commitBattlePenalties(tx, {op: 'start_committed_battle', target_id: targetId})) startCommittedBattle(tx, targetId);
+}
+
+/** Mandatory hand penalties belong to team commitment, before target selection. */
+export function commitBattlePenalties(tx: Transition, continuation: Record<string, any>): boolean {
   const needsCommitment = !tx.state.battle_context.negative_effects_committed
     && tx.ruleset.abilities.some(ability => ability.kind === 'triggered'
       && ability.event === 'BATTLE_TEAM_COMMITTED'
@@ -39,12 +44,17 @@ export function declareBattleTarget(tx: Transition, targetId: string) {
     tx.state.battle_context.negative_effects_committed = true;
     tx.state.subphase = 'BATTLE_COMMIT';
     tx.state.timing_window = 'BATTLE_TEAM_COMMITTED';
-    tx.event('battle_commitment_started', {player_id: tx.playerId, target_instance_id: targetId});
+    tx.event('battle_commitment_started', {player_id: tx.playerId});
     queueSteps(tx, [{op: 'event', event: 'BATTLE_TEAM_COMMITTED'},
-      {op: 'start_committed_battle', target_id: targetId}]);
-    return;
+      continuation], true);
+    return true;
   }
-  startCommittedBattle(tx, targetId);
+  return false;
+}
+
+export function awaitBattleDeclaration(tx: Transition) {
+  reconcileEquipment(tx, true);
+  tx.state.subphase = tx.state.timing_window = 'DUNGEON_DECLARE';
 }
 
 /** Continue only after every mandatory commitment effect and choice resolved. */
@@ -75,11 +85,19 @@ export function resolveBattleOutcome(tx: Transition) {
     rank, health, outcome: won ? 'win' : 'loss', calculation: trace, card_effects: 'reviewed_ruleset'});
   context.outcome = won ? 'win' : 'loss';
   queueSteps(tx, [{op: 'release_battle_diseases', target_id: targetId, timing: 'after'},
+    ...(won ? [{op: 'event', event: 'BATTLE_TRIUMPH', context: {source_instance_id: targetId, rank,
+      hall_zone: context.hall_zone}}] : []),
     {op: 'destroy_battle_marks'}, {op: 'battle_departure'}]);
 }
-export function destroyBattleMarks(tx: Transition) {
-  queueSteps(tx, Object.entries(tx.state.instances).filter(([, item]: [string, any]) => item.flags.pending_after_battle_destruction)
-    .map(([instance_id]) => ({op: 'destroy_one', instance_id, reason: 'after_battle'})), true);
+export function destroyBattleMarks(tx: Transition, processed: string[] = []) {
+  // Removing a strength aura can create another zero-strength hero. Drain new
+  // marks before departure, while each instance receives at most one attempt.
+  reconcileEquipment(tx, true);
+  const pending = Object.entries(tx.state.instances).filter(([id, item]: [string, any]) =>
+    item.flags.pending_after_battle_destruction && !processed.includes(id)).map(([id]) => id);
+  if (!pending.length) return;
+  queueSteps(tx, [...pending.map(instance_id => ({op: 'destroy_one', instance_id, reason: 'after_battle'})),
+    {op: 'destroy_battle_marks', processed: [...processed, ...pending]}], true);
 }
 export function battleDeparture(tx: Transition) {
   const context = tx.state.battle_context, targetId = context.target_instance_id, target = tx.card(targetId);
@@ -91,7 +109,8 @@ export function battleDeparture(tx: Transition) {
     tx.state.instances[targetId].owner_player_id = tx.playerId;
     tx.move(targetId, hallZone, `player:${tx.playerId}:discard`);
     tx.player.xp += xp;
-    tx.event('monster_defeated', {player_id: tx.playerId, target_instance_id: targetId, xp_gained: xp});
+    tx.event('monster_defeated', {player_id: tx.playerId, target_instance_id: targetId, xp_gained: xp, hall_zone: hallZone, rank,
+      hall_rank_count: hallRankCount(tx, hallZone.replace(/:rank0$/, ''))});
     departed = true;
   } else if (isMonster(target) && target.subcategory !== '守护者' && canMoveMonster(tx, targetId)) {
     const deckZone = hallZone.replace('hall:', 'dungeon:').replace(/:rank0$/, '');
@@ -101,7 +120,8 @@ export function battleDeparture(tx: Transition) {
       pile.splice(pile.indexOf(targetId), 1);
       pile.splice(Math.min(context.retreat_position - 1, pile.length), 0, targetId);
     }
-    tx.event('monster_returned_to_deck', {target_instance_id: targetId, deck_zone: deckZone,
+    tx.event('monster_returned_to_deck', {target_instance_id: targetId, deck_zone: deckZone, hall_zone: hallZone, rank,
+      hall_rank_count: hallRankCount(tx, hallZone.replace(/:rank0$/, '')),
       position: context.retreat_position ?? 'bottom'});
     departed = true;
   } else tx.event('guardian_remained', {target_instance_id: targetId});

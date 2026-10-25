@@ -7,8 +7,8 @@ const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const source = await readFile(new URL('../.test-dist/lobby-page.js', import.meta.url), 'utf8');
 const settle = () => new Promise(resolve => setImmediate(resolve));
 
-async function page() {
-  const nodes = new Map(), requests = [], sockets = [], events = {};
+async function page(search = '') {
+  const nodes = new Map(), requests = [], sockets = [], events = {}, navigations = [];
   let user = {id: 1, username: '阿莉丝', email: 'alice@example.com', avatar_url: '/api/v1/users/avatars/first.png'};
   let room = null;
   class Element {
@@ -37,7 +37,7 @@ async function page() {
   const context = vm.createContext({document, Headers, URLSearchParams, URL, WebSocket: Socket, confirm: () => true,
     sessionStorage: {getItem: key => tokens.get(key) ?? null, setItem: (key, value) => tokens.set(key, value), removeItem: key => tokens.delete(key)},
     window: {addEventListener: (type, callback) => {events[type] = callback;}},
-    location: {search: '', protocol: 'https:', host: 'test.invalid', replace() {}, assign() {}},
+    location: {search, protocol: 'https:', host: 'test.invalid', replace(url) {navigations.push(url);}, assign(url) {navigations.push(url);}},
     setTimeout, clearTimeout, setInterval: () => 1, clearInterval() {},
     Option: function(text, value) {const element = new Element('option'); element.textContent = text; element.value = value; return element;},
     fetch: async (path, options) => {
@@ -58,11 +58,22 @@ async function page() {
       return new Response(JSON.stringify(value), {headers: {'Content-Type': 'application/json'}});
     }});
   vm.runInContext(source, context); await settle(); await settle();
-  return {get, requests,
+  return {get, requests, navigations,
+    async started() {room = {...room, status: 'playing', active_match_id: 'm'.repeat(32), version: room.version + 1};
+      sockets[0].onmessage({data: JSON.stringify({type: 'match_changed'})}); await settle(); await settle();},
     async refreshUser(value) {user = {...user, ...value}; sockets[0].onmessage({data: JSON.stringify({type: 'profile_changed'})}); await settle();},
     async create(isPublic) {get('new-room-name').value = '新队伍'; get('new-room-public').checked = isPublic; get('create-form').fire('submit'); await settle();},
     cleanup() {events.pagehide?.();}};
 }
+
+for (const search of ['', '?view=room']) test(`room participants follow match start automatically: ${search}`, async () => {
+  const p = await page(search);
+  try {
+    await p.create(true); assert.equal(p.get('ready').textContent, '准备'); assert.equal(p.get('ready-note').hidden, true);
+    await p.started(); assert.equal(p.navigations.at(-1), '/match?id=' + 'm'.repeat(32));
+    assert.doesNotMatch(html.match(/<nav[^>]*>[\s\S]*?<\/nav>/)[0], /href="\/config"/);
+  } finally {p.cleanup();}
+});
 
 test('the lobby header uses the shared avatar and follows profile changes without replacing it', async () => {
   const p = await page();

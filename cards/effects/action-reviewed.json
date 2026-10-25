@@ -291,7 +291,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_id": "TS-0001"
+            "tag": "民兵"
           }
         }
       ],
@@ -299,7 +299,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_id": "TS-0001"
+          "tag": "民兵"
         },
         "bind": "chosen",
         "min": 1,
@@ -424,7 +424,7 @@
         "count": {
           "count": {
             "zone": "active_hand",
-            "card_id": "TS-0001"
+            "tag": "民兵"
           }
         }
       }
@@ -2059,7 +2059,7 @@
         "op": "for_each",
         "query": {
           "zone": "active_hand",
-          "card_id": "TS-0001"
+          "tag": "民兵"
         },
         "bind": "chosen",
         "body": {
@@ -4792,7 +4792,9 @@
           "exists": {
             "zone": "bound",
             "var": "source",
-            "equipper_card_id": "TS-0001"
+            "equipper_tags_any": [
+              "民兵"
+            ]
           }
         }
       ],
@@ -6379,7 +6381,7 @@
           "op": "select",
           "query": {
             "zone": "other_control",
-            "subcategory": "宝藏"
+            "tag": "宝藏"
           },
           "bind": "chosen",
           "min": 1,
@@ -6409,7 +6411,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_id": "TS-0001"
+          "tag": "民兵"
         },
         "bind": "chosen",
         "min": 1,
@@ -6564,7 +6566,8 @@
                 "destination": "discard",
                 "maximum_cost": {
                   "value": "limit"
-                }
+                },
+                "may_skip": false
               }
             ]
           }
@@ -6761,14 +6764,14 @@
               "condition": {
                 "exists": {
                   "zone": "subject_hand",
-                  "card_id": "TS-0001"
+                  "tag": "民兵"
                 }
               },
               "then": {
                 "op": "select",
                 "query": {
                   "zone": "subject_hand",
-                  "card_id": "TS-0001"
+                  "tag": "民兵"
                 },
                 "bind": "chosen",
                 "min": 1,
@@ -6809,7 +6812,7 @@
                     {
                       "count": {
                         "zone": "active_hand",
-                        "card_id": "TS-0001"
+                        "tag": "民兵"
                       }
                     },
                     {
@@ -7545,7 +7548,7 @@
         {
           "exists": {
             "zone": "active_hand",
-            "card_id": "TS-0001"
+            "tag": "民兵"
           }
         },
         {
@@ -7566,7 +7569,7 @@
         "op": "select",
         "query": {
           "zone": "active_hand",
-          "card_id": "TS-0001"
+          "tag": "民兵"
         },
         "bind": "militia",
         "min": 1,

@@ -75,8 +75,9 @@ def run_advanced(case_id, run_class, choose, choice_index):
     elif case_id == "trap-immunity":
         run.do("ActivateAbility", ability_id="TS-0268-A01", source_instance_id=ids["source"])
         run.do("ResolveChoice", instance_id=ids["target"])
-        choice = run.state["pending_choice"]
-        run.do("ResolveEffectOrder", effect_ids=[r["effect_id"] for r in choice["effects"]])
+        run.do("ResolveTrap", instance_id=run.state["pending_choice"]["instance_id"])
+        # This trap's printed clauses now resolve in order automatically;
+        # after activation, its recipient response is the next player decision.
         run.check("陷阱让实际受影响的对手选择反应", run.state["pending_choice"]["player_id"] == other)
         run.do("ResolveResponse", source_instance_id=ids["response"])
         # Drive the original banishment cost to completion, without consuming a

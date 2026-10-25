@@ -98,6 +98,42 @@ class MatchCommandTests(unittest.TestCase):
             db.commit()
         return instance
 
+    def test_revealed_trap_requires_its_actor_click_and_removal_is_public(self):
+        a, b, view = self.match()
+        state = self.f.stored_match(view["id"])["state"]
+        actor = view["viewer_player_id"]
+        hall = state["zones"]["hall:main"]
+        trap = hall[-1]
+        for instance in hall:
+            state["instances"][instance]["card_id"] = "TS-0476"
+        state["instances"][trap]["card_id"] = "TS-0692"
+        state["zones"].setdefault("destroyed", []).extend(state["zones"]["dungeon:main"])
+        state["zones"]["dungeon:main"] = []
+        state.update(chosen_action="dungeon", subphase="BATTLE_AFTER_EFFECTS", effect_resume="workflow",
+                     pending_choice={"kind": "trap_activation", "player_id": actor, "instance_id": trap, "hall_zone": "hall:main"},
+                     resolution_frames=[{"kind": "trap_activation", "instance_id": trap}],
+                     workflow_steps=[{"op": "event", "event": "TRAP_REVEALED", "context": {"source_instance_id": trap, "hall_zone": "hall:main"}},
+                                     {"op": "dispose_trap", "instance_id": trap, "hall_zone": "hall:main"},
+                                     {"op": "refill_hall", "hall_zone": "hall:main"}, {"op": "await_turn_end"}])
+        with closing(sqlite3.connect(self.f.db_path)) as db:
+            db.execute("UPDATE matches SET state=? WHERE id=?", (json.dumps(state), view["id"]))
+            db.commit()
+        view = self.latest(a, view)
+        self.assertEqual(view["legal_commands"], [{"type": "ResolveTrap", "player_id": actor, "instance_ids": [trap]}])
+        self.assertEqual(self.latest(b, view)["legal_commands"], [])
+        command = {"type": "ResolveTrap", "instance_id": trap}
+        self.assertNotEqual(self.f.play(b, view, command).status_code, 200)
+        self.assertNotEqual(self.f.play(a, view, {**command, "instance_id": hall[0]}).status_code, 200)
+        self.assertEqual(self.f.stored_match(view["id"])["state"], state)
+        final = self.play(a, view, "ResolveTrap", instance_id=trap)
+        self.assertIsNone(final["pending_choice"])
+        self.assertFalse(any(card["instance_id"] == trap for card in final["dungeons"][0]["hall"]))
+        self.assertEqual(final["turn"]["subphase"], "ACTION_END")
+        removed = next(event for event in self.latest(b, final)["event_log"] if event["kind"] == "trap_removed")
+        self.assertEqual(removed["card_id"], "TS-0692")
+        self.assertEqual(removed["hall_zone"], "hall:main")
+        self.assertNotIn("instance_id", removed)
+
     def test_http_version_is_distinct_from_engine_version_and_snapshot_is_frozen(self):
         a, b, view = self.match(tower=True)
         before = self.f.stored_match(view["id"])
@@ -136,7 +172,7 @@ class MatchCommandTests(unittest.TestCase):
             {"type": "ChooseAction", "action": "rest", "player_id": "intruder"},
             {"type": "ChooseAction", "action": "rest", "expected_version": 1},
             {"type": "ChooseAction", "action": "rest", "state": {}},
-            {"type": "TakeDisease"}, {"type": "DeclareBattleTarget", "target_instance_id": "CI-000001"},
+            {"type": "TakeDisease"}, {"type": "DeclareBattleTarget", "target_instance_id": "CI-000001", "player_id": "intruder"},
             {"type": "ResolveValueChoice", "value": {"state": {}}},
             {"type": "SubmitBattleTeam", "draft": {"target_instance_id": "CI-000001",
                 "hero_instance_ids": [], "support_instance_ids": [], "equipment": {}, "player_id": "intruder"}},
@@ -232,7 +268,10 @@ class MatchCommandTests(unittest.TestCase):
         view = self.play(a, view, "ChooseAction", action="dungeon")
         prep = view["battle_preparation"]
         draft = {key: prep["draft"][key] for key in ("hero_instance_ids", "support_instance_ids", "equipment")}
-        draft["target_instance_id"] = prep["options"]["target_instance_ids"][0]
+        target = prep["options"]["target_instance_ids"][0]
+        draft["target_instance_id"] = None
+        # Target declaration cannot bypass team preparation through the HTTP API.
+        self.assertEqual(self.f.play(a, view, {"type": "DeclareBattleTarget", "target_instance_id": target}).status_code, 422)
         saved = self.f.stored_match(view["id"])
         hidden = saved["state"]["zones"][f"player:{view['viewer_player_id']}:draw"][0]
         rejected = self.f.play(a, view, {"type": "SubmitBattleTeam", "draft": {**draft, "hero_instance_ids": [hidden]}})
@@ -242,3 +281,8 @@ class MatchCommandTests(unittest.TestCase):
         after = self.f.stored_match(view["id"])
         self.assertEqual(accepted["version"], view["version"]+1)
         self.assertTrue(any(e["kind"] == "battle_team_submitted" for e in after["events"][len(saved["events"]):]))
+        self.assertEqual(accepted["turn"]["subphase"], "DUNGEON_DECLARE")
+        self.assertEqual(accepted["battle_preparation"]["draft"]["hero_instance_ids"], draft["hero_instance_ids"])
+        self.assertFalse(any(e["kind"] == "battle_target_declared" for e in after["events"][len(saved["events"]):]))
+        declared = self.play(a, accepted, "DeclareBattleTarget", target_instance_id=target)
+        self.assertGreater(declared["version"], accepted["version"])

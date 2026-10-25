@@ -195,6 +195,11 @@ def verify_rule(test, base, cards, ruleset, rule):
             test.assertNotIn(disease, f.tx.state["zones"]["destroyed"])
         else:
             other = next(player for player in f.tx.state["player_order"] if player != f.player)
+            test.assertEqual(f.tx.state["pending_choice"]["stage"], "recipient")
+            result = apply_command(f.tx.state, {"type": "ResolveDiseaseReplacement", "player_id": f.player,
+                "source_instance_id": None, "recipient_id": other}, effects=ruleset)
+            f.tx.state.clear()
+            f.tx.state.update(result["state"])
             test.assertIn(disease, f.tx.zone("discard", other))
             test.assertEqual(f.tx.state["instances"][disease]["owner_player_id"], other)
         f.tx.move(source, f"player:{f.player}:hand", f"player:{f.player}:discard")

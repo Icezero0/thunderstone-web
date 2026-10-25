@@ -2,7 +2,7 @@ import {RuleError} from '../types.js';
 import {tags} from '../catalog/cards.js';
 import type {Transition} from '../turn/transaction.js';
 
-/** A spell is used explicitly, never merely because it is present in the hand. */
+/** Internal commitment helper. A local draft selection is never a spell use. */
 export function spellUseOptions(tx: Transition): string[] {
   if (tx.state.chosen_action !== 'dungeon' || tx.state.subphase !== 'DUNGEON_PREPARE' || tx.state.pending_choice) return [];
   return tx.zone('hand').filter(id => tags(tx.card(id)).includes('法术') && !(tx.state.used_cards ?? []).includes(id));

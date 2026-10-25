@@ -22,6 +22,7 @@ const SNAP_MS = 160;
 /** Hand layout and bounded pointer gestures; instance order belongs to the controller. */
 export class HandArea {
   private cards: readonly PhysicalCard[] = [];
+  private attachments: readonly {card: PhysicalCard; hero: PhysicalCard; index: number}[] = [];
   private observer: ResizeObserver | null = null;
   private lastWidth = -1;
   private readonly bindings = new Map<PhysicalCard, () => void>();
@@ -67,6 +68,17 @@ export class HandArea {
   }
 
   private resize = (): void => {this.geometryChanged(); this.layout();};
+  setAttachments(attachments: readonly {card: PhysicalCard; hero: PhysicalCard; index: number}[]): void {
+    const remaining = new Set(attachments.map(({card}) => card));
+    // setCards can lay out the previous attachments once more. Restore departed
+    // cards here, before measuring the new row (the weapon may be its first card).
+    for (const {card} of this.attachments) if (!remaining.has(card)) {
+      card.elements.button.style.width = ''; card.elements.button.style.top = '';
+    }
+    this.attachments = attachments;
+    for (const {card} of attachments) {this.track.append(card.elements.button); card.setFaceUp(true, false); card.setVisible(true);}
+    this.layout();
+  }
   layout(order = this.cards): void {
     const width = this.track.clientWidth, size = this.cards[0]?.elements.button.offsetWidth ?? 0;
     this.lastWidth = width;
@@ -77,6 +89,12 @@ export class HandArea {
       card.elements.button.style.left = `${layout.positions[index]}px`;
       card.elements.button.style.zIndex = String(card === this.settling ? this.cards.length + 2 : index + 1);
     });
+    for (const {card, hero, index} of this.attachments) {
+      const button = card.elements.button, anchor = hero.elements.button;
+      button.style.left = `${parseFloat(anchor.style.left || '0') + size * .03 + index * 10}px`;
+      button.style.top = `${size * 704 / 504 * .44 - index * 12}px`; button.style.width = `${size * .55}px`;
+      button.style.zIndex = String(100 + Number(anchor.style.zIndex || 0) + index);
+    }
   }
 
   private bindCard(card: PhysicalCard): void {
@@ -184,6 +202,10 @@ export class HandArea {
     if (drag?.active || this.timer !== null || this.settling) this.complete();
   }
 
+  resetCards(): void {
+    this.finish(); this.bindings.forEach(unbind => unbind()); this.bindings.clear();
+    this.cards = []; this.attachments = []; this.layout();
+  }
   dispose(): void {
     this.finish(); this.observer?.disconnect(); window.removeEventListener('resize', this.resize);
     window.removeEventListener('pointermove', this.pointermove);

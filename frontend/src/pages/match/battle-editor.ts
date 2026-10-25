@@ -1,122 +1,150 @@
-import {updateBattleDraft, previewBattleTeam, type BattleDraft, type BattleDraftAction} from '@thunderstone/engine';
+﻿import {updateBattleDraft, previewBattleTeam, type BattleDraft, type BattleDraftAction} from '@thunderstone/engine';
 import type {GameCommand, MatchView} from '../../shared/api/types.js';
-import {$, el} from './dom.js';
+import {BoardPicker} from './board-picker.js';
 import {instanceName, optionRows} from './commands.js';
+import type {CardStatus} from '../../shared/components/game-card/types.js';
 
+/** Local contribution markers and equipment; all cards remain in the hand. */
 export class BattleEditor {
-  private key = '';
   private draft: BattleDraft | null = null;
   private view: MatchView | null = null;
   private busy = false;
-  constructor(private send: (command: GameCommand) => void, private report: (message: string) => void,
-    private selection: (ids: readonly string[]) => void) {}
-  submit(): void {
-    if (this.busy || !this.view?.battle_preparation || !this.draft
-      || !this.view.legal_commands.some(command => command.type === 'SubmitBattleTeam')) return;
-    if (!this.draft.target_instance_id) {this.report('请先选择地下城大厅中的战斗目标。'); return;}
-    try {
-      const preview = previewBattleTeam(this.view.battle_preparation.context, this.draft);
-      if (!preview.calculation.can_attack) {this.report('当前战斗队伍无法攻击，请调整队伍或目标。'); return;}
-      this.report('');
-      this.send({type: 'SubmitBattleTeam', draft: {
-        target_instance_id: this.draft.target_instance_id, hero_instance_ids: [...this.draft.hero_instance_ids],
-        support_instance_ids: [...this.draft.support_instance_ids], equipment: structuredClone(this.draft.equipment),
-      }});
-    } catch (error) {this.report(error instanceof Error ? error.message : '当前队伍无法提交。');}
+  private key = '';
+  private turn = '';
+  private effects = false;
+  private mandatory: string[] = [];
+  private calculated: {context: Parameters<typeof previewBattleTeam>[0]; draft: BattleDraft;
+    selected?: ReturnType<typeof previewBattleTeam> | null; base?: ReturnType<typeof previewBattleTeam> | null} | null = null;
+  constructor(private picker: BoardPicker, private send: (command: GameCommand) => void,
+    private report: (message: string) => void, private changed: () => void) {}
+  get effectMode(): boolean {return this.active && this.effects;}
+  get mandatoryIds(): string[] {return this.mandatory.filter(id => this.view?.hand.some(card => card.instance_id === id));}
+  get equipment(): Record<string, string[]> {return this.draft?.equipment ?? {};}
+  get selectedIds(): string[] {
+    return this.draft ? [...this.draft.hero_instance_ids, ...this.draft.support_instance_ids, ...this.mandatoryIds,
+      ...Object.entries(this.draft.equipment).filter(([hero]) => this.draft!.hero_instance_ids.includes(hero)).flatMap(([, weapons]) => weapons)] : [];
   }
-  selectTarget(id: string): void {
-    if (this.view?.battle_preparation?.options.target_instance_ids.includes(id)) this.update({type: 'set_target', target_instance_id: id});
+  get targetId(): string | null {return this.draft?.target_instance_id ?? null;}
+  /** One calculation per immutable draft/context, shared by values and all status markers. */
+  private calculation(withoutTarget = false): ReturnType<typeof previewBattleTeam> | null {
+    const context = this.view?.battle_preparation?.context, draft = this.draft;
+    if (!context || !draft) return null;
+    if (this.calculated?.context !== context || this.calculated.draft !== draft) this.calculated = {context, draft};
+    const key = withoutTarget && draft.target_instance_id !== null ? 'base' : 'selected';
+    if (this.calculated[key] === undefined) {
+      try {this.calculated[key] = previewBattleTeam(context, key === 'base' ? {...draft, target_instance_id: null} : draft);}
+      catch {this.calculated[key] = null;}
+    }
+    return this.calculated[key] ?? null;
   }
-  selectHand(ids: readonly string[]): void {
-    if (this.busy || !this.view?.battle_preparation || !this.draft) return;
-    const prep = this.view.battle_preparation;
-    try {
-      let next = this.draft;
-      for (const id of prep.options.hero_instance_ids) next = updateBattleDraft(prep.context, next, {type: 'set_hero', instance_id: id, selected: ids.includes(id)});
-      for (const id of prep.options.support_instance_ids) next = updateBattleDraft(prep.context, next, {type: 'set_support', instance_id: id, selected: ids.includes(id)});
-      this.draft = next;
-      this.report('');
-    } catch (error) {this.report(error instanceof Error ? error.message : '当前选择无效。');}
-    this.render();
+  get handStatuses(): Record<string, readonly CardStatus[]> | null {
+    if (!this.draft || !this.view?.battle_preparation) return null;
+    const live = this.calculation()?.continuous_card_statuses; if (!live) return null;
+    return Object.fromEntries(this.view.hand.map(card => [card.instance_id,
+      [...(card.statuses ?? []).filter(status => !status.continuous), ...live[card.instance_id] ?? []]]));
   }
-
+  get publicStatuses(): Record<string, readonly CardStatus[]> | null {
+    if (!this.draft || !this.view?.battle_preparation) return null;
+    const live = this.calculation()?.continuous_card_statuses; if (!live) return null;
+    return Object.fromEntries([...this.view.settings, ...this.view.dungeons.flatMap(dungeon => dungeon.hall)].map(card => [card.instance_id,
+      [...(card.statuses ?? []).filter(status => !status.continuous), ...live[card.instance_id] ?? []]]));
+  }
+  get preview(): ReturnType<typeof previewBattleTeam> | null {
+    if (!this.draft?.target_instance_id || !this.view?.battle_preparation || this.view.turn?.subphase !== 'DUNGEON_DECLARE') return null;
+    return this.calculation();
+  }
+  get values() {
+    const trace = this.calculation(true)?.calculation; if (!trace) return undefined;
+    const final = this.preview?.calculation;
+    return {attack: trace.attack, magicAttack: trace.magic_attack, light: trace.light,
+      ...(final ? {versusTarget: {attack: final.attack, magicAttack: final.magic_attack, light: final.light}} : {})};
+  }
+  get active(): boolean {
+    return this.view?.turn?.subphase === 'DUNGEON_PREPARE' && !!this.view.battle_preparation && this.view.actor_player_id === this.view.viewer_player_id
+      && this.view.status === 'active' && !this.view.pending_choice && !this.view.unavailable_reason;
+  }
+  get targetIds(): string[] {
+    if (this.busy || this.view?.turn?.subphase !== 'DUNGEON_DECLARE' || this.view.status !== 'active'
+      || this.view.actor_player_id !== this.view.viewer_player_id || this.view.pending_choice || this.view.unavailable_reason) return [];
+    return this.view.legal_commands.find(command => command.type === 'DeclareBattleTarget')?.instance_ids ?? [];
+  }
   receive(view: MatchView, busy: boolean): void {
-    const hadDraft = !!this.draft;
-    this.view = view; this.busy = busy;
-    const key = `${view.id}:${view.version}`;
-    if (key !== this.key || (!this.draft && view.battle_preparation)) {
-      this.key = key; this.draft = view.battle_preparation ? structuredClone(view.battle_preparation.draft) : null;
-    }
-    if (!view.battle_preparation) {if (hadDraft) this.selection([]); this.draft = null;}
-    this.render();
-  }
-  private update(action: BattleDraftAction): void {
-    if (this.busy || !this.view?.battle_preparation || !this.draft) return;
-    try {
-      this.draft = updateBattleDraft(this.view.battle_preparation.context, this.draft, action);
-      this.report(''); this.render();
-    } catch (error) {this.report(error instanceof Error ? error.message : '当前装备或选择无效。'); this.render();}
-  }
-  private render(): void {
-    const panel = $('#battle-team-panel'), view = this.view, draft = this.draft, prep = view?.battle_preparation;
-    panel.replaceChildren(); panel.hidden = !prep || !draft;
-    if (!view || !prep || !draft) return;
-    panel.append(el('h3', '', '战斗队伍'), el('p', 'muted small', '在手牌区选择英雄与支援。所有牌仍留在手牌中，参战选择只改变本场贡献。'));
-    this.selection([...draft.hero_instance_ids, ...draft.support_instance_ids]);
-    const participants = el('div', 'battle-participants'); panel.append(participants);
-    for (const item of view.hand) {
-      const controls = el('div', 'hand-slot-controls'); controls.id = `hand-controls-${item.instance_id}`; participants.append(controls);
-      const hero = prep.options.hero_instance_ids.includes(item.instance_id), support = prep.options.support_instance_ids.includes(item.instance_id);
-      if (hero || support) {
-        const checked = (hero ? draft.hero_instance_ids : draft.support_instance_ids).includes(item.instance_id);
-        const label = el('label', `participation-control${checked ? ' selected' : ''}`), input = el('input');
-        input.type = 'checkbox'; input.checked = checked; input.disabled = this.busy; input.dataset.battleInstance = item.instance_id;
-        input.addEventListener('change', () => this.update({type: hero ? 'set_hero' : 'set_support', instance_id: item.instance_id, selected: input.checked}));
-        label.append(input, el('span', '', `${instanceName(view, item.instance_id)} · ${hero ? (checked ? '已参战' : '不参战') : (checked ? '已选用' : '不使用')}`)); controls.append(label);
-      } else controls.append(el('span', 'muted small', prep.options.weapon_instance_ids.includes(item.instance_id) ? '在上方分配装备' : '随手牌生效'));
-    }
-    const targetLabel = el('label', 'battle-target-label', '攻击目标'), target = el('select'); target.disabled = this.busy; target.dataset.battleTarget = 'true';
-    target.append(new Option('选择地下城中的怪物', ''));
-    for (const id of prep.options.target_instance_ids) {
-      const dungeon = view.dungeons.find(d => d.hall.some(card => card.instance_id === id));
-      const rank = dungeon?.hall.find(card => card.instance_id === id)?.rank;
-      target.append(new Option(`${instanceName(view, id)} · ${dungeon?.id === 'main' ? '' : `${dungeon?.id.toUpperCase()} · `}阶层 ${rank ?? '?'}`, id));
-    }
-    target.value = draft.target_instance_id ?? '';
-    target.addEventListener('change', () => this.update({type: 'set_target', target_instance_id: target.value || null}));
-    targetLabel.append(target); panel.append(targetLabel);
-    const equipment = el('div', 'battle-equipment');
-    const formalEquipment = optionRows(view.legal_commands.find(c => c.type === 'EquipWeapon') ?? {type: ''});
-    for (const weapon of prep.options.weapon_instance_ids) {
-      const row = el('div', 'equipment-row'), label = el('label', '', instanceName(view, weapon)), select = el('select');
-      select.disabled = this.busy; select.dataset.weaponInstance = weapon; select.append(new Option('未装备', ''));
-      for (const hero of draft.hero_instance_ids) select.append(new Option(instanceName(view, hero), hero));
-      const owner = Object.keys(draft.equipment).find(hero => draft.equipment[hero].includes(weapon)); select.value = owner ?? '';
-      select.addEventListener('change', () => this.update(select.value ? {type: 'equip', hero_instance_id: select.value, weapon_instance_id: weapon}
-        : {type: 'unequip', weapon_instance_id: weapon}));
-      label.append(select); row.append(label);
-      if (owner && formalEquipment.some(option => option.hero_instance_id === owner && option.weapon_instance_id === weapon)) {
-        const equip = el('button', 'button secondary', '立即装备'); equip.type = 'button'; equip.disabled = this.busy;
-        equip.title = '提前结算装备效果，以便在准备阶段使用这件武器的能力';
-        equip.addEventListener('click', () => this.send({type: 'EquipWeapon', hero_instance_id: owner, weapon_instance_id: weapon})); row.append(equip);
+    const turn = `${view.id}:${view.history?.epoch ?? 0}:${view.turn?.number}:${view.turn?.active_player_id}`, key = `${view.id}:${view.version}`;
+    if (turn !== this.turn || view.turn?.chosen_action !== 'dungeon' || view.status !== 'active') {this.draft = null; this.effects = false; this.mandatory = [];}
+    if (view.battle_preparation) this.mandatory = [...view.battle_preparation.options.mandatory_instance_ids];
+    if (view.battle_preparation && (this.key !== key || !this.draft)) {
+      const previous = this.draft, prep = view.battle_preparation;
+      let next = structuredClone(prep.draft);
+      const committed = view.turn?.subphase === 'DUNGEON_DECLARE';
+      next.hero_instance_ids = committed ? [...prep.draft.hero_instance_ids] : previous?.hero_instance_ids.filter(id => prep.options.hero_instance_ids.includes(id)) ?? [];
+      next.support_instance_ids = committed ? [...prep.draft.support_instance_ids] : previous?.support_instance_ids.filter(id => prep.options.support_instance_ids.includes(id)) ?? [];
+      next.target_instance_id = committed && this.view?.turn?.subphase === 'DUNGEON_DECLARE'
+        && view.legal_commands.some(command => command.type === 'DeclareBattleTarget' && command.instance_ids?.includes(previous?.target_instance_id ?? ''))
+        ? previous?.target_instance_id ?? null : null;
+      next.equipment = {};
+      for (const [hero, weapons] of Object.entries(committed ? prep.draft.equipment : previous?.equipment ?? prep.draft.equipment)) {
+        if (!prep.options.hero_instance_ids.includes(hero)) continue;
+        for (const weapon of weapons) try {next = updateBattleDraft(prep.context, next, {type: 'equip', hero_instance_id: hero, weapon_instance_id: weapon});} catch { /* A resolved effect can invalidate equipment. */ }
       }
-      equipment.append(row);
+      this.draft = next;
     }
-    if (equipment.childElementCount) panel.append(el('h4', '', '分配武器'), equipment,
-      el('p', 'muted small', '选择只在本地预览。提交队伍会执行新增装备的效果；若要先使用武器能力，可点击“立即装备”。'));
+    this.view = view; this.busy = busy; this.key = key; this.turn = turn;
+  }
+  toggleEffects(): void {if (this.active && !this.busy) {this.effects = !this.effects; this.changed();}}
+  selectTarget(id: string): void {
+    if (!this.draft || !this.view?.battle_preparation || !this.targetIds.includes(id)) return;
     try {
-      const preview = previewBattleTeam(prep.context, draft), trace = preview.calculation, totals = el('dl', 'battle-totals');
-      for (const [title, value] of [['攻击', trace.attack], ['魔法攻击', trace.magic_attack], ['光照', trace.light],
-        ['光照惩罚', trace.darkness_penalty], ['有效攻击', trace.effective_attack], ['目标生命', preview.health ?? '—']]) {
-        const pair = el('div'); pair.append(el('dt', '', String(title)), el('dd', '', String(value))); totals.append(pair);
+      this.draft = updateBattleDraft(this.view.battle_preparation.context, this.draft, {type: 'set_target', target_instance_id: id});
+      this.report(''); this.changed();
+    } catch (error) {this.report(error instanceof Error ? error.message : '当前目标无法选择。');}
+  }
+  confirmTarget(): void {
+    if (this.targetId && this.targetIds.includes(this.targetId)) this.send({type: 'DeclareBattleTarget', target_instance_id: this.targetId});
+  }
+  clickCard(id: string): boolean {
+    if (!this.active) return false;
+    if (this.busy || this.mandatoryIds.includes(id) || !this.draft) return true;
+    const prep = this.view!.battle_preparation!;
+    if (prep.options.weapon_instance_ids.includes(id)) {
+      const authoritative = this.view!.legal_commands.some(command => command.type === 'UnequipWeapon' && command.instance_ids?.includes(id));
+      if (Object.values(this.draft.equipment).some(weapons => weapons.includes(id)) || authoritative) {
+        if (this.update({type: 'unequip', weapon_instance_id: id}) && authoritative) this.send({type: 'UnequipWeapon', instance_id: id});
       }
-      panel.append(totals);
-      const results = {win: '当前数值足以击败', loss: '当前数值不足以击败', cannot_attack: '当前不能攻击此目标'};
-      panel.append(el('p', 'preview-result', preview.outcome_before_battle_effects ? results[preview.outcome_before_battle_effects] : '选择目标后预览战果'),
-        el('p', 'muted small', '这是战斗效果结算前的预估；怪物战斗词条、疾病确认、装备触发和待选效果可能改变结果。'));
-      const submit = el('button', 'button primary', '提交战斗队伍'); submit.type = 'button'; submit.dataset.command = 'SubmitBattleTeam';
-      submit.disabled = this.busy || !draft.target_instance_id || !trace.can_attack;
-      submit.addEventListener('click', () => this.submit()); panel.append(submit);
-    } catch (error) {panel.append(el('p', 'notice error', error instanceof Error ? error.message : '预览暂不可用，请刷新。'));}
+      else this.chooseHero(id);
+    } else if (prep.options.hero_instance_ids.includes(id)) this.update({type: 'set_hero', instance_id: id, selected: !this.draft.hero_instance_ids.includes(id)});
+    else if (prep.options.support_instance_ids.includes(id)) {
+      const selected = !this.draft.support_instance_ids.includes(id);
+      // Participation is only a preview until SubmitBattleTeam. Activating an
+      // ability records real use separately; toggling never consumes a spell.
+      this.update({type: 'set_support', instance_id: id, selected});
+    }
+    return true;
+  }
+  private chooseHero(weapon: string): void {
+    const prep = this.view!.battle_preparation!, key = this.key;
+    const eligible = prep.options.hero_instance_ids.filter(hero => {
+      try {updateBattleDraft(prep.context, this.draft!, {type: 'equip', hero_instance_id: hero, weapon_instance_id: weapon}); return true;} catch {return false;}
+    });
+    if (!eligible.length) {this.report('手牌中没有能够装备此武器的英雄。'); return;}
+    this.picker.start({prompt: `为${instanceName(this.view!, weapon)}选择装备英雄`, cards: eligible.map(id => ({key: id, instanceId: id,
+      cardId: prep.context.state.instances[id].card_id})), immediate: true, cancel: () => {}, submit: ids => {
+      if (key !== this.key || !this.update({type: 'equip', hero_instance_id: ids[0], weapon_instance_id: weapon})) return;
+      this.picker.clear(); this.changed();
+      const options = optionRows(this.view!.legal_commands.find(command => command.type === 'EquipWeapon') ?? {type: ''});
+      if (options.some(option => option.hero_instance_id === ids[0] && option.weapon_instance_id === weapon))
+        this.send({type: 'EquipWeapon', hero_instance_id: ids[0], weapon_instance_id: weapon});
+    }});
+  }
+  private update(action: BattleDraftAction): boolean {
+    if (!this.active || this.busy || !this.draft) return false;
+    try {this.draft = updateBattleDraft(this.view!.battle_preparation!.context, this.draft, action); this.report(''); this.changed(); return true;}
+    catch (error) {this.report(error instanceof Error ? error.message : '当前装备或选择无效。'); return false;}
+  }
+  submit(): void {
+    if (!this.active || this.busy || !this.draft || !this.view!.legal_commands.some(command => command.type === 'SubmitBattleTeam')) return;
+    try {
+      this.send({type: 'SubmitBattleTeam', draft: {target_instance_id: null,
+        hero_instance_ids: [...this.draft.hero_instance_ids], support_instance_ids: [...this.draft.support_instance_ids], equipment: structuredClone(this.draft.equipment)}});
+    } catch (error) {this.report(error instanceof Error ? error.message : '当前队伍无法提交。');}
   }
 }

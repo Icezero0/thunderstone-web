@@ -50,8 +50,11 @@ The browser uses read-only exports such as `previewBattle`, `combatValues`,
 consume no RNG and do not advance game state. `ENGINE_VERSION` fingerprints the
 TypeScript sources; previews reject a version mismatch. `BattleDraft` provides
 local hero, equipment, support and target selections. `updateBattleDraft` and
-`previewBattleTeam` run on each click; the backend validates `SubmitBattleTeam`
-before combat. See [the frontend/backend API](../docs/game-engine/battle-team-api.md).
+`previewBattleTeam` run on each click. `SubmitBattleTeam` commits only participation
+and equipment, resolves commitment penalties, then pauses at `DUNGEON_DECLARE`.
+`DeclareBattleTarget` chooses the hall monster in the next stage and starts combat;
+`ReviseBattleTeam` returns to preparation without undoing effects. See
+[the frontend/backend API](../docs/game-engine/battle-team-api.md).
 
 The server must never send a full `GameState` or private evaluation snapshot to
 the browser. It projects only visible card definitions, public halls and the

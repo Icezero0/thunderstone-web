@@ -1,7 +1,7 @@
 import {RuleError} from '../types.js';
 import {Calculation} from '../effects/context.js';
 import {economyRules, printedGold, purchasePrice} from '../effects/economy.js';
-import {isHero, stat, tags} from '../catalog/cards.js';
+import {isHero, isMilitia, stat, tags} from '../catalog/cards.js';
 import {isSupplyZone, sameHeroSeries} from '../catalog/supplies.js';
 import {queueSteps} from './workflow.js';
 import type {Transition} from './transaction.js';
@@ -18,16 +18,20 @@ export function enterVillage(tx: Transition) {
 export function finishAbilities(tx: Transition) {
   tx.event('village_abilities_finished', {player_id: tx.playerId});
   tx.state.subphase = tx.state.timing_window = 'VILLAGE_BUY';
-  const {sources, total} = villageGoldProduction(tx);
+  produceGold(tx, 'village');
+}
+/** All remaining hand cards count, including equipped weapons and marked cards. */
+export function produceGold(tx: Transition, reason: 'village' | 'triumph') {
+  const {sources, total} = goldProduction(tx, reason === 'village');
   tx.player.temporary_gold = total;
   delete tx.player.turn_gold_adjustment;
-  tx.event('village_gold_counted', {player_id: tx.playerId, sources, total: tx.player.temporary_gold});
+  tx.event(reason === 'village' ? 'village_gold_counted' : 'triumph_gold_counted', {player_id: tx.playerId, sources, total});
 }
 /** The immediate production result, without activating abilities, drawing or consuming adjustments. */
-function villageGoldProduction(tx: Transition) {
+function goldProduction(tx: Transition, village = true) {
   const input = tx.evaluation();
-  const calculation = new Calculation({...input, state: {...tx.state, chosen_action: 'village',
-    subphase: 'VILLAGE_BUY', timing_window: 'VILLAGE_BUY'}});
+  const calculation = new Calculation(village ? {...input, state: {...tx.state, chosen_action: 'village',
+    subphase: 'VILLAGE_BUY', timing_window: 'VILLAGE_BUY'}} : input);
   const sources = tx.zone('hand').map(id => ({instance_id: id, gold: printedGold(calculation, tx.card(id))})).filter(item => item.gold);
   const total = Math.max(0, tx.player.temporary_gold + sources.reduce((sum, item) => sum + item.gold, 0)
     + (tx.player.turn_gold_adjustment ?? 0));
@@ -36,7 +40,7 @@ function villageGoldProduction(tx: Transition) {
 export function goldIncomePreview(tx: Transition, playerId: string): number | null {
   if (tx.state.phase !== 'PLAYING' || playerId !== tx.playerId
     || !['TURN_START', 'VILLAGE_ABILITIES'].includes(tx.state.subphase)) return null;
-  return villageGoldProduction(tx).total - tx.player.temporary_gold;
+  return goldProduction(tx).total - tx.player.temporary_gold;
 }
 export function purchasableCards(tx: Transition): string[] {
   if (!(tx.player.purchases_remaining > 0 || tx.player.extra_basic_purchases) || !purchaseAllowed(tx)) return [];
@@ -44,7 +48,7 @@ export function purchasableCards(tx: Transition): string[] {
   for (const [zone, pile] of Object.entries(tx.state.zones) as [string, string[]][]) if (pile.length &&
     (zone.startsWith('village_supply:') || zone.startsWith('hero_supply:')))
     available.add(tx.state.instances[pile[0]].card_id);
-  return [...available].sort().filter(id => (tx.player.purchases_remaining > 0 || id === 'TS-0001') &&
+  return [...available].sort().filter(id => (tx.player.purchases_remaining > 0 || isMilitia(tx.cards[id])) &&
     price(tx, id) <= tx.player.temporary_gold);
 }
 /** Quote the same effective prices charged by buyCard, including current effects. */
@@ -67,7 +71,9 @@ export function buyCard(tx: Transition, cardId: string) {
     tx.move(instanceId, supplyZone, destination);
   }
   tx.player.temporary_gold -= cost;
-  if (cardId === 'TS-0001' && tx.player.extra_basic_purchases) tx.player.extra_basic_purchases--;
+  // The legacy counter name is retained in saved state; its scope is the
+  // militia tag. Spend the restricted opportunity before an ordinary purchase.
+  if (isMilitia(tx.cards[cardId]) && tx.player.extra_basic_purchases) tx.player.extra_basic_purchases--;
   else tx.player.purchases_remaining--;
   const made = tx.state.turn_purchases ??= {};
   made[tx.playerId] = (made[tx.playerId] ?? 0) + 1;

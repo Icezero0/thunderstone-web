@@ -1,5 +1,6 @@
 import {isDisease} from '../catalog/cards.js';
 import type {Transition} from '../turn/transaction.js';
+import {diseaseOrigin} from './disease-origin.js';
 
 /** A player's deck consists of hand, draw pile and discard pile. */
 export function inPlayerDeck(zone: string|null|undefined, playerId: string): boolean {
@@ -8,7 +9,7 @@ export function inPlayerDeck(zone: string|null|undefined, playerId: string): boo
 
 /** Call after a transfer; replacements are resolved by the normal interruptible workflow. */
 export function gainSteps(tx: Transition, instanceId: string, origin: string|null|undefined,
-                          oldOwner: string|null, reason = 'effect'): Record<string, any>[] {
+                          oldOwner: string|null, reason = 'effect', sourceId?: string): Record<string, any>[] {
   const instance = tx.state.instances[instanceId];
   if (!instance) return [];
   const player = instance.owner_player_id, destination = tx.location(instanceId);
@@ -20,5 +21,5 @@ export function gainSteps(tx: Transition, instanceId: string, origin: string|nul
   const part = destination!.slice(`player:${player}:`.length);
   return [{op: 'resolve_disease_gain', gain: {instance_id: instanceId, player_id: player,
     destination: part, draw_top: part === 'draw' && tx.state.zones[destination!][0] === instanceId,
-    used_sources: []}}];
+    used_sources: [], monster_source: diseaseOrigin(tx, sourceId)}}];
 }

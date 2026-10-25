@@ -19,6 +19,8 @@ export interface EffectNode {op: string; [key: string]: unknown}
 export interface Ability {
   id: string; source_card_id: string; kind: string; source_zone: string; usage: string;
   actions: string[]; event: string|null; conditions: Condition[]; body: EffectNode;
+  /** Only card text explicitly granting ordering uses a player choice. */
+  resolution_order?: 'player';
 }
 export type Bindings = Record<string, unknown>;
 /** Server evaluation may inspect private zones. Never send this snapshot to a client. */

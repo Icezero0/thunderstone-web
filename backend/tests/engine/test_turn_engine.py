@@ -13,10 +13,11 @@ from backend.tests.support.setup import config, request
 
 
 def run(state: dict, kind: str, **arguments: object) -> dict:
-    return apply_command(state, {"type": kind,
-                                 "player_id": state["active_player_id"],
-                                 "expected_version": state["game_version"],
-                                 **arguments})
+    command = {"type": kind, "player_id": state["active_player_id"],
+               "expected_version": state["game_version"], **arguments}
+    if kind == "DeclareBattleTarget" and state["subphase"] == "DUNGEON_PREPARE":
+        command.pop("expected_version")  # legacy all-hand baseline; staged commands have dedicated tests
+    return apply_command(state, command)
 
 
 class TurnEngineTests(unittest.TestCase):

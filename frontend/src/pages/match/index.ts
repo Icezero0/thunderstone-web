@@ -5,8 +5,10 @@ import {RoomConnection} from '../../shared/realtime/room-connection.js';
 import type {GameCommand, MatchView, User} from '../../shared/api/types.js';
 import {allocation, setupSelection, type SetupSelection} from './model.js';
 import {MatchPage} from './view.js';
-import {MatchActions} from './actions.js';
 import {mayCommand} from './commands.js';
+import {HandSortPreference} from '../../app/hand-sort-preference.js';
+import {MatchHistoryPanel} from './history-panel.js';
+import {downloadMatchFile, type MatchExport} from './match-export.js';
 
 const $ = <T extends HTMLElement = HTMLElement>(selector: string) => document.querySelector<T>(selector)!;
 let matchId = new URLSearchParams(location.search).get('id');
@@ -21,10 +23,41 @@ const page = new MatchPage(id => {if (view?.cards[id]) page.detail(view.cards[id
   selection[kind] = selection[kind].filter(value => value !== id);
   if (checked) selection[kind].push(id);
   page.renderSetup(view, selection, busy);
-}, command => {void sendCommand(command);}, ids => actions.selectHand(ids), id => actions.selectTarget(id),
-  () => actions.completeBattle(), () => actions.openResponse());
-const actions = new MatchActions(command => {void sendCommand(command);}, (view, id, caption) => page.tile(view, id, caption),
-  message => notice(message, !!message), ids => page.setSelected(ids), () => page.closeBrowsers());
+}, command => {void sendCommand(command);}, enabled => preference.change(enabled));
+const preference = new HandSortPreference(enabled => page.setAutoSort(enabled), message => page.setCommandError(message));
+const historyPanel = new MatchHistoryPanel(step => {void restoreHistory(step);}, () => {void downloadMatch();});
+let downloading = false;
+let restoreAttempt: {key: string; command_id: string} | null = null;
+
+async function downloadMatch(): Promise<void> {
+  if (!view || !user || busy || downloading || view.status === 'cancelled') return;
+  const currentId = view.id, currentUser = user.id;
+  downloading = true; page.setCommandError(); renderControls();
+  try {
+    const data = await api.request<MatchExport>(`/matches/${currentId}/export`);
+    if (user?.id === currentUser && view?.id === currentId) downloadMatchFile(data);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {login(); return;}
+    if (user?.id === currentUser && view?.id === currentId) page.setCommandError(errorMessage(error));
+  } finally {downloading = false; renderControls();}
+}
+
+async function restoreHistory(step?: number): Promise<void> {
+  if (!view || busy || (step === undefined ? !view.history?.can_undo : !view.history?.can_jump)) return;
+  const current = view, key = `${current.id}:${current.version}:${step ?? 'undo'}`;
+  if (restoreAttempt?.key !== key) restoreAttempt = {key, command_id: crypto.randomUUID()};
+  busy = true; page.finish(); page.setCommandError(); renderControls();
+  try {
+    const result = await api.request<MatchView>(`/matches/${current.id}/history/restore`, {method: 'POST', body: JSON.stringify({
+      expected_version: current.version, command_id: restoreAttempt.command_id, ...(step !== undefined ? {target_step: step} : {}),
+    })});
+    accept(result);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {login(); return;}
+    if (error instanceof ApiError && [403, 409].includes(error.status)) await safeRefresh();
+    page.setCommandError(errorMessage(error));
+  } finally {busy = false; renderControls();}
+}
 
 function notice(text = '', error = false): void {
   const node = $('#notice'); node.textContent = text; node.hidden = !text; node.classList.toggle('error', error);
@@ -38,7 +71,8 @@ function errorMessage(error: unknown): string {
   return '连接失败。请检查网络，然后点击“刷新牌桌”。';
 }
 function login(): void {
-  page.closeBrowsers(); actions.finish();
+  preference.receive(null);
+  page.closeBrowsers();
   sequence++; view = null; user = null; connection?.close();
   $('#match-content').hidden = true; $<HTMLDialogElement>('#card-dialog').close();
   location.replace(matchLoginLink(matchId));
@@ -46,6 +80,9 @@ function login(): void {
 function accept(value: MatchView): void {
   if (view?.id === value.id && value.version < view.version) return;
   const same = view?.id === value.id && view?.version === value.version;
+  if (view && (view.history?.epoch ?? 0) !== (value.history?.epoch ?? 0)) {
+    page.closeBrowsers(); $<HTMLDialogElement>('#card-dialog').close();
+  }
   view = value; selection = setupSelection(value, same ? selection : undefined);
   if (value.status === 'cancelled') {page.closeBrowsers(); $<HTMLDialogElement>('#card-dialog').close();}
   matchId = value.id; history.replaceState(null, '', matchLink(value.id));
@@ -56,14 +93,14 @@ function renderControls(): void {
   if (!view) return;
   $('#cancel-match-bar').hidden = !['active', 'setup_pending'].includes(view.status) || user?.id !== view.host_user_id;
   $<HTMLButtonElement>('#cancel-match').disabled = busy;
-  actions.receive(view, busy);
   page.controls(view, busy);
+  historyPanel.render(view, busy, downloading);
 }
 async function sendCommand(command: GameCommand): Promise<void> {
   if (!view || busy || !mayCommand(view, command)) return;
   const current = view, key = JSON.stringify([current.id, current.version, command]);
   if (commandAttempt?.key !== key) commandAttempt = {key, command_id: crypto.randomUUID()};
-  busy = true; renderControls(); notice();
+  busy = true; page.setCommandError(); renderControls(); notice();
   try {
     const result = await api.request<MatchView>(`/matches/${current.id}/commands`, {method: 'POST', body: JSON.stringify({
       expected_version: current.version, command_id: commandAttempt.command_id, command,
@@ -72,7 +109,7 @@ async function sendCommand(command: GameCommand): Promise<void> {
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {login(); return;}
     if (error instanceof ApiError && [403, 409].includes(error.status)) await safeRefresh();
-    notice(errorMessage(error), true);
+    page.setCommandError(errorMessage(error));
   } finally {busy = false; renderControls();}
 }
 async function refresh(): Promise<void> {
@@ -83,7 +120,7 @@ async function refresh(): Promise<void> {
   if (request !== sequence || !user) return;
   if (current) {accept(current); notice();}
   else {
-    page.closeBrowsers(); actions.finish();
+    page.closeBrowsers();
     view = null; $('#match-content').hidden = true; $('#empty-view').hidden = false;
     $('#match-title').textContent = '冒险尚未开始'; $('#match-subtitle').textContent = '先回到房间，与伙伴一起准备。';
     $('#page-state').textContent = '没有进行中的对局。';
@@ -95,7 +132,7 @@ async function safeRefresh(): Promise<void> {
     console.error('Failed to refresh match', error);
     if (error instanceof ApiError && error.status === 401) {login(); return;}
     if (error instanceof ApiError && [403, 404].includes(error.status)) {
-      page.closeBrowsers(); actions.finish();
+      page.closeBrowsers();
       view = null; $('#match-content').hidden = true; $('#empty-view').hidden = false;
       $<HTMLDialogElement>('#card-dialog').close();
       $('#empty-title').textContent = '这场对局暂不可访问'; $('#empty-description').textContent = '返回房间，确认当前参与的对局。';
@@ -152,8 +189,8 @@ $('#card-dialog').addEventListener('click', event => {if (event.target === event
 api.onExpired = login;
 document.addEventListener('visibilitychange', () => {if (!document.hidden && user) void safeRefresh();});
 window.addEventListener('pagehide', event => {
-  connection?.close(); page.finish(); actions.finish();
-  if (!event.persisted) {actions.dispose(); page.dispose();}
+  connection?.close(); page.finish();
+  if (!event.persisted) {historyPanel.dispose(); preference.dispose(); page.dispose();}
 });
 window.addEventListener('pageshow', event => {if (event.persisted && user) {connect(); void safeRefresh();}});
 
@@ -165,6 +202,7 @@ async function start(): Promise<void> {
   starting = true; $('#page-state').textContent = '正在验证登录状态…';
   try {
     user = await api.restore(); if (!user) {login(); return;}
+    preference.receive(user);
     $('#account-name').textContent = user.username || user.email;
     connect(); await safeRefresh();
   } catch (error) {

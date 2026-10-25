@@ -33,7 +33,7 @@ class MatchTableProjectionTests(unittest.TestCase):
         match.events.append({'kind': 'card_destroyed', 'sequence': 3, 'instance_id': 'secret-bob-hand',
                              'card_id': 'TS-0004', 'source': 'player:bob:hand', 'destination': 'destroyed', 'reason': 'private-reason'})
         event = build_match_view(match, 1)['event_log'][-1]
-        self.assertEqual(event, {'kind': 'card_destroyed', 'sequence': 3, 'card_id': 'TS-0004', 'player_id': 'bob'})
+        self.assertEqual(event, {'kind': 'card_destroyed', 'sequence': 3, 'card_id': 'TS-0004', 'player_id': 'bob', 'cause': 'effect'})
         self.assertIn('TS-0004', build_match_view(match, 1)['cards'])
 
     def test_inventories_are_order_independent_and_opponent_hand_is_masked(self):

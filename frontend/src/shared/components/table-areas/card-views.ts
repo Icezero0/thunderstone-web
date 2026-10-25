@@ -1,5 +1,6 @@
 import {CardInteractions, createCardElements, createCardInspection, defaultCardImages, type PhysicalCard} from '../game-card/index.js';
 import type {TableAreaOptions, TableCard} from './types.js';
+import type {CardStatus} from '../game-card/types.js';
 import {node} from '../../dom/elements.js';
 
 /** Shared presentation lifecycle for public game areas; no game rules or instance creation. */
@@ -8,6 +9,8 @@ export class AreaCards {
   private readonly cache = node('div');
   private readonly views = new Map<string, PhysicalCard>();
   private used = new Set<string>();
+  private originals = new Map<string, readonly CardStatus[]>();
+  private statusOverrides: Readonly<Record<string, readonly CardStatus[]>> | null = null;
   readonly interactions: CardInteractions;
   private readonly images;
   constructor(root: HTMLElement, private prefix: string, options: TableAreaOptions) {
@@ -28,7 +31,13 @@ export class AreaCards {
     }
     if (view.elements.button.dataset.cardId !== data.cardId) throw new Error('A cached card view cannot change catalog identity.');
     view.elements.button.dataset.instanceId = data.id;
-    view.setName(data.name); view.setFaceUp(faceUp, false); view.setVisible(true); return view;
+    this.originals.set(key, data.statuses ?? []);
+    view.setAttachments(data.attachments ?? [], this.images);
+    view.setName(data.name); view.setStatuses(this.statusOverrides?.[data.id] ?? data.statuses); view.setFaceUp(faceUp, false); view.setVisible(true); return view;
+  }
+  setStatusOverrides(statuses: Readonly<Record<string, readonly CardStatus[]>> | null): void {
+    this.statusOverrides = statuses;
+    for (const [key, view] of this.views) if (this.used.has(key)) view.setStatuses(statuses?.[view.elements.button.dataset.instanceId!] ?? this.originals.get(key));
   }
   end(): void {
     for (const [key, view] of this.views) if (!this.used.has(key)) view.setVisible(false);

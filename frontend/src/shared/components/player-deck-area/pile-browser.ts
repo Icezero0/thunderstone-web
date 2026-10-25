@@ -11,10 +11,12 @@ export class PileBrowser {
   private inertBefore: boolean[] = [];
   private kind: 'draw' | 'discard' | null = null;
   isOpen = false;
+  private highlighted = new Set<string>();
+  private selected = new Set<string>();
 
   constructor(private interactions: CardInteractions, private view: BrowserElements,
     private background: readonly HTMLElement[],
-    private images: CardImageSource, private id: (key: string) => string) {
+    private images: CardImageSource, private id: (key: string) => string, private onPick?: (id: string) => void) {
     this.closeButton.addEventListener('click', this.closeClicked);
     this.overlay.addEventListener('click', this.backdropClicked);
     window.addEventListener('keydown', this.keydown);
@@ -24,6 +26,14 @@ export class PileBrowser {
   private get grid(): HTMLElement {return this.view.grid;}
   private get closeButton(): HTMLButtonElement {return this.view.close;}
   get pile(): 'draw' | 'discard' | null {return this.kind;}
+  setCardTargets(highlighted: readonly string[], selected: readonly string[]): void {
+    this.highlighted = new Set(highlighted); this.selected = new Set(selected);
+    for (const item of this.current) this.target(item);
+  }
+  private target(item: BrowserItem): void {
+    const id = item.card.elements.button.dataset.instanceId!;
+    item.card.setGlow(this.highlighted.has(id)); item.card.setActive(this.selected.has(id));
+  }
 
   open(kind: 'draw' | 'discard', cards: readonly PlayerDeckCard[], trigger: HTMLElement): void {
     if (this.isOpen) return;
@@ -56,11 +66,13 @@ export class PileBrowser {
       if (!item) {
         const elements = createCardElements(data.cardId, this.images);
         elements.button.id = this.id(`browse-${data.id}`); elements.button.dataset.instanceId = data.id;
+        elements.button.addEventListener('click', () => {if (this.isOpen && this.highlighted.has(data.id)) this.onPick?.(data.id);});
         const element = document.createElement('article'); element.className = 'pile-browser-entry';
         element.append(elements.button);
         item = {element, card: this.interactions.add(elements, data.name)}; this.items.set(data.id, item);
       }
-      item.element.hidden = false; item.card.setName(data.name); item.card.setFaceUp(true, false); item.card.setVisible(true);
+      item.element.hidden = false; item.card.setName(data.name); item.card.setStatuses(data.statuses); item.card.setFaceUp(true, false); item.card.setVisible(true);
+      this.target(item);
       return item;
     });
     // Leave unchanged elements in place so a focused/inspected card keeps its identity.
@@ -105,6 +117,11 @@ export class PileBrowser {
       event.preventDefault(); targets[0].focus();
     }
   };
+  resetCards(): void {
+    this.close(false);
+    for (const item of this.items.values()) {this.interactions.remove(item.card); item.element.remove();}
+    this.items.clear();
+  }
   dispose(): void {
     this.close(false);
     this.items.clear();

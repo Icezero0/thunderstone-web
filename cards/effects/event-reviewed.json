@@ -608,7 +608,7 @@
               "exists": {
                 "zone": "bound",
                 "var": "revealed",
-                "card_id": "TS-0001"
+                "tag": "民兵"
               }
             },
             "then": {
@@ -616,7 +616,7 @@
               "query": {
                 "zone": "bound",
                 "var": "revealed",
-                "card_id": "TS-0001"
+                "tag": "民兵"
               },
               "bind": "chosen",
               "min": 1,
@@ -1585,7 +1585,7 @@
       "source_card_id": "TS-0323",
       "kind": "triggered",
       "source_zone": "active_hand",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -1598,7 +1598,7 @@
       "source_card_id": "TS-0324",
       "kind": "triggered",
       "source_zone": "active_hand",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -1657,7 +1657,7 @@
       "source_card_id": "TS-0446",
       "kind": "triggered",
       "source_zone": "active_hand",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -1782,14 +1782,14 @@
         "condition": {
           "exists": {
             "zone": "subject_hand",
-            "card_id": "TS-0001"
+            "tag": "民兵"
           }
         },
         "then": {
           "op": "select",
           "query": {
             "zone": "subject_hand",
-            "card_id": "TS-0001"
+            "tag": "民兵"
           },
           "bind": "chosen",
           "min": 1,
@@ -2414,7 +2414,7 @@
       "source_card_id": "TS-0358",
       "kind": "triggered",
       "source_zone": "active_hand",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -2423,7 +2423,7 @@
           "tag": "武器"
         },
         "destination": "discard",
-        "payment": "none"
+        "payment": "gold"
       }
     },
     {
@@ -2431,7 +2431,7 @@
       "source_card_id": "TS-0332",
       "kind": "triggered",
       "source_zone": "active_hand",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -2440,7 +2440,7 @@
           "tag": "武器"
         },
         "destination": "discard",
-        "payment": "none"
+        "payment": "gold"
       }
     },
     {
@@ -2448,7 +2448,7 @@
       "source_card_id": "TS-0338",
       "kind": "triggered",
       "source_zone": "active_hand",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -2460,7 +2460,7 @@
           ]
         },
         "destination": "discard",
-        "payment": "none"
+        "payment": "gold"
       }
     },
     {
@@ -2468,7 +2468,7 @@
       "source_card_id": "TS-0340",
       "kind": "triggered",
       "source_zone": "active_hand",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -2477,7 +2477,7 @@
           "tag": "武器"
         },
         "destination": "discard",
-        "payment": "none"
+        "payment": "gold"
       }
     },
     {
@@ -2485,7 +2485,7 @@
       "source_card_id": "TS-0371",
       "kind": "triggered",
       "source_zone": "active_hand",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -2497,7 +2497,7 @@
           ]
         },
         "destination": "discard",
-        "payment": "none"
+        "payment": "gold"
       }
     },
     {
@@ -2505,7 +2505,7 @@
       "source_card_id": "TS-0374",
       "kind": "triggered",
       "source_zone": "active_hand",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -2514,7 +2514,7 @@
           "tag": "村庄"
         },
         "destination": "discard",
-        "payment": "none"
+        "payment": "gold"
       }
     },
     {
@@ -2522,7 +2522,7 @@
       "source_card_id": "TS-0380",
       "kind": "triggered",
       "source_zone": "active_hand",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -2531,7 +2531,7 @@
           "tag": "村民"
         },
         "destination": "discard",
-        "payment": "none"
+        "payment": "gold"
       }
     },
     {
@@ -2539,7 +2539,7 @@
       "source_card_id": "TS-0407",
       "kind": "triggered",
       "source_zone": "active_hand",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -2548,7 +2548,7 @@
           "tag": "法术"
         },
         "destination": "discard",
-        "payment": "none"
+        "payment": "gold"
       }
     },
     {
@@ -2556,7 +2556,7 @@
       "source_card_id": "TS-0445",
       "kind": "triggered",
       "source_zone": "active_hand",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -2565,7 +2565,7 @@
           "tag": "村民"
         },
         "destination": "discard",
-        "payment": "none"
+        "payment": "gold"
       }
     },
     {
@@ -2573,7 +2573,7 @@
       "source_card_id": "TS-0579",
       "kind": "triggered",
       "source_zone": "event_source",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -2582,7 +2582,7 @@
           "tag": "食物"
         },
         "destination": "discard",
-        "payment": "none"
+        "payment": "gold"
       }
     },
     {
@@ -2590,7 +2590,7 @@
       "source_card_id": "TS-0595",
       "kind": "triggered",
       "source_zone": "event_source",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -2599,7 +2599,7 @@
           "tag": "村庄"
         },
         "destination": "discard",
-        "payment": "none"
+        "payment": "gold"
       }
     },
     {
@@ -2648,7 +2648,7 @@
       "source_card_id": "TS-0652",
       "kind": "triggered",
       "source_zone": "event_source",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -2838,7 +2838,7 @@
       "source_card_id": "TS-0344",
       "kind": "triggered",
       "source_zone": "active_hand",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {
@@ -3054,7 +3054,7 @@
             "op": "select",
             "query": {
               "zone": "subject_hand",
-              "card_id": "TS-0001"
+              "tag": "民兵"
             },
             "bind": "sacrificed",
             "min": 0,
@@ -3098,7 +3098,7 @@
       "source_card_id": "TS-0499",
       "kind": "triggered",
       "source_zone": "event_source",
-      "event": "MONSTER_DEFEATED",
+      "event": "BATTLE_TRIUMPH",
       "usage": "once_per_event",
       "conditions": [],
       "body": {

@@ -24,7 +24,9 @@ export function createCardElements(cardId: string, images = defaultCardImages, d
   front.append(frontImage); back.append(backImage); surface.append(front, back); lift.append(surface); button.append(lift);
   const inspection = document.createElement('div'); inspection.className = 'inspect-picture'; inspection.hidden = true;
   const largeFront = image(images.front(cardId)), largeBack = image(images.back, true);
+  const statusPanel = document.createElement('aside'); statusPanel.className = 'inspect-status-panel'; statusPanel.hidden = true;
+  statusPanel.setAttribute('aria-label', '当前卡牌状态');
   largeFront.alt = '卡牌正面原图'; largeBack.alt = '卡牌背面原图';
-  inspection.append(largeFront, largeBack);
-  return {button, surface, front, back, frontImage, backImage, inspection, largeFront, largeBack};
+  inspection.append(largeFront, largeBack, statusPanel);
+  return {button, surface, front, back, frontImage, backImage, inspection, largeFront, largeBack, statusPanel};
 }

@@ -86,6 +86,7 @@ async function page(responses = []) {
 
 test('configuration page wires selection, environment limits, export and reset after module split', async () => {
   const ui = await page();
+  ui.get('card-configuration').value = 'custom'; ui.get('card-configuration').dispatch('change');
   ui.get('group-list').children[0].dispatch('click');
   assert.deepEqual(ui.payload().selection.village.fixed_randomizer_ids, ['village-0']);
   ui.get('feature-random').checked = false; ui.get('feature-random').dispatch('change');
@@ -104,6 +105,21 @@ test('configuration page wires selection, environment limits, export and reset a
   const saved = JSON.parse(ui.storage.get('thunderstone-rules-draft-v7'));
   assert.equal(saved.catalog_hash, 'config-fixture');
   assert.equal(saved.state.counts.monster_groups, 3);
+});
+
+test('default configuration locks 8/4/3 random groups and unit multipliers, preserving the custom draft on toggle', async () => {
+  const ui = await page();
+  for (const id of ['fixed-config-panel', 'extras-config-panel', 'multipliers-config-panel']) assert.equal(ui.get(id).hidden, true);
+  assert.deepEqual(ui.payload().counts, {village_groups: 8, hero_groups: 4, monster_groups: 3});
+  assert.deepEqual(ui.payload().instance_multipliers, {village: 1, hero: 1, monster: 1});
+  for (const kind of ['village', 'hero', 'monster']) assert.equal(ui.get('count-' + kind).disabled, true);
+  const select = value => {ui.get('card-configuration').value = value; ui.get('card-configuration').dispatch('change');};
+  select('custom'); ui.get('count-village').value = 6; ui.get('count-village').dispatch('change');
+  ui.get('group-list').children[0].dispatch('click');
+  const custom = ui.payload(); select('default');
+  assert.equal(ui.payload().counts.village_groups, 8); assert.deepEqual(ui.payload().selection.village.fixed_randomizer_ids, []);
+  select('custom'); assert.deepEqual(ui.payload(), custom);
+  for (const id of ['fixed-config-panel', 'extras-config-panel', 'multipliers-config-panel']) assert.equal(ui.get(id).hidden, false);
 });
 
 test('flying spire allocation keeps the original request and submits two groups per dungeon', async () => {

@@ -2,17 +2,18 @@
 
 ## State and ownership
 
-The backend owns `GameState`. During uninterrupted `DUNGEON_PREPARE`, it calls
+The backend owns `GameState`. During uninterrupted `DUNGEON_PREPARE` or `DUNGEON_DECLARE`, it calls
 `battlePreparation(state, playerId, catalog, ruleset)` and sends the returned
 `{context, options, draft}` to the active player. The context contains that player's
-hand, public halls, relevant card definitions and calculation rules. It excludes
+hand, public halls and environment settings, relevant card definitions and calculation rules. It excludes
 draw piles, opponents' hands, RNG, private flags and effect continuations.
 
 The frontend edits `BattleDraft` locally. Each click calls `updateBattleDraft` and
 `previewBattleTeam` from the same `@thunderstone/engine` package used on the server.
 These functions do not change the match, consume RNG, execute abilities or send
-requests. Defaults select all hand heroes and optional support, retaining current
-equipment; a client can start with empty selections if desired.
+requests. Preparation defaults select all hand heroes and optional support, retaining
+equipment; the formal client starts with empty selections. During declaration the
+returned draft contains the committed team, including after reconnecting.
 
 After an authoritative ability, draw or other state change, obtain a fresh context
 for the new `game_version`. The server rejects drafts built for an older version.
@@ -56,8 +57,8 @@ zone or changes ownership. A hand-targeting effect sees both selected and
 unselected cards; only an explicit participation condition narrows that scope.
 
 Spells and other non-weapon support cards are
-selected in `support_instance_ids` and need no hero. Equipment belongs to a selected
-hero; removing that hero also removes its draft equipment. Diseases, monster hand
+selected in `support_instance_ids` and need no hero. Equipment can belong to any hand
+hero; deselecting that hero retains the equipment but removes its combat contribution. Diseases, monster hand
 trophies and thunderstones are mandatory hand cards and cannot be disabled as support.
 
 Actions accepted by `updateBattleDraft`:
@@ -95,6 +96,32 @@ Without a target, preview uses rank 0 to display raw team values and returns
 applies that hall's rank, darkness and continuous monster restrictions. Outcomes
 are provisional: random effects, equipment triggers, choices and monster battle
 effects have not been executed. `equipment_events_pending` counts new equip events.
+`battle_effects_pending` conservatively flags remaining pre-outcome triggers from
+the target, participating hand cards, public halls/settings, or scheduled effects.
+It does not execute those effects or inspect random draws. Conditional triggers
+that may affect combat are also flagged until resolved. A static DSL analysis
+treats `mark_destroy` and disease gains into discard, including nested select/if/sequence/iteration/binding branches,
+as outcome-neutral: marked cards and their equipment still contribute until
+post-battle destruction, and newly gained diseases do not enter the battle hand.
+Disease redirection or destruction replacement does not alter that conclusion;
+the gain/replacement still executes normally after confirmation. A sequence that also
+draws cards or modifies battle participants/numbers remains uncertain.
+Immediate destroy/discard, exclusion, stat changes and
+unknown operations remain conservative. The declaration UI uses a third question-mark
+status with “有效果待执行” instead of predicting victory or defeat in that case.
+Clicking a hall target only changes the local draft. “确认战斗” sends the separate
+`DeclareBattleTarget` command. Base team values remain visible, with parenthesized
+target-adjusted values; these exclude unexecuted triggers and the combined total
+also accounts for darkness. New authoritative snapshots invalidate stale targets.
+
+`turnOptions.card_statuses` is an internal instance-keyed read model. Per-card
+modifier applications retain public source card identity and signed values;
+active protection buffs and deferred destruction flags supply additional marks.
+These records are display evidence, never calculation inputs. Participant views
+attach `statuses` only to visible card records and omit hidden-hand statuses.
+Each status has `kind` (`buff`, `debuff`, `destroy`), `source_name`, `description`
+and optional `source_card_id`. Numeric/deferred statuses expire with the battle
+context or their actual flags; destruction protection follows its turn duration.
 Valid disease attack-pool choices are retained; if changing the team makes a chosen
 pool invalid, the shared default allocation is used in both preview and submission.
 
@@ -102,33 +129,64 @@ pool invalid, the shared default allocation is used in both preview and submissi
 
 The command shape is `{type: 'SubmitBattleTeam', player_id, expected_version, draft}`.
 The server checks actor, phase, pending choices, all draft revisions, current hand
-membership, duplicate IDs, weapon capacity/weight and the visible attack target.
+membership, duplicate IDs and weapon capacity/weight. Submission has no target:
+`draft.target_instance_id` must be `null`; the command builder clears any local
+preview target. Target restrictions are checked during declaration.
 An empty hero selection is legal. The server calculates all values again.
+
+Equipment can be assigned to any legal current-hand hero, including a hero not
+selected for battle. Deselecting a hero retains its equipment. Strength, weapon
+weight and capacity remain validated; attack, magic attack and light from the
+hero and its weapons contribute only while that hero participates. Preparation
+also accepts `{type: 'UnequipWeapon', player_id, expected_version, instance_id}`;
+its legal instances are advertised separately. It removes the authoritative
+equipment pair without undoing effects that already resolved on equipping.
 
 New equipment emits the existing `CARD_EQUIPPED` events, resolving each pair's
 effects before equipping the next pair. Choices interrupt the
 serializable workflow normally; resolving them continues the same submission.
-If these effects change the hand, drop selected equipment or make the target
-unattackable, the engine emits `battle_team_revision_required` and returns to
+If these effects change the hand or drop selected equipment,
+the engine emits `battle_team_revision_required` and returns to
 preparation. Request a fresh context and confirm the revised team. Already equipped
 weapons do not trigger again on the next submission.
 
 Otherwise the engine records `battle_context.battle_team`, emits
 `battle_team_submitted` and records the selected spells as used. Mandatory plague
-and fatigue effects then resolve at `BATTLE_TEAM_COMMITTED` before monster battle
-effects. Their choices suspend in `BATTLE_COMMIT`; clients must resolve them before
-any other action. Hero strength, total weapon weight and zero-strength destruction
-marks are reconciled after these effects. The engine then declares the target and
-runs the usual battle workflow.
+and fatigue effects resolve at `BATTLE_TEAM_COMMITTED`. Their choices suspend in
+`BATTLE_COMMIT` as part of stage 2; clients must resolve them before continuing.
+Hero strength, total weapon weight and zero-strength destruction marks are reconciled.
+Zero-strength marks use the ordinary after-battle destruction window: they do
+not remove contribution before the outcome, and resolve before the monster
+departs. Prevention/replacement and repeated reconciliation do not create a
+second attempt for the same zero-strength hero in this battle.
+The engine then pauses at `DUNGEON_DECLARE` (stage 3), without choosing or attacking
+any monster. Only `{type: 'DeclareBattleTarget', player_id, expected_version,
+target_instance_id}` chooses the hall monster/rank and starts battle resolution.
+The legal command advertises current target instances. `ReviseBattleTeam` returns
+to preparation if the player needs to adjust the team; it preserves already resolved
+effects, spell use and once-only commitment penalties.
 The selection lasts through this battle and is cleared with the turn context.
 
-During preparation, `{type: 'UseSpell', player_id, expected_version, instance_id}`
-explicitly records a spell's first use without automatically activating its optional
-abilities. `legal_commands` supplies `UseSpell.instance_ids`. Activating a spell
-ability also records use. Local preview alone never marks a spell as used; Bluefire
+`previewBattleTeam.continuous_card_statuses` returns instance-keyed, source-labeled
+continuous effects derived from the draft, for both hand cards and public hall/environment cards.
+Conditional combat bonuses record evidence in the same branches that calculate their numbers;
+equipment capacity, conversions, immunity and economy rules also expose source-labeled descriptions.
+Team-wide changes identify their scope instead of pretending each hero individually receives the total.
+Status entries have `continuous: true`;
+the browser replaces previous continuous entries while retaining explicit
+temporary buffs, debuffs and destruction marks. `turnOptions.card_statuses`
+includes the authoritative equivalent after the team is committed. The preview
+never writes these derived entries into permanent card values or match state.
+
+During preparation, selecting or deselecting a spell only changes the local draft:
+it sends no command and never marks a spell as used. `ActivateAbility` records actual
+ability use; `SubmitBattleTeam` records selected spells after validating the team.
+The standalone `UseSpell` command has been removed. Bluefire
 Staff can recast a spell only after an authoritative use. Recasting repeats its
 printed/dynamic numerical contribution and applicable dungeon abilities, with normal
 interruptible choices. Unselected spells still contribute no battle numbers.
+Cancelling a preview leaves an otherwise unused spell unused; it cannot undo an
+already activated ability or a previously committed use.
 
 Selection has these rules:
 
@@ -148,10 +206,9 @@ Selection has these rules:
   restrictions. Earlier active spell/item use is retained even if its source is
   later deselected; active-ability history remains separate from team selection.
 
-Legacy `DeclareBattleTarget` remains accepted for existing replays and implicitly
-uses the old all-hand calculation. New clients should submit `SubmitBattleTeam`.
-The migration parity gate ignores only the newly advertised command when comparing
-legacy responses; the new selection behavior has independent browser/server tests.
+Unversioned `DeclareBattleTarget` calls from preparation remain supported only for
+legacy effect-lab/migration fixtures and use the old all-hand calculation. Versioned
+network commands cannot use that shortcut: submit the team, then declare the target.
 
 ## Python and local HTTP adapters
 
@@ -183,10 +240,11 @@ only the visible preparation result and player-specific state/events to clients.
 The formal multiplayer implementation now follows this boundary through
 `POST /api/v1/matches/{id}/commands`. Its envelope carries `MatchView.version`
 and an idempotency `command_id`; its `SubmitBattleTeam` intent carries only the
-four editable selection fields in `draft`. The service injects the frozen rule
+three editable team fields in `draft`, plus an optional `target_instance_id: null`.
+The service injects the frozen rule
 revisions, authenticated player and current engine `game_version`. See the
-[match API](../match-lifecycle.md) for the transport contract. The legacy
-`DeclareBattleTarget` command is not exposed by this authenticated endpoint.
+[match API](../match-lifecycle.md) for the transport contract. The endpoint accepts
+`DeclareBattleTarget` only in the declaration phase and also accepts `ReviseBattleTeam`.
 
 Invalid JSON returns 400; invalid commands, actor/phase/revision conflicts or
 malformed selections return 422; an unavailable worker/build returns 503.

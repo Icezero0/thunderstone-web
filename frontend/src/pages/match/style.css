@@ -82,9 +82,6 @@
 .score-table {width: 100%; border-collapse: collapse; font-size: 13px;}
 .score-table td, .score-table th {padding: 12px; text-align: left; border-bottom: 1px solid var(--line);}
 .score-table th {font-weight: 600; color: var(--muted);}
-.event-log { list-style: none; padding: 0; margin: 0; max-height: 20rem; overflow: auto; }
-.event-log li { display: flex; align-items: baseline; gap: .8rem; padding: .65rem 0; border-top: 1px solid var(--line); line-height: 1.6; }
-.event-log small { min-width: 3rem; font-variant-numeric: tabular-nums; }
 @media (max-width: 800px) {.masthead-inner nav {gap: 14px;} #account-name {display: none;}}
 @media (max-width: 560px) {
   .setup-panel {padding: 18px 15px;}

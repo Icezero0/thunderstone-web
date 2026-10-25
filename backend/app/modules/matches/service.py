@@ -3,6 +3,7 @@
 import asyncio
 from copy import deepcopy
 from dataclasses import dataclass
+from datetime import datetime, timezone
 import hashlib
 import json
 import secrets
@@ -22,6 +23,7 @@ from backend.app.modules.matches.projection import build_match_view
 from backend.app.modules.matches.repository import MatchRepository
 from backend.app.modules.matches.schemas import MatchCommand, SetupChoiceCommand, StartMatchCommand
 from backend.app.modules.matches.command_schemas import PlayCommand
+from backend.app.modules.matches import history
 from backend.app.modules.rooms.service import RoomService
 from backend.app.modules.users.repository import UserRepository
 
@@ -118,6 +120,30 @@ class MatchService:
     async def get(self, db: AsyncSession, match_id: str, user_id: int) -> dict:
         return await self.view(db, await self.repo.get(db, match_id), user_id)
 
+    async def export(self, db: AsyncSession, match_id: str, user_id: int) -> dict:
+        """Explicit participant download, independent of engine availability/projection.
+
+        All mutable values come from one persisted Match row, so a concurrent
+        command cannot mix two revisions inside the exported checkpoint.
+        """
+        match = await self.repo.get(db, match_id)
+        self.member(match, user_id)
+        return {
+            "format": "thunderstone-match", "format_version": 1,
+            "exported_at": datetime.now(timezone.utc).isoformat(),
+            "match": {
+                "id": match.id, "room_id": match.room_id, "host_user_id": match.host_user_id,
+                "version": match.version, "history_cursor": match.history_cursor,
+                "history_epoch": match.history_epoch or 0,
+                "created_at": match.created_at.replace(tzinfo=timezone.utc).isoformat(),
+                "updated_at": match.updated_at.replace(tzinfo=timezone.utc).isoformat(),
+            },
+            "players": deepcopy(match.frozen_players),
+            "rules": self.revision(match),
+            "catalog_snapshot": deepcopy(match.catalog_snapshot),
+            "snapshot": history.snapshot(match),
+        }
+
     async def current(self, db: AsyncSession, user_id: int) -> dict | None:
         match = await self.repo.current(db, user_id)
         return await self.view(db, match, user_id) if match else None
@@ -137,12 +163,20 @@ class MatchService:
         member = self.member(match, user_id)
         options = {}
         state = match.state or {}
-        actor = (state.get("pending_choice") or {}).get("player_id", state.get("active_player_id"))
-        if match.status == "active" and member["player_id"] in {actor, state.get("active_player_id")}:
+        # Observers also need engine-calculated public hall capacities. The
+        # projection still restricts commands and preparation to their actor.
+        if match.status == "active":
             options = await asyncio.to_thread(calculate_options, state, member["player_id"],
                 CatalogSnapshot(**match.catalog_snapshot), self.revision(match))
         profiles = await UserRepository().profiles(db, [p["user_id"] for p in match.frozen_players])
-        return build_match_view(match, user_id, profiles=profiles, **options)
+        view = build_match_view(match, user_id, profiles=profiles, **options)
+        rows = await self.repo.history(db, match.id)
+        current = next((row for row in rows if row["step"] == match.history_cursor), None)
+        view["history"] = {"cursor": match.history_cursor, "epoch": match.history_epoch or 0,
+            "can_undo": match.status in ("active", "setup_pending", "finished") and bool(current and current["parent_step"]),
+            "can_jump": match.host_user_id == user_id and match.status != "cancelled",
+            "entries": [{**dict(row), "created_at": row["created_at"].replace(tzinfo=timezone.utc).isoformat()} for row in rows]}
+        return view
 
     async def replay(self, db, user_id, operation, resource_id, payload) -> MatchResult | None:
         previous = await self.repo.command(db, user_id, payload.command_id)
@@ -153,6 +187,8 @@ class MatchService:
         return MatchResult(deepcopy(previous.response_view))
 
     async def accepted(self, db, match, user_id, operation, resource_id, payload, room_version=None):
+        if operation in ("start", "setup_choice", "command"):
+            await self.repo.checkpoint(db, match, user_id, history.label(operation, payload), history.snapshot(match))
         await db.flush()
         view = await self.view(db, match, user_id)
         await self.repo.save_command(db, SavedCommand(user_id=user_id, command_id=payload.command_id,
@@ -216,6 +252,7 @@ class MatchService:
             match = await self.repo.get(db, match_id)
             if match.host_user_id != user_id:
                 raise forbidden()
+            await self.ensure_history(db, match)
             await self.repo.advance(db, match, payload.expected_version)
             snapshot = CatalogSnapshot(**deepcopy(match.catalog_snapshot))
             request = deepcopy(match.setup_request)
@@ -259,6 +296,7 @@ class MatchService:
             if match.status != "active":
                 raise AppError("对局尚未开始或已经结束，无法提交回合操作",
                                code="match_not_active", status_code=409)
+            await self.ensure_history(db, match)
             await self.repo.advance(db, match, payload.expected_version, ("active",))
             state = match.state
             actor = (state.get("pending_choice") or {}).get("player_id", state["active_player_id"])
@@ -269,6 +307,7 @@ class MatchService:
             command = payload.command.model_dump(exclude_none=True)
             command.update(player_id=member["player_id"], expected_version=state["game_version"])
             if command["type"] == "SubmitBattleTeam":
+                command["draft"]["target_instance_id"] = None
                 command["draft"].update(schema_version="thunderstone.battle-draft/1",
                     engine_version=match.engine_version, game_version=state["game_version"],
                     catalog_version=state["catalog_version"], effects_version=match.effects_version,
@@ -289,3 +328,45 @@ class MatchService:
             return await self.accepted(db, match, user_id, "command", match_id, payload, room_version)
         except Exception as error:
             return await self.recover(db, error, user_id, "command", match_id, payload)
+
+    async def ensure_history(self, db, match):
+        if match.history_cursor is None:
+            await self.repo.checkpoint(db, match, None, "现有对局起点", history.snapshot(match))
+
+    async def restore(self, db, match_id, user_id, payload):
+        try:
+            retry = await self.replay(db, user_id, "restore", match_id, payload)
+            if retry is not None:
+                return retry
+            match = await self.repo.get(db, match_id)
+            self.member(match, user_id)
+            if payload.target_step is not None and match.host_user_id != user_id:
+                raise forbidden("只有房主可以跳转操作历史")
+            current = await self.repo.history_step(db, match.id, match.history_cursor) if match.history_cursor else None
+            target = payload.target_step if payload.target_step is not None else current.parent_step if current else None
+            checkpoint = await self.repo.history_step(db, match.id, target) if target else None
+            if checkpoint is None or target == match.history_cursor:
+                raise AppError("没有可恢复的操作节点", code="invalid_history_step", status_code=409)
+            await self.repo.advance(db, match, payload.expected_version, ("active", "setup_pending", "finished"))
+            room = await self.rooms.repo.get(db, match.room_id)
+            members = await self.rooms.repo.players(db, room.id)
+            if room.status == "closed" or room.active_match_id not in (None, match.id) or \
+                    {p.user_id for p in members} != {p["user_id"] for p in match.frozen_players}:
+                raise AppError("房间参与者或对局已改变，不能恢复旧对局", code="history_room_conflict", status_code=409)
+            state = deepcopy(checkpoint.snapshot)
+            room_version = None
+            if state["status"] == "finished" and room.status == "playing":
+                await self.repo.reopen_room(db, room, match.id)
+                await self.rooms.repo.reset_ready(db, room.id)
+                room_version = room.version
+            elif state["status"] in ("active", "setup_pending") and room.status == "waiting":
+                await self.repo.resume_room(db, room, match.id)
+                await self.rooms.repo.reset_ready(db, room.id)
+                room_version = room.version
+            for key in history.SNAPSHOT_FIELDS:
+                setattr(match, key, state[key])
+            match.history_cursor = target
+            match.history_epoch = (match.history_epoch or 0) + 1
+            return await self.accepted(db, match, user_id, "restore", match_id, payload, room_version)
+        except Exception as error:
+            return await self.recover(db, error, user_id, "restore", match_id, payload)

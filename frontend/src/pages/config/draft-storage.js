@@ -6,6 +6,7 @@ export function createDraftStorage(page, {defaultState, effectiveCounts}) {
       const stored = [STORAGE_KEY, ...LEGACY_STORAGE_KEYS]
         .map(key => localStorage.getItem(key)).find(value => value);
       const saved = JSON.parse(stored);
+      if (saved?.card_configuration === "custom") page.cardConfiguration = "custom";
       const draft = saved?.state;
       if (draft?.selection && !draft.selection.guardian) {
         const oldEnvironment = draft.selection.environment?.fixed_card_id;

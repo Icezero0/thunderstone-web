@@ -4,7 +4,10 @@ import type {PlayerDeckState} from '../../shared/components/player-deck-area/ind
 
 /** Presentation adaptation only: no setup, purchasing or combat rules. */
 export function tableState(view: MatchView): {table: PublicTableState; deck: PlayerDeckState} {
-  const card = (item: MatchCardInstance) => ({id: item.instance_id, cardId: item.card_id, name: view.cards[item.card_id]?.name ?? item.card_id});
+  const card = (item: MatchCardInstance) => ({id: item.instance_id, cardId: item.card_id, name: view.cards[item.card_id]?.name ?? item.card_id,
+    ...(item.attachments?.length ? {attachments: item.attachments.map(entry => ({id: entry.instance_id, cardId: entry.card_id,
+      kind: entry.kind, name: view.cards[entry.card_id]?.name ?? entry.card_id}))} : {}),
+    ...(item.statuses?.length ? {statuses: item.statuses.map(status => ({...status}))} : {})});
   const own = view.players.find(player => player.is_you);
   const control = own?.control ?? [];
   const treasure = (item: MatchCardInstance) => view.cards[item.card_id]?.tags.includes('宝藏');
@@ -33,6 +36,7 @@ export function tableState(view: MatchView): {table: PublicTableState; deck: Pla
       })),
     },
     deck: {hand: view.hand.map(card), draw: (view.draw ?? []).map(card), discard: view.discard.map(card),
-      treasures: control.filter(treasure).map(card), aside: [...control.filter(item => !treasure(item)), ...view.aside ?? []].map(card)},
+      treasures: control.filter(treasure).map(card), aside: [...control.filter(item => !treasure(item)), ...view.aside ?? []].map(card),
+      revealed: (view.revealed ?? []).map(card)},
   };
 }

@@ -15,8 +15,8 @@
       <div class="header-status"><a href="/play" style="color:inherit">联机大厅</a><span class="status-dot"></span>规则配置草稿</div>
     </div>
     <div class="hero-copy">
-      <p class="eyebrow">游戏引擎 / 输入参数</p>
-      <h1>配置这一局的卡牌。</h1>
+      <p class="eyebrow">预知冒险</p>
+      <h1>游戏配置</h1>
       <p>设定牌组数量、指定卡组和实例倍率，然后在页面下方生成本局的实际卡组、地下城与起始牌组。</p>
     </div>
   </header>
@@ -31,6 +31,7 @@
     <main class="main-column">
       <section class="panel" aria-labelledby="counts-title">
         <div class="section-heading"><span class="step">01</span><div><p class="eyebrow">经典模式 · 随机设置目标</p><h2 id="counts-title">牌组数量</h2></div></div>
+        <div class="configuration-modes"><label>规则模式<select id="rule-mode"><option value="classic">经典模式</option></select></label><label>卡牌配置<select id="card-configuration"><option value="default">默认</option><option value="custom">自定义</option></select></label></div>
         <p class="section-copy">固定组计入目标数量，不足名额随机补足。数字显示环境调整后的实际组数，调整幅度标在数字上方。地下城特征与环境不计入怪物组数。</p>
         <div class="count-grid">
           <label class="count-card"><span>村庄牌</span><strong>村庄组</strong><span class="count-value"><small id="village-adjustment" class="count-adjustment" aria-live="polite"></small><input id="count-village" type="number" min="0" step="1" inputmode="numeric" aria-label="村庄组数"></span><small id="village-availability"></small></label>
@@ -39,7 +40,7 @@
         </div>
       </section>
 
-      <section class="panel" aria-labelledby="fixed-title">
+      <section id="fixed-config-panel" class="panel" aria-labelledby="fixed-title">
         <div class="section-heading"><span class="step">02</span><div><p class="eyebrow">固定选择</p><h2 id="fixed-title">村庄与地下城</h2></div></div>
         <div class="group-tabs" role="tablist" aria-label="卡组种类">
           <button type="button" class="tab active" data-kind="village" role="tab" aria-selected="true">村庄 <span id="tab-count-village">0</span></button>
@@ -52,7 +53,7 @@
         <div id="group-list" class="group-list"></div>
       </section>
 
-      <section class="panel" aria-labelledby="extras-title">
+      <section id="extras-config-panel" class="panel" aria-labelledby="extras-title">
         <div class="section-heading"><span class="step">03</span><div><p class="eyebrow">组局方式</p><h2 id="extras-title">地下城特征</h2></div></div>
         <label class="feature-mode"><input id="feature-random" type="checkbox"><span><strong>经典随机抽取地下城特征</strong><small>开启时，将地下城特征牌洗入设置流程并随机结算；关闭后可手动选择实际牌或完整牌组。</small></span></label>
         <div id="scenario-note" class="scenario-note" hidden></div>
@@ -70,7 +71,7 @@
         </div>
       </section>
 
-      <section class="panel" aria-labelledby="multipliers-title">
+      <section id="multipliers-config-panel" class="panel" aria-labelledby="multipliers-title">
         <div class="section-heading"><span class="step">04</span><div><p class="eyebrow">实例数量</p><h2 id="multipliers-title">供应数量倍率</h2></div></div>
         <p class="section-copy">每张适用卡牌的实例数 = <code>cards.csv.initial_copy_count</code> × 此处倍率。默认均为 ×1；同一倍率适用于所有等级的英雄牌。基础牌初始牌组与无限供应另按规则处理。</p>
         <div class="multiplier-grid">

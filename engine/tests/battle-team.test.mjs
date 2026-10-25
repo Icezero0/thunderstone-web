@@ -39,10 +39,116 @@ function fixture(hand = ['h', 'g', 'w', 's', 'l']) {
   return {state, catalog, rules};
 }
 const prepare = (f, engine = server) => engine.battlePreparation(f.state, 'alice', f.catalog, f.rules);
-const submit = (f, context, draft, engine = server) => engine.applyCommand(f.state,
-  engine.buildSubmitBattleTeamCommand(context, draft), f.catalog, f.rules);
+// End-to-end combat examples now perform two distinct player commands.
+const submit = (f, context, draft, engine = server) => {
+  const prepared = engine.applyCommand(f.state, engine.buildSubmitBattleTeamCommand(context, draft), f.catalog, f.rules);
+  if (prepared.state.subphase !== 'DUNGEON_DECLARE' || !draft.target_instance_id) return prepared;
+  const declared = engine.applyCommand(prepared.state, {type: 'DeclareBattleTarget', player_id: 'alice',
+    expected_version: prepared.state.game_version, target_instance_id: draft.target_instance_id}, f.catalog, f.rules);
+  return {...declared, events: [...prepared.events, ...declared.events]};
+};
 const trigger = (id, source, event, body, zone = 'active_hand') => ({id, source_card_id: source,
   kind: 'triggered', source_zone: zone, event, body, conditions: [], actions: [], usage: 'once_per_event'});
+
+test('battle previews flag unresolved target, participating hand and global effects without executing them', () => {
+  for (const [zone, source, selected, pending] of [
+    ['battle_target', 'm', [], true], ['active_hand', 'g', [], false], ['active_hand', 'g', ['g'], true],
+    ['hall', 'm', [], true],
+  ]) {
+    const f = fixture(['h', 'g']);
+    f.rules.abilities = [trigger('pending', source, 'BATTLE_BEFORE_OUTCOME', {op: 'draw', count: 1}, zone)];
+    const before = structuredClone(f), {context, draft} = prepare(f);
+    draft.target_instance_id = 'm'; draft.hero_instance_ids = selected;
+    const preview = server.previewBattleTeam(context, draft);
+    assert.equal(preview.battle_effects_pending, pending, `${zone}:${selected}`);
+    assert.deepEqual(browser.previewBattleTeam(context, draft), preview);
+    assert.deepEqual(f, before, 'preview must not run effects, consume RNG or mutate state');
+  }
+  const f = fixture(['h']);
+  f.rules.abilities = [trigger('target-only', 'm', 'BATTLE_BEFORE_OUTCOME', {op: 'draw', count: 1}, 'battle_target')];
+  f.catalog.cards.other = {...f.catalog.cards.m, card_id: 'other'};
+  f.state.instances.other = {card_id: 'other', owner_player_id: null, flags: {}}; f.state.zones['hall:main'].push('other');
+  const {context, draft} = prepare(f); draft.target_instance_id = 'other';
+  assert.equal(server.previewBattleTeam(context, draft).battle_effects_pending, false);
+  f.state.scheduled_effects.push({event: 'BATTLE_BEFORE_OUTCOME', source_instance_id: 'secret', private: 'hidden', player_id: 'alice', turn_number: 1});
+  const prepared = prepare(f); prepared.draft.target_instance_id = 'other';
+  assert.equal(server.previewBattleTeam(prepared.context, prepared.draft).battle_effects_pending, true);
+  assert.equal(JSON.stringify(prepared.context).includes('secret'), false);
+  assert.equal(JSON.stringify(prepared.context).includes('hidden'), false);
+  f.state.scheduled_effects[0].turn_number = 2;
+  const later = prepare(f); later.draft.target_instance_id = 'other';
+  assert.equal(server.previewBattleTeam(later.context, later.draft).battle_effects_pending, false);
+});
+
+test('submitting a target-free team pauses at declaration and only the next command attacks', () => {
+  const f = fixture(['h', 'g', 'l']), {context, draft} = prepare(f);
+  draft.hero_instance_ids = ['h']; draft.support_instance_ids = ['l'];
+  const command = server.buildSubmitBattleTeamCommand(context, draft);
+  assert.equal(command.draft.target_instance_id, null);
+  const prepared = server.applyCommand(f.state, command, f.catalog, f.rules);
+  assert.deepEqual(browser.applyCommand(f.state, command, f.catalog, f.rules), prepared);
+  assert.equal(prepared.state.subphase, 'DUNGEON_DECLARE');
+  assert.deepEqual(prepared.state.zones, f.state.zones);
+  assert.equal(prepared.state.battle_context.target_instance_id, undefined);
+  assert.equal(prepared.events.some(event => ['battle_target_declared', 'battle_resolved'].includes(event.kind)), false);
+  assert.deepEqual(prepare({...f, state: prepared.state}).draft.hero_instance_ids, ['h']);
+  assert.deepEqual(prepared.legal_commands.map(item => item.type), ['DeclareBattleTarget', 'ReviseBattleTeam']);
+  assert.throws(() => server.applyCommand(f.state, {type: 'DeclareBattleTarget', player_id: 'alice',
+    expected_version: f.state.game_version, target_instance_id: 'm'}, f.catalog, f.rules));
+  assert.throws(() => server.applyCommand(prepared.state, {...command, expected_version: prepared.state.game_version}, f.catalog, f.rules));
+  const declaration = {type: 'DeclareBattleTarget', player_id: 'alice', expected_version: prepared.state.game_version, target_instance_id: 'm'};
+  const result = server.applyCommand(prepared.state, declaration, f.catalog, f.rules);
+  assert.deepEqual(browser.applyCommand(prepared.state, declaration, f.catalog, f.rules), result);
+  assert.ok(result.events.some(event => event.kind === 'battle_resolved'));
+});
+
+test('target-specific restrictions apply during declaration; the team can be reopened without undoing uses', () => {
+  const f = fixture(['h', 's']);
+  f.rules.mechanics.push({id: 'no-spells', source_card_id: 'm', source_line: '', op: 'target_restriction', params: {forbid_used_spell: true}});
+  const {context, draft} = prepare(f);
+  const prepared = server.applyCommand(f.state, server.buildSubmitBattleTeamCommand(context, draft), f.catalog, f.rules);
+  assert.equal(prepared.state.subphase, 'DUNGEON_DECLARE');
+  assert.throws(() => server.applyCommand(prepared.state, {type: 'DeclareBattleTarget', player_id: 'alice',
+    expected_version: prepared.state.game_version, target_instance_id: 'm'}, f.catalog, f.rules), /attack restrictions/);
+  const reopened = server.applyCommand(prepared.state, {type: 'ReviseBattleTeam', player_id: 'alice', expected_version: prepared.state.game_version}, f.catalog, f.rules);
+  assert.equal(reopened.state.subphase, 'DUNGEON_PREPARE');
+  assert.ok(reopened.state.battle_context.used_card_tags.includes('法术'));
+  assert.equal(reopened.state.battle_context.battle_team, undefined);
+});
+
+test('mandatory commitment choices settle before declaration and do not repeat after revising the team', () => {
+  const f = fixture(['h', 'g', 'd']);
+  f.rules.abilities.push(trigger('fatigue', 'd', 'BATTLE_TEAM_COMMITTED', {op: 'select', query: {zone: 'active_hand', tag: '英雄'},
+    min: 1, max: 1, bind: 'chosen', then: {op: 'mod_card', target: {var: 'chosen'}, stat: 'strength', amount: -1}}));
+  const {context, draft} = prepare(f);
+  const submitted = server.applyCommand(f.state, server.buildSubmitBattleTeamCommand(context, draft), f.catalog, f.rules);
+  assert.equal(submitted.state.subphase, 'BATTLE_COMMIT');
+  assert.equal(submitted.state.pending_choice.kind, 'effect_select');
+  assert.equal(submitted.state.battle_context.target_instance_id, undefined);
+  const choice = {type: 'ResolveChoice', player_id: 'alice', expected_version: submitted.state.game_version, instance_ids: ['h']};
+  const resolved = server.applyCommand(JSON.parse(JSON.stringify(submitted.state)), choice, f.catalog, f.rules);
+  assert.deepEqual(browser.applyCommand(submitted.state, choice, f.catalog, f.rules), resolved);
+  assert.equal(resolved.state.subphase, 'DUNGEON_DECLARE'); assert.equal(resolved.state.pending_choice, null);
+  assert.equal(resolved.state.battle_context.card_modifiers.h.strength, -1);
+  assert.equal(resolved.events.some(event => event.kind === 'battle_target_declared'), false);
+  const reopened = server.applyCommand(resolved.state, {type: 'ReviseBattleTeam', player_id: 'alice'}, f.catalog, f.rules);
+  const prepared = prepare({...f, state: reopened.state});
+  const again = server.applyCommand(reopened.state, server.buildSubmitBattleTeamCommand(prepared.context, prepared.draft), f.catalog, f.rules);
+  assert.equal(again.state.subphase, 'DUNGEON_DECLARE'); assert.equal(again.state.pending_choice, null);
+  assert.equal(again.state.battle_context.card_modifiers.h.strength, -1);
+});
+
+test('explicit unequipping updates authoritative equipment and permits equipping again without undoing earlier events', () => {
+  const f = fixture(['h', 'w']);
+  const play = command => {const result = server.applyCommand(f.state, {...command, player_id: 'alice', expected_version: f.state.game_version}, f.catalog, f.rules); f.state = result.state; return result;};
+  play({type: 'EquipWeapon', hero_instance_id: 'h', weapon_instance_id: 'w'});
+  assert.deepEqual(server.legalCommands(f.state, f.catalog, f.rules).find(command => command.type === 'UnequipWeapon').instance_ids, ['w']);
+  const result = play({type: 'UnequipWeapon', instance_id: 'w'});
+  assert.deepEqual(result.state.battle_context.equipped_weapon_by_hero, {});
+  assert.ok(result.events.some(event => event.kind === 'weapon_unequipped' && event.weapon_instance_id === 'w'));
+  assert.ok(server.legalCommands(f.state, f.catalog, f.rules).find(command => command.type === 'EquipWeapon').options.some(option => option.weapon_instance_id === 'w'));
+  assert.throws(() => play({type: 'UnequipWeapon', instance_id: 'w'}), /not equipped/);
+});
 function freeze(value) {
   if (value && typeof value === 'object') {Object.freeze(value); Object.values(value).forEach(freeze);} return value;
 }
@@ -65,7 +171,7 @@ test('each local selection updates attack and light, with identical immutable No
   assert.equal(server.previewBattleTeam(context, draft).calculation.attack, 2);
   assert.equal(server.previewBattleTeam(context, draft).calculation.light, 1);
   draft = server.updateBattleDraft(context, draft, {type: 'set_hero', instance_id: 'h', selected: false});
-  assert.deepEqual(draft.equipment, {});
+  assert.deepEqual(draft.equipment, {h: ['w']});
   assert.equal(server.previewBattleTeam(context, draft).calculation.attack, 0);
   assert.deepEqual(f.state.battle_context, {equipped_weapon_by_hero: {}});
   assert.equal(f.state.rng_state.counter, 0);
@@ -81,6 +187,18 @@ test('visible preparation excludes opponents, decks, RNG, continuation and priva
   assert.equal(result.context.state.instances.secret, undefined);
   assert.equal(result.context.state.instances.h.flags, undefined);
   assert.equal(result.context.state.players.bob, undefined);
+});
+
+test('a hand hero may equip before participating, and toggling participation retains the weapon without contributing it', () => {
+  const f = fixture(['h', 'w']), {context, draft: initial} = prepare(f);
+  let draft = {...initial, hero_instance_ids: []};
+  draft = server.updateBattleDraft(context, draft, {type: 'equip', hero_instance_id: 'h', weapon_instance_id: 'w'});
+  assert.deepEqual(draft.equipment, {h: ['w']}); assert.equal(server.previewBattleTeam(context, draft).calculation.attack, 0);
+  draft = server.updateBattleDraft(context, draft, {type: 'set_hero', instance_id: 'h', selected: true});
+  assert.equal(server.previewBattleTeam(context, draft).calculation.attack, 2);
+  draft = server.updateBattleDraft(context, draft, {type: 'set_hero', instance_id: 'h', selected: false});
+  assert.deepEqual(browser.previewBattleTeam(context, draft), server.previewBattleTeam(context, draft));
+  assert.deepEqual(draft.equipment, {h: ['w']}); assert.equal(server.previewBattleTeam(context, draft).calculation.attack, 0);
 });
 
 test('nested preparation references cannot reveal hidden sources and preserve resolved global bonuses', () => {
@@ -247,7 +365,7 @@ test('draft validation rejects foreign cards, duplicates, overweight equipment, 
   ]) assert.throws(() => server.previewBattleTeam(context, broken));
   context.cards.w['wiki_重量'] = '10';
   assert.throws(() => server.previewBattleTeam(context, {...draft, equipment: {h: ['w']}}), /too heavy/);
-  assert.throws(() => server.buildSubmitBattleTeamCommand(context, draft), /select a battle target/);
+  assert.equal(server.buildSubmitBattleTeamCommand(context, draft).draft.target_instance_id, null);
   assert.throws(() => server.battlePreparation(f.state, 'bob', f.catalog, f.rules), /active player/);
   assert.throws(() => server.battlePreparation({...f.state, subphase: 'TURN_START'}, 'alice', f.catalog, f.rules), /preparation phase/);
   const command = server.buildSubmitBattleTeamCommand(context, {...draft, target_instance_id: 'm'});
@@ -284,7 +402,8 @@ test('equipment choices retain the submission workflow and commit only after the
   const resumed = server.applyCommand(JSON.parse(JSON.stringify(result.state)), command, f.catalog, f.rules);
   assert.deepEqual(browser.applyCommand(result.state, command, f.catalog, f.rules), resumed);
   assert.ok(resumed.events.some(e => e.kind === 'battle_team_submitted'));
-  assert.ok(resumed.events.some(e => e.kind === 'battle_resolved'));
+  assert.equal(resumed.state.subphase, 'DUNGEON_DECLARE');
+  assert.equal(resumed.events.some(e => e.kind === 'battle_resolved'), false);
 });
 
 test('equipment events settle one pair at a time and later invalid pairs return to preparation', () => {

@@ -138,6 +138,9 @@ class EffectIntegrationTests(unittest.TestCase):
 
         do("ActivateAbility", ability_id="TS-0268-A01", source_instance_id=source)
         do("ResolveChoice", instance_id=state["pending_choice"]["candidate_instance_ids"][0])
+        self.assertEqual(state["pending_choice"]["kind"], "trap_activation")
+        self.assertIn(trap, state["zones"]["hall:main"])
+        do("ResolveTrap", instance_id=trap)
         self.assertEqual(state["pending_choice"]["ability_id"], "TS-0688-A01")
         self.assertNotIn(torch, state["zones"]["destroyed"])
         do("ResolveChoice", instance_id=militia)
@@ -150,7 +153,7 @@ class EffectIntegrationTests(unittest.TestCase):
         self.assertTrue(any(e["kind"] == "effect_draw" and e["ability_id"] == "TS-0268-A01" for e in events))
         self.assertEqual(state["subphase"], "DUNGEON_PREPARE")
 
-    def test_two_spoils_purchases_each_use_full_surviving_hand_gold(self):
+    def test_two_triumph_purchases_share_surviving_hand_gold(self):
         f = self.fixture()
         f.add("TS-0332")
         f.add("TS-0340")
@@ -176,7 +179,8 @@ class EffectIntegrationTests(unittest.TestCase):
             events.extend(result["events"])
         purchases = [e for e in events if e["kind"] == "effect_purchase_completed"]
         self.assertEqual(len(purchases), 2)
-        self.assertEqual([e["budget"] for e in purchases], [6, 6])
+        self.assertEqual([e["budget"] for e in purchases], [6, 3])
+        self.assertEqual(state["players"][f.player]["temporary_gold"], 0)
         self.assertIsNone(state["pending_choice"])
 
     def test_declining_treasure_purchase_keeps_source_and_rejects_bad_option(self):

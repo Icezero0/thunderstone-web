@@ -26,7 +26,7 @@ export function matchHeading(view: MatchView): {title: string; detail: string} {
 export function phaseLabel(phase?: string): string {
   const phases: Record<string, string> = {TURN_START: '回合开始', VILLAGE_ABILITIES: '村庄能力',
     VILLAGE_BUY: '村庄购买', VILLAGE_UPGRADE: '英雄升级', REST: '休整', ACTION_END: '结束回合', DUNGEON_PREPARE: '地下城准备',
-    BATTLE_COMMIT: '确认战斗', BATTLE_EFFECTS: '战斗效果', BATTLE_AFTER_EFFECTS: '战斗后效果',
+    DUNGEON_DECLARE: '宣言战斗', BATTLE_COMMIT: '确认战斗', BATTLE_EFFECTS: '战斗效果', BATTLE_AFTER_EFFECTS: '战斗后效果',
     ACTION_EXIT_EFFECTS: '行动结束', TURN_END_EFFECTS: '回合结束', GAME_END: '对局结算'};
   return phase ? phases[phase] ?? '对局进行中' : '等待开局';
 }
@@ -51,7 +51,7 @@ export function actionProgress(view: MatchView) {
       : ({VILLAGE_ABILITIES: 2, VILLAGE_BUY: 4, VILLAGE_UPGRADE: 5} as Record<string, number>)[turn.subphase];
   } else {
     step = window === 'DUNGEON_ENTER' ? 1
-      : ({DUNGEON_PREPARE: 2, BATTLE_COMMIT: 3, BATTLE_EFFECTS: 4, BATTLE_AFTER_EFFECTS: 4} as Record<string, number>)[turn.subphase];
+      : ({DUNGEON_PREPARE: 2, DUNGEON_DECLARE: 3, BATTLE_COMMIT: 2, BATTLE_EFFECTS: 4, BATTLE_AFTER_EFFECTS: 4} as Record<string, number>)[turn.subphase];
   }
   return step ? {action: labels[action], stage: list[step - 1], step, total: list.length} : undefined;
 }

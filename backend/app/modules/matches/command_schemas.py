@@ -21,7 +21,7 @@ class ChooseAction(Intent):
 
 
 class FinishStep(Intent):
-    type: Literal["FinishAbilities", "FinishBuying", "FinishUpgrading", "SkipRestDestroy", "FinishTurn"]
+    type: Literal["FinishAbilities", "FinishBuying", "FinishUpgrading", "SkipRestDestroy", "FinishTurn", "ReviseBattleTeam"]
 
 
 class BuyCard(Intent):
@@ -42,7 +42,7 @@ class UpgradeHero(Intent):
 
 
 class InstanceAction(Intent):
-    type: Literal["RestDestroy", "UseSpell"]
+    type: Literal["RestDestroy", "UnequipWeapon", "ResolveTrap"]
     instance_id: Identifier
 
 
@@ -55,7 +55,7 @@ class EquipWeapon(Intent):
 class BattleDraftSelection(Intent):
     """Only mutable choices cross the API; revision/actor fields are injected."""
 
-    target_instance_id: Identifier
+    target_instance_id: None = None
     hero_instance_ids: InstanceIds
     support_instance_ids: InstanceIds
     equipment: Annotated[dict[Identifier, InstanceIds], Field(max_length=1000)]
@@ -64,6 +64,11 @@ class BattleDraftSelection(Intent):
 class SubmitBattleTeam(Intent):
     type: Literal["SubmitBattleTeam"]
     draft: BattleDraftSelection
+
+
+class DeclareBattleTarget(Intent):
+    type: Literal["DeclareBattleTarget"]
+    target_instance_id: Identifier
 
 
 class AssignDiseasePenalty(Intent):
@@ -123,7 +128,7 @@ class ResolveEffectOrder(Intent):
 
 PlayerIntent = Annotated[
     ChooseAction | FinishStep | BuyCard | ActivateAbility | UpgradeHero | InstanceAction |
-    EquipWeapon | SubmitBattleTeam | AssignDiseasePenalty | AssignStrengthPenalty |
+    EquipWeapon | SubmitBattleTeam | DeclareBattleTarget | AssignDiseasePenalty | AssignStrengthPenalty |
     ResolveChoice | ResolveResponse | ResolveReusedAbility | ResolveEffectUpgrade |
     ResolveValueChoice | ResolveCardOrder | ResolveEffectPurchase | ResolveEffectOrder,
     Field(discriminator="type"),

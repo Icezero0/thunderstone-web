@@ -46,7 +46,7 @@ export function sourceInstances(evaluation: EffectEvaluation, ability: Ability):
       if (!state.active_settings.includes(ability.source_card_id)) return [];
       pool = zones.settings ?? [];
   }
-  const combatTiming = ['BATTLE_BEFORE_OUTCOME', 'BATTLE_AFTER_OUTCOME', 'MONSTER_DEFEATED'].includes(ability.event ?? '');
+  const combatTiming = ['BATTLE_BEFORE_OUTCOME', 'BATTLE_TRIUMPH', 'BATTLE_AFTER_OUTCOME', 'MONSTER_DEFEATED'].includes(ability.event ?? '');
   const targetId = state.battle_context?.target_instance_id;
   const excluded = combatTiming && ability.source_zone === 'active_hand' && state.battle_context?.battle_team
     ? combatValues(evaluation.input, state.battle_context.target_rank ?? 1,

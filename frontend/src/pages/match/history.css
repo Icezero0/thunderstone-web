@@ -1,0 +1,22 @@
+.history-drawer {position:fixed;right:0;top:24%;z-index:80;width:min(360px,calc(100vw - 32px));transform:translateX(100%);transition:transform 240ms cubic-bezier(.22,.75,.25,1);filter:drop-shadow(0 8px 22px rgb(0 0 0 / 18%));}
+.history-drawer[data-open="true"] {transform:translateX(0);}
+.history-drawer-toggle {position:absolute;right:100%;top:24px;display:grid;place-items:center;width:24px;height:132px;padding:0;border:1px solid var(--gold-ink);border-right:0;border-radius:8px 0 0 8px;background:var(--navy);color:var(--header-muted);cursor:pointer;transition:color 160ms,border-color 160ms;}
+.history-drawer-toggle:hover,.history-drawer-toggle:focus-visible {color:var(--header-gold);border-color:var(--gold);}
+.history-drawer-toggle span {width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:5px solid currentColor;transition:transform 240ms;}
+.history-drawer[data-open="true"] .history-drawer-toggle span {transform:rotate(180deg);}
+.history-drawer-body {height:68vh;height:68dvh;display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-right:0;border-radius:10px 0 0 10px;padding:18px;}
+.history-drawer header {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-shrink:0;}
+.history-drawer h2 {margin:0;font-size:19px;}
+#history-undo {display:inline-flex;align-items:center;justify-content:center;gap:6px;}
+#history-undo svg {width:17px;height:17px;flex:none;}
+.history-drawer ol {list-style:none;margin:0;padding:0;overflow-y:auto;min-height:0;flex:1;overscroll-behavior:contain;scrollbar-width:none;}
+.history-drawer ol::-webkit-scrollbar {display:none;}
+.history-entry {padding:12px 10px;border-left:2px solid var(--line);border-bottom:1px solid var(--line);}
+.history-entry.current {border-left-color:var(--gold);background:var(--surface-selected);}
+.history-entry.alternate {opacity:.65;}
+.history-entry-heading {display:flex;justify-content:space-between;gap:10px;font-size:13px;}
+.history-entry-heading small,.history-entry p {font-size:11px;color:var(--muted);}
+.history-entry p {margin:6px 0;}
+.history-drawer footer {flex-shrink:0;border-top:1px solid var(--line);padding-top:14px;margin-top:14px;}
+.history-drawer footer button {width:100%;}
+@media (prefers-reduced-motion:reduce) {.history-drawer,.history-drawer-toggle,.history-drawer-toggle span {transition:none;}}

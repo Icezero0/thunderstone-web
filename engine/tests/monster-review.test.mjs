@@ -220,8 +220,14 @@ for (const replacement of ['destroy', 'redirect']) test(`Emerald Dragon disease 
   const command = {type: 'ResolveDiseaseReplacement', player_id: 'bob',
     source_instance_id: replacement === 'destroy' ? destroySource : redirectSource};
   assert.throws(() => engine.applyCommand(paused, {...command, player_id: 'alice'}, f.catalog, f.rules));
-  const finished = engine.applyCommand(paused, command, f.catalog, f.rules);
-  const events = [...started.events, ...finished.events];
+  let finished = engine.applyCommand(paused, command, f.catalog, f.rules);
+  const continuationEvents = [...finished.events];
+  if (replacement === 'redirect') {
+    assert.equal(finished.state.pending_choice.stage, 'recipient');
+    finished = engine.applyCommand(finished.state, {type: 'ResolveDiseaseReplacement', player_id: 'bob', source_instance_id: null, recipient_id: 'alice'}, f.catalog, f.rules);
+    continuationEvents.push(...finished.events);
+  }
+  const events = [...started.events, ...continuationEvents];
   assert.equal(finished.state.pending_choice, null);
   assert.equal(finished.state.attachments[emerald], undefined);
   assert.equal(events.filter(e => e.kind === 'card_gained' && e.instance_id === disease).length, 1);
@@ -263,6 +269,7 @@ for (const replacement of ['TS-0686', 'TS-0700', 'TS-0707', 'TS-0673']) test(`Th
     } else if (c.kind === 'effect_reorder') cmd = {type: 'ResolveCardOrder', instance_ids: c.candidate_instance_ids};
     else if (c.kind === 'effect_value') cmd = {type: 'ResolveValueChoice', value: c.options[0]};
     else if (c.kind === 'effect_order') cmd = {type: 'ResolveEffectOrder', effect_ids: c.effects.map(e => e.effect_id)};
+    else if (c.kind === 'trap_activation') cmd = {type: 'ResolveTrap', instance_id: c.instance_id};
     else assert.fail(`unexpected choice ${c.kind}`);
     result = engine.applyCommand(result.state, {...cmd, player_id: c.player_id}, f.catalog, f.rules); events.push(...result.events);
   }

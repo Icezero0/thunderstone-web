@@ -6,9 +6,10 @@ const byId = (a: PublicPlayerCard, b: PublicPlayerCard) => a.cardId.localeCompar
 function playerCards(player: PlayerListPlayer): PublicPlayerCards | undefined {
   if (!player.cards) return undefined;
   const ids = new Set<string>();
-  const identity = (card: {id: string; cardId?: string; name?: string}) => {
+  const identity = (card: {id: string; cardId?: string; name?: string; statuses?: readonly import('../game-card/types.js').CardStatus[]}) => {
     if (!text(card.cardId) || !text(card.name)) throw new Error('Visible player cards require a cardId and name.');
-    return {id: card.id, cardId: card.cardId, name: card.name};
+    return {id: card.id, cardId: card.cardId, name: card.name,
+      ...(card.statuses ? {statuses: card.statuses.map(status => ({...status}))} : {})};
   };
   const instance = (card: {id: string}) => {
     if (!text(card.id) || ids.has(card.id)) throw new Error('Player card instance IDs must be nonempty and unique across zones.');

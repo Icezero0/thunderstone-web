@@ -14,15 +14,20 @@ export class PlayerList {
   private readonly activity: PlayerActivityBubble;
   private players: readonly PlayerListPlayer[] = [];
   private disposed = false;
+  private selection: ReadonlySet<string> | null = null;
   get isBrowsing(): boolean {return this.browser.isOpen;}
   get browsingPlayerId(): string | null {return this.browser.playerId;}
 
   constructor(host: HTMLElement, private options: PlayerListOptions = {}) {
     this.view = createPlayerListView(host, options); this.root = this.view.root;
-    this.rows = new PlayerRows(this.view.list, id => {if (!this.blocked()) this.openPlayer(id);}, this.view.id('player-browser'));
+    this.rows = new PlayerRows(this.view.list, id => {
+      if (this.blocked()) return;
+      if (this.selection) {if (this.selection.has(id)) this.options.onPlayerClick?.(id);}
+      else this.openPlayer(id);
+    }, this.view.id('player-browser'));
     this.activity = new PlayerActivityBubble(this.view.id('player-activity'), this.root, this.view.list, id => this.rows.anchor(id));
     this.browser = new PlayerBrowser(this.view.overlays, options.background ?? [this.root], options.images,
-      this.view.id, id => this.rows.trigger(id));
+      this.view.id, id => this.rows.trigger(id), options.onCardTargetClick);
   }
   setPlayers(players: readonly PlayerListPlayer[]): void {
     this.assertAlive(); const snapshot = copyPlayers(players);
@@ -43,6 +48,13 @@ export class PlayerList {
     this.browser.open(playerId, zone);
   }
   closePlayer(restoreFocus = true): void {this.assertAlive(); this.browser.close(restoreFocus);}
+  setCardTargets(ids: readonly string[], selected: readonly string[]): void {this.browser.setCardTargets(ids, selected);}
+  playerRect(playerId: string): DOMRect | null {return this.rows.anchor(playerId)?.getBoundingClientRect() ?? null;}
+  setPlayerSelection(ids: readonly string[] | null): void {
+    this.assertAlive(); this.selection = ids === null ? null : new Set(ids);
+    this.rows.setSelection(this.selection); this.rows.render(this.players);
+    if (this.selection) this.browser.close(false);
+  }
   showActivity(playerId: string, text: string, durationMs?: number): void {
     this.assertAlive(); if (!this.blocked()) this.activity.show(playerId, text, durationMs);
   }

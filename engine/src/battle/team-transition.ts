@@ -1,10 +1,10 @@
 import {RuleError} from '../types.js';
 import type {Transition} from '../turn/transaction.js';
 import {queueSteps} from '../turn/workflow.js';
-import {declareBattleTarget} from '../turn/dungeon.js';
+import {awaitBattleDeclaration, commitBattlePenalties} from '../turn/dungeon.js';
 import {equipWeapon, equipmentPairs} from './equipment.js';
 import {projectBattleContext} from './preparation.js';
-import {battleDraftInput, createBattleDraft, previewBattleTeam, type BattleDraft} from './team.js';
+import {battleDraftInput, createBattleDraft, type BattleDraft} from './team.js';
 import {spellUseOptions, useSpell} from '../effects/spell-use.js';
 
 const contextFor = (tx: Transition) => projectBattleContext(tx.state,
@@ -14,9 +14,7 @@ const pairKey = ([hero, weapon]: [string, string]) => `${hero}\0${weapon}`;
 /** Equip events use the normal interruptible workflow before the team is locked. */
 export function submitBattleTeam(tx: Transition, draft: BattleDraft) {
   const input = battleDraftInput(contextFor(tx), draft);
-  if (!draft.target_instance_id) throw new RuleError('select a battle target before submitting');
-  if (!previewBattleTeam(contextFor(tx), draft).calculation.can_attack)
-    throw new RuleError("target's attack restrictions are not satisfied");
+  if (draft.target_instance_id !== null) throw new RuleError('declare a battle target after submitting the team');
   const previous = equipmentPairs(tx.state.battle_context), wanted = equipmentPairs(input.state.battle_context!);
   const desired = new Set(wanted.map(pairKey)), existing = new Set(previous.map(pairKey));
   const kept = previous.filter(pair => desired.has(pairKey(pair)));
@@ -58,7 +56,6 @@ export function finalizeBattleTeam(tx: Transition, draft: BattleDraft, submitted
     if (equipmentPairs({equipped_weapon_by_hero: draft.equipment}).some(pair => !current.has(pairKey(pair))))
       throw new RuleError('equipment effects changed the selected equipment');
     input = battleDraftInput(context, refreshed);
-    if (!previewBattleTeam(context, refreshed).calculation.can_attack) throw new RuleError("target's attack restrictions are not satisfied");
   } catch (error) {
     if (!(error instanceof RuleError)) throw error;
     tx.event('battle_team_revision_required', {player_id: tx.playerId, reason: error.message});
@@ -75,6 +72,6 @@ export function finalizeBattleTeam(tx: Transition, draft: BattleDraft, submitted
   for (const instance of draft.support_instance_ids) if (unusedSpells.has(instance)) useSpell(tx, instance);
   tx.event('battle_team_submitted', {player_id: tx.playerId,
     hero_instance_ids: [...draft.hero_instance_ids], support_instance_ids: [...draft.support_instance_ids],
-    equipment: structuredClone(draft.equipment), target_instance_id: draft.target_instance_id});
-  declareBattleTarget(tx, draft.target_instance_id!);
+    equipment: structuredClone(draft.equipment)});
+  if (!commitBattlePenalties(tx, {op: 'await_battle_declaration'})) awaitBattleDeclaration(tx);
 }

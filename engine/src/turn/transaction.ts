@@ -13,6 +13,7 @@ import {returnDestroyedToSupply, replenishEmptySupplies} from '../effects/supply
 import {reconcileEquipment} from '../battle/equipment.js';
 import {expireRules} from '../effects/durations.js';
 import {gainSteps} from '../effects/gain.js';
+import {diseaseOrigin} from '../effects/disease-origin.js';
 
 // The state is serialized after every command. No process-local game data lives here.
 export type GameState = Record<string, any>;
@@ -76,7 +77,9 @@ export class Transition {
     if (index < 0) throw new RuleError(`${instanceId} is not in ${source}`);
     pile.splice(index, 1);
     (this.state.zones[destination] ??= []).push(instanceId);
-    this.event('card_moved', {instance_id: instanceId, source, destination});
+    this.event('card_moved', {instance_id: instanceId, source, destination,
+      ...(source.startsWith('hall:') ? {source_rank: source.endsWith(':rank0') ? 0 : index + 1} : {}),
+      ...(destination.startsWith('hall:') ? {destination_rank: destination.endsWith(':rank0') ? 0 : this.state.zones[destination].length} : {})});
   }
   createOwned(cardId: string, destination: string, origin: string, owner = this.playerId, emitEvent = true): string {
     const instanceId = `CI-${String(this.state.next_instance_sequence++).padStart(6, '0')}`;
@@ -87,7 +90,7 @@ export class Transition {
       owner_player_id: owner, destination, origin});
     return instanceId;
   }
-  takeDisease(destination = 'discard', playerId = this.playerId): string {
+  takeDisease(destination = 'discard', playerId = this.playerId, sourceId?: string): string {
     if (!['hand', 'discard'].includes(destination)) throw new RuleError('invalid disease destination');
     const supply = this.state.supply_rules;
     const sample = sampleDisease(supply, this.rng.snapshot());
@@ -100,12 +103,14 @@ export class Transition {
       card_id: sample.card_id, disease_mode: supply.disease_mode, roll: sample.roll,
       total_weight: sample.total_weight, candidates: sample.candidates});
     queueSteps(this, [{op: 'resolve_disease_gain', gain: {instance_id: instanceId,
-      player_id: playerId, destination, used_sources: []}}], true);
+      player_id: playerId, destination, used_sources: [], monster_source: diseaseOrigin(this, sourceId)}}], true);
     return instanceId;
   }
   destroyCard(instanceId: string, reason = 'effect'): Record<string, any> {
     const source = this.location(instanceId);
     if (!source) throw new RuleError('destroyed card has no zone');
+    const hallOrigin = source.startsWith('hall:') ? {hall_zone: source,
+      rank: source.endsWith(':rank0') ? 0 : this.state.zones[source].indexOf(instanceId) + 1} : {};
     const card = this.printedCard(instanceId), instance = this.state.instances[instanceId];
     const replacement = destructionReplacement(instance, card, this.state.turn_number);
     delete instance.flags.pending_after_battle_destruction;
@@ -131,7 +136,7 @@ export class Transition {
       destination = 'destroyed';
     }
     const details = {instance_id: instanceId, card_id: card.card_id, source, destination};
-    this.event('card_destroyed', {...details, reason});
+    this.event('card_destroyed', {...details, ...hallOrigin, reason});
     return details;
   }
   playerDrawPile(playerId = this.playerId): string[] {
