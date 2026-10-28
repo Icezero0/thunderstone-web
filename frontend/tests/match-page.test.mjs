@@ -5,12 +5,40 @@ import {page as domPage} from './support/player-deck-dom.mjs';
 import {allocation, setupSelection, cardImageUrl, actionProgress} from '../.test-dist/match-model.js';
 import {matchReturnPath} from '../.test-dist/navigation.js';
 import {playerActivity} from '../.test-dist/match-player-activity.js';
-import {battlePreparation} from '../../engine/dist/index.js';
+import {battlePreparation, projectActionPrediction, legalCommands} from '../../engine/dist/index.js';
+import {predictMatchAction} from '../.test-dist/match-action-prediction.js';
 import {fixture as engineFixture} from '../../engine/tests/support/catalog.mjs';
 
 const source = await readFile(new URL('../.test-dist/match-page.js', import.meta.url), 'utf8');
 const html = await readFile(new URL('../match.html', import.meta.url), 'utf8');
 const settle = () => new Promise(resolve => setImmediate(resolve));
+
+test('predicted purchase flies to discard before a slow server reply and confirmation does not replay it', async () => {
+  const fx = engineFixture(['TS-0001', 'TS-0002']);
+  fx.state.battle_context = null; fx.state.chosen_action = 'village';
+  fx.state.subphase = fx.state.timing_window = 'VILLAGE_BUY'; fx.state.players.alice.temporary_gold = 10;
+  const view = villageView('VILLAGE_BUY', legalCommands(fx.state, fx.catalog, fx.rules));
+  view.viewer_resources = {xp: 0, temporary_gold: 10, purchases_remaining: 1, extra_basic_purchases: 0};
+  view.hand = fx.hand.map(id => ({instance_id: id, card_id: fx.state.instances[id].card_id}));
+  view.supplies = [{zone_id: 'basic_supply:TS-0002', kind: 'basic', infinite: true, remaining: null,
+    top_card_id: 'TS-0002', cards: [{card_id: 'TS-0002', count: null}]}];
+  view.action_prediction = projectActionPrediction(fx.state, 'alice', fx.catalog, fx.rules);
+  view.sync = {reset: false, event_sequence: 0, history_loaded: false, history_after: 0};
+  const expected = predictMatchAction(view, {type: 'BuyCard', card_id: 'TS-0002'}); assert.ok(expected);
+  let confirm;
+  const ui = await page({view, animationsEnabled: true, post: () => new Promise(resolve => {confirm = resolve;})});
+  await ui.click('match-public-village-tab'); await ui.click('match-deck-response-village:buy');
+  supplyCard(ui, 'basic_supply:TS-0002').fire('click'); await settle();
+  assert.equal(posts(ui).length, 1);
+  assert.equal(ui.animations.filter(a => a.element.className === 'card-flight').length, 1);
+  await ui.advance(2000);
+  assert.equal(ui.get('match-deck-discard-count').textContent, '1');
+  assert.equal(ui.get('match-deck-response-FinishTurn').disabled, false);
+  assert.match(ui.get('page-state').textContent, /正在同步 1 步/);
+  confirm(expected); await settle(); await ui.advance(2000);
+  assert.equal(ui.animations.filter(a => a.element.className === 'card-flight').length, 1);
+  assert.doesNotMatch(ui.get('page-state').textContent, /正在同步/); ui.cleanup();
+});
 
 const deckMotion = (sequence, steps) => ({sequence, kind: 'player_card_motion', player_id: 'alice', steps});
 const moveCards = (source, destination, cards) => ({kind: 'move', source, destination, cards});
@@ -302,6 +330,7 @@ for (const host of [false, true]) test(`history undo is shared, jumps are host-o
     assert.ok(url.endsWith('/history/restore')); assert.equal(body.expected_version, 2); assert.equal(body.target_step, undefined); return restored;
   }});
   assert.equal(ui.get('history-undo').disabled, false);
+  await ui.click('history-toggle');
   assert.equal(ui.get('history-entries').querySelectorAll('button').length, host ? 1 : 0);
   await ui.click('history-undo'); await ui.advance(5000);
   assert.equal(ui.get('history-undo').disabled, true);
@@ -1437,7 +1466,7 @@ test('rapid first-time spell and hero selections never wait for the network with
   reply(view); await settle(); ui.cleanup();
 });
 
-test('weapons equip an unselected hand hero, attach at its upper right and contribute only when that hero participates', async () => {
+test('ordinary equipment edits stay local and contribute only when the hero participates', async () => {
   const {view, f} = battleView(), [hero, weapon] = f.hand;
   const next = structuredClone(view); next.version++;
   f.state.game_version++; f.state.battle_context.equipped_weapon_by_hero = {[hero]: weapon};
@@ -1449,14 +1478,81 @@ test('weapons equip an unselected hand hero, attach at its upper right and contr
   assert.match(ui.get('match-deck-player-response').textContent, /选择装备英雄/);
   handCard(ui, weapon).fire('click'); assert.equal(posts(ui).length, 0);
   handCard(ui, hero).fire('click'); await settle();
-  assert.deepEqual(posts(ui)[0].body.command, {type: 'EquipWeapon', hero_instance_id: hero, weapon_instance_id: weapon});
+  assert.equal(posts(ui).length, 0, 'ordinary equip should not wait for the network');
   assert.equal(handCard(ui, hero).dataset.selected, 'false'); assert.equal(handCard(ui, weapon).dataset.selected, 'false');
   assert.equal(handCard(ui, weapon).dataset.equippedTo, hero); assert.match(combatText(ui), /攻击 0/);
   cardAction(ui, hero, '出阵'); assert.equal(handCard(ui, weapon).dataset.selected, 'true');
   assert.match(combatText(ui), /攻击 2/); assert.equal(handCards(ui).length, 3);
   cardAction(ui, weapon, '卸下装备'); assert.equal(handCard(ui, weapon).dataset.selected, 'false'); assert.equal(handCard(ui, weapon).dataset.equippedTo, undefined);
   cardAction(ui, weapon, '装备'); await ui.click('match-deck-response-pick:cancel');
-  assert.equal(posts(ui).length, 1); assert.deepEqual(responseButtons(ui).map(button => button.textContent), ['使用效果', '完成']); ui.cleanup();
+  assert.equal(posts(ui).length, 0); assert.deepEqual(responseButtons(ui).map(button => button.textContent), ['使用效果', '完成']); ui.cleanup();
+});
+
+test('slow triggered equipment allows consecutive local participation edits and preserves them after acknowledgement', async () => {
+  const {view, f} = battleView(), [hero, weapon, support] = f.hand;
+  view.battle_preparation.options.immediate_equipment_instance_ids = [weapon];
+  const next = structuredClone(view); next.version++;
+  f.state.game_version++; f.state.battle_context.equipped_weapon_by_hero = {[hero]: weapon};
+  next.battle_preparation = battlePreparation(f.state, 'alice', f.catalog, f.rules);
+  let reply;
+  const ui = await page({view, post: () => new Promise(resolve => {reply = resolve;})});
+  handCard(ui, weapon).fire('click'); handCard(ui, hero).fire('click');
+  assert.deepEqual(posts(ui)[0].body.command, {type: 'EquipWeapon', hero_instance_id: hero, weapon_instance_id: weapon});
+  for (const id of [hero, support]) {handCard(ui, id).fire('click'); assert.equal(handCard(ui, id).dataset.selected, 'true');}
+  handCard(ui, hero).fire('click'); assert.equal(handCard(ui, hero).dataset.selected, 'false');
+  assert.equal(posts(ui).length, 1); assert.equal(ui.get('match-deck-response-SubmitBattleTeam').disabled, true);
+  const gets = ui.requests.filter(request => request.options.method !== 'POST' && request.url.includes('/matches/')).length;
+  ui.sockets[0].onmessage({data: JSON.stringify({type: 'match_changed', payload: {match_id: view.id, version: next.version}})});
+  assert.equal(ui.requests.filter(request => request.options.method !== 'POST' && request.url.includes('/matches/')).length, gets);
+  reply(next); await settle(); await settle();
+  assert.equal(handCard(ui, support).dataset.selected, 'true'); assert.equal(handCard(ui, hero).dataset.selected, 'false');
+  assert.equal(ui.requests.filter(request => request.options.method !== 'POST' && request.url.includes('/matches/')).length, gets,
+    'the command response already satisfies its websocket invalidation');
+  assert.equal(ui.get('match-deck-response-SubmitBattleTeam').disabled, false); ui.cleanup();
+});
+
+test('entering effects flushes an edited ordinary equipment plan once, not on every click', async () => {
+  const {view, f} = battleView(), [hero, weapon] = f.hand;
+  view.legal_commands.push({type: 'UpdatePreparationEquipment'});
+  const next = structuredClone(view); next.version++;
+  f.state.game_version++; f.state.battle_context.equipped_weapon_by_hero = {[hero]: weapon};
+  next.battle_preparation = battlePreparation(f.state, 'alice', f.catalog, f.rules);
+  const ui = await page({view, post: () => next});
+  handCard(ui, weapon).fire('click'); handCard(ui, hero).fire('click');
+  assert.equal(posts(ui).length, 0);
+  await ui.click('match-deck-response-battle:effects');
+  assert.deepEqual(posts(ui)[0].body.command, {type: 'UpdatePreparationEquipment', equipment: {[hero]: [weapon]}});
+  await ui.click('match-deck-response-battle:effects'); await ui.click('match-deck-response-battle:effects');
+  assert.equal(posts(ui).length, 1, 'unchanged equipment does not require a second sync'); ui.cleanup();
+});
+
+test('equipment accepted into a pending effect response survives until preparation resumes', async () => {
+  const {view, f} = battleView(), [hero, weapon] = f.hand;
+  view.battle_preparation.options.immediate_equipment_instance_ids = [weapon];
+  const pending = structuredClone(view); pending.version++; pending.battle_preparation = null;
+  pending.pending_choice = {kind: 'effect_value', player_id: 'alice', can_resolve: true};
+  pending.legal_commands = [{type: 'ResolveValueChoice', options: ['pay']}];
+  const done = structuredClone(view); done.version += 2;
+  f.state.game_version += 2; f.state.battle_context.equipped_weapon_by_hero = {[hero]: weapon};
+  done.battle_preparation = battlePreparation(f.state, 'alice', f.catalog, f.rules);
+  const ui = await page({view, post: () => pending});
+  handCard(ui, weapon).fire('click'); handCard(ui, hero).fire('click'); await settle();
+  assert.equal(handCard(ui, weapon).dataset.equippedTo, hero, 'an accepted pending effect is not a rejected equip');
+  ui.setView(done); ui.sockets[0].onmessage({data: JSON.stringify({type: 'match_changed', payload: {match_id: done.id, version: done.version}})});
+  await settle(); await settle();
+  assert.equal(handCard(ui, weapon).dataset.equippedTo, hero); ui.cleanup();
+});
+
+test('rejected immediate equip restores the prior equipment but keeps local participation edits', async () => {
+  const {view, f} = battleView(), [hero, weapon] = f.hand;
+  view.battle_preparation.options.immediate_equipment_instance_ids = [weapon];
+  let reject;
+  const ui = await page({view, post: () => new Promise((_resolve, fail) => {reject = fail;})});
+  handCard(ui, weapon).fire('click'); handCard(ui, hero).fire('click'); handCard(ui, hero).fire('click');
+  reject(new Error('offline')); await settle(); await settle();
+  assert.equal(handCard(ui, hero).dataset.selected, 'true');
+  assert.equal(handCard(ui, weapon).dataset.equippedTo, undefined);
+  assert.equal(ui.get('match-deck-response-SubmitBattleTeam').disabled, false); ui.cleanup();
 });
 
 test('resolving a dungeon ability preserves the local team while updating unused abilities and the preview', async () => {

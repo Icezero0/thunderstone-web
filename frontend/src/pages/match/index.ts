@@ -9,6 +9,10 @@ import {mayCommand} from './commands.js';
 import {HandSortPreference} from '../../app/hand-sort-preference.js';
 import {MatchHistoryPanel} from './history-panel.js';
 import {downloadMatchFile, type MatchExport} from './match-export.js';
+import {MatchSync} from './match-sync.js';
+import {viewCursor, viewQuery, mergeMatchView} from './match-protocol.js';
+import {predictMatchAction, predictionMatches} from './action-prediction.js';
+import {MatchCommandQueue} from './command-queue.js';
 
 const $ = <T extends HTMLElement = HTMLElement>(selector: string) => document.querySelector<T>(selector)!;
 let matchId = new URLSearchParams(location.search).get('id');
@@ -17,7 +21,9 @@ let selection: SetupSelection = {groupA: [], featureA: []};
 let connection: RoomConnection | null = null, busy = false, starting = false, sequence = 0;
 let setupAttempt: {key: string; command_id: string} | null = null;
 let cancelAttempt: {version: number; command_id: string} | null = null;
-let commandAttempt: {key: string; command_id: string} | null = null;
+let pendingCommandType: string | null = null;
+let recoveryError = '';
+let transportAttempt: {id: string; body: string} | null = null;
 const page = new MatchPage(id => {if (view?.cards[id]) page.detail(view.cards[id]);}, (kind, id, checked) => {
   if (!view?.can_resolve_setup || busy) return;
   selection[kind] = selection[kind].filter(value => value !== id);
@@ -25,12 +31,48 @@ const page = new MatchPage(id => {if (view?.cards[id]) page.detail(view.cards[id
   page.renderSetup(view, selection, busy);
 }, command => {void sendCommand(command);}, enabled => preference.change(enabled));
 const preference = new HandSortPreference(enabled => page.setAutoSort(enabled), message => page.setCommandError(message));
-const historyPanel = new MatchHistoryPanel(step => {void restoreHistory(step);}, () => {void downloadMatch();});
+const historyPanel = new MatchHistoryPanel(step => {void restoreHistory(step);}, () => {void downloadMatch();}, () => {void loadHistory();});
+let historyLoading = false;
+async function loadHistory(): Promise<void> {
+  if (!view?.sync || view.sync.history_loaded || historyLoading) return;
+  const id = view.id; historyLoading = true;
+  try {
+    const result = await api.request<{entries: NonNullable<MatchView['history']>['entries']}>(`/matches/${id}/history`);
+    if (view?.id === id && view.history && view.sync) {
+      const entries = new Map([...result.entries, ...view.history.entries].map(row => [row.step, row]));
+      view = {...view, history: {...view.history, entries: [...entries.values()].sort((a, b) => a.step - b.step)},
+        sync: {...view.sync, history_loaded: true, history_after: Math.max(0, ...entries.keys())}};
+      renderControls();
+      sync.invalidate({type: 'connected'}); // Catch commands committed during the history request.
+    }
+  } catch (error) {page.setCommandError(errorMessage(error));}
+  finally {historyLoading = false;}
+}
 let downloading = false;
 let restoreAttempt: {key: string; command_id: string} | null = null;
+const commandQueue = new MatchCommandQueue({
+  predict: predictMatchAction, matches: predictionMatches,
+  corrected: () => {recoveryError = '已按服务器结果更新牌桌，后续尚未提交的操作已取消。';},
+  show: (value, reset) => accept(value, reset), changed: renderControls,
+  send: async (current, command, commandId) => {
+    current = mergeMatchView(view, current);
+    pendingCommandType = command.type;
+    if (transportAttempt?.id !== commandId) transportAttempt = {id: commandId,
+      body: JSON.stringify({expected_version: current.version, command_id: commandId, command, ...viewCursor(current)})};
+    // Manual retry after a lost response reuses the exact receipt key AND payload.
+    return await api.request<MatchView>(`/matches/${current.id}/commands`, {method: 'POST', body: transportAttempt.body});
+  },
+  recover: async error => {
+    if (error instanceof ApiError && error.status === 401) {login(); return null;}
+    recoveryError = errorMessage(error); page.setCommandError(recoveryError);
+    try {return await api.request<MatchView>(`/matches/${matchId}?compact=true`);}
+    catch {recoveryError = '尚未确认操作结果，请恢复网络后刷新牌桌。'; page.setCommandError(recoveryError); return null;}
+  },
+});
+const sync = new MatchSync(() => commandQueue.baseline ?? view, () => busy || commandQueue.synchronizing || commandQueue.blocked || !user, safeRefresh);
 
 async function downloadMatch(): Promise<void> {
-  if (!view || !user || busy || downloading || view.status === 'cancelled') return;
+  if (!view || !user || busy || commandQueue.synchronizing || commandQueue.blocked || downloading || view.status === 'cancelled') return;
   const currentId = view.id, currentUser = user.id;
   downloading = true; page.setCommandError(); renderControls();
   try {
@@ -43,15 +85,15 @@ async function downloadMatch(): Promise<void> {
 }
 
 async function restoreHistory(step?: number): Promise<void> {
-  if (!view || busy || (step === undefined ? !view.history?.can_undo : !view.history?.can_jump)) return;
+  if (!view || busy || commandQueue.synchronizing || commandQueue.blocked || (step === undefined ? !view.history?.can_undo : !view.history?.can_jump)) return;
   const current = view, key = `${current.id}:${current.version}:${step ?? 'undo'}`;
   if (restoreAttempt?.key !== key) restoreAttempt = {key, command_id: crypto.randomUUID()};
   busy = true; page.finish(); page.setCommandError(); renderControls();
   try {
     const result = await api.request<MatchView>(`/matches/${current.id}/history/restore`, {method: 'POST', body: JSON.stringify({
-      expected_version: current.version, command_id: restoreAttempt.command_id, ...(step !== undefined ? {target_step: step} : {}),
+      expected_version: current.version, command_id: restoreAttempt.command_id, ...viewCursor(current), ...(step !== undefined ? {target_step: step} : {}),
     })});
-    accept(result);
+    commandQueue.receive(result);
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {login(); return;}
     if (error instanceof ApiError && [403, 409].includes(error.status)) await safeRefresh();
@@ -73,12 +115,14 @@ function errorMessage(error: unknown): string {
 function login(): void {
   preference.receive(null);
   page.closeBrowsers();
-  sequence++; view = null; user = null; connection?.close();
+  sequence++; view = null; user = null; connection?.close(); sync.dispose();
+  commandQueue.dispose();
   $('#match-content').hidden = true; $<HTMLDialogElement>('#card-dialog').close();
   location.replace(matchLoginLink(matchId));
 }
-function accept(value: MatchView): void {
-  if (view?.id === value.id && value.version < view.version) return;
+function accept(value: MatchView, reset = false): void {
+  if (!reset && view?.id === value.id && value.version < view.version) return;
+  value = mergeMatchView(view, value);
   const same = view?.id === value.id && view?.version === value.version;
   if (view && (view.history?.epoch ?? 0) !== (value.history?.epoch ?? 0)) {
     page.closeBrowsers(); $<HTMLDialogElement>('#card-dialog').close();
@@ -86,39 +130,33 @@ function accept(value: MatchView): void {
   view = value; selection = setupSelection(value, same ? selection : undefined);
   if (value.status === 'cancelled') {page.closeBrowsers(); $<HTMLDialogElement>('#card-dialog').close();}
   matchId = value.id; history.replaceState(null, '', matchLink(value.id));
-  page.render(value, selection, busy);
+  page.render(value, selection, busy || commandQueue.blocked, reset);
   renderControls();
 }
 function renderControls(): void {
   if (!view) return;
   $('#cancel-match-bar').hidden = !['active', 'setup_pending'].includes(view.status) || user?.id !== view.host_user_id;
-  $<HTMLButtonElement>('#cancel-match').disabled = busy;
-  page.controls(view, busy);
-  historyPanel.render(view, busy, downloading);
+  const blocked = busy || commandQueue.blocked;
+  $<HTMLButtonElement>('#cancel-match').disabled = blocked || commandQueue.synchronizing;
+  page.controls(view, blocked, commandQueue.blocked && ['ActivateAbility', 'EquipWeapon', 'UpdatePreparationEquipment', 'AssignDiseasePenalty', 'AssignStrengthPenalty'].includes(pendingCommandType ?? ''));
+  if (recoveryError) page.setCommandError(recoveryError);
+  historyPanel.render(view, blocked || commandQueue.synchronizing, downloading);
+  if (view.status === 'active') $('#page-state').textContent = `鼠标悬停卡牌时，按住空格检视大图。${commandQueue.pending ? ` · 正在同步 ${commandQueue.pending} 步` : ''}`;
+  if (!busy) sync.resume();
 }
 async function sendCommand(command: GameCommand): Promise<void> {
-  if (!view || busy || !mayCommand(view, command)) return;
-  const current = view, key = JSON.stringify([current.id, current.version, command]);
-  if (commandAttempt?.key !== key) commandAttempt = {key, command_id: crypto.randomUUID()};
-  busy = true; page.setCommandError(); renderControls(); notice();
-  try {
-    const result = await api.request<MatchView>(`/matches/${current.id}/commands`, {method: 'POST', body: JSON.stringify({
-      expected_version: current.version, command_id: commandAttempt.command_id, command,
-    })});
-    accept(result);
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 401) {login(); return;}
-    if (error instanceof ApiError && [403, 409].includes(error.status)) await safeRefresh();
-    page.setCommandError(errorMessage(error));
-  } finally {busy = false; renderControls();}
+  if (!view || busy || commandQueue.blocked || !mayCommand(view, command)) return;
+  pendingCommandType = command.type; recoveryError = ''; page.setCommandError(); notice();
+  if (!commandQueue.enqueue(command)) page.setCommandError('待同步操作较多，请稍候再继续。');
 }
 async function refresh(): Promise<void> {
   if (!user) return;
+  if (commandQueue.synchronizing) {sync.invalidate({type: 'connected'}); return;}
   const request = ++sequence;
-  const current = matchId ? await api.request<MatchView>(`/matches/${encodeURIComponent(matchId)}`)
+  const current = matchId ? await api.request<MatchView>(`/matches/${encodeURIComponent(matchId)}${viewQuery(view)}`)
     : (await api.request<{match: MatchView | null}>('/matches/current')).match;
   if (request !== sequence || !user) return;
-  if (current) {accept(current); notice();}
+  if (current) {if (commandQueue.blocked) commandQueue.recovered(current); else commandQueue.receive(current); notice();}
   else {
     page.closeBrowsers();
     view = null; $('#match-content').hidden = true; $('#empty-view').hidden = false;
@@ -142,7 +180,7 @@ async function safeRefresh(): Promise<void> {
 }
 function connect(): void {
   connection?.close();
-  connection = new RoomConnection(api, () => {void safeRefresh();}, status => {
+  connection = new RoomConnection(api, change => sync.invalidate(change), status => {
     $('#connection').textContent = {connecting: '正在连接', online: '实时连接正常', offline: '连接中断，正在重连'}[status];
     $('#connection').dataset.status = status;
   });
@@ -156,7 +194,7 @@ $('#confirm-setup').addEventListener('click', () => {
   if (setupAttempt?.key !== key) setupAttempt = {key, command_id: crypto.randomUUID()};
   busy = true; renderControls(); page.renderSetup(view, selection, busy); notice();
   void api.request<MatchView>(`/matches/${view.id}/setup-choice`, {method: 'POST', body: JSON.stringify({...body, command_id: setupAttempt.command_id})})
-    .then(result => {accept(result);})
+    .then(result => {commandQueue.receive(result);})
     .catch(async error => {
       if (error instanceof ApiError && error.status === 401) {login(); return;}
       if (error instanceof ApiError && error.status === 409) await safeRefresh();
@@ -168,7 +206,7 @@ $('#confirm-setup').addEventListener('click', () => {
 });
 $('#refresh-match').addEventListener('click', () => {void (user ? safeRefresh() : start());});
 $('#cancel-match').addEventListener('click', () => {
-  if (!view || user?.id !== view.host_user_id || view.status === 'cancelled' || busy) return;
+  if (!view || user?.id !== view.host_user_id || view.status === 'cancelled' || busy || commandQueue.synchronizing || commandQueue.blocked) return;
   if (!confirm('取消本局并返回房间？所有玩家将重新准备，当前开局不再继续。')) return;
   const current = view;
   if (cancelAttempt?.version !== current.version) cancelAttempt = {version: current.version, command_id: crypto.randomUUID()};
@@ -190,7 +228,7 @@ api.onExpired = login;
 document.addEventListener('visibilitychange', () => {if (!document.hidden && user) void safeRefresh();});
 window.addEventListener('pagehide', event => {
   connection?.close(); page.finish();
-  if (!event.persisted) {historyPanel.dispose(); preference.dispose(); page.dispose();}
+  if (!event.persisted) {sync.dispose(); commandQueue.dispose(); historyPanel.dispose(); preference.dispose(); page.dispose();}
 });
 window.addEventListener('pageshow', event => {if (event.persisted && user) {connect(); void safeRefresh();}});
 

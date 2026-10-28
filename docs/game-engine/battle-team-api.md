@@ -132,6 +132,33 @@ pool invalid, the shared default allocation is used in both preview and submissi
 
 ## Submission and effect semantics
 
+### Local preparation and synchronization
+
+Ordinary equip/unequip and participation toggles stay in the browser draft. They
+update the shared preview and animation immediately, with no command per click.
+`options.immediate_equipment_instance_ids` identifies weapons whose equip event
+could trigger an effect; those still issue `EquipWeapon` immediately. The engine
+derives the hint from reviewed, registered and scheduled `CARD_EQUIPPED` triggers,
+conservatively treating non-source-specific listeners as requiring resolution.
+Clients missing the hint retain immediate submission for compatibility.
+
+Entering ability mode flushes changed equipment once through
+`UpdatePreparationEquipment {equipment}` to refresh equipment-dependent ability
+legality. `ActivateAbility`, `EquipWeapon`, `AssignDiseasePenalty` and
+`AssignStrengthPenalty` can also carry optional `preparation_equipment`. The engine
+validates/applies that mapping before executing the command in the same transition.
+New triggered pairs cannot be introduced through this field; they must use the
+normal equipment event workflow. Unequipping never removes already-earned buffs.
+Synchronization does not commit participation or consume spells.
+
+While these preparation requests are pending, hero/support contribution choices
+remain editable locally; final team submission and effect choices still wait for
+authority. Replies preserve local contribution choices, reconcile equipment from
+the accepted state, and reject invalid optimistic triggered-equipment display.
+The client pauses versioned realtime refreshes during commands: if the response
+already covers the notified version, it does not fetch that snapshot again.
+Reconnect/profile notifications still refresh even at the same match version.
+
 The command shape is `{type: 'SubmitBattleTeam', player_id, expected_version, draft}`.
 The server checks actor, phase, pending choices, all draft revisions, current hand
 membership, duplicate IDs and weapon capacity/weight. Submission has no target:

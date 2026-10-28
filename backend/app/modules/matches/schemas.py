@@ -5,10 +5,18 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
+class ViewCursor(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    epoch: int = Field(default=0, strict=True, ge=0)
+    after_event: int | None = Field(default=None, strict=True, ge=0)
+    history_after: int | None = Field(default=None, strict=True, ge=0)
+
+
 class MatchCommand(BaseModel):
     model_config = ConfigDict(extra="forbid")
     expected_version: int = Field(strict=True, ge=1)
     command_id: str = Field(min_length=1, max_length=128, pattern=r"^[A-Za-z0-9][A-Za-z0-9_.:-]*$")
+    sync: ViewCursor | None = None
 
 
 class FirstPlayer(BaseModel):

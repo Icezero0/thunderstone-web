@@ -6,6 +6,7 @@ from copy import deepcopy
 # The engine supplies legality. This layer only describes the offered inputs;
 # interpreter nodes, queries, bindings and continuations never cross this boundary.
 COMMAND_FIELDS = {
+    "UpdatePreparationEquipment": (),
     "ChooseAction": ("actions",), "FinishAbilities": (), "FinishBuying": (),
     "FinishUpgrading": (), "SkipRestDestroy": (), "FinishTurn": (),
     "ActivateAbility": (), "BuyCard": ("card_ids",), "UpgradeHero": (),

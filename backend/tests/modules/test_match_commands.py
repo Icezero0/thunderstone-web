@@ -263,6 +263,29 @@ class MatchCommandTests(unittest.TestCase):
         self.assertIsNone(view["pending_choice"])
         self.assertEqual(view["turn"]["subphase"], "DUNGEON_PREPARE")
 
+    def test_preparation_equipment_sync_validates_instances_and_does_not_submit_team(self):
+        a, b, view = self.match()
+        view = self.play(a, view, "ChooseAction", action="dungeon")
+        state = self.f.stored_match(view["id"])["state"]
+        hero, weapon = state["zones"][f"player:{view['viewer_player_id']}:hand"][:2]
+        state["instances"][hero]["card_id"] = "TS-0001"
+        state["instances"][weapon]["card_id"] = "TS-0002"
+        with closing(sqlite3.connect(self.f.db_path)) as db:
+            db.execute("UPDATE matches SET state=? WHERE id=?", (json.dumps(state), view["id"]))
+            db.commit()
+        view = self.latest(a, view)
+        self.assertNotIn(weapon, view["battle_preparation"]["options"]["immediate_equipment_instance_ids"])
+        rejected = self.f.play(a, view, {"type": "UpdatePreparationEquipment", "equipment": {hero: ["foreign"]}})
+        self.assertEqual(rejected.status_code, 422)
+        view = self.play(a, view, "UpdatePreparationEquipment", equipment={hero: [weapon]})
+        self.assertEqual(view["turn"]["subphase"], "DUNGEON_PREPARE")
+        self.assertEqual(view["battle_preparation"]["draft"]["equipment"], {hero: [weapon]})
+        stored = self.f.stored_match(view["id"])["state"]
+        self.assertNotIn("battle_team", stored["battle_context"])
+        self.assertIsNone(self.latest(b, view)["battle_preparation"])
+        view = self.play(a, view, "UpdatePreparationEquipment", equipment={})
+        self.assertEqual(view["battle_preparation"]["draft"]["equipment"], {})
+
     def test_battle_draft_only_choices_are_accepted_and_hidden_card_cannot_join_team(self):
         a, _, view = self.match()
         view = self.play(a, view, "ChooseAction", action="dungeon")

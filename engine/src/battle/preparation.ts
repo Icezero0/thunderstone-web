@@ -1,6 +1,7 @@
 import {ENGINE_VERSION} from '../build-info.js';
 import type {PreviewContext} from './preview.js';
 import {battleTeamOptions, createBattleDraft} from './team.js';
+import {equipmentNeedsResolution} from './equipment.js';
 import {affectsBattleOutcome} from '../effects/outcome-impact.js';
 import type {GameCatalog, GameRules, GameState} from '../turn/transaction.js';
 
@@ -100,5 +101,7 @@ export function battlePreparationResult(state: GameState, catalog: GameCatalog, 
   const context = projectBattleContext(state, catalog, rules);
   const draft = createBattleDraft(context);
   if (state.subphase === 'DUNGEON_DECLARE') Object.assign(draft, context.state.battle_context!.battle_team);
-  return {context, options: battleTeamOptions(context), draft};
+  const options = battleTeamOptions(context);
+  return {context, options: {...options, immediate_equipment_instance_ids:
+    options.weapon_instance_ids.filter(id => equipmentNeedsResolution(state, rules, id))}, draft};
 }

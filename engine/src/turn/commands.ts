@@ -15,9 +15,10 @@ import {advanceVillageStages, buyCard, finishAbilities, finishBuying, goldIncome
 import {attackTargets, declareBattleTarget} from './dungeon.js';
 import {activateTrap, hallRankCount} from './hall.js';
 import {equipmentOptions, equipWeapon, unequipWeapon, equipmentPairs, reconcileEquipment} from '../battle/equipment.js';
-import {submitBattleTeam} from '../battle/team-transition.js';
+import {submitBattleTeam, syncPreparationEquipment} from '../battle/team-transition.js';
 import {battlePreparationResult} from '../battle/preparation.js';
 import {cardStatuses} from '../battle/statuses.js';
+import {projectActionPrediction} from './prediction.js';
 
 const SUBPHASES = new Set(['TURN_START', 'VILLAGE_ABILITIES', 'VILLAGE_BUY', 'VILLAGE_UPGRADE', 'REST', 'ACTION_END',
   'DUNGEON_PREPARE', 'DUNGEON_DECLARE', 'BATTLE_COMMIT', 'ACTION_EXIT_EFFECTS', 'TURN_END_EFFECTS', 'GAME_END', 'BATTLE_EFFECTS', 'BATTLE_AFTER_EFFECTS']);
@@ -137,7 +138,7 @@ function legal(tx: Transition): Record<string, any>[] {
         ...(trace.disease_penalties.length ? [{type: 'AssignDiseasePenalty',
           instance_ids: trace.disease_penalties.map(item => item.instance_id), attack_types: ['attack', 'magic_attack']}] : []),
         ...(abilities.length ? [{type: 'ActivateAbility', options: abilities}] : []),
-        ...(equipment.length ? [{type: 'EquipWeapon', options: equipment}] : []),
+        {type: 'EquipWeapon', options: equipment}, {type: 'UpdatePreparationEquipment'},
         ...(equipped.length ? [{type: 'UnequipWeapon', instance_ids: equipped}] : []),
         {type: 'SubmitBattleTeam', requires_draft: true}];
     }
@@ -150,10 +151,14 @@ export function legalCommands(state: GameState, catalog: GameCatalog, rules: Gam
   return legal(new Transition(state, catalog, rules));
 }
 /** Read-only per-player options; the worker returns them together in one request. */
-export function turnOptions(state: GameState, playerId: string, catalog: GameCatalog, rules: GameRules) {
+export function turnOptions(state: GameState, playerId: string, catalog: GameCatalog, rules: GameRules, prediction = false) {
   checkVersions(state, catalog, rules); validateTurnState(state, catalog.cards);
   const tx = new Transition(state, catalog, rules);
   return {legal_commands: legal(tx), gold_income_preview: goldIncomePreview(tx, playerId), card_statuses: cardStatuses(tx),
+    battle_preparation: playerId === state.active_player_id && state.phase === 'PLAYING'
+      && ['DUNGEON_PREPARE', 'DUNGEON_DECLARE'].includes(state.subphase) && state.pending_choice === null
+      ? battlePreparationResult(state, catalog, rules) : null,
+    ...(prediction ? {action_prediction: projectActionPrediction(state, playerId, catalog, rules)} : {}),
     hall_rank_counts: Object.fromEntries(Object.keys(state.zones).filter(zone => zone.startsWith('hall:') && !zone.endsWith(':rank0'))
       .map(zone => [zone, hallRankCount(tx, zone)]))};
 }
@@ -175,6 +180,12 @@ export function applyCommand(state: GameState, command: Record<string, any>, cat
   if (command.expected_version !== undefined && command.expected_version !== state.game_version)
     throw new RuleError('stale game version');
   const tx = new Transition(state, catalog, rules, traceEffects), kind = command.type, phase = state.subphase;
+  if (command.preparation_equipment !== undefined) {
+    if (state.pending_choice !== null || phase !== 'DUNGEON_PREPARE'
+        || !['ActivateAbility', 'EquipWeapon', 'UnequipWeapon', 'AssignDiseasePenalty', 'AssignStrengthPenalty'].includes(kind))
+      throw new RuleError('preparation equipment requires an active dungeon preparation command');
+    syncPreparationEquipment(tx, command.preparation_equipment);
+  }
   if (state.pending_choice !== null) {
     const choice = state.pending_choice;
     const routes: Record<string, [string, () => boolean]> = {
@@ -209,6 +220,7 @@ export function applyCommand(state: GameState, command: Record<string, any>, cat
   else if (phase === 'REST' && kind === 'SkipRestDestroy') tx.awaitTurnEnd();
   else if (phase === 'ACTION_END' && kind === 'FinishTurn') tx.finishTurn();
   else if (phase === 'DUNGEON_PREPARE' && kind === 'EquipWeapon') equipWeapon(tx, command.hero_instance_id, command.weapon_instance_id);
+  else if (phase === 'DUNGEON_PREPARE' && kind === 'UpdatePreparationEquipment') syncPreparationEquipment(tx, command.equipment);
   else if (phase === 'DUNGEON_PREPARE' && kind === 'UnequipWeapon') unequipWeapon(tx, command.instance_id);
   else if (phase === 'DUNGEON_DECLARE' && kind === 'ReviseBattleTeam') {
     delete tx.state.battle_context.battle_team;

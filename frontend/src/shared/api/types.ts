@@ -45,6 +45,8 @@ export interface MatchSupply {
   remaining: number | null; infinite: boolean; cards: {card_id: string; count: number | null}[];
 }
 export interface MatchView {
+  action_prediction?: import('@thunderstone/engine').ActionPredictionContext;
+  sync?: {reset: boolean; event_sequence: number; history_loaded: boolean; history_after: number};
   id: string; room_id: string; status: 'setup_pending' | 'active' | 'cancelled' | 'finished'; version: number;
   host_user_id: number; viewer_player_id: string; can_resolve_setup: boolean; created_at: string;
   players: MatchPlayer[];
@@ -65,7 +67,7 @@ export interface MatchView {
   abilities: Record<string, {source_card_id: string; source_line: string}>;
   battle_preparation: null | {context: PreviewContext; draft: BattleDraft;
     options: {hero_instance_ids: string[]; support_instance_ids: string[]; weapon_instance_ids: string[];
-      mandatory_instance_ids: string[]; target_instance_ids: string[]}};
+      mandatory_instance_ids: string[]; target_instance_ids: string[]; immediate_equipment_instance_ids?: string[]}};
   viewer_resources: {xp: number; temporary_gold: number; purchases_remaining: number; extra_basic_purchases: number;
     gold_income_preview?: number | null};
   event_log: Array<{sequence: number; kind: string; [key: string]: unknown}>;

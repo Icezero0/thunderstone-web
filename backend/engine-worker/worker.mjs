@@ -57,7 +57,7 @@ const operations = {
   plan_disease_gain: p => planDiseaseGain(p),
   apply_command: p => applyCommand(p.state, p.command, p.catalog, p.ruleset, p.trace_effects ?? false),
   legal_commands: p => legalCommands(p.state, p.catalog, p.ruleset),
-  turn_options: p => turnOptions(p.state, p.player_id, p.catalog, p.ruleset),
+  turn_options: p => turnOptions(p.state, p.player_id, p.catalog, p.ruleset, p.prediction ?? false),
   battle_preparation: p => battlePreparation(p.state, p.player_id, p.catalog, p.ruleset),
   take_disease: p => takeDisease(p.state, p.player_id, p.destination ?? 'discard', p.catalog, p.ruleset),
   setup_step: p => {
@@ -75,12 +75,23 @@ const operations = {
     return {draft: builder.snapshot(), result: result ?? null};
   },
 };
+const resources = new Map();
 for await (const line of createInterface({input: process.stdin, crlfDelay: Infinity})) {
   let request;
   try {
     request = JSON.parse(line);
     if (request.protocol !== 1 || !Object.hasOwn(operations, request.op)) throw new Error('unsupported engine request');
-    const result = operations[request.op](request.payload);
+    let payload = request.payload;
+    if (payload.resource_key) {
+      const key = payload.resource_key;
+      if (payload.resource_definitions) resources.set(key, payload.resource_definitions);
+      const definitions = resources.get(key);
+      if (!definitions) {const error = new Error('engine resource was evicted'); error.name = 'MissingResource'; throw error;}
+      resources.delete(key); resources.set(key, definitions);
+      while (resources.size > 4) resources.delete(resources.keys().next().value);
+      payload = {...payload, ...definitions};
+    }
+    const result = operations[request.op](payload);
     process.stdout.write(JSON.stringify({id: request.id, ok: true, result}) + '\n');
   } catch (error) {
     process.stdout.write(JSON.stringify({id: request?.id ?? null, ok: false,

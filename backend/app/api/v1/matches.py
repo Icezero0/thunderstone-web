@@ -2,13 +2,13 @@
 
 import asyncio
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.core.database import get_db
 from backend.app.modules.auth.deps import get_current_user
-from backend.app.modules.matches.schemas import MatchCommand, SetupChoiceCommand, StartMatchCommand, RestoreMatchCommand
+from backend.app.modules.matches.schemas import MatchCommand, SetupChoiceCommand, StartMatchCommand, RestoreMatchCommand, ViewCursor
 from backend.app.modules.matches.command_schemas import PlayCommand
 from backend.app.modules.matches.service import MatchResult, MatchService
 from backend.app.modules.users.models import User
@@ -41,8 +41,16 @@ async def current(user: User = Depends(get_current_user), db: AsyncSession = Dep
 
 
 @router.get("/matches/{match_id}")
-async def match(match_id: str, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    return await service.get(db, match_id, user.id)
+async def match(match_id: str, compact: bool = False, after_event: int | None = Query(None, ge=0),
+                epoch: int = Query(0, ge=0), history_after: int | None = Query(None, ge=0),
+                user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    cursor = ViewCursor(after_event=after_event, epoch=epoch, history_after=history_after) if compact else None
+    return await service.get(db, match_id, user.id, cursor)
+
+
+@router.get("/matches/{match_id}/history")
+async def match_history(match_id: str, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    return await service.history_entries(db, match_id, user.id)
 
 
 @router.get("/matches/{match_id}/export")

@@ -153,6 +153,57 @@ function freeze(value) {
   if (value && typeof value === 'object') {Object.freeze(value); Object.values(value).forEach(freeze);} return value;
 }
 
+test('ordinary equipment flushes atomically before an ability, without committing the team', () => {
+  const f = fixture(['h', 'w', 's']);
+  f.state.instances.x = {card_id: 'x', owner_player_id: 'alice', origin: 'fixture', flags: {}};
+  f.state.zones['player:alice:draw'] = ['x'];
+  f.rules.mechanics.push({id: 'draw-bonus', source_card_id: 'w', source_line: '', op: 'draw_attack', params: {amount: 1}});
+  f.rules.abilities.push({id: 'draw', source_card_id: 's', kind: 'activated', source_zone: 'active_hand',
+    actions: ['dungeon'], usage: 'once_per_turn', event: null, conditions: [], body: {op: 'draw', count: 1}});
+  const before = structuredClone(f.state);
+  assert.deepEqual(prepare(f).options.immediate_equipment_instance_ids, []);
+  const command = {type: 'ActivateAbility', player_id: 'alice', expected_version: f.state.game_version,
+    ability_id: 'draw', source_instance_id: 's', preparation_equipment: {h: ['w']}};
+  const result = server.applyCommand(f.state, command, f.catalog, f.rules);
+  assert.deepEqual(browser.applyCommand(f.state, command, f.catalog, f.rules), result);
+  assert.equal(result.state.battle_context.equipment_draw_counts.w, 1);
+  assert.equal(result.state.battle_context.battle_team, undefined);
+  assert.deepEqual(f.state, before);
+  assert.ok(result.events.findIndex(e => e.kind === 'weapon_equipped') < result.events.findIndex(e => e.kind === 'cards_drawn'));
+  assert.throws(() => server.applyCommand(f.state, {...command, ability_id: 'missing'}, f.catalog, f.rules));
+  assert.deepEqual(f.state, before, 'invalid ability cannot leave the equipment partially committed');
+});
+
+test('equipment synchronization validates ownership, capacity and phase and supports authoritative unequipping', () => {
+  const f = fixture(['h', 'w']);
+  const command = {type: 'UpdatePreparationEquipment', player_id: 'alice', expected_version: f.state.game_version, equipment: {h: ['w']}};
+  const result = server.applyCommand(f.state, command, f.catalog, f.rules);
+  assert.deepEqual(result.state.battle_context.equipped_weapon_by_hero, {h: 'w'});
+  assert.equal(result.state.subphase, 'DUNGEON_PREPARE');
+  const removed = server.applyCommand(result.state, {...command, expected_version: result.state.game_version, equipment: {}}, f.catalog, f.rules);
+  assert.deepEqual(removed.state.battle_context.equipped_weapon_by_hero, {});
+  for (const equipment of [{h: ['secret']}, {secret: ['w']}, {h: ['w', 'w']}, null])
+    assert.throws(() => server.applyCommand(f.state, {...command, equipment}, f.catalog, f.rules));
+  assert.throws(() => server.applyCommand({...f.state, subphase: 'ACTION_END'}, command, f.catalog, f.rules));
+});
+
+test('triggered equipment cannot bypass immediate effects through a preparation draft', () => {
+  const f = fixture(['h', 'w']);
+  f.rules.abilities.push(trigger('equip-xp', 'w', 'CARD_EQUIPPED', {op: 'gain_xp', amount: 1}, 'event_source'));
+  assert.deepEqual(prepare(f).options.immediate_equipment_instance_ids, ['w']);
+  const play = command => server.applyCommand(f.state, {...command, player_id: 'alice', expected_version: f.state.game_version}, f.catalog, f.rules);
+  assert.throws(() => play({type: 'UpdatePreparationEquipment', equipment: {h: ['w']}}), /triggered equipment/);
+  let result = play({type: 'EquipWeapon', hero_instance_id: 'h', weapon_instance_id: 'w'});
+  assert.equal(result.state.players.alice.xp, 1); f.state = result.state;
+  // Remove the old pairing as part of the next equip operation: it is a new event.
+  result = play({type: 'EquipWeapon', hero_instance_id: 'h', weapon_instance_id: 'w', preparation_equipment: {}});
+  assert.equal(result.state.players.alice.xp, 2);
+  f.state = result.state;
+  const prepared = prepare(f);
+  result = server.applyCommand(f.state, server.buildSubmitBattleTeamCommand(prepared.context, prepared.draft), f.catalog, f.rules);
+  assert.equal(result.state.players.alice.xp, 2, 'final submission must not replay an already settled equipment event');
+});
+
 test('each local selection updates attack and light, with identical immutable Node/browser results', () => {
   const f = fixture(['h', 'w', 'l']);
   const {context, draft: original} = prepare(f);

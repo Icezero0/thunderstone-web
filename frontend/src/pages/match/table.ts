@@ -38,15 +38,17 @@ export class MatchTable {
   private receivedView: MatchView | null = null;
   private syncing = false;
   private busy = false;
+  private localPreparationEdits = false;
   private selection: readonly string[] = [];
   private error = '';
   constructor(private send: (command: GameCommand) => void, onAutoSortChange?: (enabled: boolean) => void) {
-    this.rest = new RestInteraction(send);
+    const dispatch = (command: GameCommand) => send(this.battle.prepareCommand(command));
+    this.rest = new RestInteraction(dispatch);
     const changed = () => {if (this.view && !this.updatingControls && !this.syncing) this.controls(this.view, this.busy);};
     this.picker = new BoardPicker(changed);
-    this.effects = new EffectInteraction(this.picker, send);
-    this.battle = new BattleEditor(this.picker, send, message => this.setError(message), changed);
-    this.cardActions = new CardActionInteraction(send, this.picker);
+    this.effects = new EffectInteraction(this.picker, dispatch);
+    this.battle = new BattleEditor(this.picker, dispatch, message => this.setError(message), changed);
+    this.cardActions = new CardActionInteraction(dispatch, this.picker);
     const options = {overlayRoot: $('#match-overlays'), background: [$('#match-content'), $('#match-header')]};
     this.publicArea = new PublicTableArea($('#match-public-area'), {...options, idPrefix: 'match-public',
       onPlayerClick: id => this.effects.clickPlayer(id),
@@ -88,8 +90,8 @@ export class MatchTable {
     this.timeline = new MatchEventTimeline(this.publicArea, this.deck, $('#match-overlays'), changed);
     this.results = new GameResultsDialog(options.overlayRoot, options.background, () => location.assign('/play?view=room'));
   }
-  receive(view: MatchView): void {
-    const snapshot = tableState(view), reset = view.id !== this.matchId
+  receive(view: MatchView, forceReset = false): void {
+    const snapshot = tableState(view), reset = forceReset || view.id !== this.matchId
       || (view.history?.epoch ?? 0) !== (this.receivedView?.history?.epoch ?? 0);
     if (reset) {this.closeBrowsers(); this.resultsShownFor = '';}
     if (reset || view.status !== 'finished') this.results.close();
@@ -131,14 +133,15 @@ export class MatchTable {
         if (snapshot.deck.revealed?.length) this.deck.setActiveTab('revealed');
       }
       this.state = snapshot.deck; this.matchId = view.id; this.version = view.version;
-      this.eventSequence = Math.max(0, ...committed.map(event => event.sequence));
+      this.eventSequence = Math.max(0, view.sync?.event_sequence ?? 0, ...committed.map(event => event.sequence));
     } finally {this.syncing = false;}
     if (view.turn?.subphase === 'DUNGEON_DECLARE' && view.actor_player_id === view.viewer_player_id
       && (reset || previousView?.turn?.subphase !== 'DUNGEON_DECLARE')) this.publicArea.setTab('dungeon');
     this.timeline.syncPending(view);
     if (activity) this.publicArea.showPlayerActivity(activity.playerId, activity.text);
   }
-  controls(view: MatchView, busy: boolean): void {
+  controls(view: MatchView, busy: boolean, localPreparationEdits = this.localPreparationEdits): void {
+    this.localPreparationEdits = localPreparationEdits;
     if (this.updatingControls) return;
     this.updatingControls = true;
     try {this.renderControls(view, busy);} finally {this.updatingControls = false;}
@@ -155,7 +158,7 @@ export class MatchTable {
       this.closeBrowsers();
     }
     this.rest.receive(view, blocked);
-    this.battle.receive(view, blocked);
+    this.battle.receive(view, blocked, this.localPreparationEdits && !this.deck.isBusy && !this.timeline.isBusy);
     this.cardActions.receive(view, blocked);
     const ownTurn = view.status === 'active' && view.turn?.active_player_id === view.viewer_player_id;
     const income = ownTurn && !view.unavailable_reason && ['TURN_START', 'VILLAGE_ABILITIES'].includes(view.turn!.subphase)
@@ -183,6 +186,8 @@ export class MatchTable {
     const progress = this.timeline.isBattleSettlement
       ? {action: '进入地下城', stage: '结算战斗', step: 4, total: 5} : actionProgress(view);
     const preview = this.battle.preview;
+    const canEditWaitingTeam = busy && this.localPreparationEdits && this.battle.active && !this.picker.active
+      && !this.deck.isBusy && !this.timeline.isBusy;
     const response: PlayerResponse = {id: `${view.id}:${view.version}`, prompt: this.effects.active ? this.effects.prompt : this.picker.active ? this.picker.prompt
       : this.rest.active ? this.rest.prompt : this.cardActions.prompt || (view.pending_choice ? '等待效果响应' : mayAct && choose ? '请选择本回合行动'
         : mayAct && view.turn?.subphase === 'DUNGEON_DECLARE' ? preview ? preview.battle_effects_pending ? '有效果待执行' : '' : '请选择地下城大厅中的战斗目标' : progress ? '' : phaseLabel(view.turn?.subphase)),
@@ -192,7 +197,9 @@ export class MatchTable {
       ...(preview && preview.rank !== null && preview.outcome_before_battle_effects ? {battlePreview: {rank: preview.rank,
         total: preview.calculation.effective_attack, outcome: preview.battle_effects_pending ? 'unknown' : preview.outcome_before_battle_effects}} : {}),
       error: this.error,
-      selectedId: this.picker.active || this.effects.active ? undefined : this.rest.active ? this.rest.selectedId : this.cardActions.selectedId, choices, disabled: blocked};
+      selectedId: this.picker.active || this.effects.active ? undefined : this.rest.active ? this.rest.selectedId : this.cardActions.selectedId,
+      choices: canEditWaitingTeam ? choices.map(choice => ({...choice, disabled: choice.id !== 'battle:effects'})) : choices,
+      disabled: blocked && !canEditWaitingTeam};
     this.deck.setResponse(response);
     if (!this.deck.isBusy && !this.timeline.isBusy) {
       this.deck.setStatusOverrides(this.battle.handStatuses); this.publicArea.setStatusOverrides(this.battle.publicStatuses);

@@ -1,7 +1,7 @@
 ﻿import {updateBattleDraft, previewBattleTeam, type BattleDraft, type BattleDraftAction} from '@thunderstone/engine';
 import type {GameCommand, MatchView} from '../../shared/api/types.js';
 import {BoardPicker} from './board-picker.js';
-import {instanceName, optionRows} from './commands.js';
+import {instanceName} from './commands.js';
 import type {CardStatus} from '../../shared/components/game-card/types.js';
 
 /** Local contribution markers and equipment; all cards remain in the hand. */
@@ -9,6 +9,10 @@ export class BattleEditor {
   private draft: BattleDraft | null = null;
   private view: MatchView | null = null;
   private busy = false;
+  private localSelectionAllowed = false;
+  private sentEquipment: Record<string, string[]> | null = null;
+  private sentEquipmentKey = '';
+  private equipmentRollback: Record<string, string[]> | null = null;
   private key = '';
   private turn = '';
   private effects = false;
@@ -68,9 +72,11 @@ export class BattleEditor {
       || this.view.actor_player_id !== this.view.viewer_player_id || this.view.pending_choice || this.view.unavailable_reason) return [];
     return this.view.legal_commands.find(command => command.type === 'DeclareBattleTarget')?.instance_ids ?? [];
   }
-  receive(view: MatchView, busy: boolean): void {
+  receive(view: MatchView, busy: boolean, localSelectionAllowed = false): void {
     const turn = `${view.id}:${view.history?.epoch ?? 0}:${view.turn?.number}:${view.turn?.active_player_id}`, key = `${view.id}:${view.version}`;
-    if (turn !== this.turn || view.turn?.chosen_action !== 'dungeon' || view.status !== 'active') {this.draft = null; this.effects = false; this.mandatory = [];}
+    if (turn !== this.turn || view.turn?.chosen_action !== 'dungeon' || view.status !== 'active') {
+      this.draft = null; this.effects = false; this.mandatory = []; this.sentEquipment = null; this.equipmentRollback = null;
+    }
     if (view.battle_preparation) this.mandatory = [...view.battle_preparation.options.mandatory_instance_ids];
     if (view.battle_preparation && (this.key !== key || !this.draft)) {
       const previous = this.draft, prep = view.battle_preparation;
@@ -82,15 +88,30 @@ export class BattleEditor {
         && view.legal_commands.some(command => command.type === 'DeclareBattleTarget' && command.instance_ids?.includes(previous?.target_instance_id ?? ''))
         ? previous?.target_instance_id ?? null : null;
       next.equipment = {};
-      for (const [hero, weapons] of Object.entries(committed ? prep.draft.equipment : previous?.equipment ?? prep.draft.equipment)) {
+      const equipment = this.sentEquipment ? prep.draft.equipment : previous?.equipment ?? prep.draft.equipment;
+      for (const [hero, weapons] of Object.entries(committed ? prep.draft.equipment : equipment)) {
         if (!prep.options.hero_instance_ids.includes(hero)) continue;
         for (const weapon of weapons) try {next = updateBattleDraft(prep.context, next, {type: 'equip', hero_instance_id: hero, weapon_instance_id: weapon});} catch { /* A resolved effect can invalidate equipment. */ }
       }
       this.draft = next;
+      this.sentEquipment = null; this.equipmentRollback = null;
+    }
+    if (this.busy && !busy && this.sentEquipment && key === this.sentEquipmentKey) {
+      if (this.draft && this.equipmentRollback) this.draft = {...this.draft, equipment: this.equipmentRollback};
+      this.sentEquipment = null; this.equipmentRollback = null;
     }
     this.view = view; this.busy = busy; this.key = key; this.turn = turn;
+    this.localSelectionAllowed = localSelectionAllowed;
   }
-  toggleEffects(): void {if (this.active && !this.busy) {this.effects = !this.effects; this.changed();}}
+  toggleEffects(): void {
+    if (!this.active || (this.busy && !this.localSelectionAllowed)) return;
+    this.effects = !this.effects; this.changed();
+    // Ability legality may depend on being equipped. Resolve that boundary once,
+    // instead of requesting authority for every draft adjustment.
+    if (this.effects && !this.busy && this.draft && this.equipmentDirty(this.draft.equipment)
+        && this.view!.legal_commands.some(command => command.type === 'UpdatePreparationEquipment'))
+      this.send({type: 'UpdatePreparationEquipment', equipment: structuredClone(this.draft.equipment)});
+  }
   selectTarget(id: string): void {
     if (!this.draft || !this.view?.battle_preparation || !this.targetIds.includes(id)) return;
     try {
@@ -103,13 +124,11 @@ export class BattleEditor {
   }
   clickCard(id: string): boolean {
     if (!this.active) return false;
-    if (this.busy || this.mandatoryIds.includes(id) || !this.draft) return true;
+    if ((this.busy && !this.localSelectionAllowed) || this.mandatoryIds.includes(id) || !this.draft) return true;
     const prep = this.view!.battle_preparation!;
     if (prep.options.weapon_instance_ids.includes(id)) {
-      const authoritative = this.view!.legal_commands.some(command => command.type === 'UnequipWeapon' && command.instance_ids?.includes(id));
-      if (Object.values(this.draft.equipment).some(weapons => weapons.includes(id)) || authoritative) {
-        if (this.update({type: 'unequip', weapon_instance_id: id}) && authoritative) this.send({type: 'UnequipWeapon', instance_id: id});
-      }
+      if (this.busy) return true;
+      if (Object.values(this.draft.equipment).some(weapons => weapons.includes(id))) this.update({type: 'unequip', weapon_instance_id: id});
       else this.chooseHero(id);
     } else if (prep.options.hero_instance_ids.includes(id)) this.update({type: 'set_hero', instance_id: id, selected: !this.draft.hero_instance_ids.includes(id)});
     else if (prep.options.support_instance_ids.includes(id)) {
@@ -128,17 +147,38 @@ export class BattleEditor {
     if (!eligible.length) {this.report('手牌中没有能够装备此武器的英雄。'); return;}
     this.picker.start({prompt: `为${instanceName(this.view!, weapon)}选择装备英雄`, cards: eligible.map(id => ({key: id, instanceId: id,
       cardId: prep.context.state.instances[id].card_id})), immediate: true, cancel: () => {}, submit: ids => {
+      const previous = structuredClone(this.draft!.equipment);
       if (key !== this.key || !this.update({type: 'equip', hero_instance_id: ids[0], weapon_instance_id: weapon})) return;
       this.picker.clear(); this.changed();
-      const options = optionRows(this.view!.legal_commands.find(command => command.type === 'EquipWeapon') ?? {type: ''});
-      if (options.some(option => option.hero_instance_id === ids[0] && option.weapon_instance_id === weapon))
+      if (prep.options.immediate_equipment_instance_ids?.includes(weapon) ?? true) {
+        this.equipmentRollback = previous;
         this.send({type: 'EquipWeapon', hero_instance_id: ids[0], weapon_instance_id: weapon});
+      }
     }});
   }
   private update(action: BattleDraftAction): boolean {
-    if (!this.active || this.busy || !this.draft) return false;
+    if (!this.active || (this.busy && !(this.localSelectionAllowed && ['set_hero', 'set_support'].includes(action.type))) || !this.draft) return false;
     try {this.draft = updateBattleDraft(this.view!.battle_preparation!.context, this.draft, action); this.report(''); this.changed(); return true;}
     catch (error) {this.report(error instanceof Error ? error.message : '当前装备或选择无效。'); return false;}
+  }
+  /** Include draft equipment in the next real operation, without committing participation. */
+  prepareCommand(command: GameCommand): GameCommand {
+    if (command.type === 'UpdatePreparationEquipment' && this.draft) {
+      this.sentEquipment = structuredClone(this.draft.equipment); this.sentEquipmentKey = this.key; return command;
+    }
+    if (!this.active || !this.draft || !['ActivateAbility', 'EquipWeapon', 'AssignDiseasePenalty', 'AssignStrengthPenalty'].includes(command.type)) return command;
+    const equipment = structuredClone(this.draft.equipment);
+    if (command.type === 'EquipWeapon') for (const hero of Object.keys(equipment)) {
+      equipment[hero] = equipment[hero].filter(id => id !== command.weapon_instance_id);
+      if (!equipment[hero].length) delete equipment[hero];
+    }
+    this.sentEquipment = structuredClone(this.draft.equipment);
+    this.sentEquipmentKey = this.key;
+    return this.equipmentDirty(equipment) ? {...command, preparation_equipment: equipment} : command;
+  }
+  private equipmentDirty(equipment: Record<string, string[]>): boolean {
+    const pairs = (value: Record<string, string[]>) => Object.entries(value).flatMap(([hero, weapons]) => weapons.map(weapon => `${hero}:${weapon}`)).sort().join('|');
+    return pairs(equipment) !== pairs(this.view!.battle_preparation!.draft.equipment);
   }
   submit(): void {
     if (!this.active || this.busy || !this.draft || !this.view!.legal_commands.some(command => command.type === 'SubmitBattleTeam')) return;

@@ -21,9 +21,9 @@ from backend.app.modules.cards.repository import load_catalog_snapshot
 from backend.app.modules.matches.models import Match, MatchCommand as SavedCommand
 from backend.app.modules.matches.projection import build_match_view
 from backend.app.modules.matches.repository import MatchRepository
-from backend.app.modules.matches.schemas import MatchCommand, SetupChoiceCommand, StartMatchCommand
+from backend.app.modules.matches.schemas import MatchCommand, SetupChoiceCommand, StartMatchCommand, ViewCursor
 from backend.app.modules.matches.command_schemas import PlayCommand
-from backend.app.modules.matches import history
+from backend.app.modules.matches import history, presentation
 from backend.app.modules.rooms.service import RoomService
 from backend.app.modules.users.repository import UserRepository
 
@@ -42,7 +42,10 @@ def forbidden(message="只有房主可以执行此操作"):
 
 
 def payload_hash(payload: MatchCommand) -> str:
-    return hashlib.sha256(json.dumps(payload.model_dump(), sort_keys=True,
+    values = payload.model_dump()
+    if values.get("sync") is None:
+        values.pop("sync", None)  # Preserve pre-cursor command receipts during upgrades.
+    return hashlib.sha256(json.dumps(values, sort_keys=True,
         separators=(",", ":"), ensure_ascii=False).encode("utf-8")).hexdigest()
 
 
@@ -100,10 +103,10 @@ def calculate_command(state: dict, command: dict, snapshot: CatalogSnapshot, exp
                        code="invalid_game_command", status_code=422) from error
 
 
-def calculate_options(state: dict, player_id: str, snapshot: CatalogSnapshot, expected: dict) -> dict:
+def calculate_options(state: dict, player_id: str, snapshot: CatalogSnapshot, expected: dict, prediction=False) -> dict:
     try:
         check_revision(snapshot, expected)
-        result = command_options(state, player_id, snapshot=snapshot)
+        result = command_options(state, player_id, snapshot=snapshot, prediction=prediction)
         check_revision(snapshot, expected)
         return result
     except (EffectCompileError, SharedEngineUnavailable, TurnError, AppError):
@@ -117,8 +120,8 @@ class MatchService:
         self.repo = MatchRepository()
         self.rooms = RoomService()
 
-    async def get(self, db: AsyncSession, match_id: str, user_id: int) -> dict:
-        return await self.view(db, await self.repo.get(db, match_id), user_id)
+    async def get(self, db: AsyncSession, match_id: str, user_id: int, sync: ViewCursor | None = None) -> dict:
+        return await self.view(db, await self.repo.get(db, match_id), user_id, sync)
 
     async def export(self, db: AsyncSession, match_id: str, user_id: int) -> dict:
         """Explicit participant download, independent of engine availability/projection.
@@ -128,6 +131,9 @@ class MatchService:
         """
         match = await self.repo.get(db, match_id)
         self.member(match, user_id)
+        snapshot = history.snapshot(match)
+        snapshot["events"] = await self.repo.event_batches(db, match)
+        snapshot["presentation"] = None  # Portable exports carry the complete selected branch.
         return {
             "format": "thunderstone-match", "format_version": 1,
             "exported_at": datetime.now(timezone.utc).isoformat(),
@@ -141,7 +147,7 @@ class MatchService:
             "players": deepcopy(match.frozen_players),
             "rules": self.revision(match),
             "catalog_snapshot": deepcopy(match.catalog_snapshot),
-            "snapshot": history.snapshot(match),
+            "snapshot": snapshot,
         }
 
     async def current(self, db: AsyncSession, user_id: int) -> dict | None:
@@ -159,7 +165,7 @@ class MatchService:
     def revision(match: Match) -> dict:
         return {"engine_version": match.engine_version, "effects_version": match.effects_version}
 
-    async def view(self, db: AsyncSession, match: Match, user_id: int) -> dict:
+    async def view(self, db: AsyncSession, match: Match, user_id: int, sync: ViewCursor | None = None) -> dict:
         member = self.member(match, user_id)
         options = {}
         state = match.state or {}
@@ -167,16 +173,31 @@ class MatchService:
         # projection still restricts commands and preparation to their actor.
         if match.status == "active":
             options = await asyncio.to_thread(calculate_options, state, member["player_id"],
-                CatalogSnapshot(**match.catalog_snapshot), self.revision(match))
+                CatalogSnapshot(**match.catalog_snapshot), self.revision(match), sync is not None)
         profiles = await UserRepository().profiles(db, [p["user_id"] for p in match.frozen_players])
-        view = build_match_view(match, user_id, profiles=profiles, **options)
-        rows = await self.repo.history(db, match.id)
-        current = next((row for row in rows if row["step"] == match.history_cursor), None)
+        last_event = (match.presentation or {}).get("event_sequence", max((e.get("sequence", 0) for e in match.events), default=0))
+        reset = sync is not None and (sync.after_event is None or sync.epoch != (match.history_epoch or 0) or sync.after_event > last_event)
+        reveal_context = {}
+        events = [] if reset else await self.repo.event_batches(db, match, sync.after_event if sync else 0, reveal_context)
+        view = build_match_view(match, user_id, profiles=profiles, presentation_events=events, reveal_events=list(reveal_context.values()), **options)
+        rows = await self.repo.history(db, match.id, (sync.history_after if sync else 0) or 0) if sync is None or sync.history_after is not None else []
+        parent = await self.repo.history_parent(db, match.id, match.history_cursor) if match.history_cursor else None
         view["history"] = {"cursor": match.history_cursor, "epoch": match.history_epoch or 0,
-            "can_undo": match.status in ("active", "setup_pending", "finished") and bool(current and current["parent_step"]),
+            "can_undo": match.status in ("active", "setup_pending", "finished") and bool(parent),
             "can_jump": match.host_user_id == user_id and match.status != "cancelled",
             "entries": [{**dict(row), "created_at": row["created_at"].replace(tzinfo=timezone.utc).isoformat()} for row in rows]}
+        if sync is not None:
+            view["sync"] = {"reset": reset, "event_sequence": (match.presentation or {}).get("event_sequence",
+                max((e.get("sequence", 0) for e in match.events), default=0)),
+                "history_loaded": sync.history_after is not None,
+                "history_after": max([sync.history_after or 0, *[row["step"] for row in rows]])}
         return view
+
+    async def history_entries(self, db, match_id, user_id):
+        match = await self.repo.get(db, match_id)
+        self.member(match, user_id)
+        rows = await self.repo.history(db, match_id)
+        return {"entries": [{**dict(row), "created_at": row["created_at"].replace(tzinfo=timezone.utc).isoformat()} for row in rows]}
 
     async def replay(self, db, user_id, operation, resource_id, payload) -> MatchResult | None:
         previous = await self.repo.command(db, user_id, payload.command_id)
@@ -188,9 +209,11 @@ class MatchService:
 
     async def accepted(self, db, match, user_id, operation, resource_id, payload, room_version=None):
         if operation in ("start", "setup_choice", "command"):
+            if match.presentation is None or operation in ("start", "setup_choice"):
+                match.presentation = presentation.advance(None, match.events, match.state)
             await self.repo.checkpoint(db, match, user_id, history.label(operation, payload), history.snapshot(match))
         await db.flush()
-        view = await self.view(db, match, user_id)
+        view = await self.view(db, match, user_id, payload.sync)
         await self.repo.save_command(db, SavedCommand(user_id=user_id, command_id=payload.command_id,
             operation=operation, resource_id=resource_id, payload_hash=payload_hash(payload),
             match_id=match.id, response_view=deepcopy(view)))
@@ -314,8 +337,10 @@ class MatchService:
                     player_id=member["player_id"])
             result = await asyncio.to_thread(calculate_command, state, command,
                 CatalogSnapshot(**match.catalog_snapshot), self.revision(match))
+            previous_presentation = match.presentation or presentation.advance(None, match.events, match.state)
             match.state = result["state"]
-            match.events = [*match.events, *result["events"]]
+            match.events = result["events"]
+            match.presentation = presentation.advance(previous_presentation, match.events, match.state)
             room_version = None
             if match.state["phase"] == "SETTLING":
                 if not isinstance(match.state.get("result"), dict):
@@ -364,7 +389,7 @@ class MatchService:
                 await self.rooms.repo.reset_ready(db, room.id)
                 room_version = room.version
             for key in history.SNAPSHOT_FIELDS:
-                setattr(match, key, state[key])
+                setattr(match, key, state.get(key))
             match.history_cursor = target
             match.history_epoch = (match.history_epoch or 0) + 1
             return await self.accepted(db, match, user_id, "restore", match_id, payload, room_version)

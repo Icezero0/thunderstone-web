@@ -99,4 +99,19 @@ class MatchApiFixture:
             row = dict(db.execute("SELECT * FROM matches WHERE id=?", (match_id,)).fetchone())
         for key in ("frozen_players", "setup_request", "setup_choice", "state", "events", "catalog_snapshot"):
             row[key] = json.loads(row[key]) if row[key] is not None else None
+        # Most integration assertions inspect the logical selected-branch log,
+        # not its compact on-disk batches. Preserve the raw batch for storage tests.
+        row["event_batch"] = row["events"]
+        if row.get("presentation") and json.loads(row["presentation"]) is not None and row.get("history_cursor"):
+            batches, step = [], row["history_cursor"]
+            with closing(sqlite3.connect(self.db_path)) as db:
+                while step:
+                    saved = db.execute("SELECT parent_step, snapshot FROM match_history WHERE match_id=? AND step=?", (match_id, step)).fetchone()
+                    if not saved:
+                        break
+                    snapshot = json.loads(saved[1]); batches.append(snapshot["events"])
+                    if snapshot.get("presentation") is None:
+                        break
+                    step = saved[0]
+            row["events"] = [event for batch in reversed(batches) for event in batch]
         return row

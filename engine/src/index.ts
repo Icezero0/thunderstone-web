@@ -30,3 +30,4 @@ export * from './turn/advance.js';
 export * from './turn/buffs.js';
 export * from './turn/disease-gain.js';
 export * from './turn/commands.js';
+export * from './turn/prediction.js';

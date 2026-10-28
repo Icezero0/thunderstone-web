@@ -1,6 +1,10 @@
 import type {ApiClient} from '../api/client.js';
 
 export type ConnectionStatus = 'connecting' | 'online' | 'offline';
+export interface RealtimeChange {
+  type: 'connected' | 'room_changed' | 'match_changed' | 'profile_changed';
+  payload?: {match_id?: string; version?: number};
+}
 
 export class RoomConnection {
   private socket: WebSocket | null = null;
@@ -9,7 +13,7 @@ export class RoomConnection {
   private heartbeat: ReturnType<typeof setInterval> | null = null;
   private attempt = 0;
 
-  constructor(private api: ApiClient, private changed: () => void,
+  constructor(private api: ApiClient, private changed: (change: RealtimeChange) => void,
               private status: (status: ConnectionStatus) => void) {}
 
   async connect(): Promise<void> {
@@ -26,11 +30,11 @@ export class RoomConnection {
         if (message.type === 'ack') {
           this.attempt = 0;
           this.status('online');
-          this.changed(); // Refresh after reconnect to recover missed invalidations.
+          this.changed({type: 'connected'}); // Recover missed invalidations after reconnect.
           this.heartbeat = setInterval(() => {
             if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({type: 'heartbeat'}));
           }, 25_000);
-        } else if (['room_changed', 'match_changed', 'profile_changed'].includes(message.type)) this.changed();
+        } else if (['room_changed', 'match_changed', 'profile_changed'].includes(message.type)) this.changed(message);
       };
       socket.onclose = () => {this.clearHeartbeat(); this.schedule();};
       socket.onerror = () => socket.close();

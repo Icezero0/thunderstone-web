@@ -12,7 +12,7 @@ export class MatchPage {
   }
   setAutoSort(enabled: boolean): void {this.table.setAutoSort(enabled);}
   setCommandError(message = ''): void {this.table.setError(message);}
-  controls(view: MatchView, busy: boolean): void {renderMatchStatus(view); this.table.controls(view, busy);}
+  controls(view: MatchView, busy: boolean, localPreparationEdits = false): void {renderMatchStatus(view); this.table.controls(view, busy, localPreparationEdits);}
   setSelected(ids: readonly string[]): void {this.table.setSelected(ids);}
   finish(): void {this.table.finish();}
   closeBrowsers(): void {this.table.closeBrowsers();}
@@ -32,7 +32,7 @@ export class MatchPage {
     tile.addEventListener('click', () => this.inspect(id)); return tile;
   }
 
-  render(view: MatchView, selection: SetupSelection, busy: boolean): void {
+  render(view: MatchView, selection: SetupSelection, busy: boolean, reset = false): void {
     const ownPlayer = view.players.find(player => player.is_you);
     if (ownPlayer) $('#account-name').textContent = ownPlayer.display_name;
     $('#empty-view').hidden = true; $('#match-content').hidden = false;
@@ -49,7 +49,7 @@ export class MatchPage {
     $('#page-state').textContent = view.status === 'setup_pending' ? '分配确认后将生成初始牌组与地下城大厅。' : '鼠标悬停卡牌时，按住空格检视大图。';
     $('#setup-panel').hidden = view.status !== 'setup_pending'; $('#active-table').hidden = !['active', 'finished'].includes(view.status);
     if (view.status === 'setup_pending') {this.table.finish(); this.table.closeBrowsers(); this.renderSetup(view, selection, busy);}
-    else this.table.receive(view);
+    else this.table.receive(view, reset);
   }
 
   renderSetup(view: MatchView, selection: SetupSelection, busy: boolean): void {

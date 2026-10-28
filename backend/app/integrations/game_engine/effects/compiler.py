@@ -4,12 +4,16 @@ import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
+from collections import OrderedDict
+from threading import RLock
 from backend.app.core.paths import PROJECT_ROOT
 from backend.app.integrations.game_engine.effects.mechanics import Mechanic
 from backend.app.integrations.game_engine.shared.client import client, SharedRuleError
 
 
 SCHEMA_VERSION = "thunderstone.effects/1"
+_rules_cache = OrderedDict()
+_rules_lock = RLock()
 
 
 class EffectCompileError(ValueError):
@@ -55,6 +59,27 @@ def compile_ruleset(data: object, cards: dict[str, dict[str, str]]) -> EffectsRu
 
 
 def load_ruleset(cards: dict[str, dict[str, str]], root: Path = PROJECT_ROOT) -> EffectsRuleset:
+    """Cache immutable compiled definitions; invalidate on catalogue, file or engine changes."""
+    directory = root / "cards" / "effects"
+    paths = [directory / name for name in ("classic-v1.json", "simple-reviewed.json", "action-reviewed.json",
+             "battle-reviewed.json", "event-reviewed.json", "mechanics.json")]
+    paths.append(root / "engine" / "dist" / "index.js")
+    stamps = tuple((str(path), path.stat().st_mtime_ns, path.stat().st_size) if path.is_file()
+                   else (str(path), None, None) for path in paths)
+    digest = hashlib.sha256(json.dumps(cards, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()).digest()
+    key = (stamps, digest)
+    with _rules_lock:
+        if key in _rules_cache:
+            _rules_cache.move_to_end(key)
+            return _rules_cache[key]
+        result = _load_ruleset(cards, root)
+        _rules_cache[key] = result
+        while len(_rules_cache) > 4:
+            _rules_cache.popitem(last=False)
+        return result
+
+
+def _load_ruleset(cards: dict[str, dict[str, str]], root: Path) -> EffectsRuleset:
     directory = root / "cards" / "effects"
     source = json.loads((directory / "classic-v1.json").read_text(encoding="utf-8"))
     simple = json.loads((directory / "simple-reviewed.json").read_text(encoding="utf-8"))

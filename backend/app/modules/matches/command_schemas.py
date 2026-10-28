@@ -9,6 +9,7 @@ from backend.app.modules.matches.schemas import MatchCommand
 
 Identifier = Annotated[str, Field(strict=True, min_length=1, max_length=256)]
 InstanceIds = Annotated[list[Identifier], Field(max_length=1000)]
+Equipment = Annotated[dict[Identifier, InstanceIds], Field(max_length=1000)]
 
 
 class Intent(BaseModel):
@@ -33,6 +34,7 @@ class ActivateAbility(Intent):
     type: Literal["ActivateAbility"]
     ability_id: Identifier
     source_instance_id: Identifier
+    preparation_equipment: Equipment | None = None
 
 
 class UpgradeHero(Intent):
@@ -50,6 +52,7 @@ class EquipWeapon(Intent):
     type: Literal["EquipWeapon"]
     hero_instance_id: Identifier
     weapon_instance_id: Identifier
+    preparation_equipment: Equipment | None = None
 
 
 class BattleDraftSelection(Intent):
@@ -59,6 +62,11 @@ class BattleDraftSelection(Intent):
     hero_instance_ids: InstanceIds
     support_instance_ids: InstanceIds
     equipment: Annotated[dict[Identifier, InstanceIds], Field(max_length=1000)]
+
+
+class UpdatePreparationEquipment(Intent):
+    type: Literal["UpdatePreparationEquipment"]
+    equipment: Equipment
 
 
 class SubmitBattleTeam(Intent):
@@ -76,12 +84,14 @@ class AssignDiseasePenalty(Intent):
     instance_id: Identifier
     attack_type: Literal["attack", "magic_attack"]
     order: InstanceIds | None = None
+    preparation_equipment: Equipment | None = None
 
 
 class AssignStrengthPenalty(Intent):
     type: Literal["AssignStrengthPenalty"]
     instance_id: Identifier
     hero_instance_id: Identifier
+    preparation_equipment: Equipment | None = None
 
 
 class ResolveChoice(Intent):
@@ -128,7 +138,7 @@ class ResolveEffectOrder(Intent):
 
 PlayerIntent = Annotated[
     ChooseAction | FinishStep | BuyCard | ActivateAbility | UpgradeHero | InstanceAction |
-    EquipWeapon | SubmitBattleTeam | DeclareBattleTarget | AssignDiseasePenalty | AssignStrengthPenalty |
+    EquipWeapon | UpdatePreparationEquipment | SubmitBattleTeam | DeclareBattleTarget | AssignDiseasePenalty | AssignStrengthPenalty |
     ResolveChoice | ResolveResponse | ResolveReusedAbility | ResolveEffectUpgrade |
     ResolveValueChoice | ResolveCardOrder | ResolveEffectPurchase | ResolveEffectOrder,
     Field(discriminator="type"),

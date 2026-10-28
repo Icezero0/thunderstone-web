@@ -1,7 +1,15 @@
 import {RuleError} from '../types.js';
 import {equipmentChoices} from './combat.js';
-import type {Transition} from '../turn/transaction.js';
+import type {Transition, GameState, GameRules} from '../turn/transaction.js';
 import {queueSteps} from '../turn/workflow.js';
+
+/** Conservative public hint: only equipment with no possible trigger is a local draft. */
+export function equipmentNeedsResolution(state: GameState, rules: GameRules, weaponId: string): boolean {
+  const sources = new Set([state.instances[weaponId]?.card_id, ...(state.copied_heroes?.[weaponId]?.card_ids ?? [])]);
+  return rules.abilities.some(ability => ability.kind === 'triggered' && ability.event === 'CARD_EQUIPPED'
+    && (ability.source_zone !== 'event_source' || sources.has(ability.source_card_id)))
+    || [...state.registered_triggers ?? [], ...state.scheduled_effects ?? []].some(item => item.event === 'CARD_EQUIPPED');
+}
 
 export function equipmentPairs(context: Record<string, any>): [string, string][] {
   return Object.entries(context?.equipped_weapon_by_hero ?? {}).flatMap(([hero, value]) =>

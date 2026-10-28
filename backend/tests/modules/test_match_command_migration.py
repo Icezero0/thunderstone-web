@@ -52,10 +52,10 @@ class MatchCommandMigrationTests(unittest.TestCase):
                     _upgrade_database()
                     with closing(sqlite3.connect(path)) as db:
                         db.execute("PRAGMA foreign_keys=ON")
-                        self.assertEqual(db.execute("SELECT version_num FROM alembic_version").fetchone()[0], "0009_match_history")
+                        self.assertEqual(db.execute("SELECT version_num FROM alembic_version").fetchone()[0], "0010_match_event_batches")
                         for table in tables:
                             with self.subTest(table=table):
-                                expected = [(*row, None, 0) for row in before[table]] if table in ("users", "matches") else (
+                                expected = [(*row, None, 0, None) for row in before[table]] if table == "matches" else [(*row, None, 0) for row in before[table]] if table == "users" else (
                                     [(*row, 1) for row in before[table]] if table == "rooms" else before[table])
                                 self.assertEqual(db.execute(f"SELECT * FROM {table}").fetchall(), expected)
                         self.assertEqual(db.execute("PRAGMA foreign_key_check").fetchall(), [])

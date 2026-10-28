@@ -2,7 +2,7 @@ import {RuleError} from '../types.js';
 import type {Transition} from '../turn/transaction.js';
 import {queueSteps} from '../turn/workflow.js';
 import {awaitBattleDeclaration, commitBattlePenalties} from '../turn/dungeon.js';
-import {equipWeapon, equipmentPairs} from './equipment.js';
+import {equipWeapon, equipmentPairs, unequipWeapon, equipmentNeedsResolution} from './equipment.js';
 import {projectBattleContext} from './preparation.js';
 import {battleDraftInput, createBattleDraft, type BattleDraft} from './team.js';
 import {spellUseOptions, useSpell} from '../effects/spell-use.js';
@@ -10,6 +10,20 @@ import {spellUseOptions, useSpell} from '../effects/spell-use.js';
 const contextFor = (tx: Transition) => projectBattleContext(tx.state,
   {cards: tx.cards, setup_index: tx.setupIndex}, tx.ruleset);
 const pairKey = ([hero, weapon]: [string, string]) => `${hero}\0${weapon}`;
+
+/** Flush reversible local equipment before an actual ability/assignment, atomically. */
+export function syncPreparationEquipment(tx: Transition, equipment: Record<string, string[]>): void {
+  const context = contextFor(tx);
+  const input = battleDraftInput(context, {...createBattleDraft(context), equipment});
+  const previous = equipmentPairs(tx.state.battle_context), wanted = equipmentPairs(input.state.battle_context!);
+  const existing = new Set(previous.map(pairKey)), desired = new Set(wanted.map(pairKey));
+  const added = wanted.filter(pair => !existing.has(pairKey(pair)));
+  if (added.some(([, weapon]) => equipmentNeedsResolution(tx.state, tx.ruleset, weapon)))
+    throw new RuleError('triggered equipment must resolve through EquipWeapon');
+  for (const [, weapon] of previous.filter(pair => !desired.has(pairKey(pair)))) unequipWeapon(tx, weapon);
+  // These pairs cannot dispatch effects. Keeping normal equip events preserves history.
+  for (const [hero, weapon] of added) equipWeapon(tx, hero, weapon, true);
+}
 
 /** Equip events use the normal interruptible workflow before the team is locked. */
 export function submitBattleTeam(tx: Transition, draft: BattleDraft) {

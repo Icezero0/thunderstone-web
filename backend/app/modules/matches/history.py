@@ -1,7 +1,7 @@
 """Checkpoint values and public operation labels, with no database access."""
 from copy import deepcopy
 
-SNAPSHOT_FIELDS = ("status", "state", "events", "setup_request", "setup_choice")
+SNAPSHOT_FIELDS = ("status", "state", "events", "setup_request", "setup_choice", "presentation")
 LABELS = {
     "ChooseAction": "选择行动", "FinishAbilities": "结束使用效果", "BuyCard": "购买卡牌",
     "FinishBuying": "结束购买", "UpgradeHero": "升级英雄", "FinishUpgrading": "结束升级",
@@ -9,6 +9,7 @@ LABELS = {
     "ActivateAbility": "发动卡牌效果", "ResolveChoice": "选择效果对象", "ResolveValueChoice": "选择效果选项",
     "ResolveCardOrder": "排列卡牌", "ResolveEffectPurchase": "选择供应牌", "ResolveEffectUpgrade": "升级英雄",
     "SubmitBattleTeam": "完成战斗队伍", "DeclareBattleTarget": "宣言战斗", "ReviseBattleTeam": "调整战斗队伍",
+    "UpdatePreparationEquipment": "更新装备方案",
     "ResolveTrap": "触发陷阱", "ResolveDiseaseGain": "处理疾病获得", "ResolveOptional": "处理可选效果",
 }
 
@@ -16,7 +17,7 @@ LABELS = {
 def snapshot(match):
     # Catalogue, participant identities and executable revisions are immutable
     # on Match; this captures all mutable rule state, RNG and continuations.
-    return deepcopy({key: getattr(match, key) for key in SNAPSHOT_FIELDS})
+    return deepcopy({key: getattr(match, key, None) for key in SNAPSHOT_FIELDS})
 
 
 def label(operation, payload):

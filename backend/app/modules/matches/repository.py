@@ -18,11 +18,45 @@ class MatchRepository:
     async def history_step(self, db, match_id, step):
         return await db.get(MatchHistory, (match_id, step))
 
-    async def history(self, db, match_id):
+    async def history_parent(self, db, match_id, step):
+        return await db.scalar(select(MatchHistory.parent_step).where(MatchHistory.match_id == match_id, MatchHistory.step == step))
+
+    async def history(self, db, match_id, after=0):
         # Never fetch the large private snapshots when rendering the timeline.
         return (await db.execute(select(MatchHistory.step, MatchHistory.parent_step, MatchHistory.user_id,
             MatchHistory.label, MatchHistory.turn_number, MatchHistory.created_at)
-            .where(MatchHistory.match_id == match_id).order_by(MatchHistory.step))).mappings().all()
+            .where(MatchHistory.match_id == match_id, MatchHistory.step > after).order_by(MatchHistory.step))).mappings().all()
+
+    async def event_batches(self, db, match, after=0, reveal_context=None):
+        """Read only event JSON on the selected branch, never historical game snapshots."""
+        if reveal_context is not None:
+            reveal_context.update((match.presentation or {}).get("recent_reveals", {}))
+        if match.presentation is None or not match.history_cursor:
+            return [e for e in match.events if e.get("sequence", 0) > after]
+        if after >= match.presentation.get("event_sequence", 0):
+            return []
+        if match.events and after >= match.events[0].get("sequence", 0) - 1:
+            return [e for e in match.events if e.get("sequence", 0) > after]
+        chain = select(MatchHistory.step, MatchHistory.parent_step).where(
+            MatchHistory.match_id == match.id, MatchHistory.step == match.history_cursor).cte(recursive=True)
+        chain = chain.union_all(select(MatchHistory.step, MatchHistory.parent_step).join(
+            chain, MatchHistory.step == chain.c.parent_step).where(MatchHistory.match_id == match.id,
+                func.coalesce(MatchHistory.snapshot["presentation"]["event_sequence"].as_integer(), after + 1) > after))
+        rows = (await db.execute(select(MatchHistory.step,
+            MatchHistory.snapshot["events"], MatchHistory.snapshot["presentation"])
+            .join(chain, MatchHistory.step == chain.c.step).where(MatchHistory.match_id == match.id)
+            .order_by(MatchHistory.step.desc()))).all()
+        batches = []
+        for _, events, presentation in rows:
+            if reveal_context is not None:
+                for zone, event in (presentation or {}).get("recent_reveals", {}).items():
+                    reveal_context.setdefault(zone, event)
+            batch = [e for e in (events or []) if e.get("sequence", 0) > after]
+            if batch:
+                batches.append(batch)
+            if presentation is None or presentation.get("event_sequence", 0) <= after or batch and batch[0].get("sequence", 0) <= after + 1:
+                break
+        return [event for batch in reversed(batches) for event in batch]
 
     async def resume_room(self, db, room, match_id):
         changed = await db.execute(update(Room).where(Room.id == room.id, Room.version == room.version,

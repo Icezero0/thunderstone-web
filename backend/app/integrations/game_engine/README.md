@@ -52,7 +52,7 @@ a gold adjustment.
 | `VILLAGE_UPGRADE` | `UpgradeHero` with `source_instance_id` and `target_card_id`; `FinishUpgrading` |
 | `REST` | `RestDestroy` with `instance_id`; `SkipRestDestroy`; either enters `ACTION_END` |
 | `ACTION_END` | `FinishTurn`; shared explicit confirmation for village, dungeon and rest |
-| `DUNGEON_PREPARE` | `ActivateAbility`; `EquipWeapon`; `SubmitBattleTeam` with a versioned draft (legacy `DeclareBattleTarget` remains accepted) |
+| `DUNGEON_PREPARE` | `ActivateAbility`; `EquipWeapon`; `UpdatePreparationEquipment` to flush local ordinary equipment; `SubmitBattleTeam` with a versioned draft (legacy `DeclareBattleTarget` remains accepted) |
 | Pending card choice | `ResolveChoice` with `instance_id` from the current candidates |
 | Pending simultaneous triggers | `ResolveEffectOrder` with each offered effect ID once |
 | Pending effect purchase | `ResolveEffectPurchase` with an offered `card_id`, or `null` to skip |

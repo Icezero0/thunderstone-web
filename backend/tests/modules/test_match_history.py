@@ -1,5 +1,8 @@
 """Real authenticated checkpoints, shared undo and host-only branch restoration."""
 from uuid import uuid4
+import json
+from contextlib import closing
+import sqlite3
 import unittest
 
 from backend.tests.support.matches import MatchApiFixture
@@ -33,6 +36,37 @@ class MatchHistoryTests(unittest.TestCase):
     def play(self, account, view, type, **args):
         return self.f.successful(self.f.play(account, view, {"type": type, **args}))
 
+    def test_compact_cursor_omits_old_events_and_history_and_storage_keeps_batches(self):
+        a, b, start = self.create()
+        url = f"/api/v1/matches/{start['id']}"
+        baseline = self.f.successful(self.f.client.get(url + '?compact=true', headers=a['headers']))
+        self.assertEqual(baseline['event_log'], [])
+        self.assertEqual(baseline['history']['entries'], [])
+        cursor = baseline['sync']['event_sequence']
+        action = self.f.successful(self.f.client.post(url + '/commands', headers=a['headers'], json={
+            'expected_version': start['version'], 'command_id': uuid4().hex,
+            'sync': {'epoch': 0, 'after_event': cursor}, 'command': {'type': 'ChooseAction', 'action': 'rest'}}))
+        self.assertTrue(action['event_log'])
+        self.assertTrue(all(event['sequence'] > cursor for event in action['event_log']))
+        self.assertEqual(action['history']['entries'], [])
+        final = self.play(a, action, 'SkipRestDestroy')
+        missed = self.f.successful(self.f.client.get(url + f'?compact=true&epoch=0&after_event={cursor}', headers=a['headers']))
+        full = self.f.successful(self.f.client.get(url, headers=a['headers']))
+        self.assertEqual(missed['event_log'], [event for event in full['event_log'] if event['sequence'] > cursor])
+        with closing(sqlite3.connect(self.f.db_path)) as db:
+            rows = db.execute('SELECT snapshot FROM match_history WHERE match_id=? ORDER BY step', (start['id'],)).fetchall()
+        batches = [json.loads(row[0])['events'] for row in rows]
+        self.assertEqual(len({e['sequence'] for batch in batches for e in batch}), sum(map(len, batches)))
+        entries = self.f.successful(self.f.client.get(url + '/history', headers=a['headers']))['entries']
+        self.assertEqual(len(entries), 3)
+        self.assertNotIn('snapshot', str(entries))
+        restored = self.f.successful(self.restore(b, final))
+        reset = self.f.successful(self.f.client.get(url + f'?compact=true&epoch=0&after_event={missed["sync"]["event_sequence"]}', headers=a['headers']))
+        self.assertTrue(reset['sync']['reset']); self.assertEqual(reset['event_log'], [])
+        self.assertEqual(reset['turn'], restored['turn'])
+        exported = self.f.successful(self.f.client.get(url + '/export', headers=a['headers']))
+        self.assertEqual(exported['snapshot']['events'], self.f.stored_match(start['id'])['events'])
+
     def test_other_player_undo_restores_full_state_and_next_undo_follows_parent(self):
         a, b, start = self.create()
         initial = self.f.stored_match(start['id'])['state']
@@ -47,6 +81,28 @@ class MatchHistoryTests(unittest.TestCase):
         self.assertEqual(again['history']['epoch'], 2)
         self.assertFalse(again['history']['can_undo'])
         self.assertNotIn('rng_state', str(again['history']))
+
+    def test_legacy_cumulative_snapshots_can_extend_branch_undo_and_export(self):
+        a, b, start = self.create()
+        view = self.play(a, start, 'ChooseAction', action='rest')
+        cumulative = self.f.stored_match(view['id'])['events']
+        # Simulate a pre-0010 row/checkpoint without the new metadata field.
+        with closing(sqlite3.connect(self.f.db_path)) as db:
+            db.execute('UPDATE matches SET events=?, presentation=NULL WHERE id=?', (json.dumps(cumulative), view['id']))
+            raw = db.execute('SELECT snapshot FROM match_history WHERE match_id=? AND step=?', (view['id'], view['version'])).fetchone()[0]
+            snapshot = json.loads(raw); snapshot.pop('presentation', None); snapshot['events'] = cumulative
+            db.execute('UPDATE match_history SET snapshot=? WHERE match_id=? AND step=?', (json.dumps(snapshot), view['id'], view['version']))
+            db.commit()
+        view = self.play(a, view, 'SkipRestDestroy')
+        url = f"/api/v1/matches/{view['id']}"
+        exported = self.f.successful(self.f.client.get(url + '/export', headers=a['headers']))
+        self.assertEqual(exported['snapshot']['events'][:len(cumulative)], cumulative)
+        restored = self.f.successful(self.restore(b, view))
+        self.assertEqual(restored['turn']['subphase'], 'REST')
+        branch = self.play(a, restored, 'RestDestroy', instance_id=restored['players'][0]['cards']['hand'][0]['instance_id'])
+        exported = self.f.successful(self.f.client.get(url + '/export', headers=a['headers']))
+        self.assertEqual(exported['snapshot']['events'][:len(cumulative)], cumulative)
+        self.assertTrue(any(e['kind'] == 'rest_card_destroyed' for e in exported['snapshot']['events']))
 
     def test_host_can_restore_abandoned_branch_but_other_player_cannot(self):
         a, b, view = self.create()

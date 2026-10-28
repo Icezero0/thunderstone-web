@@ -24,7 +24,9 @@ def build_match_view(match: Any, viewer_user_id: int, *, legal_commands: list | 
                      gold_income_preview: int | None = None,
                      hall_rank_counts: dict | None = None,
                      card_statuses: dict | None = None,
-                     unavailable_reason: str | None = None, profiles: dict | None = None) -> dict:
+                     unavailable_reason: str | None = None, profiles: dict | None = None,
+                     presentation_events: list | None = None, action_prediction: dict | None = None,
+                     reveal_events: list | None = None) -> dict:
     """Expose board, unordered inventories, shown hand cards and the viewer's own cards."""
     members = match.frozen_players
     viewer = next((p for p in members if p["user_id"] == viewer_user_id), None)
@@ -66,7 +68,8 @@ def build_match_view(match: Any, viewer_user_id: int, *, legal_commands: list | 
         return [{"instance_id": item if pid == player_id else f"inventory:{pid}:{zone}:{i}",
                  "card_id": include_card(instances[item]["card_id"]), **statuses(item)} for i, item in enumerate(ordered)]
 
-    revealed = public_hand_instances(getattr(match, "events", []))
+    metadata = getattr(match, "presentation", None)
+    revealed = set(metadata["public_hand"]) if metadata is not None else public_hand_instances(getattr(match, "events", []))
 
     players = []
     for member in members:
@@ -201,9 +204,12 @@ def build_match_view(match: Any, viewer_user_id: int, *, legal_commands: list | 
     if preparation:
         for card_id in preparation["context"]["cards"]:
             include_card(card_id)
-    logs = event_view(getattr(match, "events", []), instances, include_card)
-    motions = deck_motion_view(getattr(match, "events", []), instances, player_id, catalog, include_card)
-    revealed_zones = {event["zone"] for event in getattr(match, "events", []) if event.get("kind") == "cards_revealed"
+    events = getattr(match, "events", []) if presentation_events is None else presentation_events
+    reveal_context = reveal_events or list((metadata or {}).get("recent_reveals", (metadata or {}).get("reveals", {})).values())
+    motion_events = [event for event in reveal_context if event.get("sequence", 0) < min((e.get("sequence", 0) for e in events), default=0)] + events
+    logs = event_view(events, instances, include_card)
+    motions = deck_motion_view(motion_events, instances, player_id, catalog, include_card)
+    revealed_zones = {event["zone"] for event in [*reveal_context, *events] if event.get("kind") == "cards_revealed"
                       and "zone" in event and player_id in event.get("visible_to", [])}
     temporary = card_instances([item for zone, pile in zones.items()
         if zone in revealed_zones or zone.startswith(f"player:{player_id}:revealed_")
@@ -218,12 +224,13 @@ def build_match_view(match: Any, viewer_user_id: int, *, legal_commands: list | 
         "actor_player_id": actor, "legal_commands": commands, "pending_choice": pending, "pending_disease": pending_disease,
         "command_instances": command_instances, "abilities": ability_descriptions,
         "battle_preparation": preparation, "unavailable_reason": unavailable_reason,
+        **({"action_prediction": action_prediction} if can_act and action_prediction else {}),
         "viewer_resources": {**{key: resources.get(key, 0) for key in
                               ("xp", "temporary_gold", "purchases_remaining", "extra_basic_purchases")},
                              "gold_income_preview": gold_income_preview if match.status == "active"
                              and state.get("active_player_id") == player_id and unavailable_reason is None else None},
         "event_log": logs, "card_motion": motions, "result": result_view(state),
-        "table_motion": table_motion_view(getattr(match, "events", []), instances, player_id, catalog, include_card),
+        "table_motion": table_motion_view(motion_events, instances, player_id, catalog, include_card),
         "revealed": temporary,
         "hand": card_instances(zones.get(f"player:{player_id}:hand", [])),
         "draw": inventory(zones.get(f"player:{player_id}:draw", []), player_id, "draw"),

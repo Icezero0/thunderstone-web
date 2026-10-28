@@ -1,5 +1,7 @@
 # 游戏引擎设计文档
 
+正式客户端的增量事件传输、本地预测及顺序提交见[客户端同步与即时操作](client-sync.md)。
+
 现有规则已完成 [TypeScript 迁移](typescript-migration.md)。战斗数值、怪物生命、金币／价格、计分、[DSL 编译与纯计算](typescript-dsl.md)、[规则配置与 setup](typescript-setup.md)、回合和有状态效果处理器均由共享 TS 包执行。前端复用只读计算，正式状态由后端维护。
 
 本目录把 [总览](../game-engine-design.md) 展开为可直接指导 TypeScript 实现的规则与接口约定。正文中的“规则书要求”来自 [`TS4_rules_CN.pdf`](../../game_TTS/TS4_rules_CN.pdf) 的标准竞争对局；“设计约定”是网页版的实现选择；“待裁定”表示资料尚不足以写成确定行为。目前已实现[规则配置校验](../../engine/src/setup/validation.ts)、[确定性组局](../../engine/src/setup/builder.ts)、[疾病供应及回合转换](../../engine/src/turn/commands.ts)、[全量效果绑定与逐卡测试](ability-runtime-implementation.md)、特殊场景战斗、计分和[本地面板 API](../../backend/devtools/api/setup.py)。520 张有效果的卡牌均已完整覆盖；联机层与正式客户端仍待开发。

@@ -28,6 +28,7 @@ class Match(Base):
     setup_choice: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     state: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     events: Mapped[list] = mapped_column(JSON, nullable=False)
+    presentation: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     catalog_snapshot: Mapped[dict] = mapped_column(JSON, nullable=False)
     engine_version: Mapped[str] = mapped_column(String(64), nullable=False)
     effects_version: Mapped[str] = mapped_column(String(64), nullable=False)
@@ -36,7 +37,7 @@ class Match(Base):
 
 
 class MatchHistory(Base):
-    """Immutable complete checkpoints; parent links retain alternate continuations."""
+    """Complete state checkpoints plus per-step events; parents retain alternate branches."""
 
     __tablename__ = "match_history"
     match_id: Mapped[str] = mapped_column(ForeignKey("matches.id"), primary_key=True)
