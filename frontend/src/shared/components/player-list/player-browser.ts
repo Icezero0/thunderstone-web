@@ -29,7 +29,7 @@ export class PlayerBrowser {
   }
   private target(item: CardView): void {
     const id = item.card.elements.button.dataset.instanceId!;
-    item.card.setGlow(!!item.identity && this.targets.has(id)); item.card.setActive(this.selected.has(id));
+    item.card.setGlow(!!item.identity && this.targets.has(id)); item.card.setActive(this.selected.has(id)); item.card.setTargetSelected(this.selected.has(id));
   }
   get playerId(): string | null {return this.selectedPlayer;}
   get zone(): PlayerBrowseZone {return this.selectedZone;}

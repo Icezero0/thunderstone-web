@@ -15,6 +15,22 @@ async function setup(options = {}) {
   area.setState(snapshot()); await settle(); return {ui, api, area};
 }
 
+test('hall and supply effect selections show checks without marking an ordinary battle target', async () => {
+  const {ui, area} = await setup();
+  const hall = top(ui.get('first-dungeon-cards-main-rank-1').children[1]), id = hall.dataset.instanceId;
+  area.setHallSelection([id], [id]);
+  assert.equal(hall.dataset.targetSelected, 'false');
+  area.setCardTargets([id], [id]); assert.equal(hall.dataset.targetSelected, 'true');
+  area.setState(snapshot()); await settle();
+  assert.equal(top(ui.get('first-dungeon-cards-main-rank-1').children[1]).dataset.targetSelected, 'true');
+  area.setCardTargets([], []);
+  assert.equal(top(ui.get('first-dungeon-cards-main-rank-1').children[1]).dataset.targetSelected, 'false');
+  const supply = top(ui.get('first-village-cards-pile-amazon').children[1]);
+  area.setSupplySelection([supply.dataset.cardId], [supply.dataset.cardId]);
+  assert.equal(supply.dataset.targetSelected, 'true');
+  area.setSupplySelection([], []); assert.equal(supply.dataset.targetSelected, 'false'); area.dispose();
+});
+
 test('local continuous hall statuses update markers and restore the authoritative state without moving cards', async () => {
   const {ui, area} = await setup();
   const button = top(ui.get('first-dungeon-cards-main-rank-1').children[1]), id = button.dataset.instanceId;

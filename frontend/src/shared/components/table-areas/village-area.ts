@@ -127,6 +127,7 @@ export class VillageArea {
     const top = supplyTop(pile), price = top && this.highlighted.get(top.cardId);
     view.card?.setGlow(price !== undefined || pile.cards.some(card => this.targets.has(card.cardId)));
     view.card?.setActive(!!top && this.selected.has(top.cardId));
+    view.card?.setTargetSelected(!!top && this.selected.has(top.cardId));
     view.root.dataset.purchasePrice = price === undefined ? '' : String(price);
     if (view.card) {
       view.card.elements.button.dataset.purchasePrice = price === undefined ? '' : String(price);

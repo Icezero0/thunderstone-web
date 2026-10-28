@@ -14,6 +14,21 @@ async function setup(options = {}) {
   return {ui, Area: ui.evaluate('PlayerDeckPackage.PlayerDeckArea')};
 }
 
+test('effect selection checks remain separate from participation and survive hover', async () => {
+  const {ui, Area} = await setup(), area = new Area(ui.get('first'), {idPrefix: 'one'});
+  area.setState(snapshot()); await settle();
+  const a = handCards(ui, 'one').find(button => button.dataset.instanceId === 'a');
+  area.setSelectedIds(['a']);
+  assert.equal(a.dataset.targetSelected, 'false', 'participation alone is not an effect selection');
+  area.setCardTargets(['a', 'b'], ['a']);
+  assert.equal(a.dataset.targetSelected, 'true');
+  a.fire('pointerenter'); a.fire('pointerleave');
+  assert.equal(a.dataset.targetSelected, 'true');
+  area.setCardTargets(['a', 'b'], []);
+  assert.equal(a.dataset.targetSelected, 'false'); assert.equal(a.dataset.glowing, 'true');
+  area.setCardTargets([], []); assert.equal(a.dataset.glowing, 'false'); area.dispose();
+});
+
 test('temporary revealed cards use their own targetable tab and disappear when resolved', async () => {
   const {ui, Area} = await setup(), picked = [];
   const area = new Area(ui.get('first'), {idPrefix: 'one', onCardTargetClick: id => picked.push(id)});
@@ -421,7 +436,7 @@ for (const kind of ['draw', 'discard']) test(`an open ${kind} browser follows ex
   area.setState(initial); await settle(); area.openPileBrowser(kind); await settle();
   const grid = ui.get('one-pile-browser-grid'), modal = ui.get('one-pile-browser');
   const initialCards = browserCards(ui), retained = initialCards[1];
-  retained.focus(); ui.key(' '); grid.scrollTop = 153;
+  ui.key('Tab'); retained.focus(); ui.key(' '); grid.scrollTop = 153;
   assert.equal(ui.get('one-inspect-overlay').hidden, false);
   const added = card('new', 'TS-0002'), updated = {...initial, [kind]: [...initial[kind].slice(0, 2), added]};
   // Preserve the middle focused instance while replacing a different card, including equal catalog IDs.

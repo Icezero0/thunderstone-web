@@ -93,7 +93,9 @@ export class PublicTableArea {
   setTabAttention(tabs: readonly PublicTableTab[]): void {
     this.attention = new Set(tabs); this.renderAttention();
   }
-  setCardTargets(ids: readonly string[], selected: readonly string[]): void {this.players.setCardTargets(ids, selected);}
+  setCardTargets(ids: readonly string[], selected: readonly string[]): void {
+    this.players.setCardTargets(ids, selected); this.dungeon.setEffectSelection(selected);
+  }
   private renderAttention(): void {
     for (const kind of ['dungeon', 'village'] as const) {
       const needed = this.attention.has(kind) && kind !== this.active;

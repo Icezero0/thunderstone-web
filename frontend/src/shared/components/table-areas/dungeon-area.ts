@@ -23,6 +23,7 @@ export class DungeonArea {
   private disposed = false;
   private highlighted = new Set<string>();
   private selected = new Set<string>();
+  private effectSelected = new Set<string>();
   private readonly hallCards = new Map<string, PhysicalCard>();
   private environmentCard: {id: string; card: PhysicalCard} | null = null;
   private readonly motion: CardMotion;
@@ -55,6 +56,7 @@ export class DungeonArea {
     if (environmentCard && environment) environmentCard.elements.button.onclick = () => {
       if (!this.root.hidden && !this.root.inert && this.highlighted.has(environment.id)) this.options.onHallCardClick?.(environment);
     };
+    environmentCard?.setTargetSelected(!!environment && this.effectSelected.has(environment.id));
     environmentCard?.elements.button.setAttribute('data-pan-start', '');
     reconcile(this.environmentSlot, environmentCard ? [environmentCard.elements.button] : []);
     const lanes = copied.dungeons.map(lane => this.renderLane(lane));
@@ -139,6 +141,11 @@ export class DungeonArea {
     this.motionRevision++; this.motion.finish();
     const completions = this.layoutCompletions; this.layoutCompletions = []; completions.forEach(complete => complete());
   }
+  setEffectSelection(selected: readonly string[]): void {
+    this.effectSelected = new Set(selected);
+    for (const [id, card] of this.hallCards) card.setTargetSelected(this.effectSelected.has(id));
+    if (this.environmentCard) this.environmentCard.card.setTargetSelected(this.effectSelected.has(this.environmentCard.id));
+  }
   setCardSelection(highlighted: readonly string[], selected: readonly string[]): void {
     this.highlighted = new Set(highlighted); this.selected = new Set(selected);
     for (const [id, card] of [...this.hallCards, ...(this.environmentCard ? [[this.environmentCard.id, this.environmentCard.card] as const] : [])]) {
@@ -180,6 +187,7 @@ export class DungeonArea {
       if (slot.card) {
         const card = this.cards.card(`hall-${slot.card.id}-${slot.card.cardId}`, slot.card);
         this.hallCards.set(slot.card.id, card);
+        card.setTargetSelected(this.effectSelected.has(slot.card.id));
         card.setGlow(this.highlighted.has(slot.card.id)); card.elements.button.dataset.selected = String(this.selected.has(slot.card.id));
         card.elements.button.setAttribute('aria-pressed', String(this.selected.has(slot.card.id)));
         card.elements.button.setAttribute('data-pan-start', '');

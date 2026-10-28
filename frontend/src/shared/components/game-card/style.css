@@ -12,6 +12,14 @@
 .physical-card .card-lift {position: absolute; top: 0; left: 0; width: 100%; aspect-ratio: 504 / 704; display: block; transition: top 180ms ease-out, left 180ms ease-out, width 180ms ease-out;}
 .physical-card .card-lift::after {content: ''; position: absolute; inset: 0; border-radius: var(--card-radius, 9px); pointer-events: none; opacity: 0; transition: opacity 140ms ease-out; box-shadow: 0 0 3px 2px var(--card-glow-color, var(--header-gold)), 0 0 16px 4px color-mix(in srgb, var(--card-glow-color, var(--header-gold)) 65%, transparent);}
 .physical-card[data-glowing="true"] .card-lift::after {opacity: 1;}
+.physical-card[data-target-selected="true"] .card-lift::after {opacity: .3;}
+.physical-card[data-target-selected="true"] .card-face {border-color: var(--header-gold); box-shadow: inset 0 0 0 1px var(--header-gold);}
+.physical-card[data-target-selected="true"] .card-lift::before {
+  content: '\2713'; position: absolute; top: 5px; left: 5px; z-index: 21; pointer-events: none;
+  display: grid; place-items: center; width: 27px; height: 27px; border-radius: 50%;
+  color: var(--header-gold); background: var(--navy); border: 2px solid var(--header-gold);
+  font: bold 20px/1 var(--font-body); box-shadow: 0 2px 6px rgb(0 0 0 / 65%);
+}
 .physical-card[data-active="true"] .card-lift {top: -12px; left: -3px; width: calc(100% + 6px);}
 .card-status-markers {position: absolute; top: 5px; right: 5px; z-index: 20; display: flex; gap: 3px;}
 .physical-card[data-face="back"] .card-status-markers {display: none;}

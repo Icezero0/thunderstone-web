@@ -310,6 +310,7 @@ export class PlayerDeckArea {
       const pileTarget = (this.state.draw[0]?.id === id && this.state.draw.some(card => this.targetIds.has(card.id)))
         || (this.state.discard.at(-1)?.id === id && this.state.discard.some(card => this.targetIds.has(card.id)));
       card.setGlow(handIds.has(id) && this.highlighted.has(id) || this.targetIds.has(id) || pileTarget);
+      card.setTargetSelected(this.targetSelection.has(id));
       if (!handIds.has(id)) card.setActive(this.targetSelection.has(id));
       card.elements.button.dataset.forced = String(handIds.has(id) && this.battleDisplay.mandatoryIds.includes(id));
     }

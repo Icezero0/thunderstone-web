@@ -29,7 +29,7 @@ export class SupplyBrowser {
   }
   private target(card: PhysicalCard): void {
     const id = card.elements.button.dataset.cardId!;
-    card.setGlow(this.targets.has(id)); card.setActive(this.selected.has(id));
+    card.setGlow(this.targets.has(id)); card.setActive(this.selected.has(id)); card.setTargetSelected(this.selected.has(id));
   }
   private inertBefore: boolean[] = [];
   get pileId(): string | null {return this.pile?.id ?? null;}

@@ -64,6 +64,10 @@ export class PhysicalCard {
     if (!this.disposed) this.flip.setFaceUp(faceUp, animate && this.ready);
   }
   setActive(active: boolean): void {this.active = active; this.render();}
+  /** Effect target selection is independent of hover and battle participation. */
+  setTargetSelected(selected: boolean): void {
+    this.elements.button.dataset.targetSelected = String(selected);
+  }
   /** Presentation hint shared by every card region; independent of hover and selection. */
   setGlow(glowing: boolean): void {if (!this.disposed) this.elements.button.dataset.glowing = String(glowing);}
   setStatuses(statuses: readonly CardStatus[] = []): void {
@@ -274,8 +278,14 @@ export class CardInteractions {
     // Keyboard input can make a mouse-focused control match :focus-visible even
     // when its default action is prevented. Release that stale focus before the
     // browser paints it; never blur text editors or genuine keyboard navigation.
-    if (hovering && CardInteractions.pointerFocus && document.activeElement instanceof HTMLElement
-        && document.activeElement !== document.body) document.activeElement.blur();
+    const focused = document.activeElement;
+    const staleCard = CardInteractions.pointerFocus && focused instanceof HTMLElement
+      && this.cards.some(card => card.elements.button === focused && this.allowed(card));
+    if (CardInteractions.pointerFocus && focused instanceof HTMLElement
+        && focused !== document.body && (hovering || staleCard)) focused.blur();
+    // Once claimed, swallow repeats and keyup too: Space must not activate the
+    // card last clicked after the pointer has left it.
+    if (staleCard) {this.inspectionCaptured = true; this.consume(event);}
     this.render();
     this.inspectionHeld = true;
     if (this.active || this.inspectionCaptured) {this.inspectionCaptured = true; this.consume(event);}

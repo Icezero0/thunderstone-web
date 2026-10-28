@@ -32,7 +32,7 @@ export class PileBrowser {
   }
   private target(item: BrowserItem): void {
     const id = item.card.elements.button.dataset.instanceId!;
-    item.card.setGlow(this.highlighted.has(id)); item.card.setActive(this.selected.has(id));
+    item.card.setGlow(this.highlighted.has(id)); item.card.setActive(this.selected.has(id)); item.card.setTargetSelected(this.selected.has(id));
   }
 
   open(kind: 'draw' | 'discard', cards: readonly PlayerDeckCard[], trigger: HTMLElement): void {

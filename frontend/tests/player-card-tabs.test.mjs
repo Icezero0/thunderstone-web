@@ -51,7 +51,7 @@ test('switching tabs preserves hand order and selection, supports Space on both 
 
 test('tabs support keyboard navigation and return focus to the hand when the selected zone becomes empty', async () => {
   const {ui, area} = await setup(); area.setState(snapshot()); await settle();
-  const hand = ui.get('one-hand-heading'); hand.focus(); hand.fire('keydown', {key: 'ArrowRight'});
+  const hand = ui.get('one-hand-heading'); ui.key('Tab'); hand.focus(); hand.fire('keydown', {key: 'ArrowRight'});
   assert.equal(area.activeTab, 'treasures'); assert.equal(ui.document.activeElement, ui.get('one-treasures-tab'));
   ui.get('one-treasures-tab').fire('keydown', {key: 'End'}); assert.equal(area.activeTab, 'aside');
   const held = displayed(ui, 'aside')[0]; held.focus(); ui.key(' ');

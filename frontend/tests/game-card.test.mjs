@@ -93,7 +93,7 @@ test('Space inspection works for dungeon and village cards outside the player de
   deck.openPileBrowser('draw'); ui.key(' ');
   assert.equal(inspection.overlay.hidden, true); assert.equal(ui.get('game').inert, true);
   ui.key('Escape'); ui.release();
-  villageCard.setFaceUp(true, false); village.button.focus(); ui.key(' ');
+  villageCard.setFaceUp(true, false); ui.key('Tab'); village.button.focus(); ui.key(' ');
   assert.equal(village.largeFront.hidden, false); assert.equal(village.largeBack.hidden, true);
   assert.equal(village.frontImage.decodeCalls, 1); assert.equal(village.frontImage.srcWrites.length, 1);
   ui.release(); assert.equal(inspection.overlay.hidden, true);
@@ -213,6 +213,26 @@ test('mouse inspection releases the stale focus ring without changing card selec
     assert.equal(elements.button.dataset.selected, 'true', 'actual selection remains intact');
   }
   interactions.dispose(); inspection.dispose();
+});
+
+test('Space after leaving a mouse-clicked card clears focus and cannot activate it', async () => {
+  const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
+  const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
+  const elements = api.createCardElements('TS-0001'); ui.get('deck').append(elements.button);
+  interactions.add(elements, 'Militia'); await settle();
+  elements.button.dataset.selected = 'true';
+  ui.window.fire('pointerdown', {target: elements.button}); elements.button.focus();
+  elements.button.fire('pointerenter'); elements.button.fire('pointerleave');
+  assert.equal(ui.key(' ', {target: elements.button}).defaultPrevented, true);
+  assert.equal(ui.document.activeElement === ui.document.body, true);
+  assert.equal(inspection.overlay.hidden, true);
+  assert.equal(ui.key(' ', {target: ui.document.body, repeat: true}).defaultPrevented, true);
+  assert.equal(ui.release().defaultPrevented, true);
+  assert.equal(elements.button.dataset.selected, 'true');
+  ui.key('Tab'); elements.button.focus();
+  assert.equal(ui.key(' ', {target: elements.button}).defaultPrevented, true);
+  assert.equal(inspection.overlay.hidden, false, 'keyboard navigation still supports inspection without hover');
+  ui.release(); interactions.dispose(); inspection.dispose();
 });
 
 test('Tab navigation retains real keyboard focus through inspection', async () => {

@@ -46,3 +46,7 @@ inspection.dispose();
 `PhysicalCard.setAttachments(cards, images, onPick?)` 显示左下角附着牌组与数量；每项提供 `id`、`cardId`、`name`、`kind`。点击打开使用共享样式的浏览窗口，支持 空格 检视，武器、囚禁、附着疾病等分开标明类型。`attachmentRect()` 给动画提供缩略牌组位置。组件仅展示关系，不改变卡牌的规则区域或所有权。
 
 `PhysicalCard.setGlow(true / false)` 控制卡牌周围的光晕，独立于悬停、选中和翻面，用于提示效果的可选对象。光晕跟随卡牌外框尺寸，不改变卡图、检视原图或实例状态。默认使用主题金色，宿主可通过卡牌上的 `--card-glow-color` 自定义颜色；卡牌各区域均可使用此能力。
+
+`PhysicalCard.setTargetSelected(true / false)` 专用于效果对象选择：左上角显示深色底金色勾，保留金色边框并减弱候选光晕。与参战状态及悬停状态分开，手牌、大厅、供应和牌堆浏览复用。清空选卡时必须同步传入 `false`。
+
+鼠标点击卡牌后，即使鼠标已移开，空格也会清除该卡牌的残留焦点，并拦截本次按键的重复及释放事件，避免误操作；通过 Tab 导航获得的焦点仍支持键盘检视。
