@@ -1,4 +1,5 @@
 import {RuleError} from '../types.js';
+import {STATE_FORMAT_VERSION, validateStateFormat} from '../state-format.js';
 import {RULESET_VERSION} from '../setup/rules.js';
 import {validateTurnBuffs} from './buffs.js';
 import {isMonster} from '../catalog/cards.js';
@@ -17,7 +18,7 @@ import {activateTrap, hallRankCount} from './hall.js';
 import {equipmentOptions, equipWeapon, unequipWeapon, equipmentPairs, reconcileEquipment} from '../battle/equipment.js';
 import {submitBattleTeam, syncPreparationEquipment} from '../battle/team-transition.js';
 import {battlePreparationResult} from '../battle/preparation.js';
-import {cardStatuses} from '../battle/statuses.js';
+import {cardStatuses, publicEffectStatuses} from '../battle/statuses.js';
 import {projectActionPrediction} from './prediction.js';
 
 const SUBPHASES = new Set(['TURN_START', 'VILLAGE_ABILITIES', 'VILLAGE_BUY', 'VILLAGE_UPGRADE', 'REST', 'ACTION_END',
@@ -25,6 +26,7 @@ const SUBPHASES = new Set(['TURN_START', 'VILLAGE_ABILITIES', 'VILLAGE_BUY', 'VI
 const CHOICES = new Set(['effect_select', 'effect_order', 'effect_purchase', 'effect_value',
   'effect_reorder', 'effect_upgrade', 'disease_replacement', 'effect_reuse', 'effect_response', 'trap_activation']);
 export function validateTurnState(state: GameState, cards: GameCatalog['cards']) {
+  validateStateFormat(state);
   if (!['PLAYING', 'SETTLING'].includes(state.phase)) throw new RuleError('game is not in a turn or settlement phase');
   if (!SUBPHASES.has(state.subphase)) throw new RuleError('unknown turn subphase');
   if (state.turn_hand_public !== undefined && typeof state.turn_hand_public !== 'boolean')
@@ -155,6 +157,7 @@ export function turnOptions(state: GameState, playerId: string, catalog: GameCat
   checkVersions(state, catalog, rules); validateTurnState(state, catalog.cards);
   const tx = new Transition(state, catalog, rules);
   return {legal_commands: legal(tx), gold_income_preview: goldIncomePreview(tx, playerId), card_statuses: cardStatuses(tx),
+    public_effects: publicEffectStatuses(tx),
     battle_preparation: playerId === state.active_player_id && state.phase === 'PLAYING'
       && ['DUNGEON_PREPARE', 'DUNGEON_DECLARE'].includes(state.subphase) && state.pending_choice === null
       ? battlePreparationResult(state, catalog, rules) : null,
@@ -257,6 +260,7 @@ export function applyCommand(state: GameState, command: Record<string, any>, cat
   } else throw new RuleError(`${kind} is not allowed during ${phase}`);
   if (tx.state.battle_context) reconcileEquipment(tx);
   advanceVillageStages(tx);
+  tx.state.state_format_version = STATE_FORMAT_VERSION;
   const result = tx.finish();
   validateTurnState(result.state, catalog.cards);
   return {...result, legal_commands: legal(tx)};
@@ -282,6 +286,7 @@ export function takeDisease(state: GameState, playerId: string, destination: str
   validateTurnState(state, catalog.cards);
   const tx = new Transition(state, catalog, rules);
   const instanceId = tx.takeDisease(destination, playerId), result = tx.finish();
+  result.state.state_format_version = STATE_FORMAT_VERSION;
   validateTurnState(result.state, catalog.cards);
   return {...result, instance_id: instanceId,
     instance: result.state.instances[instanceId] ? structuredClone(result.state.instances[instanceId]) : null};

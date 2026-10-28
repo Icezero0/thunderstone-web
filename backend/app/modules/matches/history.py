@@ -15,8 +15,9 @@ LABELS = {
 
 
 def snapshot(match):
-    # Catalogue, participant identities and executable revisions are immutable
-    # on Match; this captures all mutable rule state, RNG and continuations.
+    # Catalogue, participant identities and creation-build/effect fingerprints
+    # stay on Match. State carries its own compatible save-format version;
+    # historical unmarked states remain readable after implementation updates.
     return deepcopy({key: getattr(match, key, None) for key in SNAPSHOT_FIELDS})
 
 

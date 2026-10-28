@@ -45,6 +45,7 @@ export interface MatchSupply {
   remaining: number | null; infinite: boolean; cards: {card_id: string; count: number | null}[];
 }
 export interface MatchView {
+  public_effects?: CardStatus[];
   action_prediction?: import('@thunderstone/engine').ActionPredictionContext;
   sync?: {reset: boolean; event_sequence: number; history_loaded: boolean; history_after: number};
   id: string; room_id: string; status: 'setup_pending' | 'active' | 'cancelled' | 'finished'; version: number;

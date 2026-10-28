@@ -15,7 +15,7 @@ export class CardStatusMarkers {
   private signature = '';
   private suspended = false;
   private cleanup: (() => void)[] = [];
-  constructor(private card: HTMLButtonElement, lift: HTMLElement) {
+  constructor(private card: HTMLElement, lift: HTMLElement, private options: {requireFrontFace?: boolean} = {}) {
     this.badges.className = 'card-status-markers'; this.badges.hidden = true; lift.append(this.badges);
   }
   set(statuses: readonly CardStatus[] = []): void {
@@ -42,7 +42,7 @@ export class CardStatusMarkers {
   setSuspended(value: boolean): void {this.suspended = value; if (value) this.hide();}
   hide = (): void => {this.tooltip?.remove(); this.tooltip = null; if (CardStatusMarkers.opened === this) CardStatusMarkers.opened = null;};
   private show(title: string, rows: string[], event: Event, badge: HTMLElement): void {
-    if (this.suspended || this.card.dataset.face !== 'front') return;
+    if (this.suspended || this.options.requireFrontFace !== false && this.card.dataset.face !== 'front') return;
     for (let node: HTMLElement | null = this.card; node; node = node.parentElement) if (node.hidden || node.inert) return;
     CardStatusMarkers.opened?.hide(); CardStatusMarkers.opened = this;
     const panel = document.createElement('div'); panel.className = 'card-status-tooltip game-cursor'; panel.setAttribute('role', 'tooltip');

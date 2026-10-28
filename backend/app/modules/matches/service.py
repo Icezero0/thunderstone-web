@@ -50,12 +50,9 @@ def payload_hash(payload: MatchCommand) -> str:
 
 
 def calculate_setup(request: dict, snapshot: CatalogSnapshot, expected_revision: dict | None = None) -> dict:
-    """Run against a frozen catalogue and reject a changed executable revision."""
+    """Resume compatible frozen setup inputs, guarding against a mid-call update."""
     try:
-        revision = rules_revision(snapshot)
-        if expected_revision is not None and revision != expected_revision:
-            raise AppError("规则引擎版本已更新，无法续接旧的组局选择；请取消本局后重新开始",
-                           code="match_rules_changed", status_code=409)
+        revision = check_revision(snapshot, expected_revision) if expected_revision is not None else rules_revision(snapshot)
         try:
             result = start_game(request, snapshot=snapshot)
             outcome = {"status": "active", "state": result["state"],
@@ -73,26 +70,40 @@ def calculate_setup(request: dict, snapshot: CatalogSnapshot, expected_revision:
                        details={"issues": error.issues}) from error
     except EffectCompileError as error:
         if expected_revision is not None:
-            raise AppError("当前规则已无法读取本局目录快照，请取消本局后重新开始",
+            raise AppError("当前规则无法读取本局目录快照；本局已保留，需迁移规则数据后继续",
                            code="match_rules_changed", status_code=409) from error
         raise AppError("规则定义暂不可用，请检查目录与效果版本", code="engine_unavailable", status_code=503) from error
 
 
-def check_revision(snapshot: CatalogSnapshot, expected: dict) -> None:
-    if rules_revision(snapshot) != expected:
-        raise AppError("本局规则版本已变化，无法继续操作；请由房主取消后重新开局",
+def check_revision(snapshot: CatalogSnapshot, expected: dict) -> dict:
+    # The build fingerprint is for browser/server agreement and in-flight races,
+    # not save compatibility. The engine validates the persisted state contract.
+    current = rules_revision(snapshot)
+    if current["effects_version"] != expected["effects_version"]:
+        raise AppError("本局卡牌效果版本与当前版本不同；本局已保留，需迁移规则数据后继续",
                        code="match_rules_changed", status_code=409)
+    return current
+
+
+def check_runtime_unchanged(snapshot: CatalogSnapshot, revision: dict) -> None:
+    if rules_revision(snapshot) != revision:
+        raise AppError("操作期间规则引擎发生更新，请刷新后重试", code="match_rules_changed", status_code=409)
 
 
 def calculate_command(state: dict, command: dict, snapshot: CatalogSnapshot, expected: dict) -> dict:
     """An engine transition is atomic: a rejected command never persists state."""
     try:
-        check_revision(snapshot, expected)
+        revision = check_revision(snapshot, expected)
+        if command.get("type") == "SubmitBattleTeam":
+            # The HTTP API supplies choices only; bind its draft to this runtime,
+            # never to the build that originally created the match.
+            command = deepcopy(command)
+            command["draft"]["engine_version"] = revision["engine_version"]
         result = apply_command(state, command, snapshot=snapshot)
-        check_revision(snapshot, expected)
+        check_runtime_unchanged(snapshot, revision)
         return result
     except EffectCompileError as error:
-        raise AppError("当前规则无法读取本局快照，请由房主取消后重新开局",
+        raise AppError("当前规则无法读取本局快照；本局已保留，需迁移规则数据后继续",
                        code="match_rules_changed", status_code=409) from error
     except SharedEngineUnavailable as error:
         raise AppError("规则引擎暂不可用，请稍后重试", code="engine_unavailable", status_code=503) from error
@@ -105,14 +116,16 @@ def calculate_command(state: dict, command: dict, snapshot: CatalogSnapshot, exp
 
 def calculate_options(state: dict, player_id: str, snapshot: CatalogSnapshot, expected: dict, prediction=False) -> dict:
     try:
-        check_revision(snapshot, expected)
+        revision = check_revision(snapshot, expected)
         result = command_options(state, player_id, snapshot=snapshot, prediction=prediction)
-        check_revision(snapshot, expected)
+        check_runtime_unchanged(snapshot, revision)
         return result
-    except (EffectCompileError, SharedEngineUnavailable, TurnError, AppError):
-        # History and cancellation remain available after a code upgrade or
-        # worker outage, even though the old match cannot accept new commands.
-        return {"unavailable_reason": "本局规则版本已变化或引擎暂不可用，无法继续操作；可稍后重试或由房主取消本局"}
+    except AppError as error:
+        return {"unavailable_reason": str(error)}
+    except SharedEngineUnavailable:
+        return {"unavailable_reason": "规则引擎暂不可用；本局已保留，请稍后刷新重试"}
+    except (EffectCompileError, TurnError):
+        return {"unavailable_reason": "当前引擎无法读取本局规则或存档格式；本局已保留，可下载对局文件排查并迁移"}
 
 
 class MatchService:

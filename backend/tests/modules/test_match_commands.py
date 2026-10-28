@@ -42,6 +42,46 @@ class MatchCommandTests(unittest.TestCase):
     def latest(self, account, view):
         return self.f.successful(self.f.client.get(f"/api/v1/matches/{view['id']}", headers=account["headers"]))
 
+    def test_previous_build_save_can_resume_undo_and_submit_a_new_battle_team(self):
+        a, _, view = self.match()
+        saved = self.f.stored_match(view["id"])
+        saved["state"].pop("state_format_version", None)
+        with closing(sqlite3.connect(self.f.db_path)) as db:
+            db.execute("UPDATE matches SET engine_version=?, state=? WHERE id=?",
+                       ("previous-build", json.dumps(saved["state"]), view["id"]))
+            # Undo must also accept unmarked historical snapshots.
+            for step, raw in db.execute("SELECT step, snapshot FROM match_history WHERE match_id=?", (view["id"],)).fetchall():
+                snapshot = json.loads(raw)
+                snapshot["state"].pop("state_format_version", None)
+                db.execute("UPDATE match_history SET snapshot=? WHERE match_id=? AND step=?", (json.dumps(snapshot), view["id"], step))
+            db.commit()
+        before = self.f.stored_match(view["id"])
+        current = self.latest(a, view)
+        self.assertIsNone(current["unavailable_reason"])
+        self.assertEqual(current["legal_commands"][0]["type"], "ChooseAction")
+        self.assertEqual(self.f.stored_match(view["id"]), before, "reading must not mutate the saved game")
+        current = self.play(a, current, "ChooseAction", action="rest")
+        self.assertEqual(self.f.stored_match(view["id"])["state"]["state_format_version"], 1)
+        current = self.f.successful(self.f.client.post(f"/api/v1/matches/{view['id']}/history/restore", headers=a["headers"],
+            json={"expected_version": current["version"], "command_id": uuid4().hex}))
+        self.assertEqual(current["turn"]["subphase"], "TURN_START")
+        self.assertIsNone(current["unavailable_reason"])
+        current = self.play(a, current, "ChooseAction", action="dungeon")
+        draft = current["battle_preparation"]["draft"]
+        self.assertNotEqual(draft["engine_version"], "previous-build")
+        current = self.play(a, current, "SubmitBattleTeam", draft={key: draft[key] for key in
+            ("hero_instance_ids", "support_instance_ids", "equipment", "target_instance_id")})
+        self.assertEqual(current["turn"]["subphase"], "DUNGEON_DECLARE")
+        self.assertIsNone(current["unavailable_reason"])
+
+    def test_build_update_during_command_is_rejected_atomically(self):
+        a, _, view = self.match(); before = self.f.stored_match(view["id"])
+        revision = {"engine_version": before["engine_version"], "effects_version": before["effects_version"]}
+        with patch("backend.app.modules.matches.service.rules_revision", side_effect=[revision, {**revision, "engine_version": "new-build"}]):
+            result = self.f.play(a, view, {"type": "ChooseAction", "action": "rest"})
+        self.assertEqual(result.status_code, 409)
+        self.assertEqual(self.f.stored_match(view["id"]), before)
+
     def test_hand_disclosure_begins_before_action_and_new_refill_hides_until_next_turn(self):
         for action in ('village', 'dungeon', 'rest'):
             with self.subTest(action=action):
@@ -220,7 +260,7 @@ class MatchCommandTests(unittest.TestCase):
 
     def test_rules_change_and_worker_failure_do_not_mutate_and_old_view_can_be_cancelled(self):
         a, _, view = self.match(); before = self.f.stored_match(view["id"])
-        cases = [({"return_value": {"engine_version": "changed", "effects_version": before["effects_version"]}}, 409),
+        cases = [({"return_value": {"engine_version": "changed", "effects_version": "changed-effects"}}, 409),
                  ({"side_effect": EffectCompileError("old cards")}, 409),
                  ({"side_effect": SharedEngineUnavailable("offline")}, 503)]
         for override, code in cases:
@@ -244,6 +284,10 @@ class MatchCommandTests(unittest.TestCase):
         source = self.replace_hand_card(view, "TS-0298")
         view = self.play(a, view, "ChooseAction", action="dungeon")
         view = self.play(a, view, "ActivateAbility", ability_id="TS-0298-A01", source_instance_id=source)
+        # A deployment must also preserve an interrupted interpreter continuation.
+        with closing(sqlite3.connect(self.f.db_path)) as db:
+            db.execute("UPDATE matches SET engine_version=? WHERE id=?", ("previous-build", view["id"]))
+            db.commit()
         self.assertEqual(view["pending_choice"]["player_id"], f"u-{a['id']}")
         own_choices = view["legal_commands"][0]["instance_ids"]
         view = self.play(a, view, "ResolveChoice", instance_ids=[next(i for i in own_choices if i != source)])

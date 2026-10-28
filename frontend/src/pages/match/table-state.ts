@@ -14,6 +14,7 @@ export function tableState(view: MatchView): {table: PublicTableState; deck: Pla
   const environment = view.settings.find(item => view.cards[item.card_id]?.subcategory === '环境牌');
   return {
     table: {
+      publicEffects: view.public_effects ?? [],
       dungeon: {environment: environment ? card(environment) : null, dungeons: view.dungeons.map(dungeon => ({
         id: dungeon.id, name: dungeon.id === 'main' ? '地下城' : `地下城 ${dungeon.id.toUpperCase()}`, deckCount: dungeon.deck_count,
         hall: [...Array.from({length: Math.max(3, dungeon.rank_count ?? 3, ...dungeon.hall.map(slot => slot.rank))}, (_, index) => index + 1),

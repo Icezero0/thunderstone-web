@@ -12,6 +12,16 @@ import type {CalculationInput, CombatTrace} from '../types.js';
 export type {CardStatus} from './status-evidence.js';
 export {statStatus} from './status-evidence.js';
 
+/** Public, player-wide effects. These are never modifiers on individual cards. */
+export function publicEffectStatuses(tx: Transition): CardStatus[] {
+  return activeGlobalRules(tx.evaluation().state, 'light').filter(rule => rule.scope === 'all').map(rule => {
+    const source = rule.source_card_id ?? (rule.source_instance_id ? tx.state.instances[rule.source_instance_id]?.card_id : undefined);
+    return {kind: rule.amount >= 0 ? 'buff' : 'debuff', ...(source ? {source_card_id: source} : {}),
+      source_name: source ? tx.cards[source]?.name ?? '公共效果' : '公共效果',
+      description: `所有玩家光照 ${rule.amount >= 0 ? '+' : ''}${rule.amount}。`};
+  });
+}
+
 /** Presentation evidence, stored separately from numeric rule inputs. */
 export function recordCardStatus(tx: Transition, instance: string, source: string | undefined, ability: string,
   kind: CardStatus['kind'], description: string): void {
@@ -31,15 +41,6 @@ export function continuousCardStatuses(input: CalculationInput, trace?: CombatTr
   // A local draft supplies its collector, so numerical rules are not evaluated twice.
   const calculation = inBattle ? collected && trace ? trace : combatValues(input, tx.context.target_rank ?? 0, target, evidence) : null;
   const pairs = calculation?.equipped_pairs ?? equipmentPairs(tx.context);
-  for (const [zone, hand] of Object.entries(tx.state.zones)) if (/^player:[^:]+:hand$/.test(zone)) {
-    const player = zone.split(':')[1];
-    for (const [index, rule] of activeGlobalRules(tx.state, 'light', player).entries()) {
-      const source = rule.source_card_id ?? (rule.source_instance_id ? tx.state.instances[rule.source_instance_id]?.card_id : '') ?? '';
-      for (const id of hand) evidence.text(id, source, `队伍光照 ${rule.amount >= 0 ? '+' : ''}${rule.amount}`
-        + (rule.until === 'owner_next_turn_end' ? '；持续至施放者的下个回合结束' : ''),
-        rule.amount >= 0 ? 'buff' : 'debuff', `global:${index}`);
-    }
-  }
   for (const id of tx.hand()) {
     if (tx.context.zero_weapon_weight && tags(tx.card(id)).includes('武器')) evidence.text(id,
       tx.context.flag_sources?.zero_weapon_weight ?? '', '重量视为 0');

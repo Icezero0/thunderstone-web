@@ -250,6 +250,46 @@ test('Tab navigation retains real keyboard focus through inspection', async () =
   ui.release(); interactions.dispose(); inspection.dispose();
 });
 
+test('Space releases mouse focus from game pile controls, tabs and desktops even with no hovered card', async () => {
+  const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
+  ui.get('game').classList.add('game-cursor'); ui.get('overlays').classList.add('game-cursor');
+  const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
+  for (const [tag, role, host] of [['button', 'button', 'deck'], ['button', 'tab', 'village'],
+    ['section', 'tabpanel', 'dungeon'], ['button', 'button', 'overlays']]) {
+    const control = ui.document.createElement(tag); control.setAttribute('role', role); control.tabIndex = 0;
+    ui.get(host).append(control); ui.window.fire('pointerdown', {target: control}); control.focus();
+    assert.equal(ui.key(' ', {target: control}).defaultPrevented, true, `${host}: suppress native activation/scroll`);
+    assert.equal(ui.document.activeElement, ui.document.body, `${host}: clear stale focus before painting`);
+    assert.equal(ui.key(' ', {target: ui.document.body, repeat: true}).defaultPrevented, true);
+    assert.equal(ui.release().defaultPrevented, true); assert.equal(inspection.overlay.hidden, true);
+    // Deliberate Tab navigation still focuses and activates the same controls normally.
+    ui.key('Tab'); control.focus();
+    assert.equal(ui.key(' ', {target: control}).defaultPrevented, false);
+    assert.equal(ui.document.activeElement, control); ui.release(); control.remove();
+  }
+  interactions.dispose(); inspection.dispose();
+});
+
+test('game-wide mouse focus cleanup leaves text editing, modified shortcuts and outside-page buttons intact', async () => {
+  const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
+  ui.get('game').classList.add('game-cursor');
+  const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
+  for (const tag of ['input', 'textarea', 'select', 'div']) {
+    const field = ui.document.createElement(tag); if (tag === 'div') field.isContentEditable = true;
+    ui.get('deck').append(field); ui.window.fire('pointerdown', {target: field}); field.focus();
+    assert.equal(ui.key(' ', {target: field}).defaultPrevented, false);
+    assert.equal(ui.document.activeElement, field); ui.release(); field.remove();
+  }
+  const control = ui.document.createElement('button'); ui.get('deck').append(control);
+  ui.window.fire('pointerdown', {target: control}); control.focus();
+  assert.equal(ui.key(' ', {target: control, ctrlKey: true}).defaultPrevented, false);
+  assert.equal(ui.document.activeElement, control); ui.release();
+  ui.document.body.append(control);
+  assert.equal(ui.key(' ', {target: control}).defaultPrevented, false);
+  assert.equal(ui.document.activeElement, control); ui.release();
+  interactions.dispose(); inspection.dispose();
+});
+
 test('inspection over a hovered card does not toggle a mouse-focused checkbox or radio', async () => {
   const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
   const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);

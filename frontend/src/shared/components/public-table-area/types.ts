@@ -1,5 +1,6 @@
 import type {DungeonState, VillageOptions, VillageState} from '../table-areas/index.js';
 import type {PlayerListPlayer} from '../player-list/types.js';
+import type {CardStatus} from '../game-card/types.js';
 export type {PlayerBrowseZone, PublicPlayerCard, PublicPlayerHandCard, PublicPlayerCards,
   PlayerListPlayer as PublicTablePlayer} from '../player-list/types.js';
 
@@ -9,6 +10,7 @@ export interface PublicTableState {
   readonly dungeon: DungeonState;
   readonly village: VillageState;
   readonly players?: readonly PlayerListPlayer[];
+  readonly publicEffects?: readonly CardStatus[];
 }
 export interface PublicTableOptions extends VillageOptions {
   /** Defaults to unique, component-scoped IDs. Optional hook for existing integrations. */

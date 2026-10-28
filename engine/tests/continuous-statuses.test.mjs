@@ -108,9 +108,12 @@ test('an activated global light effect carries its public source into browser pr
   atom(tx, {op: 'add_global_rule', kind: 'light', scope: 'all', amount: 1, until: 'owner_next_turn_end'}, {source: f.hand[0]}, 'TS-0288-A01');
   f.state = tx.state;
   const result = preview(f);
-  assert.ok(result.continuous_card_statuses[f.hand[1]].some(row => row.source_card_id === 'TS-0288' && row.description.startsWith('队伍光照 +1')));
+  assert.equal(result.continuous_card_statuses[f.hand[1]], undefined, 'global light is not a card buff');
+  assert.deepEqual(server.turnOptions(f.state, 'alice', f.catalog, f.rules).public_effects,
+    [{kind: 'buff', source_card_id: 'TS-0288', source_name: '指引之光', description: '所有玩家光照 +1。'}]);
   f.state.continuous_effects = [];
   assert.equal(statuses(f)[f.hand[1]], undefined);
+  assert.deepEqual(server.turnOptions(f.state, 'alice', f.catalog, f.rules).public_effects, []);
 });
 
 for (const rule of rules.mechanics.filter(rule => rule.op === 'equipment_bonus'))

@@ -99,7 +99,7 @@ export class EffectInteraction {
           const cards = instances([...new Set(options.map(option => option.source_instance_id!))]).map(card => ({...card,
             label: responseLabels[options.find(option => option.source_instance_id === card.instanceId)?.action ?? '']}));
           pick('点击高亮卡牌响应', cards, id => send({type: command.type, source_instance_id: id, recipient_id: null}), command.may_decline === false);
-          if (command.may_decline) add(command.type === 'ResolveDiseaseReplacement' ? '跳过' : '不响应，继续结算', {type: command.type, source_instance_id: null, recipient_id: null});
+          if (command.may_decline) add('跳过', {type: command.type, source_instance_id: null, recipient_id: null});
         }
         break;
       default: this.instruction = `${source} · 暂无法显示此选择，请刷新牌桌`;

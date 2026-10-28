@@ -44,6 +44,7 @@ export interface SetupInput {
 export interface SetupInstance extends Instance {owner_player_id: string|null; origin: string; flags: Record<string, unknown>}
 export interface SetupEvent {sequence: number; kind: string; [key: string]: unknown}
 export interface SetupState {
+  state_format_version?: number;
   match_id: string; game_version: number; catalog_version: string; ruleset_version: string;
   effects_version: string; frozen_config_id: string; frozen_config: RulesConfig;
   player_order: string[]; first_player_id: string; active_player_id: string;

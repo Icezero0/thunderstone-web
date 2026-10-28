@@ -11,5 +11,5 @@ export function createPlayerListView(host: HTMLElement, options: PlayerListOptio
   const list = node('ul', 'player-list-scroll', undefined, id('players-list')); root.append(title, list); host.append(root);
   const overlays = node('div', 'player-list-overlays', undefined, id('player-overlays'));
   (options.overlayRoot ?? document.body).append(overlays);
-  return {root, list, overlays, id, dispose: () => {root.remove(); overlays.remove();}};
+  return {root, title, list, overlays, id, dispose: () => {root.remove(); overlays.remove();}};
 }

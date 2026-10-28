@@ -158,13 +158,25 @@ class MatchApiTests(unittest.TestCase):
     def test_setup_choice_rejects_rules_change_including_uncompilable_old_catalogue(self):
         a,b,r=self.room(tower=True);view=self.f.successful(self.f.start(a,r))
         before=self.f.stored_match(view['id'])
-        for override in ({'return_value':{'engine_version':'changed','effects_version':before['effects_version']}},
+        for override in ({'return_value':{'engine_version':'changed','effects_version':'changed-effects'}},
                          {'side_effect':EffectCompileError('new effects require new cards')}):
             with self.subTest(override=override),patch('backend.app.modules.matches.service.rules_revision',**override):
                 rejected=self.choice(a,view)
             self.assertEqual(rejected.status_code,409,rejected.text)
             self.assertEqual(rejected.json()['error']['code'],'match_rules_changed')
             self.assertEqual(self.f.stored_match(view['id']),before)
+
+    def test_setup_choice_survives_an_implementation_only_update(self):
+        a,b,r=self.room(tower=True);view=self.f.successful(self.f.start(a,r))
+        # Same rules/configuration, a different build from the initial setup.
+        from contextlib import closing
+        import sqlite3
+        with closing(sqlite3.connect(self.f.db_path)) as db:
+            db.execute('UPDATE matches SET engine_version=? WHERE id=?', ('previous-build', view['id']))
+            db.commit()
+        complete=self.f.successful(self.choice(a,view))
+        self.assertEqual(complete['status'],'active')
+        self.assertIsNone(complete['unavailable_reason'])
 
     def test_cancel_reopens_room_clears_ready_and_preserves_history_idempotently(self):
         for tower in (False,True):

@@ -1,5 +1,6 @@
 export * from './types.js';
 export {ENGINE_VERSION} from './build-info.js';
+export {STATE_FORMAT_VERSION, validateStateFormat} from './state-format.js';
 export * from './catalog/cards.js';
 export * from './effects/context.js';
 export * from './effects/economy.js';

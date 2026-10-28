@@ -21,6 +21,22 @@ async function setup(options = {}) {
   const players = snapshot(); list.setPlayers(players); await settle(); return {ui, api, list, players};
 }
 
+test('public effects live inline beside the player heading and their tooltip disappears on expiry', async () => {
+  const {ui, list} = await setup(), heading = ui.get('first-players-heading');
+  const before = [...list.root.children];
+  list.setPublicEffects([{kind: 'buff', source_card_id: 'TS-0288', source_name: '指引之光', description: '所有玩家光照 +1。'}]);
+  assert.deepEqual(list.root.children, before, 'no new section or row');
+  assert.match(heading.textContent, /玩家/);
+  const markers = heading.children.find(node => node.className === 'card-status-markers');
+  assert.equal(markers.hidden, false);
+  markers.children[0].fire('pointerenter', {clientX: 100, clientY: 100});
+  const tooltip = ui.all.find(node => node.isConnected && node.getAttribute('role') === 'tooltip');
+  assert.match(tooltip.textContent, /指引之光：所有玩家光照 \+1。/);
+  assert.doesNotMatch(tooltip.textContent, /持续|回合/);
+  list.setPublicEffects([]); assert.equal(markers.hidden, true); assert.equal(tooltip.isConnected, false);
+  list.dispose();
+});
+
 test('the player list mounts independently, supports multiple instances and owns its modal lifecycle', async () => {
   const calls = [], {ui, api, list} = await setup({onBeforeOpen: (id, zone) => calls.push([id, zone])});
   const other = new api.PlayerList(ui.get('other'), {overlayRoot: ui.get('overlays')}); other.setPlayers(snapshot());

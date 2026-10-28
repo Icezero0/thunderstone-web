@@ -8,6 +8,7 @@ import {baseHallCapacity, effectiveCopyCount, effectiveGroupCounts, hallCapacity
   RULESET_VERSION, SPECIAL_DISEASE_RANDOMIZERS, STARTER_CARDS} from './rules.js';
 import {SetupChoiceRequired, SetupError, validateSetupRequest} from './validation.js';
 import {validateSetupState} from './state.js';
+import {STATE_FORMAT_VERSION} from '../state-format.js';
 
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 export interface SetupDraft {
@@ -284,6 +285,7 @@ export class SetupBuilder {
     if (Object.values(weights).some(weight => !Number.isSafeInteger(weight) || weight < 1)) throw new SetupError(`invalid disease weights for ${mode} mode`);
     this.event('disease_mode', {mode, card_ids: diseases, weights}); this.event('setup_complete', {first_player_id: firstId});
     const state: SetupState = {
+      state_format_version: STATE_FORMAT_VERSION,
       match_id: this.request.match_id, game_version: 1, catalog_version: this.input.panel.catalog_hash, ruleset_version: RULESET_VERSION,
       effects_version: this.input.effects_version, frozen_config_id: this.input.frozen_config_id, frozen_config: this.config,
       player_order: [...this.request.player_ids], first_player_id: firstId, active_player_id: firstId,

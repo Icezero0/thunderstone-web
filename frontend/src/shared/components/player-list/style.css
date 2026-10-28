@@ -1,5 +1,8 @@
 .player-list-area {position: relative; z-index: 20; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 16px 10px; border: 1px solid var(--header-line); border-radius: 10px; background: var(--player-list-background, var(--header-background)); color: var(--header-ink);}
 .player-list-area h2 {margin: 0 0 14px 4px; color: var(--header-muted); font: 12px var(--font-body); letter-spacing: .12em;}
+.player-list-area h2 .card-status-markers {position: static; display: inline-flex; align-items: center; height: 12px; margin-left: 8px; vertical-align: middle; letter-spacing: normal;}
+.player-list-area h2 .card-status-icon {width: 16px; height: 16px; background: transparent; box-shadow: none;}
+.player-list-area h2 .card-status-icon svg {width: 16px; height: 16px;}
 .player-list-area .player-list-scroll {display: flex; flex: 1; flex-direction: column; min-height: 0; overflow: auto; scrollbar-width: none; overscroll-behavior: contain; gap: 8px; padding: 0; margin: 0; list-style: none;}
 .player-list-area .player-list-scroll::-webkit-scrollbar {display: none; width: 0; height: 0;}
 .player-list-area .public-player {position: relative; flex: none; min-width: 0; border: 1px solid transparent; border-radius: 9px;}

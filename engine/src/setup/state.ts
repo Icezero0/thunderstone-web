@@ -2,8 +2,10 @@ import type {Card} from '../types.js';
 import type {SetupState} from './contracts.js';
 import {baseHallCapacity, hallCapacity} from './rules.js';
 import {SetupError} from './validation.js';
+import {validateStateFormat} from '../state-format.js';
 
 export function validateSetupState(state: SetupState, cards: Record<string, Card>): void {
+  validateStateFormat(state);
   const seen = new Set<string>();
   for (const [zone, pile] of Object.entries(state.zones)) for (const id of pile) {
     const instance = state.instances[id];

@@ -6,7 +6,7 @@ import {ENGINE_VERSION} from '../build-info.js';
 export interface ActionPredictionContext {engine_version: string; state: GameState; catalog: GameCatalog; rules: GameRules; blocked_commands: string[]}
 const phases = new Set(['REST', 'VILLAGE_ABILITIES', 'VILLAGE_BUY', 'VILLAGE_UPGRADE', 'ACTION_END']);
 const commands = new Set(['FinishAbilities', 'BuyCard', 'FinishBuying', 'UpgradeHero', 'FinishUpgrading', 'RestDestroy', 'SkipRestDestroy']);
-const stateFields = ['phase', 'subphase', 'timing_window', 'ruleset_version', 'catalog_version', 'effects_version',
+const stateFields = ['state_format_version', 'phase', 'subphase', 'timing_window', 'ruleset_version', 'catalog_version', 'effects_version',
   'game_version', 'turn_number', 'round_number', 'next_instance_sequence', 'next_event_sequence', 'player_order',
   'first_player_id', 'active_player_id', 'chosen_action', 'turn_hand_public', 'active_settings', 'turn_purchases'];
 const playerFields = ['xp', 'temporary_gold', 'purchases_remaining', 'extra_basic_purchases', 'turn_gold_adjustment', 'rest_destroyed_on_turn', 'eliminated'];

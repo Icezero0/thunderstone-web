@@ -13,6 +13,18 @@ from backend.tests.support.match_projection import sample_match
 
 
 class MatchProjectionTests(unittest.TestCase):
+    def test_public_effects_are_shared_display_data_without_per_card_buffs(self):
+        match = sample_match()
+        effects = [{"kind": "buff", "source_card_id": "TS-0288", "source_name": "指引之光",
+                    "description": "所有玩家光照 +1。"}]
+        for viewer in (1, 2):
+            view = build_match_view(match, viewer, public_effects=effects)
+            self.assertEqual(view["public_effects"], effects)
+            self.assertTrue(all(not card.get("statuses") for card in view["hand"]))
+            view["public_effects"][0]["description"] = "changed"
+            self.assertEqual(effects[0]["description"], "所有玩家光照 +1。")
+        self.assertEqual(build_match_view(match, 1)["public_effects"], [])
+
     def test_authorized_inventory_targets_match_their_original_browser_without_disclosing_other_instance_ids(self):
         match = sample_match()
         match.state["pending_choice"] = {"kind": "effect_select", "player_id": "alice"}

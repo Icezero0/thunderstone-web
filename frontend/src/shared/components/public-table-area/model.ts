@@ -6,5 +6,5 @@ import type {PublicTableState} from './types.js';
 export function copyPublicTableState(state: PublicTableState): PublicTableState {
   const dungeon = copyDungeonState(state.dungeon), village = copyVillageState(state.village);
   const players = copyPlayers(state.players ?? []);
-  return {dungeon, village, players};
+  return {dungeon, village, players, publicEffects: (state.publicEffects ?? []).map(effect => ({...effect}))};
 }

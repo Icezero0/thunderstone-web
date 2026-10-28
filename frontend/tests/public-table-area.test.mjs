@@ -15,6 +15,17 @@ async function setup(options = {}) {
   area.setState(snapshot()); await settle(); return {ui, api, area};
 }
 
+test('public effect snapshots reach the existing player heading and clear on the next snapshot', async () => {
+  const {ui, area} = await setup(), state = snapshot();
+  state.publicEffects = [{kind: 'buff', source_name: '指引之光', description: '所有玩家光照 +1。'}];
+  area.setState(state);
+  const markers = ui.get('first-players-heading').children.find(node => node.className === 'card-status-markers');
+  assert.match(markers.children[0].getAttribute('aria-label'), /指引之光：所有玩家光照 \+1/);
+  state.publicEffects[0].description = 'caller mutation';
+  assert.doesNotMatch(markers.children[0].getAttribute('aria-label'), /mutation/);
+  area.setState(snapshot()); assert.equal(markers.hidden, true); area.dispose();
+});
+
 test('hall and supply effect selections show checks without marking an ordinary battle target', async () => {
   const {ui, area} = await setup();
   const hall = top(ui.get('first-dungeon-cards-main-rank-1').children[1]), id = hall.dataset.instanceId;

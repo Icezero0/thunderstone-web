@@ -196,7 +196,7 @@ export class MatchTable {
       combat: this.battle.values,
       ...(preview && preview.rank !== null && preview.outcome_before_battle_effects ? {battlePreview: {rank: preview.rank,
         total: preview.calculation.effective_attack, outcome: preview.battle_effects_pending ? 'unknown' : preview.outcome_before_battle_effects}} : {}),
-      error: this.error,
+      error: view.unavailable_reason ?? this.error,
       selectedId: this.picker.active || this.effects.active ? undefined : this.rest.active ? this.rest.selectedId : this.cardActions.selectedId,
       choices: canEditWaitingTeam ? choices.map(choice => ({...choice, disabled: choice.id !== 'battle:effects'})) : choices,
       disabled: blocked && !canEditWaitingTeam};

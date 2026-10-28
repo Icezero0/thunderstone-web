@@ -254,6 +254,13 @@ export class CardInteractions {
     const control = target.closest('button, a[href], summary, [role="button"], [role="switch"], [role="tab"]');
     return !!control && !control.classList.contains('physical-card');
   }
+  private inGameArea(target: HTMLElement): boolean {
+    // Includes pile-browser controls, tabs and focusable panning desktops,
+    // even when they are not registered as physical cards with this owner.
+    for (let node: HTMLElement | null = target; node; node = node.parentElement)
+      if (node.classList.contains('game-cursor')) return true;
+    return false;
+  }
   private isInspectionKey(event: KeyboardEvent): boolean {
     return event.code === 'Space' || event.key === ' ' || event.key === 'Spacebar';
   }
@@ -270,22 +277,22 @@ export class CardInteractions {
     if (!event.repeat) this.inspectionCaptured = false;
     const hoverOwner = CardInteractions.hoverOwner;
     const hovering = hoverOwner?.hovered && !hoverOwner.suspended && hoverOwner.allowed(hoverOwner.hovered);
+    const focused = document.activeElement;
+    const staleFocus = CardInteractions.pointerFocus && focused instanceof HTMLElement
+      && (this.inGameArea(focused) || this.cards.some(card => card.elements.button === focused && this.allowed(card)));
     if (event.isComposing || this.editing(event.target) || this.editing(document.activeElement)
-        || (this.control(event.target) && !hovering) || event.altKey || event.ctrlKey || event.metaKey) {
+        || (this.control(event.target) && !hovering && !staleFocus) || event.altKey || event.ctrlKey || event.metaKey) {
       if (this.inspectionCaptured) this.consume(event);
       this.inspectionHeld = false; this.render(); return;
     }
     // Keyboard input can make a mouse-focused control match :focus-visible even
     // when its default action is prevented. Release that stale focus before the
     // browser paints it; never blur text editors or genuine keyboard navigation.
-    const focused = document.activeElement;
-    const staleCard = CardInteractions.pointerFocus && focused instanceof HTMLElement
-      && this.cards.some(card => card.elements.button === focused && this.allowed(card));
     if (CardInteractions.pointerFocus && focused instanceof HTMLElement
-        && focused !== document.body && (hovering || staleCard)) focused.blur();
+        && focused !== document.body && (hovering || staleFocus)) focused.blur();
     // Once claimed, swallow repeats and keyup too: Space must not activate the
-    // card last clicked after the pointer has left it.
-    if (staleCard) {this.inspectionCaptured = true; this.consume(event);}
+    // game control last clicked after the pointer has left it.
+    if (staleFocus) {this.inspectionCaptured = true; this.consume(event);}
     this.render();
     this.inspectionHeld = true;
     if (this.active || this.inspectionCaptured) {this.inspectionCaptured = true; this.consume(event);}

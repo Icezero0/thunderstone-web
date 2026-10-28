@@ -41,6 +41,38 @@ test('predicted purchase flies to discard before a slow server reply and confirm
 });
 
 const deckMotion = (sequence, steps) => ({sequence, kind: 'player_card_motion', player_id: 'alice', steps});
+
+test('a locally predicted hero upgrade only evolves, including a delayed authoritative confirmation', async () => {
+  const fx = engineFixture(['TS-0001']);
+  const hero = Object.values(fx.cards).find(card => card.card_type === '英雄牌' && card['wiki_英雄等级'] === '1');
+  const zone = 'hero_supply:upgrade-test'; fx.add(hero.card_id, zone);
+  fx.state.battle_context = null; fx.state.chosen_action = 'village'; fx.state.turn_hand_public = true;
+  fx.state.subphase = fx.state.timing_window = 'VILLAGE_UPGRADE'; fx.state.players.alice.xp = 10;
+  const view = villageView('VILLAGE_UPGRADE', legalCommands(fx.state, fx.catalog, fx.rules));
+  view.hand = fx.hand.map(id => ({instance_id: id, card_id: fx.state.instances[id].card_id}));
+  view.viewer_resources = {xp: 10, temporary_gold: 0, purchases_remaining: 1, extra_basic_purchases: 0};
+  view.supplies = [{zone_id: zone, kind: 'hero', infinite: false, remaining: 1, top_card_id: hero.card_id,
+    cards: [{card_id: hero.card_id, count: 1}]}];
+  view.cards[hero.card_id] = {...view.cards['TS-0300'], card_id: hero.card_id, name: hero.name};
+  view.action_prediction = projectActionPrediction(fx.state, 'alice', fx.catalog, fx.rules);
+  const expected = predictMatchAction(view, {type: 'UpgradeHero', source_instance_id: fx.hand[0], target_card_id: hero.card_id});
+  assert.ok(expected);
+  const removal = expected.event_log.find(event => event.kind === 'card_destroyed');
+  assert.equal(removal.cause, 'hero_upgrade'); assert.equal(removal.player_id, 'alice');
+  let confirm;
+  const ui = await page({view, animationsEnabled: true, post: () => new Promise(resolve => {confirm = resolve;})});
+  await ui.click('match-deck-response-village:upgrade'); handCards(ui)[0].fire('click'); await settle();
+  const count = name => ui.animations.filter(animation => animation.element.className === name).length;
+  assert.equal(count('card-destruction'), 0);
+  assert.equal(count('card-upgrade'), 1);
+  await ui.advance(5000);
+  assert.equal(ui.get('match-deck-discard-count').textContent, '1');
+  const completedFlights = count('card-upgrade'); // Arrival and departure share one evolution wrapper.
+  confirm(expected); await settle(); await ui.advance(5000);
+  assert.equal(count('card-destruction'), 0); assert.equal(count('card-upgrade'), completedFlights);
+  assert.equal(new Set(ui.animations.filter(animation => animation.element.className === 'card-upgrade').map(animation => animation.element)).size, 1);
+  assert.equal(posts(ui).length, 1); ui.cleanup();
+});
 const moveCards = (source, destination, cards) => ({kind: 'move', source, destination, cards});
 
 for (const shuffle of [false, true]) test(`Chieftain's Drum plays top discard before bonus draws, including shuffle: ${shuffle}`, async () => {
@@ -971,6 +1003,15 @@ test('network retry reuses command id while a later version creates a new one', 
   assert.equal(requests.length, 3); assert.equal(requests[0].body.command_id, requests[1].body.command_id);
   assert.notEqual(requests[1].body.command_id, requests[2].body.command_id);
   assert.equal(requests[2].body.expected_version, 2); ui.cleanup();
+});
+
+test('an incompatible or unavailable engine explains missing actions in the response area', async () => {
+  const reason = '当前引擎无法读取本局规则或存档格式；本局已保留，可下载对局文件排查并迁移';
+  const ui = await page({view: {...fixture(), legal_commands: [], unavailable_reason: reason}});
+  const response = ui.get('match-deck-player-response');
+  assert.ok(response.textContent.includes(reason));
+  assert.ok(descendants(response).some(node => node.dataset.error === 'true' && node.getAttribute('role') === 'alert'));
+  assert.equal(posts(ui).length, 0); ui.cleanup();
 });
 
 test('version-conflict refresh removes stale controls when the actor changes', async () => {

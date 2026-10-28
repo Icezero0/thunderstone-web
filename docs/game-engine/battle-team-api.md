@@ -210,6 +210,14 @@ temporary buffs, debuffs and destruction marks. `turnOptions.card_statuses`
 includes the authoritative equivalent after the team is committed. The preview
 never writes these derived entries into permanent card values or match state.
 
+`turnOptions.public_effects` contains source-labeled statuses for all-player light
+effects such as Guiding Light. They appear beside the player-list heading, never
+on individual hand cards. Display text omits duration; the engine still expires
+each effect at its caster's next turn end. Battle preview and authoritative
+calculation add each global bonus once, even with an empty team, independently
+of participating cards' printed light. Changing team membership does not multiply
+the bonus.
+
 During preparation, selecting or deselecting a spell only changes the local draft:
 it sends no command and never marks a spell as used. `ActivateAbility` records actual
 ability use; `SubmitBattleTeam` records selected spells after validating the team.

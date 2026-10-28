@@ -67,6 +67,7 @@ export class PublicTableArea {
     this.dungeon.setState(snapshot.dungeon); this.village.setState(snapshot.village);
     const browsingPlayer = this.players.isBrowsing;
     this.players.setPlayers(snapshot.players ?? []);
+    this.players.setPublicEffects(snapshot.publicEffects ?? []);
     if (browsingPlayer && !this.players.isBrowsing) {this.root.tabIndex = -1; this.root.focus({preventScroll: true});}
     this.root.dataset.hasPlayers = String(!!snapshot.players?.length);
     this.refresh();

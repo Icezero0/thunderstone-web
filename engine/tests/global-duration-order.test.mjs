@@ -19,9 +19,10 @@ for (const extraTurn of [false, true]) test(`Guiding Light persists through clea
   run('DeclareBattleTarget', {target_instance_id: f.hall[0]});
   const buff = () => result.state.continuous_effects.filter(rule => rule.source_card_id === 'TS-0288');
   const marked = () => {
-    const statuses = server.turnOptions(result.state, result.state.active_player_id, f.catalog, f.rules).card_statuses;
+    const options = server.turnOptions(result.state, result.state.active_player_id, f.catalog, f.rules), statuses = options.card_statuses;
+    assert.deepEqual(options.public_effects, [{kind: 'buff', source_card_id: 'TS-0288', source_name: '指引之光', description: '所有玩家光照 +1。'}]);
     for (const [zone, hand] of Object.entries(result.state.zones)) if (zone.endsWith(':hand')) for (const id of hand)
-      assert.ok(statuses[id]?.some(row => row.source_name === '指引之光' && row.description.includes('队伍光照 +1')), `${zone}:${id}`);
+      assert.ok(!statuses[id]?.some(row => row.source_name === '指引之光'), `${zone}:${id}`);
   };
   assert.equal(result.state.subphase, 'ACTION_END'); assert.equal(buff().length, 1); marked();
   run('FinishTurn'); assert.equal(buff().length, 1); marked();
@@ -45,6 +46,36 @@ for (const extraTurn of [false, true]) test(`Guiding Light persists through clea
 
 const trigger = (id, source, body = {op: 'mod_attack', amount: 1}) => ({id, source_card_id: source, kind: 'triggered',
   source_zone: 'hall', event: 'DUNGEON_ENTER', usage: 'once_per_event', actions: [], conditions: [], body});
+
+test('global light is added once for either player, independent of team selection and printed light', () => {
+  const f = fixture(['TS-0001', 'TS-0001', 'TS-0288']);
+  const bobHero = f.add('TS-0001', 'player:bob:hand');
+  f.state.continuous_effects = [{kind: 'light', scope: 'all', amount: 1, player_id: 'alice',
+    source_card_id: 'TS-0288', until: 'owner_next_turn_end', created_turn: 0}];
+  for (const player of ['alice', 'bob']) {
+    f.state.active_player_id = player;
+    const {context, draft} = server.battlePreparation(f.state, player, f.catalog, f.rules);
+    draft.equipment = {}; draft.hero_instance_ids = []; draft.support_instance_ids = [];
+    const heroes = player === 'alice' ? f.hand.slice(0, 2) : [bobHero];
+    const check = expected => {
+      const preview = server.previewBattleTeam(context, draft);
+      assert.equal(preview.calculation.light, expected);
+      assert.deepEqual(browser.previewBattleTeam(context, draft), preview);
+      assert.ok(!Object.values(preview.continuous_card_statuses).flat().some(row => row.source_card_id === 'TS-0288'));
+      const submitted = server.applyCommand(f.state, server.buildSubmitBattleTeamCommand(context, draft), f.catalog, f.rules);
+      const committed = server.battlePreparation(submitted.state, player, f.catalog, f.rules);
+      assert.equal(server.previewBattleTeam(committed.context, committed.draft).calculation.light, expected);
+    };
+    check(1);
+    for (const hero of heroes) {draft.hero_instance_ids.push(hero); check(1);}
+    if (player === 'alice') {
+      draft.support_instance_ids = [f.hand[2]];
+      check(1 + server.stat(f.cards['TS-0288'], 'light'));
+      draft.support_instance_ids = []; check(1);
+    }
+    draft.hero_instance_ids = []; check(1);
+  }
+});
 function dispatch(f, abilities, event = 'DUNGEON_ENTER') {
   return server.planEventDispatch({evaluation: {cards: f.cards, mechanics: [], state: f.state}, abilities, event,
     listeners: [], scheduled: [], turn_number: 1, repeatable_ability_ids: []});
@@ -79,12 +110,12 @@ test('stacked global light survives removal of both sources and expires independ
     {op: 'add_global_rule', kind: 'light', scope: 'all', amount: 1, until: 'owner_next_turn_end'}, {source}, 'TS-0288-A01');
   gain(f.hand[0]); tx.state.active_player_id = 'bob'; tx.state.turn_number = 2; gain(bobSource);
   tx.destroyCard(f.hand[0]); tx.destroyCard(bobSource); tx.state.battle_context = null;
-  let statuses = server.turnOptions(tx.state, 'bob', f.catalog, f.rules).card_statuses;
-  assert.equal(statuses[f.hand[1]].filter(row => row.source_card_id === 'TS-0288').length, 2);
+  let statuses = server.turnOptions(tx.state, 'bob', f.catalog, f.rules).public_effects;
+  assert.equal(statuses.filter(row => row.source_card_id === 'TS-0288').length, 2);
   tx.state.active_player_id = 'alice'; tx.state.turn_number = 3; expireRules(tx, 'owner_next_turn_end');
   assert.equal(tx.state.continuous_effects.length, 1); assert.equal(tx.state.continuous_effects[0].player_id, 'bob');
-  statuses = server.turnOptions(tx.state, 'alice', f.catalog, f.rules).card_statuses;
-  assert.equal(statuses[f.hand[1]].filter(row => row.source_card_id === 'TS-0288').length, 1);
+  statuses = server.turnOptions(tx.state, 'alice', f.catalog, f.rules).public_effects;
+  assert.equal(statuses.filter(row => row.source_card_id === 'TS-0288').length, 1);
   tx.state.active_player_id = 'bob'; tx.state.turn_number = 4; expireRules(tx, 'owner_next_turn_end');
   assert.equal(tx.state.continuous_effects.length, 0);
 });

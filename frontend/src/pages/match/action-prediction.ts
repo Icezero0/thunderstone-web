@@ -26,6 +26,15 @@ export function predictMatchAction(view: MatchView, command: GameCommand): Match
     if (steps.length) motions.push({sequence: event.sequence, kind: 'player_card_motion', player_id: player, steps});
   }
   const resources = state.players[player];
+  // Match the server's public destruction semantics. Raw engine events use
+  // `reason` and an owner encoded in `source`; the animation timeline reads
+  // `cause` and `player_id`. In particular, upgrading owns its old card's exit.
+  const eventLog = events.map(event => {
+    if (!['card_destroyed', 'card_destruction_replaced'].includes(event.kind)) return event;
+    const owner = typeof event.source === 'string' && event.source.startsWith('player:') ? event.source.split(':')[1] : undefined;
+    return {...event, cause: ['hero_upgrade', 'after_battle', 'trap_resolved'].includes(event.reason) ? event.reason : 'effect',
+      ...(owner ? {player_id: owner} : {})};
+  });
   return {...view, version: view.version + 1, action_prediction: result.context,
     turn: {...view.turn, subphase: state.subphase, timing_window: state.timing_window},
     hand, discard, supplies, players: view.players.map(row => row.player_id !== player ? row : {...row,
@@ -35,7 +44,7 @@ export function predictMatchAction(view: MatchView, command: GameCommand): Match
     viewer_resources: {...view.viewer_resources, xp: resources.xp, temporary_gold: resources.temporary_gold,
       purchases_remaining: resources.purchases_remaining, extra_basic_purchases: resources.extra_basic_purchases ?? 0, gold_income_preview: null},
     legal_commands: result.legal_commands as MatchView['legal_commands'], command_instances: {}, pending_choice: null,
-    event_log: events as MatchView['event_log'], card_motion: motions, table_motion: [],
+    event_log: eventLog as MatchView['event_log'], card_motion: motions, table_motion: [],
     ...(view.sync ? {sync: {...view.sync, reset: false, event_sequence: state.next_event_sequence - 1}} : {})};
 }
 

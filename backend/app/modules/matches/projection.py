@@ -24,6 +24,7 @@ def build_match_view(match: Any, viewer_user_id: int, *, legal_commands: list | 
                      gold_income_preview: int | None = None,
                      hall_rank_counts: dict | None = None,
                      card_statuses: dict | None = None,
+                     public_effects: list | None = None,
                      unavailable_reason: str | None = None, profiles: dict | None = None,
                      presentation_events: list | None = None, action_prediction: dict | None = None,
                      reveal_events: list | None = None) -> dict:
@@ -216,7 +217,12 @@ def build_match_view(match: Any, viewer_user_id: int, *, legal_commands: list | 
         for item in pile])
     resources = state.get("players", {}).get(player_id, {})
     created_at = match.created_at.isoformat() if isinstance(match.created_at, datetime) else match.created_at
+    effects = deepcopy(public_effects or [])
+    for effect in effects:
+        if effect.get("source_card_id"):
+            include_card(effect["source_card_id"])
     return {
+        "public_effects": effects,
         "id": match.id, "room_id": match.room_id, "status": match.status, "version": match.version,
         "host_user_id": match.host_user_id, "viewer_player_id": player_id,
         "can_resolve_setup": match.status == "setup_pending" and viewer_user_id == match.host_user_id,
