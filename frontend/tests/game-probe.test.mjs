@@ -89,8 +89,8 @@ test('zero and one card work; quantity controls reuse already decoded cards and 
   await ui.count(-1); assert.equal(ui.cards().length, 0);
 });
 
-test('E inspection shows only full-size art and transfers to another hand card without changing sources', async () => {
-  const ui = await page(); ui.enter(); ui.key('e');
+test('Space inspection shows only full-size art and transfers to another hand card without changing sources', async () => {
+  const ui = await page(); ui.enter(); ui.key(' ');
   assert.equal(ui.get('inspect-overlay').hidden, false); assert.equal(ui.inspecting().length, 1);
   assert.deepEqual([ui.get('inspect-image').width, ui.get('inspect-image').height], [504, 704]);
   assert.equal(ui.get('inspect-image').hidden, false); assert.equal(ui.get('inspect-back-image').hidden, true);
@@ -98,7 +98,7 @@ test('E inspection shows only full-size art and transfers to another hand card w
   assert.equal(ui.get('first-inspection').hidden, true); assert.equal(ui.inspecting().length, 1);
   const [front, back] = ui.inspecting()[0].children;
   assert.equal(front.src, '/cards/TS-0001.png'); assert.equal(front.hidden, false); assert.equal(back.hidden, true);
-  for (let i = 0; i < 20; i++) {ui.release(); ui.key('e');}
+  for (let i = 0; i < 20; i++) {ui.release(); ui.key(' ');}
   for (const image of cardImages(ui)) {
     assert.equal(image.decodeCalls, 1); assert.equal(image.srcWrites.length, 1);
   }
@@ -106,7 +106,7 @@ test('E inspection shows only full-size art and transfers to another hand card w
 });
 
 test('a face-down draw pile reveals only the original-size shared back, including after pressing F', async () => {
-  const ui = await page(); ui.enter('draw-pile-card'); ui.key('e'); ui.key('f');
+  const ui = await page(); ui.enter('draw-pile-card'); ui.key(' '); ui.key('f');
   assert.equal(ui.get('inspect-content').dataset.face, 'back'); assert.equal(ui.inspecting().length, 1);
   const [front, back] = ui.inspecting()[0].children;
   assert.equal(front.hidden, true); assert.equal(back.hidden, false);
@@ -116,7 +116,7 @@ test('a face-down draw pile reveals only the original-size shared back, includin
 
 test('pointer and keyboard focus share one active card and one inspection owner', async () => {
   const ui = await page(), first = ui.get('probe-card');
-  first.keyboardFocus = true; first.fire('focus'); ui.key('e');
+  first.keyboardFocus = true; first.fire('focus'); ui.key(' ');
   assert.equal(ui.get('first-inspection').hidden, false);
   ui.cards()[2].fire('pointerenter');
   assert.equal(first.dataset.active, 'false'); assert.equal(ui.cards()[2].dataset.active, 'true');
@@ -126,43 +126,43 @@ test('pointer and keyboard focus share one active card and one inspection owner'
   first.fire('blur'); assert.equal(ui.get('inspect-overlay').hidden, true);
 });
 
-test('E held before entering works; leaving, focus loss and hidden tabs dismiss inspection', async () => {
-  const ui = await page(); ui.key('e'); assert.equal(ui.get('inspect-overlay').hidden, true);
+test('Space held before entering works; leaving, focus loss and hidden tabs dismiss inspection', async () => {
+  const ui = await page(); ui.key(' '); assert.equal(ui.get('inspect-overlay').hidden, true);
   ui.enter('probe-card'); assert.equal(ui.get('inspect-overlay').hidden, false);
   ui.get('probe-card').fire('pointerleave'); assert.equal(ui.get('inspect-overlay').hidden, true);
   ui.enter('probe-card'); ui.window.fire('blur');
   assert.equal(ui.get('inspect-overlay').hidden, true);
-  ui.enter(); ui.key('e'); ui.document.hidden = true; ui.document.fire('visibilitychange');
+  ui.enter(); ui.key(' '); ui.document.hidden = true; ui.document.fire('visibilitychange');
   assert.equal(ui.get('inspect-overlay').hidden, true);
   const input = new ui.Element(); input.editable = true;
-  ui.document.hidden = false; ui.enter(); ui.key('e', {target: input});
+  ui.document.hidden = false; ui.enter(); ui.key(' ', {target: input});
   assert.equal(ui.get('inspect-overlay').hidden, true);
 });
 
 test('removing the inspected card or leaving the page closes inspection and releases observers/listeners', async () => {
-  const ui = await page(); ui.enter(); ui.key('e'); await ui.count(0);
+  const ui = await page(); ui.enter(); ui.key(' '); await ui.count(0);
   assert.equal(ui.get('inspect-overlay').hidden, true);
-  await ui.count(6); ui.enter(); ui.key('e');
+  await ui.count(6); ui.enter(); ui.key(' ');
   ui.window.fire('pagehide', {persisted: false});
   assert.equal(ui.get('inspect-overlay').hidden, true); assert.ok(ui.observers.every(item => item.disconnected));
-  ui.enter(); ui.key('e'); assert.equal(ui.get('inspect-overlay').hidden, true);
+  ui.enter(); ui.key(' '); assert.equal(ui.get('inspect-overlay').hidden, true);
   await ui.count(10); assert.equal(ui.cards().length, 0);
   assert.equal(ui.get('player-deck-area').children.length, 0);
 });
 
 test('inspection waits for every image of its card to decode; an error does not block other cards', async () => {
   for (const id of ['front-image', 'back-image', 'inspect-image', 'inspect-back-image']) {
-    const ui = await page({pendingImages: [id]}); ui.enter(); ui.key('e');
+    const ui = await page({pendingImages: [id]}); ui.enter(); ui.key(' ');
     assert.equal(ui.get('probe-card').dataset.imagesReady, 'false');
     assert.equal(ui.get('inspect-overlay').hidden, true);
     await ui.decoded(id);
     assert.equal(ui.get('probe-card').dataset.imagesReady, 'true');
     assert.equal(ui.get('inspect-overlay').hidden, false);
   }
-  const failed = await page({brokenImage: 'back-image'}); failed.enter(); failed.key('e');
+  const failed = await page({brokenImage: 'back-image'}); failed.enter(); failed.key(' ');
   assert.equal(failed.get('inspect-overlay').hidden, true); assert.match(failed.get('probe-notice').textContent, /卡图暂未载入/);
   failed.enter('discard-pile-card'); assert.equal(failed.get('inspect-overlay').hidden, false);
-  const pending = await page({pendingImages: ['back-image']}); pending.enter(); pending.key('e');
+  const pending = await page({pendingImages: ['back-image']}); pending.enter(); pending.key(' ');
   pending.window.fire('pagehide', {persisted: false}); await pending.decoded('back-image');
   assert.equal(pending.get('probe-card').dataset.imagesReady, 'false');
   assert.equal(pending.get('inspect-overlay').hidden, true);
@@ -227,7 +227,7 @@ test('batch draw reserves final hand positions once and staggers existing decode
   assert.ok(ui.get('card-motion-layer').children.every(node => node.children[0].dataset.face === 'back'));
   assert.ok(ui.get('card-motion-layer').children.every(node => paperEdges(node.children[0]).length === 0));
   assert.equal(paperEdges(pileTop(ui, 'draw-pile')).length, 5);
-  ui.enter(); ui.key('e'); assert.equal(ui.get('inspect-overlay').hidden, true);
+  ui.enter(); ui.key(' '); assert.equal(ui.get('inspect-overlay').hidden, true);
   await ui.advance(60); assert.equal(ui.get('draw-count').textContent, '22');
   await ui.advance(65); assert.equal(ui.get('draw-pile-card').dataset.face, 'front');
   await ui.advance(125); assert.equal(ui.get('card-motion-layer').children.length, 4);
@@ -434,10 +434,10 @@ test('discard-pile browsing shows top-to-bottom order, including duplicate cards
   assert.equal(ui.get('discard-selected').disabled, true);
 });
 
-test('browser E inspection owns the overlay while the table is inert, then closing restores pile focus', async () => {
+test('browser Space inspection owns the overlay while the table is inert, then closing restores pile focus', async () => {
   const ui = await page(); await ui.click('draw-pile-card');
   assert.equal(ui.get('probe-shell').inert, true); assert.equal(ui.get('probe-header').inert, true);
-  ui.enter(); ui.key('e'); assert.equal(ui.get('inspect-overlay').hidden, true);
+  ui.enter(); ui.key(' '); assert.equal(ui.get('inspect-overlay').hidden, true);
   const first = browserCards(ui)[0]; first.fire('pointerenter');
   assert.equal(ui.get('inspect-overlay').hidden, false); assert.equal(ui.inspecting().length, 1);
   const [front, back] = ui.inspecting()[0].children;
@@ -483,9 +483,9 @@ test('an empty pile can be browsed and animation blocks opening a stale pile vie
   assert.equal(moving.get('pile-browser').hidden, false); assert.equal(browserCards(moving).length, 19);
 });
 
-test('reset and disposal close browsing and remove E inspection and modal keyboard handlers', async () => {
+test('reset and disposal close browsing and remove Space inspection and modal keyboard handlers', async () => {
   const ui = await page(); await ui.click('discard-pile-card');
-  browserCards(ui)[0].fire('pointerenter'); ui.key('e');
+  browserCards(ui)[0].fire('pointerenter'); ui.key(' ');
   await ui.click('reset-demo');
   assert.equal(ui.get('pile-browser').hidden, true); assert.equal(ui.get('inspect-overlay').hidden, true);
   assert.equal(ui.get('probe-shell').inert, false);
@@ -512,7 +512,7 @@ test('dragging previews an insertion slot, shifts neighbors and commits the same
   assert.ok(Number(card.style.zIndex) > Number(neighbor.style.zIndex));
   assert.equal(ui.get('draw-one').disabled, true);
   assert.equal(ui.get('auto-sort-hand').disabled, true);
-  ui.key('e'); assert.equal(ui.get('inspect-overlay').hidden, true);
+  ui.key(' '); assert.equal(ui.get('inspect-overlay').hidden, true);
   await ui.click('draw-one'); assert.equal(ui.cards().length, 6);
   await ui.click('draw-pile-card'); assert.equal(ui.get('pile-browser').hidden, true);
   ui.pointer('pointerup', last.left + 12);
@@ -662,7 +662,7 @@ test('non-primary, modified, empty and single-card gestures do not reorder; redu
 test('cursor drag marker activates only after moving a card and clears on release before the settling animation', async () => {
   const ui = await page(), card = ui.get('probe-card');
   const dragging = () => ui.cards().some(item => item.dataset.dragging === 'true');
-  ui.enter(); ui.key('e'); assert.equal(dragging(), false); ui.release();
+  ui.enter(); ui.key(' '); assert.equal(dragging(), false); ui.release();
   ui.window.fire('pointerdown', {target: ui.get('probe-table'), buttons: 1});
   assert.equal(dragging(), false);
   const first = ui.down(); assert.equal(dragging(), false);

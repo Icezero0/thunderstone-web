@@ -37,7 +37,7 @@ test('internal temporary tab changes preserve every reveal and discard flight in
   assert.equal(ui.get('one-discard-count').textContent, '1'); area.dispose();
 });
 
-test('attachments form a mini stack, merge equipped weapons, browse with E and close during state updates', async () => {
+test('attachments form a mini stack, merge equipped weapons, browse with Space and close during state updates', async () => {
   const {ui, Area} = await setup(), area = new Area(ui.get('first'), {idPrefix: 'one'});
   const child = {...card('captive'), kind: 'cage'}, weapon = card('weapon');
   const state = {hand: [{...card('hero'), attachments: [child]}, weapon, child], draw: [], discard: []};
@@ -403,7 +403,7 @@ test('hand glow follows instances through sorting and snapshot moves independent
   const first = handCards(ui, 'one').find(card => card.dataset.instanceId === 'a');
   first.fire('pointerenter'); first.fire('click'); assert.deepEqual(clicks, ['a']); assert.deepEqual(Array.from(area.selectedIds), ['b']);
   area.setAutoSort(true); await ui.advance(200); assert.equal(handCards(ui, 'one')[0], first); assert.equal(first.dataset.glowing, 'true');
-  first.fire('pointerenter'); ui.key('e'); assert.equal(ui.get('one-inspect-overlay').hidden, false); ui.release();
+  first.fire('pointerenter'); ui.key(' '); assert.equal(ui.get('one-inspect-overlay').hidden, false); ui.release();
   assert.throws(() => area.setHighlightedIds(['d0']), /hand instances/);
   assert.equal(first.dataset.glowing, 'true');
   area.setState({...initial, hand: initial.hand.filter(card => card.id !== 'a'), discard: [...initial.discard, initial.hand[1]]});
@@ -421,7 +421,7 @@ for (const kind of ['draw', 'discard']) test(`an open ${kind} browser follows ex
   area.setState(initial); await settle(); area.openPileBrowser(kind); await settle();
   const grid = ui.get('one-pile-browser-grid'), modal = ui.get('one-pile-browser');
   const initialCards = browserCards(ui), retained = initialCards[1];
-  retained.focus(); ui.key('e'); grid.scrollTop = 153;
+  retained.focus(); ui.key(' '); grid.scrollTop = 153;
   assert.equal(ui.get('one-inspect-overlay').hidden, false);
   const added = card('new', 'TS-0002'), updated = {...initial, [kind]: [...initial[kind].slice(0, 2), added]};
   // Preserve the middle focused instance while replacing a different card, including equal catalog IDs.
@@ -549,15 +549,15 @@ test('a newer snapshot interrupts animation and disposal removes overlays, handl
   assert.equal(ui.timers.size, 0); assert.ok(ui.observers.every(observer => observer.disconnected));
   assert.ok(ui.animations.every(animation => animation.playState === 'idle'));
   assert.throws(() => area.setState(initial), /disposed/);
-  assert.equal(ui.key('e').defaultPrevented, false);
+  assert.equal(ui.key(' ').defaultPrevented, false);
 });
 
-test('only the hovered or focused component owns E inspection when multiple deck areas exist', async () => {
+test('only the hovered or focused component owns Space inspection when multiple deck areas exist', async () => {
   const {ui, Area} = await setup();
   const first = new Area(ui.get('first'), {idPrefix: 'one'}), second = new Area(ui.get('second'), {idPrefix: 'two'});
   first.setState(snapshot()); second.setState(snapshot()); await settle();
   const firstCard = ui.get('one-first-card'), secondCard = ui.get('two-first-card');
-  firstCard.focus(); secondCard.fire('pointerenter'); ui.key('e');
+  ui.key('Tab'); firstCard.focus(); secondCard.fire('pointerenter'); ui.key(' ');
   assert.equal(ui.get('one-inspect-overlay').hidden, true); assert.equal(ui.get('two-inspect-overlay').hidden, false);
   assert.equal(firstCard.dataset.active, 'false'); assert.equal(secondCard.dataset.active, 'true');
   secondCard.fire('pointerleave');

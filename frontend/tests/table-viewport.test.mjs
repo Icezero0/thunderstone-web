@@ -165,15 +165,15 @@ test('the probe keeps every adjustment/test control outside the game and its sup
   assert.equal(ui.all.some(node => node.id === 'village-probe-browser-take' && node.isConnected), false);
 });
 
-test('panning the probe clears public hover/inspection, leaves the hand fixed and resumes E afterward', async () => {
+test('panning the probe clears public hover/inspection, leaves the hand fixed and resumes Space afterward', async () => {
   const ui = await page({width: 600}), viewport = ui.get('dungeon-panel'), desktop = ui.get('public-desktop');
   const monster = ui.get('dungeon-probe-main-rank-1').children[1].children[0], hand = ui.get('probe-card');
   const handLeft = hand.style.left;
-  monster.fire('pointerenter'); ui.key('e'); assert.equal(ui.get('dungeon-probe-inspect').hidden, false); ui.release();
+  monster.fire('pointerenter'); ui.key(' '); assert.equal(ui.get('dungeon-probe-inspect').hidden, false); ui.release();
   viewport.fire('pointerdown', {target: monster, button: 1, buttons: 4, clientX: 200, clientY: 200});
   ui.window.fire('pointermove', {buttons: 4, clientX: 80, clientY: 120});
   assert.equal(viewport.dataset.panning, 'true'); assert.equal(monster.dataset.active, 'false');
-  ui.key('e'); assert.equal(ui.get('dungeon-probe-inspect').hidden, true);
+  ui.key(' '); assert.equal(ui.get('dungeon-probe-inspect').hidden, true);
   assert.equal(desktop.style.transform, 'translate(-120px, -80px) scale(1.5)'); assert.equal(hand.style.left, handLeft);
   ui.window.fire('pointerup'); assert.equal(viewport.dataset.panning, 'false');
   monster.fire('pointerenter'); assert.equal(ui.get('dungeon-probe-inspect').hidden, false);
@@ -347,13 +347,13 @@ test('the fixed reset button affects only the active tab, whose pan and zoom per
   assert.equal(villageDesktop.style.transform, committed);
 });
 
-test('zooming a public desktop clears stale inspection and allows fresh original-size E inspection', async () => {
+test('zooming a public desktop clears stale inspection and allows fresh original-size Space inspection', async () => {
   const ui = await page(), viewport = ui.get('dungeon-panel');
   const monster = ui.get('dungeon-probe-main-rank-1').children[1].children[0];
-  monster.fire('pointerenter'); ui.key('e'); assert.equal(ui.get('dungeon-probe-inspect').hidden, false); ui.release();
+  monster.fire('pointerenter'); ui.key(' '); assert.equal(ui.get('dungeon-probe-inspect').hidden, false); ui.release();
   viewport.fire('wheel', {deltaY: -100, clientX: 200, clientY: 220});
   assert.equal(ui.get('dungeon-probe-inspect').hidden, true); assert.equal(monster.dataset.active, 'false');
-  monster.fire('pointerenter'); ui.key('e'); assert.equal(ui.get('dungeon-probe-inspect').hidden, false);
+  monster.fire('pointerenter'); ui.key(' '); assert.equal(ui.get('dungeon-probe-inspect').hidden, false);
   const large = ui.get('dungeon-probe-inspect-content').children.find(node => !node.hidden).children[0];
   assert.equal(large.width, 504); assert.equal(large.height, 704);
   ui.window.fire('pagehide', {persisted: false});

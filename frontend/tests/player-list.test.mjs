@@ -57,7 +57,7 @@ test('a standalone open browser follows reveal, conceal and player removal witho
   const modal = ui.get('first-player-browser'), retained = visible(ui)[1];
   players[1].cards.hand[0].revealed = true; list.setPlayers(players); await settle();
   const front = visible(ui)[0]; assert.equal(front.dataset.face, 'front'); assert.equal(visible(ui)[1], retained);
-  front.fire('pointerenter'); ui.key('e'); assert.equal(ui.get('first-player-browser-inspect').hidden, false);
+  front.fire('pointerenter'); ui.key(' '); assert.equal(ui.get('first-player-browser-inspect').hidden, false);
   list.finish(); assert.equal(ui.get('first-player-browser-inspect').hidden, true); assert.equal(list.isBrowsing, true);
   players[1].cards.hand[0].revealed = false; list.setPlayers(players); await settle();
   assert.equal(front.isConnected, false); assert.equal(visible(ui)[0].dataset.face, 'back'); assert.equal(ui.get('first-player-browser'), modal);

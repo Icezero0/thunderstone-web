@@ -121,7 +121,7 @@ export class PhysicalCard {
     button.dataset.flipping = String(this.flip.isAnimating);
     button.dataset.imagesReady = String(this.ready);
     button.setAttribute('aria-busy', String(!this.ready && !this.failed));
-    button.setAttribute('aria-label', `${this.faceUp ? this.name + '，正面' : '背面'}朝上的卡牌；按住 E 检视`);
+    button.setAttribute('aria-label', `${this.faceUp ? this.name + '，正面' : '背面'}朝上的卡牌；按住空格检视`);
     front.hidden = !this.faceUp; back.hidden = this.faceUp;
     front.setAttribute('aria-hidden', String(!this.faceUp));
     back.setAttribute('aria-hidden', String(this.faceUp));
@@ -132,10 +132,11 @@ export class PhysicalCard {
   }
 }
 
-/** Game-wide card interactions: any region can register cards with one E inspection owner. */
+/** Game-wide card interactions: any region can register cards with one Space inspection owner. */
 export class CardInteractions {
   private static hoverOwner: CardInteractions | null = null;
   private static focusOwner: CardInteractions | null = null;
+  private static pointerFocus = true;
   private readonly cards: PhysicalCard[] = [];
   private readonly unbind = new Map<PhysicalCard, () => void>();
   private hovered: PhysicalCard | null = null;
@@ -152,6 +153,7 @@ export class CardInteractions {
   constructor(private overlay: HTMLElement, private content: HTMLElement, private notice?: HTMLElement) {
     window.addEventListener('keydown', this.keydown, true);
     window.addEventListener('keyup', this.keyup, true);
+    window.addEventListener('pointerdown', this.pointerdown, true);
     window.addEventListener('blur', this.reset);
     window.addEventListener('pagehide', this.reset);
     window.addEventListener('wheel', this.scrollInspection, {passive: false, capture: true});
@@ -234,8 +236,14 @@ export class CardInteractions {
     if (suspended) this.resetState(true); else this.render();
   }
   private editing(target: EventTarget | null): boolean {
-    return target instanceof HTMLElement &&
-      (target.isContentEditable || !!target.closest('input, textarea, select'));
+    if (!(target instanceof HTMLElement)) return false;
+    if (target.isContentEditable) return true;
+    const field = target.closest('input, textarea, select');
+    if (!field) return false;
+    // Checkboxes and native buttons are controls, not text editors. Hovered-card
+    // inspection must not toggle a checkbox left focused by a previous click.
+    return field.tagName.toLowerCase() !== 'input' ||
+      !['checkbox', 'radio', 'button', 'submit', 'reset'].includes((field.getAttribute('type') ?? 'text').toLowerCase());
   }
   private control(target: EventTarget | null): boolean {
     if (!(target instanceof HTMLElement)) return false;
@@ -243,11 +251,14 @@ export class CardInteractions {
     return !!control && !control.classList.contains('physical-card');
   }
   private isInspectionKey(event: KeyboardEvent): boolean {
-    return event.code === 'KeyE' || event.key.toLowerCase() === 'e';
+    return event.code === 'Space' || event.key === ' ' || event.key === 'Spacebar';
   }
+  private pointerdown = (): void => {CardInteractions.pointerFocus = true;};
   private consume(event: KeyboardEvent): void {event.preventDefault(); event.stopPropagation();}
   private keydown = (event: KeyboardEvent): void => {
     if (!this.isInspectionKey(event)) {
+      if (['Tab', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown'].includes(event.key))
+        CardInteractions.pointerFocus = false;
       // Modifier shortcuts and Escape belong to their normal handlers.
       if (event.altKey || event.ctrlKey || event.metaKey || event.key === 'Escape') {this.inspectionHeld = false; this.render();}
       return;
@@ -260,6 +271,11 @@ export class CardInteractions {
       if (this.inspectionCaptured) this.consume(event);
       this.inspectionHeld = false; this.render(); return;
     }
+    // Keyboard input can make a mouse-focused control match :focus-visible even
+    // when its default action is prevented. Release that stale focus before the
+    // browser paints it; never blur text editors or genuine keyboard navigation.
+    if (hovering && CardInteractions.pointerFocus && document.activeElement instanceof HTMLElement
+        && document.activeElement !== document.body) document.activeElement.blur();
     this.render();
     this.inspectionHeld = true;
     if (this.active || this.inspectionCaptured) {this.inspectionCaptured = true; this.consume(event);}
@@ -272,7 +288,7 @@ export class CardInteractions {
   };
   private reset = (): void => {this.resetState();};
   private resetState(keepHeld = false): void {
-    // Reset presentation on blur/suspension, but retain ownership of this E release.
+    // Reset presentation on blur/suspension, but retain ownership of this Space release.
     // A new keydown clears it if a window switch prevented keyup from reaching us.
     if (!keepHeld) this.inspectionHeld = false;
     this.hovered = this.focused = null;
@@ -325,6 +341,7 @@ export class CardInteractions {
     this.unbind.clear(); this.cards.length = 0;
     window.removeEventListener('keydown', this.keydown, true);
     window.removeEventListener('keyup', this.keyup, true);
+    window.removeEventListener('pointerdown', this.pointerdown, true);
     window.removeEventListener('blur', this.reset);
     window.removeEventListener('pagehide', this.reset);
     window.removeEventListener('wheel', this.scrollInspection, true);

@@ -6,12 +6,12 @@ import {page, settle} from './support/player-deck-dom.mjs';
 const source = await readFile(new URL('../.test-dist/game-card-component.js', import.meta.url), 'utf8');
 const html = '<html><body><main id="game"><section id="dungeon"></section><section id="village"></section><section id="deck"></section></main><div id="overlays"></div></body></html>';
 
-test('E inspection shows all current statuses beside the original image and scrolls them without leaking back-side information', async () => {
+test('Space inspection shows all current statuses beside the original image and scrolls them without leaking back-side information', async () => {
   const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
   const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
   const elements = api.createCardElements('TS-0001'); ui.get('deck').append(elements.button);
   const card = interactions.add(elements, '民兵'); await settle();
-  elements.button.fire('pointerenter'); ui.key('e'); assert.equal(elements.statusPanel.hidden, true);
+  elements.button.fire('pointerenter'); ui.key(' '); assert.equal(elements.statusPanel.hidden, true);
   const statuses = [{kind: 'buff', source_name: '应急干粮', description: '力量 +2'},
     {kind: 'debuff', source_name: '<script>text</script>', description: '力量 -1'},
     {kind: 'destroy', source_name: '远古泰尔', description: '本场战斗结束后摧毁'}];
@@ -56,12 +56,12 @@ test('card status icons group by kind, show source/value tooltips at the pointer
   assert.equal(elements.frontImage.srcWrites.length, 1); interactions.dispose(); inspection.dispose();
 });
 
-test('any region can glow a physical card independently of hover, face changes and E inspection', async () => {
+test('any region can glow a physical card independently of hover, face changes and Space inspection', async () => {
   const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
   const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
   const elements = api.createCardElements('TS-0001'); ui.get('dungeon').append(elements.button);
   const card = interactions.add(elements, '怪物'); await settle();
-  card.setGlow(true); card.setFaceUp(false, false); elements.button.fire('pointerenter'); ui.key('e');
+  card.setGlow(true); card.setFaceUp(false, false); elements.button.fire('pointerenter'); ui.key(' ');
   assert.equal(elements.button.dataset.glowing, 'true'); assert.equal(elements.button.dataset.face, 'back');
   assert.equal(inspection.overlay.hidden, false); card.setGlow(false);
   assert.equal(elements.button.dataset.glowing, 'false'); assert.equal(inspection.overlay.hidden, false);
@@ -69,7 +69,7 @@ test('any region can glow a physical card independently of hover, face changes a
   interactions.dispose(); inspection.dispose();
 });
 
-test('E inspection works for dungeon and village cards outside the player deck, with one active inspector across all regions', async () => {
+test('Space inspection works for dungeon and village cards outside the player deck, with one active inspector across all regions', async () => {
   const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
   const inspection = api.createCardInspection(ui.get('overlays'));
   const interactions = new api.CardInteractions(inspection.overlay, inspection.content);
@@ -78,7 +78,7 @@ test('E inspection works for dungeon and village cards outside the player deck, 
   interactions.add(monster, '怪物'); const villageCard = interactions.add(village, '村庄牌', false);
   const deck = new api.PlayerDeckArea(ui.get('deck'), {idPrefix: 'deck', overlayRoot: ui.get('overlays'), background: [ui.get('game')]});
   deck.setState({hand: [{id: 'hero', cardId: 'TS-0001', name: '民兵'}], draw: [], discard: []}); await settle();
-  monster.button.fire('pointerenter'); ui.key('e');
+  monster.button.fire('pointerenter'); ui.key(' ');
   assert.equal(inspection.overlay.hidden, false); assert.equal(monster.largeFront.hidden, false);
   assert.equal(monster.largeFront.width, 504); assert.equal(monster.largeBack.hidden, true);
   village.button.fire('pointerenter');
@@ -90,24 +90,24 @@ test('E inspection works for dungeon and village cards outside the player deck, 
   monster.button.fire('pointerenter');
   assert.equal(inspection.overlay.hidden, false); assert.equal(ui.get('deck-inspect-overlay').hidden, true);
   // A pile modal disables every underlying game region, not just the hand.
-  deck.openPileBrowser('draw'); ui.key('e');
+  deck.openPileBrowser('draw'); ui.key(' ');
   assert.equal(inspection.overlay.hidden, true); assert.equal(ui.get('game').inert, true);
   ui.key('Escape'); ui.release();
-  villageCard.setFaceUp(true, false); village.button.focus(); ui.key('e');
+  villageCard.setFaceUp(true, false); village.button.focus(); ui.key(' ');
   assert.equal(village.largeFront.hidden, false); assert.equal(village.largeBack.hidden, true);
   assert.equal(village.frontImage.decodeCalls, 1); assert.equal(village.frontImage.srcWrites.length, 1);
   ui.release(); assert.equal(inspection.overlay.hidden, true);
   interactions.dispose(); inspection.dispose(); deck.dispose();
-  assert.equal(ui.get('overlays').children.length, 0); assert.equal(ui.key('e').defaultPrevented, false);
+  assert.equal(ui.get('overlays').children.length, 0); assert.equal(ui.key(' ').defaultPrevented, false);
 });
 
 test('shared inspection ignores hidden/disconnected cards and releases its image on blur or removal', async () => {
   const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
   const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
   const elements = api.createCardElements('TS-0001'); ui.get('dungeon').append(elements.button);
-  interactions.add(elements, '民兵'); await settle(); elements.button.fire('pointerenter'); ui.key('e');
+  interactions.add(elements, '民兵'); await settle(); elements.button.fire('pointerenter'); ui.key(' ');
   assert.equal(inspection.overlay.hidden, false); ui.window.fire('blur'); assert.equal(inspection.overlay.hidden, true);
-  ui.get('dungeon').hidden = true; elements.button.fire('pointerenter'); ui.key('e');
+  ui.get('dungeon').hidden = true; elements.button.fire('pointerenter'); ui.key(' ');
   assert.equal(inspection.overlay.hidden, true);
   ui.get('dungeon').hidden = false; elements.button.fire('pointerenter'); assert.equal(inspection.overlay.hidden, false);
   elements.button.remove(); interactions.refresh(); assert.equal(inspection.overlay.hidden, true);
@@ -115,12 +115,12 @@ test('shared inspection ignores hidden/disconnected cards and releases its image
 });
 
 for (const interruption of ['pointerleave', 'remove', 'scope', 'suspend', 'blur', 'hidden']) {
-  test(`inspection consumes the E release after ${interruption}, so it cannot click a card or scroll`, async () => {
+  test(`inspection consumes the Space release after ${interruption}, so it cannot click a card or scroll`, async () => {
     const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
     const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
     const elements = api.createCardElements('TS-0001'); ui.get('deck').append(elements.button);
     const card = interactions.add(elements, '民兵'); await settle(); elements.button.fire('pointerenter');
-    assert.equal(ui.key('e').defaultPrevented, true); assert.equal(inspection.overlay.hidden, false);
+    assert.equal(ui.key(' ').defaultPrevented, true); assert.equal(inspection.overlay.hidden, false);
     if (interruption === 'pointerleave') elements.button.fire('pointerleave');
     if (interruption === 'remove') interactions.remove(card);
     if (interruption === 'scope') interactions.setScope(ui.get('village'));
@@ -128,48 +128,48 @@ for (const interruption of ['pointerleave', 'remove', 'scope', 'suspend', 'blur'
     if (interruption === 'blur') ui.window.fire('blur');
     if (interruption === 'hidden') {ui.document.hidden = true; ui.document.fire('visibilitychange');}
     assert.equal(inspection.overlay.hidden, true);
-    assert.equal(ui.key('e', {repeat: true}).defaultPrevented, true, 'held repeats must not scroll after interruption');
+    assert.equal(ui.key(' ', {repeat: true}).defaultPrevented, true, 'held repeats must not scroll after interruption');
     assert.equal(ui.release().defaultPrevented, true);
     assert.equal(ui.release().defaultPrevented, false, 'release ownership is cleared, not retained indefinitely');
     interactions.dispose(); inspection.dispose();
   });
 }
 
-test('E pressed before hovering is consumed on release even after leaving the card', async () => {
+test('Space pressed before hovering is consumed on release even after leaving the card', async () => {
   const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
   const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
   const elements = api.createCardElements('TS-0001'); ui.get('deck').append(elements.button);
   interactions.add(elements, '民兵'); await settle();
-  assert.equal(ui.key('e').defaultPrevented, false);
+  assert.equal(ui.key(' ').defaultPrevented, false);
   elements.button.fire('pointerenter'); assert.equal(inspection.overlay.hidden, false);
   elements.button.fire('pointerleave'); assert.equal(ui.release().defaultPrevented, true);
-  elements.button.fire('pointerenter'); ui.key('e'); ui.window.fire('blur');
-  assert.equal(ui.key('e').defaultPrevented, false, 'a fresh press after a missed keyup clears obsolete ownership');
+  elements.button.fire('pointerenter'); ui.key(' '); ui.window.fire('blur');
+  assert.equal(ui.key(' ').defaultPrevented, false, 'a fresh press after a missed keyup clears obsolete ownership');
   assert.equal(ui.release().defaultPrevented, false);
-  elements.button.fire('pointermove'); ui.key('e'); assert.equal(inspection.overlay.hidden, false);
+  elements.button.fire('pointermove'); ui.key(' '); assert.equal(inspection.overlay.hidden, false);
   ui.release(); interactions.dispose(); inspection.dispose();
 });
 
-test('inspection does not consume form input, IME or modified E shortcuts', async () => {
+test('inspection does not consume form input, IME or modified Space shortcuts', async () => {
   const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
   const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
   const elements = api.createCardElements('TS-0001'); ui.get('deck').append(elements.button);
   interactions.add(elements, '民兵'); await settle(); elements.button.fire('pointerenter');
   const input = ui.document.createElement('input'); ui.get('game').append(input);
   for (const fields of [{target: input}, {isComposing: true}, {ctrlKey: true}, {metaKey: true}, {altKey: true}]) {
-    assert.equal(ui.key('e', fields).defaultPrevented, false);
+    assert.equal(ui.key(' ', fields).defaultPrevented, false);
     assert.equal(inspection.overlay.hidden, true); assert.equal(ui.release().defaultPrevented, false);
   }
   input.focus(); elements.button.fire('pointermove', {altKey: true}); assert.equal(inspection.overlay.hidden, true);
   ui.document.activeElement = null;
   elements.button.fire('pointermove', {altKey: true, ctrlKey: true}); assert.equal(inspection.overlay.hidden, true);
-  ui.key('e'); assert.equal(inspection.overlay.hidden, false);
+  ui.key(' '); assert.equal(inspection.overlay.hidden, false);
   assert.equal(ui.key('f', {altKey: true}).defaultPrevented, false);
-  assert.equal(inspection.overlay.hidden, true); assert.equal(ui.release().defaultPrevented, true, 'the preceding inspection still owns its E release');
+  assert.equal(inspection.overlay.hidden, true); assert.equal(ui.release().defaultPrevented, true, 'the preceding inspection still owns its Space release');
   interactions.dispose(); inspection.dispose();
 });
 
-test('E key, uppercase and physical code inspect; Space and Alt no longer inspect', async () => {
+test('Space key and physical code inspect without clicks; E and Alt no longer inspect', async () => {
   const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
   const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
   const elements = api.createCardElements('TS-0001'); ui.get('deck').append(elements.button);
@@ -179,23 +179,74 @@ test('E key, uppercase and physical code inspect; Space and Alt no longer inspec
   assert.equal(inspection.overlay.hidden, true);
   elements.button.fire('pointermove', {altKey: true}); assert.equal(inspection.overlay.hidden, true);
   assert.equal(ui.window.fire('keyup', {key: 'Alt', code: 'AltLeft'}).defaultPrevented, false);
-  assert.equal(ui.key(' ', {code: 'Space'}).defaultPrevented, false);
+  assert.equal(ui.key('e', {code: 'KeyE'}).defaultPrevented, false);
   assert.equal(inspection.overlay.hidden, true);
-  assert.equal(ui.window.fire('keyup', {key: ' ', code: 'Space'}).defaultPrevented, false);
-  for (const fields of [{key: 'e'}, {key: 'E'}, {key: 'E', code: 'KeyE', shiftKey: true}, {key: 'Unidentified', code: 'KeyE'}]) {
+  assert.equal(ui.window.fire('keyup', {key: 'e', code: 'KeyE'}).defaultPrevented, false);
+  for (const fields of [{key: ' '}, {key: 'Spacebar'}, {key: 'Unidentified', code: 'Space'}]) {
     const down = ui.key(fields.key, {...fields, target: elements.button});
     assert.equal(down.defaultPrevented, true); assert.equal(down.propagationStopped, true);
     assert.equal(inspection.overlay.hidden, false);
-    assert.equal(ui.key('e', {target: elements.button, repeat: true}).defaultPrevented, true);
+    assert.equal(ui.key(' ', {target: elements.button, repeat: true}).defaultPrevented, true);
     const release = ui.release(); if (!release.defaultPrevented) elements.button.fire('click', {detail: 0});
     assert.equal(clicks, 0); assert.equal(inspection.overlay.hidden, true);
   }
-  assert.match(elements.button.getAttribute('aria-label'), /\bE\b/);
+  assert.match(elements.button.getAttribute('aria-label'), /\u7a7a\u683c/);
   assert.doesNotMatch(elements.button.getAttribute('aria-label'), /Alt/);
   interactions.dispose(); inspection.dispose();
 });
 
-test('E keeps ordinary controls usable without a hovered card and never interrupts editable content', async () => {
+test('mouse inspection releases the stale focus ring without changing card selection', async () => {
+  const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
+  const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
+  const elements = api.createCardElements('TS-0001'); ui.get('deck').append(elements.button);
+  interactions.add(elements, '民兵'); await settle(); elements.button.dataset.selected = 'true';
+  const action = ui.document.createElement('button'); ui.get('game').append(action);
+  for (const control of [action, elements.button]) {
+    ui.window.fire('pointerdown', {target: control}); control.focus();
+    elements.button.fire('pointerenter');
+    assert.equal(ui.key(' ', {target: control}).defaultPrevented, true);
+    assert.equal(ui.document.activeElement, ui.document.body);
+    assert.equal(inspection.overlay.hidden, false);
+    assert.equal(ui.key(' ', {target: control, repeat: true}).defaultPrevented, true);
+    assert.equal(ui.release().defaultPrevented, true);
+    assert.equal(ui.document.activeElement, ui.document.body, 'releasing inspection must not restore the stale ring');
+    assert.equal(elements.button.dataset.selected, 'true', 'actual selection remains intact');
+  }
+  interactions.dispose(); inspection.dispose();
+});
+
+test('Tab navigation retains real keyboard focus through inspection', async () => {
+  const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
+  const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
+  const elements = api.createCardElements('TS-0001'); ui.get('deck').append(elements.button);
+  interactions.add(elements, '民兵'); await settle();
+  ui.key('Tab'); elements.button.focus(); elements.button.fire('pointerenter');
+  assert.equal(ui.key(' ', {target: elements.button}).defaultPrevented, true);
+  assert.equal(inspection.overlay.hidden, false);
+  assert.equal(ui.document.activeElement, elements.button);
+  ui.release(); assert.equal(ui.document.activeElement, elements.button);
+  ui.window.fire('pointerdown', {target: elements.button});
+  ui.key(' ', {target: elements.button}); assert.equal(ui.document.activeElement, ui.document.body);
+  ui.release(); interactions.dispose(); inspection.dispose();
+});
+
+test('inspection over a hovered card does not toggle a mouse-focused checkbox or radio', async () => {
+  const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
+  const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
+  const elements = api.createCardElements('TS-0001'); ui.get('deck').append(elements.button);
+  interactions.add(elements, '民兵'); await settle();
+  for (const type of ['checkbox', 'radio']) {
+    const control = ui.document.createElement('input'); control.setAttribute('type', type); control.checked = true;
+    ui.get('game').append(control); ui.window.fire('pointerdown', {target: control}); control.focus();
+    elements.button.fire('pointerenter');
+    assert.equal(ui.key(' ', {target: control}).defaultPrevented, true);
+    assert.equal(inspection.overlay.hidden, false); assert.equal(ui.document.activeElement, ui.document.body);
+    assert.equal(ui.release().defaultPrevented, true); assert.equal(control.checked, true);
+  }
+  interactions.dispose(); inspection.dispose();
+});
+
+test('Space keeps ordinary controls usable without a hovered card and never interrupts editable content', async () => {
   const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
   const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
   const elements = api.createCardElements('TS-0001'); ui.get('deck').append(elements.button);
@@ -204,7 +255,7 @@ test('E keeps ordinary controls usable without a hovered card and never interrup
     if (tag !== 'button') elements.button.fire('pointerenter');
     const control = ui.document.createElement(tag); if (tag === 'div') control.isContentEditable = true;
     ui.get('game').append(control); control.focus();
-    assert.equal(ui.key('e', {target: control}).defaultPrevented, false, tag);
+    assert.equal(ui.key(' ', {target: control}).defaultPrevented, false, tag);
     assert.equal(inspection.overlay.hidden, true); assert.equal(ui.release().defaultPrevented, false); control.remove();
   }
   interactions.dispose(); inspection.dispose();
@@ -217,7 +268,7 @@ test('hovered cards inspect even if an action button still holds focus after a c
   interactions.add(elements, '民兵'); await settle();
   const action = ui.document.createElement('button'); ui.get('game').append(action); action.focus();
   elements.button.fire('pointerenter');
-  assert.equal(ui.key('e', {target: action}).defaultPrevented, true);
+  assert.equal(ui.key(' ', {target: action}).defaultPrevented, true);
   assert.equal(inspection.overlay.hidden, false);
   assert.equal(ui.release().defaultPrevented, true);
   assert.equal(inspection.overlay.hidden, true);
@@ -228,7 +279,7 @@ test('inspection captures wheel input even when the full-size card fits, leaving
   const ui = await page({html, source}), api = ui.evaluate('GameCardPackage');
   const inspection = api.createCardInspection(), interactions = new api.CardInteractions(inspection.overlay, inspection.content);
   const elements = api.createCardElements('TS-0001'); ui.get('deck').append(elements.button);
-  interactions.add(elements, '民兵'); await settle(); elements.button.fire('pointerenter'); ui.key('e');
+  interactions.add(elements, '民兵'); await settle(); elements.button.fire('pointerenter'); ui.key(' ');
   const wheel = ui.window.fire('wheel', {deltaY: 120, target: elements.button});
   assert.equal(wheel.defaultPrevented, true); assert.equal(wheel.propagationStopped, true);
   ui.release(); assert.equal(ui.window.fire('wheel', {deltaY: 120}).defaultPrevented, false);

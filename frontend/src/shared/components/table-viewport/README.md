@@ -22,7 +22,7 @@ camera.reset(); // 恢复默认位置和配置的初始缩放；也可由外部�
 camera.dispose();
 ```
 
-`viewport` 使用 `.table-viewport`，其直接子元素 `desktop` 使用 `.table-desktop`。入口加载基础样式；桌面内容由调用方决定。切换 Tab 和复位按钮不放进会移动的 `desktop`。E 检视等固定覆盖层同样应挂在桌面外，因此大图保持原始尺寸。
+`viewport` 使用 `.table-viewport`，其直接子元素 `desktop` 使用 `.table-desktop`。入口加载基础样式；桌面内容由调用方决定。切换 Tab 和复位按钮不放进会移动的 `desktop`。空格 检视等固定覆盖层同样应挂在桌面外，因此大图保持原始尺寸。
 
 ## 操作
 

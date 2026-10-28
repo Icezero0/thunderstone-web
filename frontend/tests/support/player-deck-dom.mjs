@@ -88,6 +88,11 @@ export async function page({html = probeHtml, source = probeSource, pendingImage
       previous?.fire('blur'); this.fire('focus');
       for (let node = this; node; node = node.parentElement) node.fire('focusin', {target: this});
     }
+    blur() {
+      if (document.activeElement !== this) return;
+      document.activeElement = document.body; this.keyboardFocus = false;
+      this.fire('blur');
+    }
     matches() {return !!this.keyboardFocus;}
     querySelectorAll(selectors) {
       const visit = root => root.children.flatMap(child => [child, ...visit(child)]);
@@ -205,7 +210,7 @@ export async function page({html = probeHtml, source = probeSource, pendingImage
     inspecting() {return get('inspect-content').children.filter(node => !node.hidden);},
     enter(id = 'probe-card', extra = {}) {return get(id).fire('pointerenter', extra);},
     key(key, fields = {}) {return window.fire('keydown', {key, ...fields});},
-    release() {return window.fire('keyup', {key: 'e', code: 'KeyE'});},
+    release() {return window.fire('keyup', {key: ' ', code: 'Space'});},
     async count(value) {get('hand-count').value = String(value); get('hand-count').fire('input'); await settle();},
     async click(id) {get(id).fire('click'); await settle();},
     async autoSort(checked) {get('auto-sort-hand').checked = checked; get('auto-sort-hand').fire('change'); await settle();},

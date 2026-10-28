@@ -144,11 +144,11 @@ test('village stacks pan with the left button while hero and village-hero clicks
     assert.equal(clickCard(card).defaultPrevented, false);
     assert.equal(area.isBrowsing, ['amazon', 'village-thief'].includes(id));
     area.closeBrowsers();
-    card.fire('pointerenter'); ui.key('e'); assert.equal(ui.get('first-village-cards-inspect').hidden, false); ui.release();
+    card.fire('pointerenter'); ui.key(' '); assert.equal(ui.get('first-village-cards-inspect').hidden, false); ui.release();
     viewport.fire('pointerdown', {target: image, buttons: 1, clientX: 200, clientY: 200});
     ui.window.fire('pointermove', {buttons: 1, clientX: 100, clientY: 90});
     assert.equal(viewport.dataset.panning, 'true'); assert.notEqual(desktop.style.transform, initial);
-    assert.equal(card.dataset.active, 'false'); ui.key('e'); assert.equal(ui.get('first-village-cards-inspect').hidden, true); ui.release();
+    assert.equal(card.dataset.active, 'false'); ui.key(' '); assert.equal(ui.get('first-village-cards-inspect').hidden, true); ui.release();
     ui.window.fire('pointerup'); assert.equal(viewport.dataset.panning, 'false');
     assert.equal(clickCard(card).propagationStopped, true); assert.equal(area.isBrowsing, false);
     viewport.fire('pointerdown', {target: card, buttons: 1}); ui.window.fire('pointerup'); clickCard(card);
@@ -230,7 +230,7 @@ test('a live hero browser follows snapshots without reopening, keeps cached imag
   assert.equal(area.root.inert, true);
   const browser = ui.get('first-village-cards-browser'), preview = levels(ui)[1].children.find(node => node.className === 'physical-card');
   const images = ui.all.filter(node => node.tagName === 'img'); const loads = images.map(image => image.srcWrites.length);
-  preview.fire('pointerenter'); ui.key('e'); assert.equal(ui.get('first-village-cards-inspect').hidden, false);
+  preview.fire('pointerenter'); ui.key(' '); assert.equal(ui.get('first-village-cards-inspect').hidden, false);
   ui.get('first-village-cards-browser-take').fire('click'); await settle();
   assert.equal(taken[0].cardId, 'TS-0301'); assert.equal(taken[0].pileId, 'village-thief');
   assert.equal(levels(ui)[0].children[3].textContent, '剩余 4 张');
@@ -263,7 +263,7 @@ test('disposal releases capture, observers, modal and inspection without changin
   assert.equal(panel.captured.size, 1); area.finish(); assert.equal(panel.captured.size, 0);
   area.openSupply('amazon'); await settle();
   const preview = levels(ui)[0].children.find(node => node.className === 'physical-card');
-  preview.fire('pointerenter'); ui.key('e'); assert.equal(ui.get('first-village-cards-inspect').hidden, false);
+  preview.fire('pointerenter'); ui.key(' '); assert.equal(ui.get('first-village-cards-inspect').hidden, false);
   const committed = desktop.style.transform; area.dispose(); area.dispose();
   assert.equal(ui.get('one').children.length, 0); assert.equal(ui.get('first-overlays').isConnected, false);
   assert.ok(ui.observers.slice(0, 2).every(observer => observer.disconnected));
