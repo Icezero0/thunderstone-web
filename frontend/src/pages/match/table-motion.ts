@@ -12,6 +12,7 @@ export class TableMotion {
   private revision = 0;
   constructor(private area: PublicTableArea, private deck: PlayerDeckArea, private host: HTMLElement) {}
   private rect(place: MotionPlace, id: string, dungeon: DungeonState): CardFlightOrigin | null {
+    if (place.kind === 'supply') return this.area.focusSupplyPile(place.zone_id);
     if (place.kind === 'owned') return this.deck.cardRect(id) ?? (place.zone === 'draw' ? this.deck.drawRect() : this.deck.discardRect());
     if (place.kind === 'dungeon') return this.area.focusDungeon(place.dungeon_id);
     if (place.kind === 'attachment') return this.deck.attachmentRect(place.anchor_id) ?? this.area.focusAttachment(place.anchor_id)
@@ -84,7 +85,11 @@ export class TableMotion {
       await motion.fly(step.card.card_id ?? null, origins[i]!, targets[i]!, fast);
       motion.dispose(); this.flights = this.flights.filter(item => item !== motion);
     }));
-    if (revision === this.revision) {this.deck.setState(next); this.area.stageDungeon(board);}
+    if (revision === this.revision) {
+      for (const step of steps) if (step.destination.kind === 'supply')
+        this.area.receiveReturnedCard(step.destination.zone_id, step.destination.card_id);
+      this.deck.setState(next); this.area.stageDungeon(board);
+    }
     return {owned: next, dungeon: board};
   }
   async shuffle(dungeonId: string, count: number): Promise<void> {

@@ -113,6 +113,15 @@ export class VillageArea {
     const rect = pile && this.entries.get(pile.id)?.card?.elements.surface.getBoundingClientRect();
     return rect && rect.width > 0 && rect.height > 0 ? rect : null;
   }
+  /** Return flights target the pile even when this level is buried or sold out. */
+  pileRect(pileId: string): DOMRect | null {
+    const entry = this.entries.get(pileId);
+    return entry ? (entry.card?.elements.surface ?? entry.slot).getBoundingClientRect() : null;
+  }
+  receiveReturnedCard(pileId: string, cardId: string): void {
+    this.setState({piles: this.state.piles.map(pile => pile.id !== pileId ? pile : {...pile,
+      cards: pile.cards.map(card => card.cardId !== cardId || card.count === null ? card : {...card, count: card.count + 1})})});
+  }
   /** Host-supplied legal top-card prices. No price or affordability rules live here. */
   setPurchaseOptions(options: readonly {cardId: string; price: number}[]): void {
     this.highlighted = new Map(options.map(item => [item.cardId, item.price]));

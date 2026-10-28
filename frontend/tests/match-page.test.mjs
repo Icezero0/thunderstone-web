@@ -210,7 +210,7 @@ function fixture(status = 'active') {
   return view;
 }
 
-async function page({view = fixture(), authenticated = true, userId = 1, autoSort = false, savePreference, search = `?id=${'m'.repeat(32)}`, post, getMatch, getExport, restoreFailureOnce = false, animationsEnabled = false} = {}) {
+async function page({view = fixture(), authenticated = true, userId = 1, autoSort = false, savePreference, search = `?id=${'m'.repeat(32)}`, post, getMatch, getExport, restoreFailureOnce = false, animationsEnabled = false, pendingImages = [], brokenImage = null} = {}) {
   const requests = [], navigations = [], sockets = [], downloads = [], revokedUrls = [];
   const cloneStats = {previewInputs: 0};
   let current = view, uuidCount = 0;
@@ -219,8 +219,8 @@ async function page({view = fixture(), authenticated = true, userId = 1, autoSor
     constructor() {sockets.push(this);}
     send() {} close() {this.onclose?.();}
   }
-  const ui = await domPage({html, source, animationsEnabled, session: authenticated ? {access_token: 'token', refresh_token: 'refresh'} : null,
-    globals: ({document, Element}) => ({HTMLInputElement: Element,
+  const ui = await domPage({html, source, animationsEnabled, pendingImages, brokenImage, session: authenticated ? {access_token: 'token', refresh_token: 'refresh'} : null,
+    globals: ({window, document, Element}) => {return ({HTMLInputElement: Element,
       Option: function(text, value) {const option = document.createElement('option'); option.textContent = text; option.value = value; return option;},
       location: {search, protocol: 'https:', host: 'test.invalid', replace: url => navigations.push(url), assign: url => navigations.push(url)},
       history: {replaceState() {}}, Blob, URL: class extends URL {
@@ -232,7 +232,7 @@ async function page({view = fixture(), authenticated = true, userId = 1, autoSor
       }, queueMicrotask,
       setTimeout, clearTimeout, setInterval: () => 1, clearInterval() {}, WebSocket: FakeSocket,
       crypto: {randomUUID: () => ++uuidCount === 1 ? 'command-uuid' : `command-uuid-${uuidCount}`}, confirm: () => true,
-    }),
+    });},
     fetchResponse: async (url, options = {}) => {
       requests.push({url, options, body: options.body ? JSON.parse(options.body) : null});
       assert.equal(options.headers?.get('Authorization'), authenticated ? 'Bearer token' : null);
@@ -934,6 +934,22 @@ test('an invalid declaration reports in the response area, retains its target fo
   assert.match(ui.get('match-deck-player-response').textContent, /攻击阶层 2/); ui.cleanup();
 });
 
+test('confirming battle responds locally but unresolved battle choices never show an attack or result', async () => {
+  const {view} = declarationView({pending: true}); let reply;
+  const ui = await page({view, animationsEnabled: true, post: () => new Promise(resolve => {reply = resolve;})});
+  ui.get('match-public-dungeon-cards-main-rank-1').children[1].children[0].fire('click');
+  await ui.click('match-deck-response-battle:confirm');
+  assert.ok(ui.animations.some(animation => animation.element.className === 'battle-focus'));
+  const waiting = structuredClone(view); waiting.version++; waiting.battle_preparation = null;
+  waiting.turn.subphase = 'BATTLE_EFFECTS'; waiting.pending_choice = {kind: 'effect_select', player_id: 'alice', can_resolve: true};
+  waiting.legal_commands = [{type: 'ResolveChoice', instance_ids: view.hand.map(card => card.instance_id), min_count: 1, max_count: 1}];
+  waiting.event_log = [{sequence: 1, kind: 'battle_target_declared', player_id: 'alice', card_id: 'TS-0476', rank: 1}];
+  reply(waiting); await settle(); await ui.advance(2000);
+  assert.equal(ui.animations.some(animation => animation.element.className === 'battle-result'), false);
+  assert.equal(ui.animations.filter(a => a.element.className.startsWith('battle-hit')).length, 0, 'unresolved choices never launch an attack');
+  assert.equal(posts(ui).length, 1); ui.cleanup();
+});
+
 test('a removed declaration target clears local selection and disables confirmation', async () => {
   const {view, f, hall} = declarationView(), ui = await page({view});
   ui.get('match-public-dungeon-cards-main-rank-1').children[1].children[0].fire('click');
@@ -1349,13 +1365,14 @@ test('upgrade highlights only eligible hand heroes and submits a sole legal upgr
   assert.equal(ui.get('match-deck-response-FinishTurn').disabled, false); ui.cleanup();
 });
 
-test('a committed hero upgrade evolves instead of playing its destruction event, and refresh does not replay it', async () => {
+for (const removalKind of ['card_destroyed', 'destruction_returned_to_supply'])
+test(`a committed hero upgrade evolves without a separate ${removalKind} animation or refresh replay`, async () => {
   const view = villageView('VILLAGE_UPGRADE', [{type: 'UpgradeHero', options: [{source_instance_id: 'CI-1', target_card_id: 'TS-0300', xp_cost: 3}]}, {type: 'FinishUpgrading'}]);
   view.viewer_resources.xp = 3;
   const next = structuredClone(view); next.version++; next.viewer_resources.xp = 0;
   next.turn.subphase = 'ACTION_END'; next.legal_commands = [{type: 'FinishTurn'}];
   next.hand = next.hand.filter(card => card.instance_id !== 'CI-1'); next.discard = [{instance_id: 'CI-evolved', card_id: 'TS-0300'}];
-  next.event_log = [{sequence: 1, kind: 'card_destroyed', player_id: 'alice', card_id: 'TS-0001'},
+  next.event_log = [{sequence: 1, kind: removalKind, player_id: 'alice', card_id: 'TS-0001'},
     {sequence: 2, kind: 'hero_upgraded', player_id: 'alice', source_card_id: 'TS-0001', target_card_id: 'TS-0300', xp_cost: 3}];
   const ui = await page({view, animationsEnabled: true, post: () => next});
   await ui.click('match-deck-response-village:upgrade'); handCards(ui)[0].fire('click'); await settle();
@@ -1705,6 +1722,159 @@ function dungeonVisualViews(feature = null) {
   final.event_log.push({sequence: final.event_log.length + 1, kind: 'hall_card_entered', card_id: 'TS-0477', rank: 3, hall_zone: 'hall:main'});
   return {before, final};
 }
+
+for (const [attack, magic, won] of [[7, 0, true], [0, 7, true], [3, 4, true], [1, 0, false], [0, 0, false]])
+test(`committed battle impact ${attack}/${magic}/${won} precedes departure and refill`, async () => {
+  const {before, final} = dungeonVisualViews();
+  before.turn.subphase = 'DUNGEON_DECLARE';
+  if (!won) {
+    final.discard = []; final.dungeons[0].deck_count = 10;
+    final.event_log[0] = {kind: 'monster_returned_to_deck', card_id: 'TS-0476', hall_zone: 'hall:main', rank: 1,
+      deck_zone: 'dungeon:main', position: 'bottom', hall_rank_count: 3};
+  }
+  final.event_log.unshift({kind: 'battle_resolved', player_id: 'alice', target_card_id: 'TS-0476', hall_zone: 'hall:main', rank: 1,
+    health: 5, outcome: won ? 'win' : 'loss', calculation: {attack, magic_attack: magic, effective_attack: attack + magic},
+    participants: [{card_id: before.hand[0].card_id}]});
+  final.event_log.forEach((event, index) => event.sequence = index + 1);
+  const ui = await page({view: before, animationsEnabled: true}); ui.setView(final); await ui.click('refresh-match');
+  const effects = name => ui.animations.filter(animation => animation.element.className === name);
+  assert.equal(effects('battle-result').length, 1);
+  assert.equal(effects('battle-result')[0].element.dataset.outcome, won ? 'win' : 'loss');
+  assert.equal(publicFlights(ui).length, 0, 'monster stays until impact/result finishes');
+  assert.equal(ui.get('match-deck-response-FinishTurn').disabled, true);
+  await ui.advance(1250);
+  assert.equal(effects('battle-hit battle-hit-slash').length, attack > 0 ? 1 : 0);
+  assert.equal(effects('battle-hit battle-hit-magic').length, magic > 0 ? 1 : 0);
+  assert.equal(publicFlights(ui).length, 0, 'result remains visible before monster departure');
+  await ui.advance(effects('battle-result')[0].options.delay + 1800 - 1250 + 30);
+  assert.equal(publicFlights(ui).length, 1, 'departure follows the committed result');
+  await ui.advance(3000);
+  assert.equal(ui.get('match-deck-discard-count').textContent, won ? '1' : '0');
+  assert.equal(ui.get('match-deck-response-FinishTurn').disabled, false);
+  assert.equal(ui.all.filter(node => node.isConnected && node.className === 'battle-result').length, 0);
+  await ui.click('refresh-match'); assert.equal(effects('battle-result').length, 1, 'refresh never replays a battle');
+  ui.cleanup();
+});
+
+for (const attacker of ['alice', 'bob']) test(`battle projectiles use ${attacker === 'alice' ? 'own hand area' : 'opponent avatar'} and arrive at the monster`, async () => {
+  const {before, final} = dungeonVisualViews();
+  final.event_log.unshift({kind: 'battle_resolved', player_id: attacker, target_card_id: 'TS-0476', hall_zone: 'hall:main', rank: 1,
+    health: 5, outcome: 'win', calculation: {attack: 4, magic_attack: 3, effective_attack: 7}});
+  final.event_log.forEach((event, index) => event.sequence = index + 1);
+  const ui = await page({view: before, animationsEnabled: true});
+  const row = descendants(ui.get('match-public-players')).find(node => node.dataset.playerId === attacker);
+  const avatar = descendants(row).find(node => node.className === 'player-avatar');
+  avatar.getBoundingClientRect = () => ({left: 850, top: 260, width: 40, height: 40, right: 890, bottom: 300});
+  const track = ui.all.find(node => node.className.split(' ').includes('hand-track'));
+  track.getBoundingClientRect = () => ({left: 200, top: 500, width: 600, height: 160, right: 800, bottom: 660});
+  ui.setView(final); await ui.click('refresh-match');
+  await ui.advance(1000);
+  const paths = ui.all.filter(node => node.className.startsWith('battle-path '));
+  assert.equal(paths.length, 2);
+  for (const path of paths) {
+    assert.equal(parseFloat(path.style.left), attacker === 'alice' ? 500 : 870);
+    assert.equal(parseFloat(path.style.top), attacker === 'alice' ? 580 : 280);
+    const angle = Number(path.style.transform.match(/rotate\(([^r]+)rad/)[1]);
+    const hit = ui.all.find(node => node.className === `battle-hit battle-hit-${path.className.endsWith('slash') ? 'slash' : 'magic'}`);
+    const endX = parseFloat(path.style.left) + Math.cos(angle) * parseFloat(path.style.width);
+    const endY = parseFloat(path.style.top) + Math.sin(angle) * parseFloat(path.style.width);
+    assert.ok(Math.abs(endX - parseFloat(hit.style.left) - parseFloat(hit.style.width) / 2) < .001);
+    assert.ok(Math.abs(endY - parseFloat(hit.style.top) - parseFloat(hit.style.height) / 2) < .001);
+    const trail = ui.animations.find(a => a.element === path.children[0]);
+    const impact = ui.animations.find(a => a.element === hit);
+    assert.ok(impact.options.delay > trail.options.delay, 'travel precedes impact');
+  }
+  await ui.advance(5000); ui.cleanup();
+});
+
+test('battle size follows each damage type independently and saturates at high values', async () => {
+  async function sizes(attack, magic) {
+    const {before, final} = dungeonVisualViews();
+    final.event_log.unshift({kind: 'battle_resolved', player_id: 'alice', target_card_id: 'TS-0476', hall_zone: 'hall:main', rank: 1,
+      health: 5, outcome: 'win', calculation: {attack, magic_attack: magic, effective_attack: attack + magic}});
+    final.event_log.forEach((event, index) => event.sequence = index + 1);
+    const ui = await page({view: before, animationsEnabled: true});
+    ui.setView(final); await ui.click('refresh-match');
+    await ui.advance(1000);
+    const element = name => ui.all.find(node => node.className === name);
+    const result = {
+      slash: parseFloat(element('battle-hit battle-hit-slash').style.width),
+      magic: parseFloat(element('battle-hit battle-hit-magic').style.width),
+      physicalFlight: parseFloat(element('battle-path battle-path-slash').style.height),
+      magicFlight: parseFloat(element('battle-path battle-path-magic').style.height),
+    };
+    await ui.advance(5000); ui.cleanup(); return result;
+  }
+  const low = await sizes(1, 1), physical = await sizes(20, 1), magic = await sizes(1, 20);
+  assert.ok(physical.slash > low.slash); assert.ok(physical.physicalFlight > low.physicalFlight);
+  assert.equal(physical.magic, low.magic); assert.equal(physical.magicFlight, low.magicFlight);
+  assert.ok(magic.magic > low.magic); assert.ok(magic.magicFlight > low.magicFlight);
+  assert.equal(magic.slash, low.slash); assert.equal(magic.physicalFlight, low.physicalFlight);
+  assert.deepEqual(await sizes(40, 40), await sizes(999, 999));
+});
+
+for (const interrupt of ['skip', 'blur', 'resize']) test(`battle impact cleans up on ${interrupt} without stalling the final board`, async () => {
+  const {before, final} = dungeonVisualViews();
+  final.event_log.unshift({kind: 'battle_resolved', player_id: 'alice', target_card_id: 'TS-0476', hall_zone: 'hall:main', rank: 1,
+    health: 5, outcome: 'win', calculation: {attack: 7, magic_attack: 0, effective_attack: 7}});
+  final.event_log.forEach((event, index) => event.sequence = index + 1);
+  const ui = await page({view: before, animationsEnabled: true}); ui.setView(final); await ui.click('refresh-match');
+  assert.equal(publicFlights(ui).length, 0);
+  if (interrupt === 'skip') ui.all.find(node => node.className.includes('match-animation-skip')).fire('click');
+  else ui.window.fire(interrupt);
+  await settle(); await ui.advance(3000);
+  assert.equal(ui.get('match-deck-discard-count').textContent, '1');
+  assert.equal(ui.get('match-deck-response-FinishTurn').disabled, false);
+  assert.equal(ui.all.filter(node => node.isConnected && node.className === 'battle-result').length, 0);
+  assert.ok(ui.animations.filter(animation => animation.element.className.startsWith('battle-')).every(animation => animation.onfinish === null));
+  ui.cleanup();
+});
+
+for (const supplyKind of ['basic', 'hero']) test(`battle return flies into ${supplyKind} supply before monster departure without dissolving`, async () => {
+  const {before, final} = dungeonVisualViews();
+  const pileId = `${supplyKind}_supply:TS-0001`;
+  const supply = {zone_id: pileId, kind: supplyKind, infinite: supplyKind === 'basic',
+    remaining: supplyKind === 'basic' ? null : 0, top_card_id: supplyKind === 'basic' ? 'TS-0001' : null,
+    cards: [{card_id: 'TS-0001', count: supplyKind === 'basic' ? null : 0}]};
+  before.supplies = [supply]; final.supplies = [{...supply, remaining: supplyKind === 'basic' ? null : 1,
+    top_card_id: 'TS-0001', cards: [{card_id: 'TS-0001', count: supplyKind === 'basic' ? null : 1}]}];
+  before.turn.subphase = 'BATTLE_EFFECTS';
+  final.hand = final.hand.filter(card => card.instance_id !== 'CI-1');
+  final.event_log = [
+    {sequence: 927, kind: 'battle_resolved', player_id: 'alice', target_card_id: 'TS-0476', hall_zone: 'hall:main', rank: 1,
+      outcome: 'win', health: 7, calculation: {attack: 10, magic_attack: 2, effective_attack: 12}},
+    {sequence: 930, kind: 'destruction_returned_to_supply', player_id: 'alice', card_id: 'TS-0001', cause: 'after_battle'},
+    ...final.event_log.map((event, index) => ({...event, sequence: 932 + index})),
+  ];
+  final.table_motion = [{sequence: 930, kind: 'table_card_motion', steps: [{source: {kind: 'owned', zone: 'hand'},
+    destination: {kind: 'supply', zone_id: pileId, card_id: 'TS-0001'}, card: {instance_id: 'CI-1', card_id: 'TS-0001'}}]}];
+  const ui = await page({view: before, animationsEnabled: true});
+  ui.setView(final); await ui.click('refresh-match');
+  const destruction = () => ui.animations.filter(a => a.element.className === 'card-destruction');
+  assert.equal(destruction().length, 0, 'battle presentation comes first');
+  const result = ui.animations.find(a => a.element.className === 'battle-result');
+  assert.ok(result);
+  await ui.advance(result.options.delay + result.options.duration + 30);
+  assert.equal(destruction().length, 0, 'returned-to-supply never dissolves');
+  assert.equal(publicFlights(ui).length, 1, 'only the return flight starts before monster departure');
+  assert.equal(publicFlights(ui)[0].element.children[0].dataset.cardId, 'TS-0001');
+  assert.equal(ui.get('match-public-village-tab').getAttribute('aria-selected'), 'true');
+  await ui.advance(250);
+  assert.equal(publicFlights(ui).length, 2);
+  assert.equal(publicFlights(ui)[1].element.children[0].dataset.cardId, 'TS-0476');
+  const pile = ui.all.find(node => node.id?.endsWith(`pile-${pileId}`));
+  const count = descendants(pile).find(node => node.className === 'public-pile-count');
+  assert.equal(count.textContent, supplyKind === 'basic' ? '∞' : '1');
+  await ui.advance(6000);
+  assert.equal(destruction().length, 0);
+  const flights = publicFlights(ui).length;
+  assert.equal(ui.get('match-deck-discard-count').textContent, '1');
+  assert.equal(ui.get('match-deck-response-FinishTurn').disabled, false);
+  await ui.click('refresh-match');
+  assert.equal(destruction().length, 0);
+  assert.equal(publicFlights(ui).length, flights, 'refresh must not replay the return');
+  ui.cleanup();
+});
 
 for (const protectedHero of [false, true]) test(`zero-strength cleanup animates before monster departure: protection ${protectedHero}`, async () => {
   const {before, final} = dungeonVisualViews();

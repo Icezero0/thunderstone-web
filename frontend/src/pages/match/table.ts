@@ -81,7 +81,11 @@ export class MatchTable {
           this.setSelected([]); this.controls(this.view!, this.busy); return;
         }
         if (id === 'SubmitBattleTeam') {this.battle.submit(); return;}
-        if (id === 'battle:confirm') {this.battle.confirmTarget(); return;}
+        if (id === 'battle:confirm') {
+          if (this.battle.targetId && this.battle.targetIds.includes(this.battle.targetId))
+            this.timeline.cueBattle(this.battle.targetId, this.battle.selectedIds);
+          this.battle.confirmTarget(); return;
+        }
         if (id === 'battle:effects') {this.cardActions.close(); this.battle.toggleEffects(); return;}
         const command = this.view?.legal_commands.find(command => command.type === id);
         if (id.startsWith('action:')) this.send({type: 'ChooseAction', action: id.slice(7)});

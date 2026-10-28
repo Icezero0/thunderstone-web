@@ -186,6 +186,8 @@ export async function page({html = probeHtml, source = probeSource, pendingImage
   window.innerWidth = 1280; window.innerHeight = 900;
   window.matchMedia = () => ({matches: reducedMotion});
   window.setTimeout = schedule; window.clearTimeout = id => timers.delete(id);
+  window.requestAnimationFrame = callback => schedule(() => callback(clock), 16);
+  window.cancelAnimationFrame = id => timers.delete(id); window.performance = {now: () => clock};
   document.getElementById = find; document.createElement = tag => new Element(tag); document.hidden = false;
   document.querySelector = selector => selector.startsWith('#') ? find(selector.slice(1)) : null;
   document.createElementNS = (_namespace, tag) => new Element(tag);

@@ -1,5 +1,6 @@
 import {predictAction} from '@thunderstone/engine';
 import type {MatchView, GameCommand, MatchCardInstance, DeckMotionStep} from '../../shared/api/types.js';
+import {isDestructionEvent} from './animation-events.js';
 
 /** Presentation only: calculations and legality come from the shared engine. */
 export function predictMatchAction(view: MatchView, command: GameCommand): MatchView | null {
@@ -18,11 +19,19 @@ export function predictMatchAction(view: MatchView, command: GameCommand): Match
       cards: supply.cards.map(row => ({...row, count: pile.filter(id => known[id].card_id === row.card_id).length}))};
   });
   const motions: NonNullable<MatchView['card_motion']> = [];
+  const tableMotions: NonNullable<MatchView['table_motion']> = [];
   for (const event of events) {
     let steps: DeckMotionStep[] = [];
     if (event.kind === 'card_bought') steps = [{kind: 'gain', source: 'supply', destination: 'discard', cards: [card(event.instance_id)]}];
     if (event.kind === 'hero_upgraded') steps = [{kind: 'upgrade', source_card: card(event.source_instance_id), target_card: card(event.target_instance_id)}];
     if (event.kind === 'card_destroyed' && event.reason !== 'hero_upgrade') steps = [{kind: 'destroy', cards: [card(event.instance_id)]}];
+    if (event.kind === 'destruction_returned_to_supply' && event.reason !== 'hero_upgrade') {
+      const returned = card(event.instance_id);
+      tableMotions.push({sequence: event.sequence, kind: 'table_card_motion', steps: [{
+        source: {kind: 'owned', zone: 'hand'}, destination: {kind: 'supply', card_id: returned.card_id,
+          zone_id: event.destination === 'basic_supply' ? `basic_supply:${returned.card_id}` : event.destination}, card: returned,
+      }]});
+    }
     if (steps.length) motions.push({sequence: event.sequence, kind: 'player_card_motion', player_id: player, steps});
   }
   const resources = state.players[player];
@@ -30,7 +39,7 @@ export function predictMatchAction(view: MatchView, command: GameCommand): Match
   // `reason` and an owner encoded in `source`; the animation timeline reads
   // `cause` and `player_id`. In particular, upgrading owns its old card's exit.
   const eventLog = events.map(event => {
-    if (!['card_destroyed', 'card_destruction_replaced'].includes(event.kind)) return event;
+    if (!isDestructionEvent({kind: event.kind}) && event.kind !== 'card_destruction_replaced') return event;
     const owner = typeof event.source === 'string' && event.source.startsWith('player:') ? event.source.split(':')[1] : undefined;
     return {...event, cause: ['hero_upgrade', 'after_battle', 'trap_resolved'].includes(event.reason) ? event.reason : 'effect',
       ...(owner ? {player_id: owner} : {})};
@@ -44,7 +53,7 @@ export function predictMatchAction(view: MatchView, command: GameCommand): Match
     viewer_resources: {...view.viewer_resources, xp: resources.xp, temporary_gold: resources.temporary_gold,
       purchases_remaining: resources.purchases_remaining, extra_basic_purchases: resources.extra_basic_purchases ?? 0, gold_income_preview: null},
     legal_commands: result.legal_commands as MatchView['legal_commands'], command_instances: {}, pending_choice: null,
-    event_log: eventLog as MatchView['event_log'], card_motion: motions, table_motion: [],
+    event_log: eventLog as MatchView['event_log'], card_motion: motions, table_motion: tableMotions,
     ...(view.sync ? {sync: {...view.sync, reset: false, event_sequence: state.next_event_sequence - 1}} : {})};
 }
 

@@ -70,6 +70,9 @@ export class DungeonArea {
   setInteractionSuspended(suspended: boolean): void {this.cards.interactions.setSuspended(suspended);}
   setStatusOverrides(statuses: Readonly<Record<string, readonly CardStatus[]>> | null): void {this.cards.setStatusOverrides(statuses);}
   cardRect(id: string): DOMRect | null {return this.hallCards.get(id)?.elements.surface.getBoundingClientRect() ?? null;}
+  animateCard(id: string, frames: Keyframe[], options: KeyframeAnimationOptions): Animation | null {
+    return this.hallCards.get(id)?.elements.surface.animate(frames, options) ?? null;
+  }
   attachmentRect(id: string): DOMRect | null {return this.hallCards.get(id)?.attachmentRect() ?? this.cardRect(id);}
   deckRect(lane: string): DOMRect | null {return this.laneViews.get(lane)?.deck.slot.getBoundingClientRect() ?? null;}
   hideCard(id: string): void {this.hallCards.get(id)?.setVisible(false);}

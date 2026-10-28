@@ -13,6 +13,20 @@ from backend.tests.support.match_projection import sample_match
 
 
 class MatchProjectionTests(unittest.TestCase):
+    def test_battle_animation_exposes_final_numbers_and_card_definitions_without_private_identities(self):
+        raw = {"kind": "battle_resolved", "sequence": 3, "target_instance_id": "private-target", "target_card_id": "TS-0476",
+               "player_id": "alice", "hall_zone": "hall:b", "rank": 1, "health": 5, "outcome": "win",
+               "calculation": {"attack": 3, "magic_attack": 4, "light": 1, "effective_attack": 5,
+                               "components": [{"card_id": "TS-0001", "instance_id": "private-hand", "attack": 1}],
+                               "hero_strength": {"private-hand": 2}}}
+        row = event_view([raw], {}, lambda _: None)[0]
+        self.assertEqual(row["hall_zone"], "hall:b")
+        self.assertEqual(row["player_id"], "alice")
+        self.assertEqual(row["participants"], [{"card_id": "TS-0001"}])
+        self.assertEqual(row["calculation"]["effective_attack"], 5)
+        self.assertNotIn("private-", json.dumps(row))
+        self.assertNotIn("hero_strength", row["calculation"])
+
     def test_public_effects_are_shared_display_data_without_per_card_buffs(self):
         match = sample_match()
         effects = [{"kind": "buff", "source_card_id": "TS-0288", "source_name": "指引之光",

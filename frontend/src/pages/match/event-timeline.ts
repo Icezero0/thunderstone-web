@@ -5,18 +5,19 @@ import type {DungeonState, TableCard} from '../../shared/components/table-areas/
 import {PublicCardMotion} from './public-card-motion.js';
 import {deckTransitions} from './deck-transitions.js';
 import {withoutDeckCards} from '../../shared/components/player-deck-area/model.js';
-import {isUpgradeDestruction, isDiseaseGainDestruction} from './animation-events.js';
+import {isDestructionEvent, isUpgradeDestruction, isDiseaseGainDestruction} from './animation-events.js';
 import {traceCardMotion} from '../../shared/components/game-card/motion-trace.js';
 import {effectMotion} from './effect-motion.js';
 import {TableMotion} from './table-motion.js';
 import {CardAttachments} from '../../shared/components/game-card/card-attachments.js';
 import {animationSchedule} from './animation-schedule.js';
+import {BattleMotion} from './battle-motion.js';
 
 type Snapshot = {table: PublicTableState; deck: PlayerDeckState};
 type Event = MatchView['event_log'][number];
 const kinds = new Set(['monster_defeated', 'monster_returned_to_deck', 'effect_hall_relocated', 'thunderstone_acquired', 'thunderstone_returned_to_deck', 'hall_cards_swapped', 'hall_card_repositioned', 'battle_resolved', 'hall_card_entered', 'trap_revealed', 'trap_removed', 'treasure_claimed', 'guardian_entered_rank_0']);
 export const hasEventTimeline = (events: readonly Event[], previous?: DungeonState, final?: DungeonState): boolean =>
-  events.some(event => kinds.has(event.kind) || event.kind === 'card_destroyed' && !isUpgradeDestruction(event, events)
+  events.some(event => kinds.has(event.kind) || isDestructionEvent(event) && !isUpgradeDestruction(event, events)
     || event.kind === 'player_card_motion'
     || event.kind === 'table_card_motion' || event.kind === 'dungeon_shuffle_motion' || event.kind === 'player_shuffle_motion'
     || event.kind === 'card_destruction_replaced'
@@ -30,6 +31,7 @@ export class MatchEventTimeline {
   private readonly disease: PublicCardMotion;
   private readonly removal: PublicCardMotion;
   private readonly transfers: TableMotion;
+  private readonly battle: BattleMotion;
   private pendingDisease: MatchView['pending_disease'] = null;
   private displayedDisease: string | null = null;
   private target: Snapshot | null = null;
@@ -47,6 +49,7 @@ export class MatchEventTimeline {
     this.disease = new PublicCardMotion(host);
     this.removal = new PublicCardMotion(host);
     this.transfers = new TableMotion(area, deck, host);
+    this.battle = new BattleMotion(host);
     this.skip.type = 'button'; this.skip.className = 'button secondary match-animation-skip game-cursor';
     this.skip.textContent = '跳过动画'; this.skip.hidden = true;
     this.skip.addEventListener('click', this.finish); host.append(this.skip);
@@ -64,6 +67,12 @@ export class MatchEventTimeline {
   }
   syncPending(view: MatchView): void {
     this.syncDisease(view.status === 'active' ? view.pending_disease : null);
+  }
+  cueBattle(targetId: string, participants: readonly string[]): void {
+    if (this.isBusy) return;
+    this.battle.cue(this.area.hallCardRect(targetId), participants.flatMap(id => {
+      const rect = this.deck.cardRect(id); return rect ? [rect] : [];
+    }));
   }
   async play(previous: Snapshot, final: Snapshot, view: MatchView, events: readonly Event[]): Promise<void> {
     traceCardMotion('timeline:start', {version: view.version, events: events.map(event => event.kind)});
@@ -122,7 +131,30 @@ export class MatchEventTimeline {
     try {
       for (const event of animationSchedule(events)) {
         if (!alive()) return;
-        if (event.kind === 'table_card_motion') {
+        if (event.kind === 'battle_resolved') {
+          const trace = event.calculation as {attack?: number; magic_attack?: number; effective_attack?: number} | undefined;
+          if (!trace || ![trace.attack, trace.magic_attack, trace.effective_attack, event.health].every(value => typeof value === 'number' && Number.isFinite(value))
+            || !['win', 'loss'].includes(String(event.outcome))) continue;
+          const candidates = dungeon.dungeons.filter(lane => !event.hall_zone || lane.id === laneFor(event)).flatMap(lane => lane.hall)
+            .filter(slot => slot.card?.cardId === event.target_card_id && slot.rank === event.rank);
+          const victim = candidates.length === 1 ? candidates[0].card : null;
+          if (!victim) continue;
+          const target = this.area.focusHall(victim.id); if (!target) continue;
+          const attacker = typeof event.player_id === 'string' ? event.player_id : view.turn?.active_player_id;
+          const available = [...owned.hand];
+          const sources = attacker === view.viewer_player_id
+            ? (Array.isArray(event.participants) ? event.participants as {card_id: string}[] : []).flatMap(participant => {
+              const index = available.findIndex(card => card.cardId === participant.card_id); if (index < 0) return [];
+              const [card] = available.splice(index, 1), rect = this.deck.cardRect(card.id); return rect ? [rect] : [];
+            }) : [];
+          const player = attacker ? this.area.playerAvatarRect(attacker) ?? this.area.playerRect(attacker) : null;
+          const ownAttack = attacker === view.viewer_player_id;
+          if (ownAttack) this.deck.setActiveTab('hand', {duringAnimation: true});
+          const origin = ownAttack ? this.deck.handRect() : player;
+          await this.battle.play({target, origin, sources: sources.length ? sources : origin ? [origin] : [],
+            attack: trace.attack!, magic: trace.magic_attack!, total: trace.effective_attack!, health: event.health as number,
+            won: event.outcome === 'win', shake: (frames, options) => this.area.animateHallCard(victim.id, frames, options)});
+        } else if (event.kind === 'table_card_motion') {
           const result = await this.transfers.play(event.steps as TableMotionStep[], owned, dungeon, view, event.fast === true);
           owned = result.owned; dungeon = result.dungeon;
         } else if (event.kind === 'dungeon_shuffle_motion') {
@@ -282,11 +314,12 @@ export class MatchEventTimeline {
       // The exact movement stream has already handled these. In particular a
       // second cleanup inference would discard the newly refilled hand again.
       const covered = new Set(['cards_drawn', 'player_deck_shuffled', 'turn_hand_discarded', 'hero_upgraded', 'card_bought', 'effect_card_gained', 'effect_purchase_completed']);
-      const steps = deckTransitions(owned, final.deck, events.filter(event => event.kind !== 'card_destroyed' && (!hasOwnMotion || !covered.has(event.kind))), view.viewer_player_id);
+      const steps = deckTransitions(owned, final.deck, events.filter(event => !isDestructionEvent(event) && (!hasOwnMotion || !covered.has(event.kind))), view.viewer_player_id);
       if (steps.length) await this.deck.animateSequence(final.deck, steps);
     } finally {if (alive()) this.finish();}
   }
   finish = (): void => {
+    this.battle.finish();
     this.skip.hidden = true;
     if (this.target) traceCardMotion('timeline:finish', {stack: new Error().stack?.split('\n').slice(1, 5).join('\n')});
     this.revision++; this.spotlight.finish(); this.removal.finish(); this.disease.settle(); this.transfers.finish();
@@ -307,7 +340,7 @@ export class MatchEventTimeline {
   private visibility = (): void => {if (document.hidden) this.finish();};
   dispose(): void {
     this.skip.removeEventListener('click', this.finish); this.skip.remove();
-    this.finish(); this.spotlight.dispose(); this.removal.dispose(); this.disease.dispose(); window.removeEventListener('blur', this.finish); window.removeEventListener('resize', this.finish);
+    this.finish(); this.battle.dispose(); this.spotlight.dispose(); this.removal.dispose(); this.disease.dispose(); window.removeEventListener('blur', this.finish); window.removeEventListener('resize', this.finish);
     document.removeEventListener('visibilitychange', this.visibility);
   }
 }

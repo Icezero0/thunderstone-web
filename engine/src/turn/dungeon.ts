@@ -77,12 +77,12 @@ export function startCommittedBattle(tx: Transition, targetId: string) {
 }
 export function resolveBattleOutcome(tx: Transition) {
   const context = tx.state.battle_context, targetId = context.target_instance_id, target = tx.card(targetId);
-  const [, rank] = targetLocation(tx, targetId);
+  const [hallZone, rank] = targetLocation(tx, targetId);
   reconcileEquipment(tx, true);
   const trace = tx.combat(rank, target), health = tx.health(target, rank, targetId);
   const won = trace.can_defeat && trace.effective_attack >= health;
   tx.event('battle_resolved', {target_instance_id: targetId, target_card_id: target.card_id,
-    rank, health, outcome: won ? 'win' : 'loss', calculation: trace, card_effects: 'reviewed_ruleset'});
+    player_id: tx.playerId, hall_zone: hallZone, rank, health, outcome: won ? 'win' : 'loss', calculation: trace, card_effects: 'reviewed_ruleset'});
   context.outcome = won ? 'win' : 'loss';
   queueSteps(tx, [{op: 'release_battle_diseases', target_id: targetId, timing: 'after'},
     ...(won ? [{op: 'event', event: 'BATTLE_TRIUMPH', context: {source_instance_id: targetId, rank,

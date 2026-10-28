@@ -122,12 +122,13 @@ EVENT_FIELDS = {
     "battle_team_revision_required": ("player_id",),
     "rest_card_destroyed": ("player_id", "card_id"),
     "card_destroyed": ("card_id", "hall_zone", "rank"),
+    "destruction_returned_to_supply": ("card_id",),
     "card_destruction_replaced": ("card_id", "source", "destination"),
     "cards_drawn": ("player_id",), "turn_hand_discarded": ("player_id",),
     "player_deck_shuffled": ("player_id",),
     "dungeon_hand_revealed": ("player_id",), "cards_shown": ("player_id",),
     "battle_target_declared": ("player_id", "rank"),
-    "battle_resolved": ("target_card_id", "rank", "health", "outcome"),
+    "battle_resolved": ("player_id", "hall_zone", "target_card_id", "rank", "health", "outcome"),
     "monster_defeated": ("player_id", "xp_gained", "hall_zone", "rank", "hall_rank_count"),
     "monster_returned_to_deck": ("deck_zone", "hall_zone", "rank", "position", "hall_rank_count"),
     "thunderstone_returned_to_deck": ("deck_zone", "hall_zone", "rank", "hall_rank_count"),
@@ -159,7 +160,7 @@ def event_view(events, instances, add_card):
         if kind not in EVENT_FIELDS:
             continue
         row = {"kind": kind, **fields(raw, ("sequence", *EVENT_FIELDS[kind]))}
-        if kind in {"card_destroyed", "card_destruction_replaced"}:
+        if kind in {"card_destroyed", "destruction_returned_to_supply", "card_destruction_replaced"}:
             # A small semantic enum, never an interpreter ability/reason string.
             row["cause"] = "disease_gain" if raw.get("instance_id") in disease_removals else (
                 raw.get("reason") if raw.get("reason") in {"hero_upgrade", "after_battle", "trap_resolved"} else "effect")
@@ -167,7 +168,7 @@ def event_view(events, instances, add_card):
             row["destination"] = row["destination"].rsplit(":", 1)[-1]
         # Destruction is public: name the destroyed card and its former player,
         # without copying private instance records or the engine's zone data.
-        if kind in {"card_destroyed", "card_destruction_replaced"} and str(raw.get("source", "")).startswith("player:"):
+        if kind in {"card_destroyed", "destruction_returned_to_supply", "card_destruction_replaced"} and str(raw.get("source", "")).startswith("player:"):
             row["player_id"] = raw["source"].split(":")[1]
         if kind == "card_destroyed" and str(raw.get("source", "")).startswith(("basic_supply:", "hero_supply:", "village_supply:")):
             row["source_supply"] = raw["source"]
@@ -188,6 +189,9 @@ def event_view(events, instances, add_card):
         if kind == "battle_resolved":
             row["calculation"] = fields(raw.get("calculation", {}),
                                         ("attack", "magic_attack", "light", "effective_attack", "darkness_penalty"))
+            # Visible card definitions only; never expose private instance IDs or flags.
+            row["participants"] = [{"card_id": item["card_id"]} for item in
+                                   raw.get("calculation", {}).get("components", []) if item.get("card_id")]
         summaries.append(row)
     # History is public information, but never exposes the instance identity of
     # a card that later re-enters a hidden pile or the order produced by a shuffle.

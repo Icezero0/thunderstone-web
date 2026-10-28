@@ -5,6 +5,7 @@ import unittest
 
 from backend.app.modules.matches.animation_view import deck_motion_view
 from backend.app.modules.matches.interaction_view import event_view
+from backend.app.modules.matches.table_animation_view import table_motion_view
 from backend.app.modules.matches.projection import build_match_view
 from backend.tests.support.match_projection import sample_match
 from backend.app.integrations.game_engine.catalog.repository import load_catalog
@@ -18,6 +19,37 @@ from backend.tests.support.setup import config, request
 class MatchAnimationTests(unittest.TestCase):
     def project(self, events, instances, viewer='alice', cards=None):
         return deck_motion_view(events, instances, viewer, cards or {}, lambda card: card)
+
+    def test_battle_destruction_returned_to_supply_is_public_and_keeps_its_animation_position(self):
+        # Regression: v236, battle 927 -> militia returned 930 -> monster 932.
+        events = [
+            {'sequence': 927, 'kind': 'battle_resolved', 'player_id': 'alice'},
+            {'sequence': 929, 'kind': 'card_moved', 'instance_id': 'militia',
+             'source': 'player:alice:hand', 'destination': 'basic_supply'},
+            {'sequence': 930, 'kind': 'destruction_returned_to_supply', 'instance_id': 'militia',
+             'card_id': 'TS-0001', 'source': 'player:alice:hand', 'destination': 'basic_supply', 'reason': 'after_battle'},
+            {'sequence': 932, 'kind': 'monster_defeated', 'player_id': 'alice'},
+        ]
+        rows = self.project(events, {'militia': {'card_id': 'TS-0001'}})
+        self.assertEqual(rows, [])  # Return flights never dissolve the card.
+        for viewer in ('alice', 'bob'):
+            flights = table_motion_view(events, {'militia': {'card_id': 'TS-0001'}}, viewer, {}, lambda card: card)
+            self.assertEqual([row['sequence'] for row in flights], [930])
+            step = flights[0]['steps'][0]
+            self.assertEqual(step['destination'], {'kind': 'supply', 'zone_id': 'basic_supply:TS-0001', 'card_id': 'TS-0001'})
+            self.assertEqual(step['card']['card_id'], 'TS-0001')
+            self.assertEqual(step['source'], {'kind': 'owned', 'zone': 'hand'} if viewer == 'alice'
+                             else {'kind': 'player', 'player_id': 'alice', 'zone': 'hand'})
+            if viewer == 'bob': self.assertNotEqual(step['card']['instance_id'], 'militia')
+        self.assertEqual(self.project(events, {}, viewer='bob'), [])
+        public = event_view(events, {}, lambda card: card)
+        self.assertEqual([row['sequence'] for row in public], [927, 930, 932])
+        self.assertEqual(public[1], {'kind': 'destruction_returned_to_supply', 'sequence': 930,
+                                    'card_id': 'TS-0001', 'player_id': 'alice', 'cause': 'after_battle'})
+        events[2]['reason'] = 'hero_upgrade'
+        self.assertEqual(table_motion_view(events, {'militia': {'card_id': 'TS-0001'}}, 'alice', {}, lambda card: card), [])
+        self.assertEqual(self.project(events, {'militia': {'card_id': 'TS-0001'}}), [])
+        self.assertEqual(event_view(events, {}, lambda card: card)[1]['cause'], 'hero_upgrade')
 
     def test_shuffle_order_and_other_players_draws_are_never_exposed(self):
         instances = {key: {'card_id': 'TS-0001'} for key in ['old', 'secret-first', 'secret-second', 'unseen-bob']}

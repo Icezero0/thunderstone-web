@@ -358,6 +358,7 @@ export class PlayerDeckArea {
   closeBrowser(): void {this.assertActive(); this.browser.close(false); this.finish();}
   discardRect(): DOMRect {return this.discard.slot.getBoundingClientRect();}
   drawRect(): DOMRect {return this.draw.slot.getBoundingClientRect();}
+  handRect(): DOMRect {return this.view.handTrack.getBoundingClientRect();}
   cardRect(id: string): DOMRect | null {
     const anchor = allDeckCards(this.state).find(card => card.attachments?.some(item => item.id === id));
     if (anchor) {this.cardRect(anchor.id); return this.cards.get(anchor.id)?.attachmentRect() ?? null;}

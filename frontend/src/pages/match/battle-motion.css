@@ -1,0 +1,19 @@
+.battle-motion {position: fixed; inset: 0; z-index: 190; pointer-events: none; overflow: hidden;}
+.battle-motion > div {position: absolute; pointer-events: none;}
+.battle-path {transform-origin: left center;}
+.battle-trail {width: 100%; height: 100%; transform-origin: left center; border-radius: 100%;}
+.battle-trail-slash {background: linear-gradient(90deg, transparent, #d29a46 30%, #fff0bf 80%, #fffdf3); clip-path: polygon(0 40%, 82% 12%, 100% 50%, 82% 88%, 0 60%); filter: drop-shadow(0 0 5px #d5a34b);}
+.battle-trail-magic {background: linear-gradient(0deg, transparent, #477bab 15%, #b9e3ed 42%, #fffdf1 50%, #b9e3ed 58%, #477bab 85%, transparent); box-shadow: 0 0 14px #6ba5bb99;}
+.battle-hit::before, .battle-hit::after {content: ''; position: absolute; inset: 0;}
+.battle-hit-slash::before, .battle-hit-slash::after {inset: 45% -5%; background: linear-gradient(90deg, transparent, #e1b661 20%, #fffdf0 50%, #e1b661 80%, transparent); clip-path: polygon(0 50%, 55% 0, 100% 50%, 45% 100%); filter: drop-shadow(0 0 5px #e3b868); transform: rotate(-40deg);}
+.battle-hit-slash::after {transform: rotate(40deg) scale(.72);}
+.battle-hit-magic::before {border-radius: 50%; background: radial-gradient(circle, #fffdf4 0 4%, #cff4ef 5%, #70b5cf99 14%, #407eab33 32%, transparent 62%);}
+.battle-hit-magic::after {background: #dcf6ef; clip-path: polygon(50% 0, 54% 43%, 83% 17%, 57% 47%, 100% 50%, 57% 53%, 83% 83%, 54% 57%, 50% 100%, 46% 57%, 17% 83%, 43% 53%, 0 50%, 43% 47%, 17% 17%, 46% 43%);}
+.battle-ring {border: 2px solid; border-radius: 50%;}
+.battle-ring-slash {border-color: #dcb771; box-shadow: 0 0 8px #dcb77166, inset 0 0 8px #dcb77144;}
+.battle-ring-magic {border-color: #abdce7; box-shadow: 0 0 12px #7dbcc688, inset 0 0 12px #7dbcc655;}
+.battle-focus {border-radius: 8%; border: 1px solid var(--header-gold); box-shadow: inset 0 0 12px var(--header-gold), 0 0 18px var(--header-gold);}
+.battle-result {display: grid; gap: 4px; justify-items: center; min-width: 146px; padding: 11px 19px; border-radius: 8px; background: var(--header-background); color: var(--header-ink); box-shadow: 0 8px 28px rgb(0 0 0 / 35%); white-space: nowrap;}
+.battle-result strong {font: 25px var(--font-heading); letter-spacing: .16em; color: var(--game-action-green);}
+.battle-result[data-outcome="loss"] strong {color: var(--game-action-red);}
+.battle-result span {font: 12px var(--font-body); color: var(--header-muted);}

@@ -33,6 +33,8 @@ export class PublicTableArea {
     return rect();
   }
   focusSupply(cardId: string): DOMRect | null {return this.focusMotion('village', () => this.village.topCardRect(cardId));}
+  focusSupplyPile(pileId: string): DOMRect | null {return this.focusMotion('village', () => this.village.pileRect(pileId));}
+  receiveReturnedCard(pileId: string, cardId: string): void {this.village.receiveReturnedCard(pileId, cardId);}
   focusHall(id: string): DOMRect | null {return this.focusMotion('dungeon', () => this.dungeon.cardRect(id));}
   focusAttachment(id: string): DOMRect | null {return this.focusMotion('dungeon', () => this.dungeon.attachmentRect(id));}
   focusDungeon(id: string): DOMRect | null {return this.focusMotion('dungeon', () => this.dungeon.deckRect(id));}
@@ -105,6 +107,9 @@ export class PublicTableArea {
     }
   }
   hallCardRect(id: string): DOMRect | null {return this.dungeon.cardRect(id);}
+  animateHallCard(id: string, frames: Keyframe[], options: KeyframeAnimationOptions): Animation | null {
+    return this.dungeon.animateCard(id, frames, options);
+  }
   /** Only a monster currently intersecting the active public viewport is an origin. */
   visibleHallCardRect(id: string): DOMRect | null {
     if (this.active !== 'dungeon' || this.root.hidden) return null;
@@ -115,6 +120,7 @@ export class PublicTableArea {
   }
   dungeonDeckRect(id: string): DOMRect | null {return this.dungeon.deckRect(id);}
   playerRect(id: string): DOMRect | null {return this.players.playerRect(id);}
+  playerAvatarRect(id: string): DOMRect | null {return this.players.playerAvatarRect(id);}
   setPlayerSelection(ids: readonly string[] | null): void {this.players.setPlayerSelection(ids);}
   hideHallCard(id: string): void {this.dungeon.hideCard(id);}
   animateDungeon(state: DungeonState): Promise<void> {return this.dungeon.animateTo(state, () => this.viewports.dungeon.refresh());}

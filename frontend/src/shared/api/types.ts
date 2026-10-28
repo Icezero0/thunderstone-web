@@ -87,6 +87,7 @@ export interface MatchView {
 
 export type DeckMotionZone = 'hand' | 'draw' | 'discard' | 'treasures' | 'aside' | 'revealed';
 export type MotionPlace = {kind: 'owned'; zone: DeckMotionZone} | {kind: 'player'; player_id: string; zone: string}
+  | {kind: 'supply'; zone_id: string; card_id: string}
   | {kind: 'dungeon'; dungeon_id: string} | {kind: 'hall'; dungeon_id: string; rank: number}
   | {kind: 'attachment'; anchor_id: string; attachment_kind?: string; player_id?: string};
 export interface TableMotionStep {source: MotionPlace; destination: MotionPlace; card: {instance_id: string; card_id?: string};}

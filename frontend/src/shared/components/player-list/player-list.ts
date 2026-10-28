@@ -55,6 +55,7 @@ export class PlayerList {
   closePlayer(restoreFocus = true): void {this.assertAlive(); this.browser.close(restoreFocus);}
   setCardTargets(ids: readonly string[], selected: readonly string[]): void {this.browser.setCardTargets(ids, selected);}
   playerRect(playerId: string): DOMRect | null {return this.rows.anchor(playerId)?.getBoundingClientRect() ?? null;}
+  playerAvatarRect(playerId: string): DOMRect | null {return this.rows.avatarAnchor(playerId)?.getBoundingClientRect() ?? null;}
   setPlayerSelection(ids: readonly string[] | null): void {
     this.assertAlive(); this.selection = ids === null ? null : new Set(ids);
     this.rows.setSelection(this.selection); this.rows.render(this.players);

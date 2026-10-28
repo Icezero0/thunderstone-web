@@ -9,6 +9,7 @@ export class PlayerRows {
   constructor(private list: HTMLElement, private onOpen: (id: string) => void, private browserId: string) {}
   trigger(id: string): HTMLElement | undefined {return this.entries.get(id)?.button;}
   anchor(id: string): HTMLElement | undefined {return this.entries.get(id)?.root;}
+  avatarAnchor(id: string): HTMLElement | undefined {return this.entries.get(id)?.avatar.root;}
   setSelection(ids: ReadonlySet<string> | null): void {this.selectable = ids;}
   render(players: readonly PlayerListPlayer[]): void {
     const present = new Set(players.map(player => player.id));

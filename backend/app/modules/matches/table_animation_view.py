@@ -11,7 +11,7 @@ def table_motion_view(events, instances, viewer, catalog, add_card):
                       if event.get('kind') == 'card_attached' and event.get('player_id')}
     handled = {'monster_defeated', 'monster_returned_to_deck', 'effect_hall_relocated', 'thunderstone_acquired',
                'thunderstone_returned_to_deck', 'treasure_claimed', 'hall_card_entered', 'guardian_entered_rank_0',
-               'trap_revealed', 'card_destroyed', 'hall_monster_exchanged'}
+               'trap_revealed', 'card_destroyed', 'destruction_returned_to_supply', 'hall_monster_exchanged'}
 
     def attachment(anchor, kind=None):
         owner = anchor_players.get(anchor) or instances.get(anchor, {}).get('owner_player_id')
@@ -53,7 +53,13 @@ def table_motion_view(events, instances, viewer, catalog, add_card):
     for index, event in enumerate(events):
         if not isinstance(event.get('sequence'), int): continue
         kind, steps = event.get('kind'), []
-        if kind == 'card_moved':
+        if kind == 'destruction_returned_to_supply' and event.get('reason') != 'hero_upgrade':
+            item = event['instance_id']
+            zone = event['destination']
+            if zone == 'basic_supply': zone = f"basic_supply:{known[item]}"
+            steps = [flight(event, item, location(event.get('source'), item),
+                            {'kind': 'supply', 'zone_id': zone, 'card_id': known[item]}, True)]
+        elif kind == 'card_moved':
             item = event['instance_id']; raw_source, raw_target = event['source'], event['destination']
             following = index + 1
             while following < len(events) and events[following].get('kind') == 'card_moved': following += 1
